@@ -1,0 +1,491 @@
+#######################################
+# Syntax Coloring Map For Wire
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+# Globals
+
+NumMins	KEYWORD2
+PWMSlope	KEYWORD2
+PWMParabola	KEYWORD2
+MoonPhase	KEYWORD2
+ConvertNumToString	KEYWORD2
+pingSerial	KEYWORD2
+
+# ReefAngel
+
+Init	KEYWORD2
+Refresh	KEYWORD2
+SetTemperatureUnit	KEYWORD2
+ConvertTempUnit	KEYWORD2
+AddStandardMenu	KEYWORD2
+AddWifi	KEYWORD2
+StandardLights	KEYWORD2
+AddRFExpansion	KEYWORD2
+AddDateTimeMenu	KEYWORD2
+DelayedStartLights	KEYWORD2
+ActinicLights	KEYWORD2
+MoonLights	KEYWORD2
+MHLights	KEYWORD2
+StandardHeater	KEYWORD2
+StandardFan	KEYWORD2
+StandardATO	KEYWORD2
+SingleATO	KEYWORD2
+SingleATOHigh	KEYWORD2
+SingleATOLow	KEYWORD2
+DosingPump	KEYWORD2
+DosingPump1	KEYWORD2
+DosingPump2	KEYWORD2
+DosingPumpRepeat	KEYWORD2
+DosingPumpRepeat1	KEYWORD2
+DosingPumpRepeat2	KEYWORD2
+Wavemaker	KEYWORD2
+Wavemaker1	KEYWORD2
+Wavemaker2	KEYWORD2
+WavemakerRandom	KEYWORD2
+WavemakerRandom1	KEYWORD2
+WavemakerRandom2	KEYWORD2
+DisplayVersion	KEYWORD2
+ClearScreen	KEYWORD2
+MoonlightPWM	KEYWORD2
+Portal	KEYWORD2
+FeedingModeStart	KEYWORD2
+WaterChangeModeStart	KEYWORD2
+ATOClear	KEYWORD2
+OverheatClear	KEYWORD2
+InitMenu	KEYWORD2
+ShowInterface	KEYWORD2
+CO2Control	KEYWORD2
+PHControl	KEYWORD2
+
+#LCD
+
+Init	KEYWORD2
+Sleep	KEYWORD2
+Wake	KEYWORD2
+BacklightOn	KEYWORD2
+BacklightOff	KEYWORD2
+Clear	KEYWORD2
+DrawText	KEYWORD2
+DrawLargeText	KEYWORD2	
+DrawHugeText	KEYWORD2
+PutPixel	KEYWORD2
+SetContrast	KEYWORD2
+DrawDate	KEYWORD2
+DrawOutletBox	KEYWORD2
+DrawMonitor	KEYWORD2
+DrawGraph	KEYWORD2
+DrawEEPromImage	KEYWORD2
+DrawOption	KEYWORD2
+DrawCancel	KEYWORD2
+DrawOK	KEYWORD2
+DrawCalibrate	KEYWORD2
+DrawCircleOutline	KEYWORD2
+FillCircle	KEYWORD2
+DrawCircleOutletBox	KEYWORD2
+
+#PWM
+
+SetActinic	KEYWORD2
+SetDaylight	KEYWORD2
+ActinicPWMSlope	KEYWORD2
+DaylightPWMSlope	KEYWORD2
+ActinicPWMSlope	KEYWORD2
+DaylightPWMSlope	KEYWORD2
+ActinicPWMParabola	KEYWORD2
+DaylightPWMParabola	KEYWORD2
+ActinicPWMParabola	KEYWORD2
+DaylightPWMParabola	KEYWORD2
+StandardDaylight	KEYWORD2
+StandardActinic	KEYWORD2
+SetChannel	KEYWORD2
+Expansion	KEYWORD2
+ExpansionSetPercent	KEYWORD2
+ExpansionWrite	KEYWORD2
+GetChannelValue	KEYWORD2
+GetActinicValue	KEYWORD2
+GetDaylightValue	KEYWORD2
+Channel0PWMSlope	KEYWORD2
+Channel1PWMSlope	KEYWORD2
+Channel2PWMSlope	KEYWORD2
+Channel3PWMSlope	KEYWORD2
+Channel4PWMSlope	KEYWORD2
+Channel5PWMSlope	KEYWORD2
+Channel0PWMParabola	KEYWORD2
+Channel1PWMParabola	KEYWORD2
+Channel2PWMParabola	KEYWORD2
+Channel3PWMParabola	KEYWORD2
+Channel4PWMParabola	KEYWORD2
+Channel5PWMParabola	KEYWORD2
+#Relay
+
+On	KEYWORD2
+DelayedOn	KEYWORD2
+Off	KEYWORD2
+AllOn	KEYWORD2
+AllOff	KEYWORD2
+Toggle	KEYWORD2
+Set	KEYWORD2
+Write	KEYWORD2
+Status	KEYWORD2
+IsRelayPresent	KEYWORD2
+
+#ATO
+
+IsActive	KEYWORD2
+IsTopping	KEYWORD2
+StartTopping	KEYWORD2
+StopTopping	KEYWORD2
+
+#RF
+
+SetMode	KEYWORD2
+RFCheck	KEYWORD2
+GetChannel	KEYWORD2
+RadionWrite	KEYWORD2
+
+#AI
+
+SetPort	KEYWORD2
+SetStreamDelay	KEYWORD2
+
+
+#Joystick
+IsButtonPressed	KEYWORD2
+IsUp	KEYWORD2
+IsDown	KEYWORD2
+IsRight	KEYWORD2
+IsLeft	KEYWORD2
+
+#Timer
+IsTriggered	KEYWORD2
+Start	KEYWORD2
+ForceTrigger	KEYWORD2
+SetInterval	KEYWORD2
+
+#InternalEEPROM
+
+MHOnHour_read	KEYWORD2
+MHOnHour_write	KEYWORD2
+MHOnMinute_read	KEYWORD2
+MHOnMinute_write	KEYWORD2
+MHOffHour_read	KEYWORD2
+MHOffHour_write	KEYWORD2
+MHOffMinute_read	KEYWORD2
+MHOffMinute_write	KEYWORD2
+StdLightsOnHour_read	KEYWORD2
+StdLightsOnHour_write	KEYWORD2
+StdLightsOnMinute_read	KEYWORD2
+StdLightsOnMinute_write	KEYWORD2
+StdLightsOffHour_read	KEYWORD2
+StdLightsOffHour_write	KEYWORD2
+StdLightsOffMinute_read	KEYWORD2
+StdLightsOffMinute_write	KEYWORD2
+DP1Timer_read	KEYWORD2
+DP1Timer_write	KEYWORD2
+DP2Timer_read	KEYWORD2
+DP2Timer_write	KEYWORD2
+LEDPWMDaylight_read	KEYWORD2
+LEDPWMDaylight_write	KEYWORD2
+LEDPWMActinic_read	KEYWORD2
+LEDPWMActinic_write	KEYWORD2
+ATOTimeout_read	KEYWORD2
+ATOTimeout_write	KEYWORD2
+ATOHighTimeout_read	KEYWORD2
+ATOHighTimeout_write	KEYWORD2
+ATOHourInterval_read	KEYWORD2
+ATOHourInterval_write	KEYWORD2
+ATOHighHourInterval_read	KEYWORD2
+ATOHighHourInterval_write	KEYWORD2
+MHDelay_read	KEYWORD2
+MHDelay_write	KEYWORD2
+DP1OnHour_read	KEYWORD2
+DP1OnHour_write	KEYWORD2
+DP1OnMinute_read	KEYWORD2
+DP1OnMinute_write	KEYWORD2
+DP2OnHour_read	KEYWORD2
+DP2OnHour_write	KEYWORD2
+DP2OnMinute_read	KEYWORD2
+DP2OnMinute_write	KEYWORD2
+T1Pointer_read	KEYWORD2
+T1Pointer_write	KEYWORD2
+PWMSlopeStartD_read	KEYWORD2
+PWMSlopeStartD_write	KEYWORD2
+PWMSlopeEndD_read	KEYWORD2
+PWMSlopeEndD_write	KEYWORD2
+PWMSlopeDurationD_read	KEYWORD2
+PWMSlopeDurationD_write	KEYWORD2
+PWMSlopeStartA_read	KEYWORD2
+PWMSlopeStartA_write	KEYWORD2
+PWMSlopeEndA_read	KEYWORD2
+PWMSlopeEndA_write	KEYWORD2
+PWMSlopeDurationA_read	KEYWORD2
+PWMSlopeDurationA_write	KEYWORD2
+PWMSlopeStart0_read	KEYWORD2
+PWMSlopeStart0_write	KEYWORD2
+PWMSlopeEnd0_read	KEYWORD2
+PWMSlopeEnd0_write	KEYWORD2
+PWMSlopeDuration0_read	KEYWORD2
+PWMSlopeDuration0_write	KEYWORD2
+PWMSlopeStart1_read	KEYWORD2
+PWMSlopeStart1_write	KEYWORD2
+PWMSlopeEnd1_read	KEYWORD2
+PWMSlopeEnd1_write	KEYWORD2
+PWMSlopeDuration1_read	KEYWORD2
+PWMSlopeDuration1_write	KEYWORD2
+PWMSlopeStart2_read	KEYWORD2
+PWMSlopeStart2_write	KEYWORD2
+PWMSlopeEnd2_read	KEYWORD2
+PWMSlopeEnd2_write	KEYWORD2
+PWMSlopeDuration2_read	KEYWORD2
+PWMSlopeDuration2_write	KEYWORD2
+PWMSlopeStart3_read	KEYWORD2
+PWMSlopeStart3_write	KEYWORD2
+PWMSlopeEnd3_read	KEYWORD2
+PWMSlopeEnd3_write	KEYWORD2
+PWMSlopeDuration3_read	KEYWORD2
+PWMSlopeDuration3_write	KEYWORD2
+PWMSlopeStart4_read	KEYWORD2
+PWMSlopeStart4_write	KEYWORD2
+PWMSlopeEnd4_read	KEYWORD2
+PWMSlopeEnd4_write	KEYWORD2
+PWMSlopeDuration4_read	KEYWORD2
+PWMSlopeDuration4_write	KEYWORD2
+PWMSlopeStart5_read	KEYWORD2
+PWMSlopeStart5_write	KEYWORD2
+PWMSlopeEnd5_read	KEYWORD2
+PWMSlopeEnd5_write	KEYWORD2
+PWMSlopeDuration5_read	KEYWORD2
+PWMSlopeDuration5_write	KEYWORD2
+RFMode_read	KEYWORD2
+RFMode_write	KEYWORD2
+RFSpeed_read	KEYWORD2
+RFSpeed_write	KEYWORD2
+RFDuration_read	KEYWORD2
+RFDuration_write	KEYWORD2
+WM1Timer_read	KEYWORD2
+WM1Timer_write	KEYWORD2
+WM2Timer_read	KEYWORD2
+WM2Timer_write	KEYWORD2
+FeedingTimer_read	KEYWORD2
+FeedingTimer_write	KEYWORD2
+LCDTimer_read	KEYWORD2
+LCDTimer_write	KEYWORD2
+OverheatTemp_read	KEYWORD2
+OverheatTemp_write	KEYWORD2
+HeaterTempOn_read	KEYWORD2
+HeaterTempOn_write	KEYWORD2
+HeaterTempOff_read	KEYWORD2
+HeaterTempOff_write	KEYWORD2
+ChillerTempOn_read	KEYWORD2
+ChillerTempOn_write	KEYWORD2
+ChillerTempOff_read	KEYWORD2
+ChillerTempOff_write	KEYWORD2
+PHMax_read	KEYWORD2
+PHMax_write	KEYWORD2
+PHMin_read	KEYWORD2
+PHMin_write	KEYWORD2
+DP1RepeatInterval_read	KEYWORD2
+DP1RepeatInterval_write	KEYWORD2
+DP2RepeatInterval_read	KEYWORD2
+DP2RepeatInterval_write	KEYWORD2
+SalMax_read	KEYWORD2
+SalMax_write	KEYWORD2
+ORPMax_write	KEYWORD2
+ORPMax_read	KEYWORD2
+ORPMin_write	KEYWORD2
+ORPMin_read	KEYWORD2
+IMCheck_read	KEYWORD2
+IMCheck_write	KEYWORD2
+read(uint8_t);
+write	KEYWORD2
+read_int	KEYWORD2
+write_int	KEYWORD2
+write_dword	KEYWORD2
+        	
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+ReefAngel	KEYWORD1
+LCD	LITERAL1
+PWM	LITERAL1
+Relay	LITERAL1
+LowATO	LITERAL1
+HighATO	LITERAL1
+ATO	LITERAL1
+RF	LITERAL1
+AI	LITERAL1
+Joystick	LITERAL1
+LED	LITERAL1
+IO	LITERAL1
+InternalMemory	KEYWORD1
+Timer	LITERAL1
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+Params	LITERAL1
+Temp1	LITERAL2
+Temp2	LITERAL2
+Temp3	LITERAL2
+Temp	LITERAL2
+PH	LITERAL2
+Salinity	LITERAL2
+ORP	LITERAL2
+DisplayedMenu	LITERAL2
+FeedingModePorts	LITERAL2
+FeedingModePortsE	LITERAL2
+WaterChangePorts	LITERAL2
+WaterChangePortsE	LITERAL2
+OverheatShutoffPorts	LITERAL2
+OverheatShutoffPortsE	LITERAL2
+LightsOnPorts	LITERAL2
+LightsOnPortsE	LITERAL2
+DelayedOnPorts	LITERAL2
+DelayedOnPortsE	LITERAL2
+ExpansionChannel	LITERAL2
+CustomVar	LITERAL2
+
+MENU_START_COL	LITERAL2
+MENU_START_ROW	LITERAL2
+MENU_END_COL	LITERAL2
+MAX_Y	LITERAL2
+MAX_X	LITERAL2
+DEFAULT_MENU	LITERAL2
+EXCEED_TIMEOUT_MENU	LITERAL2
+FEEDING_MODE	LITERAL2
+WATERCHANGE_MODE	LITERAL2
+ALT_SCREEN_MODE	LITERAL2
+RETURN_MAIN_MODE	LITERAL2
+DEFAULT_MENU_ITEM	LITERAL2
+MAIN_MENU	LITERAL2
+
+OverheatProbe	LITERAL2
+TempProbe	LITERAL2
+T1_PROBE	LITERAL2
+T2_PROBE	LITERAL2
+T3_PROBE	LITERAL2
+
+Port8	LITERAL2
+Port7	LITERAL2
+Port6	LITERAL2
+Port5	LITERAL2
+Port4	LITERAL2
+Port3	LITERAL2
+Port2	LITERAL2
+Port1	LITERAL2
+
+Port8Bit	LITERAL2
+Port7Bit	LITERAL2
+Port6Bit	LITERAL2
+Port5Bit	LITERAL2
+Port4Bit	LITERAL2
+Port3Bit	LITERAL2
+Port2Bit	LITERAL2
+Port1Bit	LITERAL2
+
+Box0_Port1	LITERAL2
+Box0_Port2	LITERAL2
+Box0_Port3	LITERAL2
+Box0_Port4	LITERAL2
+Box0_Port5	LITERAL2
+Box0_Port6	LITERAL2
+Box0_Port7	LITERAL2
+Box0_Port8	LITERAL2
+Box1_Port1	LITERAL2
+Box1_Port2	LITERAL2
+Box1_Port3	LITERAL2
+Box1_Port4	LITERAL2
+Box1_Port5	LITERAL2
+Box1_Port6	LITERAL2
+Box1_Port7	LITERAL2
+Box1_Port8	LITERAL2
+Box2_Port1	LITERAL2
+Box2_Port2	LITERAL2
+Box2_Port3	LITERAL2
+Box2_Port4	LITERAL2
+Box2_Port5	LITERAL2
+Box2_Port6	LITERAL2
+Box2_Port7	LITERAL2
+Box2_Port8	LITERAL2
+Box3_Port1	LITERAL2
+Box3_Port2	LITERAL2
+Box3_Port3	LITERAL2
+Box3_Port4	LITERAL2
+Box3_Port5	LITERAL2
+Box3_Port6	LITERAL2
+Box3_Port7	LITERAL2
+Box3_Port8	LITERAL2
+Box4_Port1	LITERAL2
+Box4_Port2	LITERAL2
+Box4_Port3	LITERAL2
+Box4_Port4	LITERAL2
+Box4_Port5	LITERAL2
+Box4_Port6	LITERAL2
+Box4_Port7	LITERAL2
+Box4_Port8	LITERAL2
+Box5_Port1	LITERAL2
+Box5_Port2	LITERAL2
+Box5_Port3	LITERAL2
+Box5_Port4	LITERAL2
+Box5_Port5	LITERAL2
+Box5_Port6	LITERAL2
+Box5_Port7	LITERAL2
+Box5_Port8	LITERAL2
+Box6_Port1	LITERAL2
+Box6_Port2	LITERAL2
+Box6_Port3	LITERAL2
+Box6_Port4	LITERAL2
+Box6_Port5	LITERAL2
+Box6_Port6	LITERAL2
+Box6_Port7	LITERAL2
+Box6_Port8	LITERAL2
+Box7_Port1	LITERAL2
+Box7_Port2	LITERAL2
+Box7_Port3	LITERAL2
+Box7_Port4	LITERAL2
+Box7_Port5	LITERAL2
+Box7_Port6	LITERAL2
+Box7_Port7	LITERAL2
+Box7_Port8	LITERAL2
+Box8_Port1	LITERAL2
+Box8_Port2	LITERAL2
+Box8_Port3	LITERAL2
+Box8_Port4	LITERAL2
+Box8_Port5	LITERAL2
+Box8_Port6	LITERAL2
+Box8_Port7	LITERAL2
+Box8_Port8	LITERAL2
+
+RelayData	LITERAL2
+RelayMaskOn	LITERAL2
+RelayMaskOff	LITERAL2
+RelayDataE	LITERAL2
+RelayMaskOnE	LITERAL2
+RelayMaskOffE	LITERAL2
+
+UseMemory	LITERAL2
+Mode	LITERAL2
+Speed	LITERAL2
+Duration	LITERAL2
+RadionChannels	LITERAL2
+Celsius	LITERAL2
+Fahrenheit	LITERAL2 
+
+MAIN_RELAY	LITERAL2
+EXP1_RELAY	LITERAL2
+EXP2_RELAY	LITERAL2
+EXP3_RELAY	LITERAL2
+EXP4_RELAY	LITERAL2
+EXP5_RELAY	LITERAL2
+EXP6_RELAY	LITERAL2
+EXP7_RELAY	LITERAL2
+EXP8_RELAY	LITERAL2
