@@ -159,7 +159,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define VPin                0
 #define HPin                1
 #define PHPin               6
-#define Piezo               16
+// issue #2 - Piezo Not needed anymore
+//#define Piezo               16 
 
 //Digital I/O
 #define ledPin              7
