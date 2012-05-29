@@ -234,7 +234,7 @@ void RA_PWMClass::Expansion(byte cmd, byte data)
 	Wire.write('$');
 	Wire.write('$');
 	Wire.write(cmd);				// send the command
-	Wire.write(data*2.55);			// send the data
+	Wire.write((int)(data*2.55));			// send the data
 	Wire.endTransmission();		// stop transmitting
 	if (cmd<PWM_EXPANSION_CHANNELS) ExpansionChannel[cmd]=data;
 }
