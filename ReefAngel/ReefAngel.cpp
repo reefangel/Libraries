@@ -418,7 +418,8 @@ void ReefAngelClass::Init()
 #ifdef __PLUS_SPECIAL_WIFI__
 	Serial1.begin(57600);
 #endif // __PLUS_SPECIAL_WIFI__
-	pinMode(Piezo, OUTPUT);
+// issue #2 - Piezo Not needed anymore
+//	pinMode(Piezo, OUTPUT);
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
 	LCD.Init();
