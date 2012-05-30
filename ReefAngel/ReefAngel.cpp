@@ -577,9 +577,10 @@ void ReefAngelClass::Refresh()
 		PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
 		PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
 	}
-// issue #3: Redundant code	
-//	analogWrite(actinicPWMPin, PWM.GetActinicValue()*2.55);
-//    analogWrite(daylightPWMPin, PWM.GetDaylightValue()*2.55);
+// issue #3: Redundant code
+// issue #12: Revert back
+	analogWrite(actinicPWMPin, PWM.GetActinicValue()*2.55);
+    analogWrite(daylightPWMPin, PWM.GetDaylightValue()*2.55);
 #endif  // DisplayLEDPWM
 
 #ifdef RFEXPANSION
