@@ -107,19 +107,10 @@ const prog_char XML_MODE_CLOSE[] PROGMEM = "</MODE>";
 const prog_char XML_OK[] PROGMEM = "OK";
 const prog_char XML_ERR[] PROGMEM = "ERR";
 
-#define SERVER_DENY "HTTP/1.1 401 Access Denied" CRLF "WWW-Authenticate: Basic realm=Reef Angel Controller" SERVER_HEADER2 "0" SERVER_HEADER3
-#define SERVER_HEADER1 "HTTP/1.1 200 OK" CRLF "Server: ReefAngel" CRLF "Cache-Control: no-store, no-cache, must-revalidate" CRLF "Pragma: no-cache" CRLF "Connection: close" CRLF "Content-Type: text/"
-#define SERVER_HEADER2 CRLF "Content-Length: "
-#define SERVER_HEADER3 CRLF CRLF
-#define SERVER_HEADER_HTML SERVER_HEADER1 "html" SERVER_HEADER2
-#define SERVER_HEADER_XML SERVER_HEADER1 "xml" SERVER_HEADER2
-#define SERVER_DEFAULT "<h1>Reef Angel Controller Web Server</h1>"
-#define SERVER_UKNOWN "<h1>Unknown Request</h1>"
-#define SERVER_RELAY ""
-#define CRLF "\r\n"
-#define CR "\r"
-#define LF "\n"
-#define BAD "bad=1"
+const prog_char SERVER_HEADER1[] PROGMEM = "HTTP/1.1 200 OK\r\nServer: ReefAngel\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nConnection: close\r\nContent-Type: text/";
+const prog_char SERVER_HEADER2[] PROGMEM = "\r\nContent-Length: ";
+const prog_char SERVER_DENY[] PROGMEM = "HTTP/1.1 401 Access Denied\r\nWWW-Authenticate: Basic realm=Reef Angel Controller\r\nContent-Length: 0\r\n";
+const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server</h1>";
 
 // REQUEST TYPES
 #define REQ_ROOT		1		// Default page
@@ -363,7 +354,7 @@ static byte bCommaCount = 0;
 
 void WebResponse (const prog_char *response, long strsize);
 void pushbuffer(byte inStr);
-void PrintHTTPHeader(int s);
+void PrintHeader(int s, byte type);
 char GetC(int c);
 void ConvertC(char* strIn, char* strOut, byte len);
 void WifiAuthentication(char* userpass);
