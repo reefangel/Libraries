@@ -82,16 +82,7 @@ void RA_PWMClass::DaylightPWMSlope(byte MinuteOffset)
 
 void RA_PWMClass::ActinicPWMSlope()
 {
-	SetActinic(PWMSlope(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartA_read(),
-			InternalMemory.PWMSlopeEndA_read(),
-			InternalMemory.PWMSlopeDurationA_read(),
-			ActinicPWMValue
-			));
+	ActinicPWMSlope(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::DaylightPWMSlope()
@@ -140,15 +131,7 @@ void RA_PWMClass::DaylightPWMParabola(byte MinuteOffset)
 
 void RA_PWMClass::ActinicPWMParabola()
 {
-	SetActinic(PWMParabola(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartA_read(),
-			InternalMemory.PWMSlopeEndA_read(),
-			ActinicPWMValue
-			));
+	ActinicPWMParabola(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::DaylightPWMParabola()
