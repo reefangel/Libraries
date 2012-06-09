@@ -216,6 +216,7 @@ void processHTTP()
 			}  // REQ_WIFI
 			case REQ_RELAY:
 			{
+				if (weboption<10) break;
 				byte o_relay=weboption/10;
 				byte o_type=weboption%10;
 				if (o_type==0)  // Turn port off
