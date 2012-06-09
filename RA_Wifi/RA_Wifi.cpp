@@ -330,6 +330,11 @@ void processHTTP()
 				//<ORP></ORP>
 				s += intlength(ReefAngel.Params.ORP);
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+				s += 11;
+				//<PHE></PHE>
+				s += intlength(ReefAngel.Params.PHExp);
+#endif  // PHEXPANSION
 #ifdef IOEXPANSION
 				s += 9;
 				//<IO></IO>
@@ -832,6 +837,11 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.Params.ORP, DEC);
 	PROGMEMprint(XML_ORP_END);
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+	PROGMEMprint(XML_PHEXP);
+	WIFI_SERIAL.print(ReefAngel.Params.PHExp, DEC);
+	PROGMEMprint(XML_PHEXP_END);
+#endif  // PHEXPANSION
 #ifdef IOEXPANSION
 	PROGMEMprint(XML_IO);
 	WIFI_SERIAL.print(ReefAngel.IO.GetChannel(), DEC);

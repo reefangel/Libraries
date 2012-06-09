@@ -56,6 +56,10 @@ const prog_char XML_SAL_END[] PROGMEM = "</SAL>";
 const prog_char XML_ORP[] PROGMEM = "<ORP>";
 const prog_char XML_ORP_END[] PROGMEM = "</ORP>";
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
+const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
+#endif  // PHEXPANSION
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
@@ -208,6 +212,13 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 	#define IObit		0
 #endif  // IOEXPANSION
 
+#ifdef PHEXPANSION
+	const prog_char BannerPHE[] PROGMEM = "&phe=";
+	#define PHbit		64
+#else
+	#define PHbit		0
+#endif  // PHEXPANSION
+	
 #ifdef CUSTOM_VARIABLES
 	const prog_char BannerCustomVar[] PROGMEM = "&c";
 #endif //CUSTOM_VARIABLES

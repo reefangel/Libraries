@@ -1019,6 +1019,26 @@ void InternalEEPROMClass::PHControlOff_write(int value)
     write_int(Mem_I_PHControlOff, value);
 }
 
+void InternalEEPROMClass::PHExpMax_write(const int value)
+{
+    write_int(Mem_I_PHExpMax, value);
+}
+
+int InternalEEPROMClass::PHExpMax_read()
+{
+    return read_int(Mem_I_PHExpMax);
+}
+
+void InternalEEPROMClass::PHExpMin_write(const int value)
+{
+    write_int(Mem_I_PHExpMin, value);
+}
+
+int InternalEEPROMClass::PHExpMin_read()
+{
+    return read_int(Mem_I_PHExpMin);
+}
+
 unsigned long InternalEEPROMClass::IMCheck_read()
 {
     return read_dword(IMPointer);
