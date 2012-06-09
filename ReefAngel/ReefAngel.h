@@ -37,6 +37,9 @@
 #include <Timer.h>
 #include <Memory.h>
 
+#if defined PHEXPANSION
+	#include <PH.h>
+#endif  // defined PHEXPANSION
 #if defined SALINITYEXPANSION
 	#include <Salinity.h>
 #endif  // defined SALINITYEXPANSION
@@ -94,10 +97,14 @@ public:
 	int SalMax;
 	SalinityClass Salinity;
 #endif  // defined SALINITYEXPANSION
+#if defined PHEXPANSION
+	int PHExpMin, PHExpMax;
+	PHClass PH;
+#endif  // PHEXPANSION	
 #if defined ORPEXPANSION
 	int ORPMin, ORPMax;
 	ORPClass ORP;
-#endif  // ORPEXPANSION IOEXPANSION
+#endif  // ORPEXPANSION
 #if defined RFEXPANSION
 	RFClass RF;
 #endif  // defined RFEXPANSION
@@ -260,6 +267,9 @@ public:
 #if defined ORPEXPANSION
     void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
+#if defined PHEXPANSION
+    void SetupCalibratePHExp();
+#endif  // defined PHEXPANSION
 #ifdef DateTimeSetup
     void SetupDateTime();
 #endif  // DateTimeSetup

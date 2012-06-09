@@ -229,6 +229,10 @@ class InternalEEPROMClass {
         void PHControlOn_write(const int value);
         int PHControlOff_read();
         void PHControlOff_write(const int value);
+        int PHExpMax_read();
+        void PHExpMax_write(const int value);
+        int PHExpMin_read();
+        void PHExpMin_write(const int value);
 
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);
