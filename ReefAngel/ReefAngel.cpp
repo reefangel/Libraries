@@ -2789,7 +2789,7 @@ bool ReefAngelClass::SetupOption(int &v, int &y, int rangemin, int rangemax, byt
             if ( sel == OPT1 )
             {
                 v++;
-                if ( v > rangemax )
+                if ( v > rangemax || v < rangemin)
                 {
                     v = rangemin;
                 }
@@ -2797,7 +2797,7 @@ bool ReefAngelClass::SetupOption(int &v, int &y, int rangemin, int rangemax, byt
             else if ( sel == OPT2 )
             {
                 y++;
-                if ( y > rangemax )
+                if ( y > rangemax || y < rangemin )
                 {
                     y = rangemin;
                 }
@@ -2809,7 +2809,7 @@ bool ReefAngelClass::SetupOption(int &v, int &y, int rangemin, int rangemax, byt
             if ( sel == OPT1 )
             {
                 v--;
-                if ( v < rangemin )
+                if ( v < rangemin || v > rangemax )
                 {
                     v = rangemax;
                 }
@@ -2817,7 +2817,7 @@ bool ReefAngelClass::SetupOption(int &v, int &y, int rangemin, int rangemax, byt
             else if ( sel == OPT2 )
             {
                 y--;
-                if ( y < rangemin )
+                if ( y < rangemin || y > rangemax )
                 {
                     y = rangemax;
                 }
