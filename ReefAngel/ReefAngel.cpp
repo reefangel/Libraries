@@ -610,20 +610,21 @@ void ReefAngelClass::Refresh()
 #ifdef IOEXPANSION
 	IO.GetChannel();
 #endif  // IOEXPANSION
+	Relay.Write();
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 	Params.Temp[T1_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT1);
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 	Params.Temp[T2_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT2);
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 	Params.Temp[T3_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT3);
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 	Params.PH=analogRead(PHPin);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 	Params.PH=constrain(Params.PH,100,1400);
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 #if defined SALINITYEXPANSION
 	Params.Salinity=Salinity.Read();
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
@@ -638,7 +639,7 @@ void ReefAngelClass::Refresh()
 		SalCompensation=Params.Salinity/(1+((Params.Temp[T1_PROBE]-770)*0.001333));
 		Params.Salinity=round(SalCompensation);
 	}
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
 	Params.ORP=ORP.Read();
@@ -647,23 +648,23 @@ void ReefAngelClass::Refresh()
 		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
 		Params.ORP=constrain(Params.ORP,0,550);
 	}
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined ORPEXPANSION
 	TempSensor.RequestConversion();
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 #else  // DirectTempSensor
     int x = TempSensor.ReadTemperature(TempSensor.addrT1);
-    LCD.Clear(DefaultBGColor,0,0,1,1);
+    LCD.PutPixel(DefaultBGColor,1,1);
     int y;
     y = x - Params.Temp[T1_PROBE];
     // check to make sure the temp readings aren't beyond max allowed
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T1_PROBE] == 0 || ~x) Params.Temp[T1_PROBE] = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT2);
-    LCD.Clear(DefaultBGColor,0,0,1,1);
+    LCD.PutPixel(DefaultBGColor,1,1);
     y = x - Params.Temp[T2_PROBE];
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T2_PROBE] == 0 || ~x) Params.Temp[T2_PROBE] = x;
     x = TempSensor.ReadTemperature(TempSensor.addrT3);
-    LCD.Clear(DefaultBGColor,0,0,1,1);
+    LCD.PutPixel(DefaultBGColor,1,1);
     y = x - Params.Temp[T3_PROBE];
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T3_PROBE] == 0 || ~x) Params.Temp[T3_PROBE] = x;
     Params.PH=0;
@@ -672,14 +673,14 @@ void ReefAngelClass::Refresh()
     	Params.PH+=analogRead(PHPin);
     }
     Params.PH/=20;
-    LCD.Clear(DefaultBGColor,0,0,1,1);
+    LCD.PutPixel(DefaultBGColor,1,1);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 	Params.PH=constrain(Params.PH,100,1400);
 
 #if defined SALINITYEXPANSION
 	Params.Salinity=Salinity.Read();
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
 	Params.ORP=ORP.Read();
@@ -688,7 +689,7 @@ void ReefAngelClass::Refresh()
 		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
 		Params.ORP=constrain(Params.ORP,0,550);
 	}
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined ORPEXPANSION
 	TempSensor.RequestConversion();
 #endif  // DirectTempSensor
@@ -1477,7 +1478,7 @@ void ReefAngelClass::FeedingModeStart()
 		Relay.RelayMaskOffE[i] = ~FeedingModePortsE[i];
 	}
 #endif  // RelayExp
-	Relay.Write();
+//	Relay.Write();
 	ClearScreen(DefaultBGColor);
 	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
 	Timer[FEEDING_TIMER].Start();  //Start Feeding Mode timer
@@ -1506,7 +1507,7 @@ void ReefAngelClass::WaterChangeModeStart()
 		Relay.RelayMaskOffE[i] = ~WaterChangePortsE[i];
 	}
 #endif  // RelayExp
-	Relay.Write();
+//	Relay.Write();
 	ClearScreen(DefaultBGColor);
 	// Display the water change mode
 	LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
@@ -1687,28 +1688,28 @@ void ReefAngelClass::ShowInterface()
 					Timer[STORE_PARAMS_TIMER].Start();
 					CurTemp = map(Params.Temp[T1_PROBE], T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-					//LCD.Clear(DefaultBGColor,0,0,1,1);
+					//LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr, CurTemp);
 					pingSerial();
-					LCD.Clear(DefaultBGColor,0,0,1,1);
+					LCD.PutPixel(DefaultBGColor,1,1);
 					CurTemp = map(Params.Temp[T2_PROBE], T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-					LCD.Clear(DefaultBGColor,0,0,1,1);
+					LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr+120, CurTemp);
 					pingSerial();
-					LCD.Clear(DefaultBGColor,0,0,1,1);
+					LCD.PutPixel(DefaultBGColor,1,1);
 					CurTemp = map(Params.Temp[T3_PROBE], T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-					//LCD.Clear(DefaultBGColor,0,0,1,1);
+					//LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr+240, CurTemp);
 					pingSerial();
-					LCD.Clear(DefaultBGColor,0,0,1,1);
+//					LCD.PutPixel(DefaultBGColor,1,1);
 					CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-					//LCD.Clear(DefaultBGColor,0,0,1,1);
+					//LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr+360, CurTemp);
 					pingSerial();
-					LCD.Clear(DefaultBGColor,0,0,1,1);
+					LCD.PutPixel(DefaultBGColor,1,1);
 					if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
 #ifdef CUSTOM_MAIN
 					DrawCustomGraph();
@@ -1734,7 +1735,7 @@ void ReefAngelClass::ShowInterface()
 #endif  // RelayExp
 				}
 				// commit relay changes
-				Relay.Write();
+//				Relay.Write();
 				break;
 			}  // DEFAULT_MENU
 			case FEEDING_MODE:
@@ -1782,7 +1783,7 @@ void ReefAngelClass::ShowInterface()
 #endif  // RFEXPANSION
 					ExitMenu();
 				}
-				Relay.Write();
+//				Relay.Write();
 				break;
 			}
 			case WATERCHANGE_MODE:
@@ -1808,7 +1809,7 @@ void ReefAngelClass::ShowInterface()
 #endif  // RelayExp
 					ExitMenu();
 				}
-				Relay.Write();
+//				Relay.Write();
 				break;
 			}
 #ifdef CUSTOM_MENU
@@ -2341,7 +2342,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
                 InternalMemory.WM2Timer_write(y);
                 Relay.On(WM1Port);
                 Relay.On(WM2Port);
-                Relay.Write();
+//                Relay.Write();
             }
             break;
         }

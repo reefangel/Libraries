@@ -38,6 +38,7 @@ public:
 
 private:
 	void JoystickCenter();
+	void CheckTurbo();
 	int CalV, CalH;
 	unsigned long KeyKeep;
 	byte KeyTurbo;

@@ -55,10 +55,7 @@ bool RA_JoystickClass::IsUp()
 	JoystickCenter();
 	if ( (analogRead(VPin)>CalV+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 	{
-		KeyCount++;
-		if (KeyCount > 5)
-            KeyTurbo = 5;
-	    KeyKeep = millis();
+		CheckTurbo();
 		return true;
 	}
 	else
@@ -72,10 +69,7 @@ bool RA_JoystickClass::IsDown()
 	JoystickCenter();
 	if ( (analogRead(VPin)<CalV-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 	{
-		KeyCount++;
-		if (KeyCount > 5)
-            KeyTurbo = 5;
-	    KeyKeep = millis();
+		CheckTurbo();
 		return true;
 	}
 	else
@@ -89,10 +83,7 @@ bool RA_JoystickClass::IsRight()
 	JoystickCenter();
 	if ( (analogRead(HPin)<CalH-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 	{
-		KeyCount++;
-		if (KeyCount > 5)
-            KeyTurbo = 5;
-	    KeyKeep = millis();
+		CheckTurbo();
 		return true;
 	}
 	else
@@ -106,10 +97,7 @@ bool RA_JoystickClass::IsLeft()
 	JoystickCenter();
 	if ( (analogRead(HPin)>CalH+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 	{
-		KeyCount++;
-		if (KeyCount > 5)
-            KeyTurbo = 5;
-	    KeyKeep = millis();
+		CheckTurbo();
 		return true;
 	}
 	else
@@ -131,3 +119,10 @@ void RA_JoystickClass::JoystickCenter()
 	}
 }
 
+void RA_JoystickClass::CheckTurbo()
+{
+	KeyCount++;
+	if (KeyCount > 5)
+        KeyTurbo = 5;
+    KeyKeep = millis();
+}
