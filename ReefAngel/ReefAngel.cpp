@@ -1192,32 +1192,32 @@ void ReefAngelClass::PHControl(byte Relay)
 
 void ReefAngelClass::StandardATO(byte Relay)
 {
-    StandardATO(Relay, InternalMemory.ATOTimeout_read());
+    StandardATO(Relay, InternalMemory.ATOExtendedTimeout_read());
 }
 
 void ReefAngelClass::SingleATOLow(byte Relay)
 {
-    SingleATO(true, Relay, InternalMemory.ATOTimeout_read(), InternalMemory.ATOHourInterval_read());
+    SingleATO(true, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.ATOHourInterval_read());
 }
 
 void ReefAngelClass::SingleATOHigh(byte Relay)
 {
-    SingleATO(false, Relay, InternalMemory.ATOHighTimeout_read(), InternalMemory.ATOHighHourInterval_read());
+    SingleATO(false, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.ATOHourInterval_read());
 }
 
 void ReefAngelClass::StandardATOExtended(byte Relay)
 {
-    StandardATO(Relay, InternalMemory.ATOExtendedTimeout_read());
+    StandardATO(Relay);
 }
 
 void ReefAngelClass::SingleATOLowExtended(byte Relay)
 {
-    SingleATO(true, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.ATOHourInterval_read());
+	SingleATOLow(Relay);
 }
 
 void ReefAngelClass::SingleATOHighExtended(byte Relay)
 {
-    SingleATO(false, Relay, InternalMemory.ATOHighExtendedTimeout_read(), InternalMemory.ATOHighHourInterval_read());
+	SingleATOHigh(Relay);
 }
 
 void ReefAngelClass::DosingPump1(byte Relay)

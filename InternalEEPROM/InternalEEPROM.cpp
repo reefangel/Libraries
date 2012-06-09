@@ -1050,12 +1050,12 @@ void InternalEEPROMClass::IMCheck_write(const unsigned long value)
 }
 
 // Private functions
-uint8_t InternalEEPROMClass::read(uint8_t address)
+uint8_t InternalEEPROMClass::read(int address)
 {
     return eeprom_read_byte((unsigned char *) address);
 }
 
-void InternalEEPROMClass::write(uint8_t address, const uint8_t value)
+void InternalEEPROMClass::write(int address, const uint8_t value)
 {
     eeprom_write_byte((unsigned char *) address, value);
 }

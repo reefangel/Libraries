@@ -237,8 +237,8 @@ class InternalEEPROMClass {
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);
         // Functions that do the reading/writing to memory
-        uint8_t read(uint8_t);
-        void write(uint8_t, const uint8_t);
+        uint8_t read(int);
+        void write(int, const uint8_t);
         int read_int(int);
         void write_int(int, const int);
         uint32_t read_dword(int);

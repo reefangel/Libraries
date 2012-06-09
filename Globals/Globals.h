@@ -241,7 +241,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define ATOHighEvent4_On			  ATOEventStart+56
 #define ATOHighEvent4_Off			  ATOEventStart+60
 
-#define VarsStart                 800
+#define VarsStart                 200
 #define Mem_B_MHOnHour            VarsStart
 #define Mem_B_MHOnMinute          VarsStart+1
 #define Mem_B_MHOffHour           VarsStart+2
