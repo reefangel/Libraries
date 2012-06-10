@@ -372,6 +372,10 @@ PHControlOn_read	KEYWORD2
 PHControlOn_write	KEYWORD2
 PHControlOff_read	KEYWORD2
 PHControlOff_write	KEYWORD2
+PHExpMax_read	KEYWORD2
+PHExpMax_write	KEYWORD2
+PHExpMin_read	KEYWORD2
+PHExpMin_write	KEYWORD2
 
 IMCheck_read	KEYWORD2
 IMCheck_write	KEYWORD2
