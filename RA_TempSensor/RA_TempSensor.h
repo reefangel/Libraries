@@ -31,6 +31,7 @@ public:
 	void Init();
 	void RequestConversion();
 	int ReadTemperature(byte addr[8]);
+	void SendRequest(byte addr[8]);
 
 	byte addrT1[8];
 	byte addrT2[8];
