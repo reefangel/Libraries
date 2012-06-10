@@ -1979,21 +1979,21 @@ void ReefAngelClass::DisplayMenuHeading()
 //            break;
         case MainMenu:
             {
-                strcpy_P(buffer, (char*)ptr);
+//                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
         case SetupMenu:
             {
                 ptr += strlen(Menu_0_label) + 1;
-                strcpy_P(buffer, (char*)ptr);
+//                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #ifndef RemoveAllLights
         case LightsMenu:
             {
                 ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + 2;
-                strcpy_P(buffer, (char*)ptr);
+//                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #endif  // RemoveAllLights
@@ -2003,7 +2003,7 @@ void ReefAngelClass::DisplayMenuHeading()
 #ifndef RemoveAllLights
 				ptr += strlen(Menu_2_label) + 1;
 #endif  // RemoveAllLights
-                strcpy_P(buffer, (char*)ptr);
+//                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #if defined SetupExtras || defined ATOSetup
@@ -2013,12 +2013,13 @@ void ReefAngelClass::DisplayMenuHeading()
 #ifndef RemoveAllLights
 				ptr += strlen(Menu_2_label) + 1;
 #endif  // RemoveAllLights
-                strcpy_P(buffer, (char*)ptr);
+//                strcpy_P(buffer, (char*)ptr);
             }
             break;
 #endif  // if defined SetupExtras || defined ATOSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
     }  // switch MenuNum
+    strcpy_P(buffer, (char*)ptr);
 
     // clear the line that has the menu heading on it
     LCD.Clear(DefaultBGColor, MENU_START_COL, MENU_START_ROW, MAX_X, MAX_Y);
