@@ -347,13 +347,14 @@ When adding more variables, use the previous value plus 1 or 2
 #define VarsEnd                 VarsStart+125
 // Next value starts VarsStart+121
 
-// Internal Memory Check Pointer
-#define IMPointer			600
 
 // EEProm Pointers
 #define PH_Min		        949
 #define PH_Max		        951
 #define T1Pointer			953
+
+// Internal Memory Check Pointer - 4 byte length (954-957)
+#define IMPointer			954
 
 #define bit9600Delay 		101
 #define KeyPressRate		250

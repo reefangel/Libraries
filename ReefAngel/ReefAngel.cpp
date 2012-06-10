@@ -433,7 +433,10 @@ void ReefAngelClass::Init()
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;
-	if (InternalMemory.IMCheck_read()!=0x5241494D) //0x5241494D
+	
+	//0x5241494D
+	//0xCF06A31E
+	if (InternalMemory.IMCheck_read()!=0xCF06A31E) 
 	{
 		char temptext[25];
 		while(1)
