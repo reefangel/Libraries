@@ -172,6 +172,7 @@ SetInterval	KEYWORD2
 
 #WaterLevel
 GetLevel	KEYWORD2
+Read	KEYWORD2
 
 #InternalEEPROM
 
