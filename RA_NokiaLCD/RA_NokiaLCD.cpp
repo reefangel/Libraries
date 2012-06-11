@@ -663,16 +663,7 @@ void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
     ymin = (y1 <= y2) ? y1 : y2;
     ymax = (y1 > y2) ? y1 : y2;
 
-    // specify the controller drawing box according to those limits
-    // Row address set (command 0x2B)
-    SendCMD(CASET);
-    SendData(xmin);
-    SendData(xmax);
-
-    // Column address set (command 0x2A)
-    SendCMD(PASET);
-    SendData(ymin);
-    SendData(ymax);
+    SetBox(xmin,ymin,xmax,ymax);
 
     // WRITE MEMORY
     SendCMD(RAMWR);
@@ -1011,13 +1002,7 @@ void RA_NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,long text)
 
 void RA_NokiaLCD::PutPixel(byte color, byte x, byte y)
 {
-    SendCMD(CASET);   // page start/end ram
-    SendData(x);      // for some reason starts at 2
-    SendData(x+1);
-
-    SendCMD(PASET);   // column start/end ram
-    SendData(y);
-    SendData(y+1);
+	SetBox(x,y,x+1,y+1);
     SendCMD(RAMWR);
     SendData(~color);
 }
