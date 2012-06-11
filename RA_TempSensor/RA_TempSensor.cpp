@@ -50,34 +50,24 @@ void RA_TempSensorClass::Init()
 
 void RA_TempSensorClass::RequestConversion()
 {
-	if(addrT1[0]==0x28)
-	{
-		ds.reset();
-		pingSerial();
-		ds.select(addrT1);
-		pingSerial();
-		ds.write(0x44,0);
-		pingSerial();
-	}
-	if(addrT2[0]==0x28)
-	{
-		ds.reset();
-		pingSerial();
-		ds.select(addrT2);
-		pingSerial();
-		ds.write(0x44,0);
-		pingSerial();
-	}
-	if(addrT3[0]==0x28)
-	{
-		ds.reset();
-		pingSerial();
-		ds.select(addrT3);
-		pingSerial();
-		ds.write(0x44,0);
-		pingSerial();
-	}
+	SendRequest(addrT1);
+	SendRequest(addrT2);
+	SendRequest(addrT3);
 }
+
+void RA_TempSensorClass::SendRequest(byte addr[8])
+{
+	if(addr[0]==0x28)
+	{
+		ds.reset();
+		pingSerial();
+		ds.select(addr);
+		pingSerial();
+		ds.write(0x44,0);
+		pingSerial();
+	}	
+}
+
 
 int RA_TempSensorClass::ReadTemperature(byte addr[8])
 {
