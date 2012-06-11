@@ -180,6 +180,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CExpModule        0x38 // 0x38-3f
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
+#define I2CPH				0X4e
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
@@ -240,7 +241,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define ATOHighEvent4_On			  ATOEventStart+56
 #define ATOHighEvent4_Off			  ATOEventStart+60
 
-#define VarsStart                 800
+#define VarsStart                 200
 #define Mem_B_MHOnHour            VarsStart
 #define Mem_B_MHOnMinute          VarsStart+1
 #define Mem_B_MHOffHour           VarsStart+2
@@ -340,17 +341,20 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_RadionSlopeEndI	      VarsStart+118
 #define Mem_B_RadionSlopeDurationI    VarsStart+119
 #define Mem_B_DelayedStart            VarsStart+120
+#define Mem_I_PHExpMin			  VarsStart+121
+#define Mem_I_PHExpMax			  VarsStart+123
 
-#define VarsEnd                 VarsStart+121
+#define VarsEnd                 VarsStart+125
 // Next value starts VarsStart+121
 
-// Internal Memory Check Pointer
-#define IMPointer			600
 
 // EEProm Pointers
 #define PH_Min		        949
 #define PH_Max		        951
 #define T1Pointer			953
+
+// Internal Memory Check Pointer - 4 byte length (954-957)
+#define IMPointer			954
 
 #define bit9600Delay 		101
 #define KeyPressRate		250
@@ -669,6 +673,7 @@ typedef struct  {
   int PH;
   int Salinity;
   int ORP;
+  int PHExp;
 } ParamsStruct;
 
 // Temperature units

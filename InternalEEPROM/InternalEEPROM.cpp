@@ -1019,6 +1019,26 @@ void InternalEEPROMClass::PHControlOff_write(int value)
     write_int(Mem_I_PHControlOff, value);
 }
 
+void InternalEEPROMClass::PHExpMax_write(const int value)
+{
+    write_int(Mem_I_PHExpMax, value);
+}
+
+int InternalEEPROMClass::PHExpMax_read()
+{
+    return read_int(Mem_I_PHExpMax);
+}
+
+void InternalEEPROMClass::PHExpMin_write(const int value)
+{
+    write_int(Mem_I_PHExpMin, value);
+}
+
+int InternalEEPROMClass::PHExpMin_read()
+{
+    return read_int(Mem_I_PHExpMin);
+}
+
 unsigned long InternalEEPROMClass::IMCheck_read()
 {
     return read_dword(IMPointer);
@@ -1030,12 +1050,12 @@ void InternalEEPROMClass::IMCheck_write(const unsigned long value)
 }
 
 // Private functions
-uint8_t InternalEEPROMClass::read(uint8_t address)
+uint8_t InternalEEPROMClass::read(int address)
 {
     return eeprom_read_byte((unsigned char *) address);
 }
 
-void InternalEEPROMClass::write(uint8_t address, const uint8_t value)
+void InternalEEPROMClass::write(int address, const uint8_t value)
 {
     eeprom_write_byte((unsigned char *) address, value);
 }

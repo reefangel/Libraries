@@ -433,7 +433,10 @@ void ReefAngelClass::Init()
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;
-	if (InternalMemory.IMCheck_read()!=0x5241494D) //0x5241494D
+	
+	//0x5241494D
+	//0xCF06A31E
+	if (InternalMemory.IMCheck_read()!=0xCF06A31E) 
 	{
 		char temptext[25];
 		while(1)
@@ -462,9 +465,14 @@ void ReefAngelClass::Init()
     ORPMin = InternalMemory.ORPMin_read();
     ORPMax = InternalMemory.ORPMax_read();
 #endif  // ORPEXPANSION
-	taddr = InternalMemory.T1Pointer_read();
+#ifdef PHEXPANSION
+    PHExpMin = InternalMemory.PHExpMin_read();
+    PHExpMax = InternalMemory.PHExpMax_read();
+#endif  // PHEXPANSION
+    taddr = InternalMemory.T1Pointer_read();
 	Params.Salinity=0;
 	Params.ORP=0;
+	Params.PHExp=0;
 
 	if ((taddr>120) || (taddr<0))
 	{
@@ -540,7 +548,7 @@ void ReefAngelClass::Init()
 #endif  // defined WDT || defined WDT_FORCE
 
 #ifdef wifi
-	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit;
+	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit;
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
 	{
@@ -649,6 +657,15 @@ void ReefAngelClass::Refresh()
 	}
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #endif  // defined ORPEXPANSION
+#if defined PHEXPANSION
+	Params.PHExp=PH.Read();
+	if (Params.PHExp!=0)
+	{
+		Params.PHExp=map(Params.PH, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
+		Params.PHExp=constrain(Params.PHExp,100,1400);
+	}
+	LCD.Clear(DefaultBGColor,0,0,1,1);
+#endif  // defined PHEXPANSION
 	TempSensor.RequestConversion();
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #else  // DirectTempSensor
@@ -690,6 +707,15 @@ void ReefAngelClass::Refresh()
 	}
 	LCD.Clear(DefaultBGColor,0,0,1,1);
 #endif  // defined ORPEXPANSION
+#if defined PHEXPANSION
+	Params.PHExp=PH.Read();
+	if (Params.PHExp!=0)
+	{
+		Params.PHExp=map(Params.PH, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
+		Params.PHExp=constrain(Params.PHExp,100,1400);
+	}
+	LCD.Clear(DefaultBGColor,0,0,1,1);
+#endif  // defined PHEXPANSION
 	TempSensor.RequestConversion();
 #endif  // DirectTempSensor
 }
@@ -1169,32 +1195,32 @@ void ReefAngelClass::PHControl(byte Relay)
 
 void ReefAngelClass::StandardATO(byte Relay)
 {
-    StandardATO(Relay, InternalMemory.ATOTimeout_read());
+    StandardATO(Relay, InternalMemory.ATOExtendedTimeout_read());
 }
 
 void ReefAngelClass::SingleATOLow(byte Relay)
 {
-    SingleATO(true, Relay, InternalMemory.ATOTimeout_read(), InternalMemory.ATOHourInterval_read());
+    SingleATO(true, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.ATOHourInterval_read());
 }
 
 void ReefAngelClass::SingleATOHigh(byte Relay)
 {
-    SingleATO(false, Relay, InternalMemory.ATOHighTimeout_read(), InternalMemory.ATOHighHourInterval_read());
+    SingleATO(false, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.ATOHourInterval_read());
 }
 
 void ReefAngelClass::StandardATOExtended(byte Relay)
 {
-    StandardATO(Relay, InternalMemory.ATOExtendedTimeout_read());
+    StandardATO(Relay);
 }
 
 void ReefAngelClass::SingleATOLowExtended(byte Relay)
 {
-    SingleATO(true, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.ATOHourInterval_read());
+	SingleATOLow(Relay);
 }
 
 void ReefAngelClass::SingleATOHighExtended(byte Relay)
 {
-    SingleATO(false, Relay, InternalMemory.ATOHighExtendedTimeout_read(), InternalMemory.ATOHighHourInterval_read());
+	SingleATOHigh(Relay);
 }
 
 void ReefAngelClass::DosingPump1(byte Relay)
@@ -1449,6 +1475,10 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	PROGMEMprint(BannerIO);
 	WIFI_SERIAL.print(IO.GetChannel(), DEC);
 #endif  // IOEXPANSION
+#ifdef PHEXPANSION
+	PROGMEMprint(BannerPHE);
+	WIFI_SERIAL.print(Params.PHExp, DEC);
+#endif  // PHEXPANSION	
 #ifdef CUSTOM_VARIABLES
 	for ( byte EID = 0; EID < 8; EID++ )
 	{
@@ -3353,6 +3383,82 @@ void ReefAngelClass::SetupCalibrateORP()
 	}
 }
 #endif  // ORPEXPANSION
+
+#ifdef PHEXPANSION
+void ReefAngelClass::SetupCalibratePHExp()
+{
+    bool bOKSel = false;
+    bool bSave = false;
+    bool bDone = false;
+    bool bDrawButtons = true;
+    unsigned int iO[2] = {0,0};
+    unsigned int iCal[2] = {7,10};
+    byte offset = 65;
+    // draw labels
+    ClearScreen(DefaultBGColor);
+    for (int b=0;b<2;b++)
+    {
+    	if (b==1 && !bSave) break;
+    	bOKSel=false;
+    	bSave=false;
+    	bDone = false;
+    	bDrawButtons = true;
+    	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate PH");
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "pH");
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL + 18, MENU_START_ROW*5, (int)iCal[b]);
+		do
+		{
+#if defined WDT || defined WDT_FORCE
+			wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+			iO[b]=0;
+			for (int a=0;a<15;a++)
+			{
+				iO[b] += PH.Read();
+			}
+			iO[b]/=15;
+			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
+			if (  bDrawButtons )
+			{
+				if ( bOKSel )
+				{
+					LCD.DrawOK(true);
+					LCD.DrawCancel(false);
+				}
+				else
+				{
+					LCD.DrawOK(false);
+					LCD.DrawCancel(true);
+				}
+				bDrawButtons = false;
+			}
+			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+			{
+				// toggle the selection
+				bOKSel = !bOKSel;
+				bDrawButtons = true;
+			}
+			if ( Joystick.IsButtonPressed() )
+			{
+				bDone = true;
+				if ( bOKSel )
+				{
+					bSave = true;
+				}
+			}
+		} while ( ! bDone );
+    }
+    ClearScreen(DefaultBGColor);
+	if ( bSave )
+	{
+		// save PHExpMin & PHExpMax to memory
+		InternalMemory.PHExpMin_write(iO[0]);
+		PHExpMin = iO[0];
+		InternalMemory.PHExpMax_write(iO[1]);
+		PHExpMax = iO[1];
+	}
+}
+#endif  // PHEXPANSION
 
 #ifdef DateTimeSetup
 void ReefAngelClass::SetupDateTime()
