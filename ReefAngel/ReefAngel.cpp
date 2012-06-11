@@ -458,13 +458,13 @@ void ReefAngelClass::Init()
 
     PHMin = InternalMemory.PHMin_read();
     PHMax = InternalMemory.PHMax_read();
-#ifdef SALINITYEXPANSION
-    SalMax = InternalMemory.SalMax_read();
-#endif  // SALINITYEXPANSION
 #ifdef ORPEXPANSION
     ORPMin = InternalMemory.ORPMin_read();
     ORPMax = InternalMemory.ORPMax_read();
 #endif  // ORPEXPANSION
+#ifdef SALINITYEXPANSION
+    SalMax = InternalMemory.SalMax_read();
+#endif  // SALINITYEXPANSION
 #ifdef PHEXPANSION
     PHExpMin = InternalMemory.PHExpMin_read();
     PHExpMax = InternalMemory.PHExpMax_read();
@@ -548,7 +548,7 @@ void ReefAngelClass::Init()
 #endif  // defined WDT || defined WDT_FORCE
 
 #ifdef wifi
-	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit;
+	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
 	{
@@ -1472,14 +1472,18 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	PROGMEMprint(BannerORP);
 	WIFI_SERIAL.print(Params.ORP, DEC);
 #endif  // ORPEXPANSION
-#ifdef IOEXPANSION
-	PROGMEMprint(BannerIO);
-	WIFI_SERIAL.print(IO.GetChannel(), DEC);
-#endif  // IOEXPANSION
 #ifdef PHEXPANSION
 	PROGMEMprint(BannerPHE);
 	WIFI_SERIAL.print(Params.PHExp, DEC);
 #endif  // PHEXPANSION	
+#ifdef WATERLEVELEXPANSION
+	PROGMEMprint(BannerWL);
+	WIFI_SERIAL.print(WaterLevel.GetLevel(), DEC);
+#endif  // WATERLEVELEXPANSION
+#ifdef IOEXPANSION
+	PROGMEMprint(BannerIO);
+	WIFI_SERIAL.print(IO.GetChannel(), DEC);
+#endif  // IOEXPANSION
 #ifdef CUSTOM_VARIABLES
 	for ( byte EID = 0; EID < 8; EID++ )
 	{
@@ -3461,6 +3465,82 @@ void ReefAngelClass::SetupCalibratePHExp()
 	}
 }
 #endif  // PHEXPANSION
+
+#ifdef WATERLEVELEXPANSION
+void ReefAngelClass::SetupCalibrateWaterLevel()
+{
+    bool bOKSel = false;
+    bool bSave = false;
+    bool bDone = false;
+    bool bDrawButtons = true;
+    unsigned int iO[2] = {0,0};
+    unsigned int iCal[2] = {0,100};
+    byte offset = 65;
+    // draw labels
+    ClearScreen(DefaultBGColor);
+    for (int b=0;b<2;b++)
+    {
+    	if (b==1 && !bSave) break;
+    	bOKSel=false;
+    	bSave=false;
+    	bDone = false;
+    	bDrawButtons = true;
+    	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Water Level");
+		char text[10];
+		itoa(iCal[b],text,10);
+		strcat(text , " %  ");
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, text);
+		do
+		{
+#if defined WDT || defined WDT_FORCE
+			wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+			iO[b]=0;
+			for (int a=0;a<15;a++)
+			{
+				iO[b] += WaterLevel.Read();
+			}
+			iO[b]/=15;
+			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
+			if (  bDrawButtons )
+			{
+				if ( bOKSel )
+				{
+					LCD.DrawOK(true);
+					LCD.DrawCancel(false);
+				}
+				else
+				{
+					LCD.DrawOK(false);
+					LCD.DrawCancel(true);
+				}
+				bDrawButtons = false;
+			}
+			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+			{
+				// toggle the selection
+				bOKSel = !bOKSel;
+				bDrawButtons = true;
+			}
+			if ( Joystick.IsButtonPressed() )
+			{
+				bDone = true;
+				if ( bOKSel )
+				{
+					bSave = true;
+				}
+			}
+		} while ( ! bDone );
+    }
+    ClearScreen(DefaultBGColor);
+	if ( bSave )
+	{
+		// save WaterLevelMin & WaterLevelMax to memory
+		InternalMemory.WaterLevelMin_write(iO[0]);
+		InternalMemory.WaterLevelMax_write(iO[1]);
+	}
+}
+#endif  // WATERLEVELEXPANSION
 
 #ifdef DateTimeSetup
 void ReefAngelClass::SetupDateTime()

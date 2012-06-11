@@ -233,7 +233,11 @@ class InternalEEPROMClass {
         void PHExpMax_write(const int value);
         int PHExpMin_read();
         void PHExpMin_write(const int value);
-
+        int WaterLevelMax_read();
+        void WaterLevelMax_write(const int value);
+        int WaterLevelMin_read();
+        void WaterLevelMin_write(const int value);
+        
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);
         // Functions that do the reading/writing to memory

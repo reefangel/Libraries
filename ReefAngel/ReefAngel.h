@@ -37,15 +37,18 @@
 #include <Timer.h>
 #include <Memory.h>
 
-#if defined PHEXPANSION
-	#include <PH.h>
-#endif  // defined PHEXPANSION
-#if defined SALINITYEXPANSION
-	#include <Salinity.h>
-#endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
 	#include <ORP.h>
 #endif  // defined ORPEXPANSION
+#if defined SALINITYEXPANSION
+	#include <Salinity.h>
+#endif  // defined SALINITYEXPANSION
+#if defined PHEXPANSION
+	#include <PH.h>
+#endif  // defined PHEXPANSION
+#if defined WATERLEVELEXPANSION
+	#include <WaterLevel.h>
+#endif  // defined WATERLEVELEXPANSION
 #if defined RFEXPANSION
 	#include <RF.h>
 #endif  // defined RFEXPANSION
@@ -93,6 +96,10 @@ public:
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined ORPEXPANSION
+	int ORPMin, ORPMax;
+	ORPClass ORP;
+#endif  // ORPEXPANSION
 #if defined SALINITYEXPANSION
 	int SalMax;
 	SalinityClass Salinity;
@@ -101,10 +108,9 @@ public:
 	int PHExpMin, PHExpMax;
 	PHClass PH;
 #endif  // PHEXPANSION	
-#if defined ORPEXPANSION
-	int ORPMin, ORPMax;
-	ORPClass ORP;
-#endif  // ORPEXPANSION
+#if defined WATERLEVELEXPANSION
+	WaterLevelClass WaterLevel;
+#endif  // WATERLEVELEXPANSION	
 #if defined RFEXPANSION
 	RFClass RF;
 #endif  // defined RFEXPANSION
@@ -261,15 +267,18 @@ public:
 #endif  // CUSTOM_MENU
 
     void SetupCalibratePH();
-#if defined SALINITYEXPANSION
-    void SetupCalibrateSalinity();
-#endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
     void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
+#if defined SALINITYEXPANSION
+    void SetupCalibrateSalinity();
+#endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
     void SetupCalibratePHExp();
 #endif  // defined PHEXPANSION
+#if defined WATERLEVELEXPANSION
+    void SetupCalibrateWaterLevel();
+#endif  // defined WATERLEVELEXPANSION
 #ifdef DateTimeSetup
     void SetupDateTime();
 #endif  // DateTimeSetup

@@ -336,6 +336,11 @@ void processHTTP()
 				//<PHE></PHE>
 				s += intlength(ReefAngel.Params.PHExp);
 #endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+				s += 9;
+				//<WL></WL>
+				s += intlength(ReefAngel.WaterLevel.GetLevel());
+#endif  // WATERLEVELEXPANSION
 #ifdef IOEXPANSION
 				s += 9;
 				//<IO></IO>
@@ -843,6 +848,11 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.Params.PHExp, DEC);
 	PROGMEMprint(XML_PHEXP_END);
 #endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+	PROGMEMprint(XML_WL);
+	WIFI_SERIAL.print(ReefAngel.WaterLevel.GetLevel(), DEC);
+	PROGMEMprint(XML_WL_END);
+#endif  // WATERLEVELEXPANSION
 #ifdef IOEXPANSION
 	PROGMEMprint(XML_IO);
 	WIFI_SERIAL.print(ReefAngel.IO.GetChannel(), DEC);

@@ -48,18 +48,22 @@ const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
 const prog_char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
 const prog_char XML_PWMD_END[] PROGMEM = "</PWMD>";
 #endif  // DisplayLEDPWM
-#ifdef SALINITYEXPANSION
-const prog_char XML_SAL[] PROGMEM = "<SAL>";
-const prog_char XML_SAL_END[] PROGMEM = "</SAL>";
-#endif  // SALINITYEXPANSION
 #ifdef ORPEXPANSION
 const prog_char XML_ORP[] PROGMEM = "<ORP>";
 const prog_char XML_ORP_END[] PROGMEM = "</ORP>";
 #endif  // ORPEXPANSION
+#ifdef SALINITYEXPANSION
+const prog_char XML_SAL[] PROGMEM = "<SAL>";
+const prog_char XML_SAL_END[] PROGMEM = "</SAL>";
+#endif  // SALINITYEXPANSION
 #ifdef PHEXPANSION
 const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
 const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 #endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+const prog_char XML_WL[] PROGMEM = "<WL>";
+const prog_char XML_WL_END[] PROGMEM = "</WL>";
+#endif  // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
@@ -218,6 +222,13 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 #else
 	#define PHbit		0
 #endif  // PHEXPANSION
+
+#ifdef WATERLEVELEXPANSION
+	const prog_char BannerWL[] PROGMEM = "&wl=";
+	#define WLbit		128
+#else
+	#define WLbit		0
+#endif  // WATERLEVELEXPANSION
 	
 #ifdef CUSTOM_VARIABLES
 	const prog_char BannerCustomVar[] PROGMEM = "&c";

@@ -181,6 +181,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
+#define I2CWaterLevel		0X4f
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
@@ -343,9 +344,11 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DelayedStart            VarsStart+120
 #define Mem_I_PHExpMin			  VarsStart+121
 #define Mem_I_PHExpMax			  VarsStart+123
+#define Mem_I_WaterLevelMin			  VarsStart+125
+#define Mem_I_WaterLevelMax			  VarsStart+127
 
-#define VarsEnd                 VarsStart+125
-// Next value starts VarsStart+121
+#define VarsEnd                 VarsStart+129
+// Next value starts VarsStart+129
 
 
 // EEProm Pointers

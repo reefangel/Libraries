@@ -1039,6 +1039,26 @@ int InternalEEPROMClass::PHExpMin_read()
     return read_int(Mem_I_PHExpMin);
 }
 
+void InternalEEPROMClass::WaterLevelMax_write(const int value)
+{
+    write_int(Mem_I_WaterLevelMax, value);
+}
+
+int InternalEEPROMClass::WaterLevelMax_read()
+{
+    return read_int(Mem_I_WaterLevelMax);
+}
+
+void InternalEEPROMClass::WaterLevelMin_write(const int value)
+{
+    write_int(Mem_I_WaterLevelMin, value);
+}
+
+int InternalEEPROMClass::WaterLevelMin_read()
+{
+    return read_int(Mem_I_WaterLevelMin);
+}
+
 unsigned long InternalEEPROMClass::IMCheck_read()
 {
     return read_dword(IMPointer);
