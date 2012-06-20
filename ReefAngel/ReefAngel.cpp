@@ -3140,13 +3140,26 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 
 void ReefAngelClass::SetupCalibratePH()
 {
+	enum choices {
+        TARGETPH,
+        CANCEL,
+        OK
+    };
+    byte sel = CANCEL;
+	
     bool bOKSel = false;
     bool bSave = false;
     bool bDone = false;
+    bool bRedraw = true;
     bool bDrawButtons = true;
-    unsigned int iO[2] = {0,0};
-    unsigned int iCal[2] = {7,10};
+    unsigned int iStart[2] = {7,10};
+    unsigned int iTarget[2] = {0,0};
+    unsigned int iValue[2] = {0,0};
+    char msg[15];
+	unsigned int maxPh = 10;
+	unsigned int minPh = 4;
     byte offset = 65;
+		
     // draw labels
     ClearScreen(DefaultBGColor);
     for (int b=0;b<2;b++)
@@ -3155,62 +3168,200 @@ void ReefAngelClass::SetupCalibratePH()
     	bOKSel=false;
     	bSave=false;
     	bDone = false;
+		bRedraw = true;
     	bDrawButtons = true;
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "pH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL + 18, MENU_START_ROW*5, (int)iCal[b]);
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");		
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
+		
+		strcpy(msg, b==0 ? "First value\0" : "Second value\0");
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, msg);
+		
+		iTarget[b] = iStart[b];
+		if(b==1 && iTarget[0]==iTarget[b])
+		{
+			iTarget[b]--;
+		}
+	
 		do
 		{
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
-			iO[b]=0;
+			iValue[b]=0;
 			for (int a=0;a<30;a++)
 			{
-				iO[b] += analogRead(PHPin);
+				iValue[b] += analogRead(PHPin);
 			}
-			iO[b]/=30;
-			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
-			if (  bDrawButtons )
+			iValue[b]/=30;
+			LCD.DrawCalibrate(iValue[b], MENU_START_COL + offset, MENU_START_ROW*6);
+			
+			
+			if ( bRedraw )
 			{
-				if ( bOKSel )
+				switch ( sel )
 				{
-					LCD.DrawOK(true);
-					LCD.DrawCancel(false);
+					case TARGETPH:
+					{
+						LCD.DrawOption(iTarget[b], 1, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
+						if ( bDrawButtons )
+						{
+							LCD.DrawOK(false);
+							LCD.DrawCancel(false);
+						}
+						break;
+					}
+					case OK:
+					{
+						if ( bDrawButtons )
+						{
+							LCD.DrawOption(iTarget[b], 0, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
+							LCD.DrawOK(true);
+							LCD.DrawCancel(false);
+						}
+						break;
+					}
+					case CANCEL:
+					{
+						if ( bDrawButtons )
+						{
+							LCD.DrawOption(iTarget[b], 0, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
+							LCD.DrawOK(false);
+							LCD.DrawCancel(true);
+						}
+						break;
+					}
 				}
-				else
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(true);
-				}
+				bRedraw = false;
 				bDrawButtons = false;
 			}
-			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+			
+			if ( Joystick.IsUp() )
 			{
-				// toggle the selection
-				bOKSel = !bOKSel;
-				bDrawButtons = true;
+				if (sel == TARGETPH)
+				{
+					iTarget[b]++;
+					if(b==1 && iTarget[0]==iTarget[b])
+					{
+						if((iTarget[b] + 1) <= maxPh)
+						{
+							iTarget[b]++;
+						} else {
+							iTarget[b]--;
+						}
+					}
+					
+					if ( iTarget[b] > maxPh )
+					{
+						iTarget[b] = maxPh;
+					}
+					else 
+					{
+						bRedraw = true;
+					}
+				}
 			}
+			if ( Joystick.IsDown() )
+			{
+				if (sel == TARGETPH)
+				{
+					iTarget[b]--;
+					if(b==1 && iTarget[0]==iTarget[b])
+					{
+						if((iTarget[b] - 1) >= minPh)
+						{
+							iTarget[b]--;
+						} else {
+							iTarget[b]++;
+						}
+					}
+					
+					if ( iTarget[b] < minPh )
+					{
+						iTarget[b] = minPh;
+					}
+					else 
+					{
+						bRedraw = true;
+					}
+				}
+			}
+			
+			if ( Joystick.IsLeft() )
+			{
+				bRedraw = true;
+				bDrawButtons = true;
+				sel--;
+				if ( sel > OK )
+				{
+					sel = OK;
+				}
+			}
+			
+			if ( Joystick.IsRight() )
+			{
+				bRedraw = true;
+				bDrawButtons = true;
+				sel++;
+				if ( sel > OK )
+				{
+					sel = TARGETPH;
+				}
+			}
+			
 			if ( Joystick.IsButtonPressed() )
 			{
-				bDone = true;
-				if ( bOKSel )
+				if ( sel == OK || sel == TARGETPH)
 				{
+					bDone = true;
 					bSave = true;
+				}
+				else if ( sel == CANCEL )
+				{
+					bDone = true;
 				}
 			}
 		} while ( ! bDone );
     }
+	
     ClearScreen(DefaultBGColor);
+	
 	if ( bSave )
 	{
+		if(iTarget[0] == 7 && iTarget[1] == 10)
+		{
+			PHMin = iValue[0];
+			PHMax = iValue[1];
+		} 
+		else 
+		{
+			if(iTarget[0] == 7)
+			{
+				PHMin = iValue[0];
+				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+			}
+			else if(iTarget[1] == 10)
+			{
+				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+				PHMax = iValue[1];
+			} 
+			else 
+			{
+				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+			}
+		}
         // save PHMin & PHMax to memory
-        InternalMemory.PHMin_write(iO[0]);
-        PHMin = iO[0];
-        InternalMemory.PHMax_write(iO[1]);
-		PHMax = iO[1];
+        InternalMemory.PHMin_write(PHMin);
+        InternalMemory.PHMax_write(PHMax);
 	}
 }
+
+// TODO: Move this to appropriate helper class
+double ReefAngelClass::LinearInterpolation(double x, double x1, double y1, double x2, double y2)
+{
+	return y1 + (y2 - y1) / (x2 - x1) * (x - x1);
+}
+
 
 #ifdef SALINITYEXPANSION
 void ReefAngelClass::SetupCalibrateSalinity()
