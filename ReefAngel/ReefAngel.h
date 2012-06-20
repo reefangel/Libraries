@@ -254,6 +254,7 @@ public:
 #endif  // CUSTOM_MENU
 
     void SetupCalibratePH();
+	double LinearInterpolation(double x, double x1, double y1, double x2, double y2);
 #if defined SALINITYEXPANSION
     void SetupCalibrateSalinity();
 #endif  // defined SALINITYEXPANSION
