@@ -3142,8 +3142,8 @@ void ReefAngelClass::SetupCalibratePH()
 {
 	enum choices {
         TARGETPH,
-        OK,
-        CANCEL
+        CANCEL,
+        OK
     };
     byte sel = CANCEL;
 	
@@ -3242,7 +3242,7 @@ void ReefAngelClass::SetupCalibratePH()
 					iTarget[b]++;
 					if(b==1 && iTarget[0]==iTarget[b])
 					{
-						if((iTarget[b] + 1) < maxPh)
+						if((iTarget[b] + 1) <= maxPh)
 						{
 							iTarget[b]++;
 						} else {
@@ -3267,7 +3267,7 @@ void ReefAngelClass::SetupCalibratePH()
 					iTarget[b]--;
 					if(b==1 && iTarget[0]==iTarget[b])
 					{
-						if((iTarget[b] - 1) > minPh)
+						if((iTarget[b] - 1) >= minPh)
 						{
 							iTarget[b]--;
 						} else {
@@ -3291,9 +3291,9 @@ void ReefAngelClass::SetupCalibratePH()
 				bRedraw = true;
 				bDrawButtons = true;
 				sel--;
-				if ( sel > CANCEL )
+				if ( sel > OK )
 				{
-					sel = CANCEL;
+					sel = OK;
 				}
 			}
 			
@@ -3302,7 +3302,7 @@ void ReefAngelClass::SetupCalibratePH()
 				bRedraw = true;
 				bDrawButtons = true;
 				sel++;
-				if ( sel > CANCEL )
+				if ( sel > OK )
 				{
 					sel = TARGETPH;
 				}
