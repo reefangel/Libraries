@@ -30,6 +30,7 @@ AddWifi	KEYWORD2
 StandardLights	KEYWORD2
 AddRFExpansion	KEYWORD2
 AddDateTimeMenu	KEYWORD2
+DayLights	KEYWORD2
 DelayedStartLights	KEYWORD2
 ActinicLights	KEYWORD2
 MoonLights	KEYWORD2
@@ -424,6 +425,7 @@ Temp	LITERAL2
 PH	LITERAL2
 Salinity	LITERAL2
 ORP	LITERAL2
+PHExp	LITERAL2
 DisplayedMenu	LITERAL2
 FeedingModePorts	LITERAL2
 FeedingModePortsE	LITERAL2

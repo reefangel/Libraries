@@ -32,6 +32,11 @@
 
 #include <avr/pgmspace.h>
 
+#if defined(__AVR_ATmega2560__)
+#define wifi
+#define DateTimeSetup
+#endif
+
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
 
