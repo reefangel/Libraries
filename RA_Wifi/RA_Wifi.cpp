@@ -380,15 +380,22 @@ void processHTTP()
 			{
 				int s;
 
+				// if memory location is > 800 it means app is trying to pull/set old memory location.
+				// we decrease 600 to start using new memory map
+				// this is a temporary solution until we get all apps to point to new memory location
+				int newweboption2=weboption2;
+				if ( weboption2>=800 ) newweboption2-=600;
+
 				// weboption2 is location
 				// weboption is value
 				if ( bHasSecondValue && (weboption2 >= 0) )
 				{
+					
 					// if we have a second value, we write the value to memory
 					if ( reqtype == REQ_M_BYTE )
-						InternalMemory.write(weboption2, weboption);
+						InternalMemory.write(newweboption2, weboption);
 					else
-						InternalMemory.write_int(weboption2, weboption);
+						InternalMemory.write_int(newweboption2, weboption);
 
 					// check if we have to reload any timers
 					if ( weboption2 == Mem_I_FeedingTimer )
@@ -413,7 +420,7 @@ void processHTTP()
 //						ReefAngel.Timer[PORTAL_TIMER].ForceTrigger();
 //					}
 //#endif  // DisplayLEDPWM
-
+					
 					s = 9;  // <M>OK</M>
 					// add in the location, twice
 					s += (intlength(weboption2)*2);
@@ -435,9 +442,9 @@ void processHTTP()
 					s += (intlength(weboption2)*2);
 					// length of the value from memory
 					if ( reqtype == REQ_M_BYTE )
-						s += intlength(InternalMemory.read(weboption2));
+						s += intlength(InternalMemory.read(newweboption2));
 					else
-						s += intlength(InternalMemory.read_int(weboption2));
+						s += intlength(InternalMemory.read_int(newweboption2));
 
 					PrintHeader(s,1);
 
@@ -446,9 +453,9 @@ void processHTTP()
 					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 					if ( reqtype == REQ_M_BYTE )
-						WIFI_SERIAL.print(InternalMemory.read(weboption2),DEC);
+						WIFI_SERIAL.print(InternalMemory.read(newweboption2),DEC);
 					else
-						WIFI_SERIAL.print(InternalMemory.read_int(weboption2),DEC);
+						WIFI_SERIAL.print(InternalMemory.read_int(newweboption2),DEC);
 					PROGMEMprint(XML_M_CLOSE);
 					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
@@ -528,14 +535,14 @@ void processHTTP()
 				for ( x = 0, count = VarsStart; x < num; x++ )
 				{
 					PROGMEMprint(XML_M_OPEN);
-					WIFI_SERIAL.print(count,DEC);
+					WIFI_SERIAL.print(count+600,DEC); // 600 was added as temp fix - issue #26
 					PROGMEMprint(XML_CLOSE_TAG);
 					if ( offsets[x] == 1 )
 						WIFI_SERIAL.print(InternalMemory.read(count),DEC);
 					else
 						WIFI_SERIAL.print(InternalMemory.read_int(count),DEC);
 					PROGMEMprint(XML_M_CLOSE);
-					WIFI_SERIAL.print(count,DEC);
+					WIFI_SERIAL.print(count+600,DEC); // 600 was added as temp fix - issue #26
 					PROGMEMprint(XML_CLOSE_TAG);
 					count += offsets[x];
 				}  // for x
