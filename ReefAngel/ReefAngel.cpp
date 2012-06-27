@@ -695,12 +695,22 @@ void ReefAngelClass::Refresh()
 	Params.PH=constrain(Params.PH,100,1400);
 
 #if defined SALINITYEXPANSION
-	Params.Salinity=Salinity.Read();
+	unsigned long tempsal=0;
+    for (int a=0;a<20;a++)
+    {
+    	tempsal+=Salinity.Read();
+    }
+	Params.Salinity=tempsal/20;
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
-	Params.ORP=ORP.Read();
+	unsigned long temporp=0;
+    for (int a=0;a<20;a++)
+    {
+    	temporp+=ORP.Read();
+    }
+	Params.ORP=temporp/20;
 	if (Params.ORP!=0)
 	{
 		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
@@ -709,7 +719,12 @@ void ReefAngelClass::Refresh()
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined ORPEXPANSION
 #if defined PHEXPANSION
-	Params.PHExp=PH.Read();
+	unsigned long tempph=0;
+    for (int a=0;a<20;a++)
+    {
+    	tempph+=PH.Read();
+    }
+	Params.PHExp=tempph/20;
 	if (Params.PHExp!=0)
 	{
 		Params.PHExp=map(Params.PH, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
