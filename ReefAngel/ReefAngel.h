@@ -267,6 +267,7 @@ public:
 #endif  // CUSTOM_MENU
 
     void SetupCalibratePH();
+    void SetupCalibrateChoicePH();
 #if defined ORPEXPANSION
     void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
