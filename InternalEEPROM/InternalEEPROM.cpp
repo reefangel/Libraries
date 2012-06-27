@@ -1069,6 +1069,20 @@ void InternalEEPROMClass::IMCheck_write(const unsigned long value)
 	write_dword(IMPointer, value);
 }
 
+int InternalEEPROMClass::TimeUse24Hour_read()
+{
+    return read_int(Mem_I_TimeUse24Hours);
+}
+
+void InternalEEPROMClass::TimeUse24Hour_write(int value)
+{
+	if(value < 0){ value = 0; }
+	else if(value > 1) { value = 1; }
+	
+    write_int(Mem_I_TimeUse24Hours, value);
+}
+
+
 // Private functions
 uint8_t InternalEEPROMClass::read(int address)
 {

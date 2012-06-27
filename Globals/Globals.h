@@ -346,9 +346,10 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_PHExpMax			  VarsStart+123
 #define Mem_I_WaterLevelMin			  VarsStart+125
 #define Mem_I_WaterLevelMax			  VarsStart+127
+#define Mem_I_TimeUse24Hours       	  VarsStart+129
 
-#define VarsEnd                 VarsStart+129
-// Next value starts VarsStart+129
+#define VarsEnd                 VarsStart+131
+// Next value starts VarsStart+131
 
 
 // EEProm Pointers

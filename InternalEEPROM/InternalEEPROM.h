@@ -237,6 +237,8 @@ class InternalEEPROMClass {
         void WaterLevelMax_write(const int value);
         int WaterLevelMin_read();
         void WaterLevelMin_write(const int value);
+		int TimeUse24Hour_read();
+		void TimeUse24Hour_write(int value);
         
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);

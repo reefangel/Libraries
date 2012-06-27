@@ -1694,7 +1694,12 @@ void ReefAngelClass::ShowInterface()
 #else
 				// display everything on the home screen except the graph
 				// the graph is drawn/updated when we exit the main menu & when the parameters are saved
-				LCD.DrawDate(6, 112);
+				if(InternalMemory.TimeUse24Hour_read())
+				{
+					LCD.DrawDateTimeISO8601(6, 112);
+				} else {
+					LCD.DrawDate(6, 112);
+				}
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 				LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -3551,6 +3556,7 @@ void ReefAngelClass::SetupDateTime()
         YEAR,
         HOUR,
         MINUTE,
+        USE24,
         OK,
         CANCEL
     };
@@ -3561,13 +3567,15 @@ void ReefAngelClass::SetupDateTime()
     bool bDrawButtons = true;
     byte Year, Month, Day, Hour, Minute;
     byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-    byte DateRow = 45, TimeRow = 75;
+	unsigned int iUse24;
+    byte DateRow = 45, TimeRow = 75, FormatRow = 90;
 
     Year = year() - 2000;
     Month = month();
     Day = day();
     Hour = hour();
     Minute = minute();
+	iUse24 = InternalMemory.TimeUse24Hour_read() ? 24 : 12;
 
     ClearScreen(DefaultBGColor);
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
@@ -3576,6 +3584,7 @@ void ReefAngelClass::SetupDateTime()
     LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, DateRow, "/");
     LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, DateRow, "/");
     LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, TimeRow, ":");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, FormatRow, "H");
 
     do
     {
@@ -3593,6 +3602,7 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                     LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
+					LCD.DrawOption(iUse24, 0, 69, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -3607,6 +3617,7 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                     LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
+					LCD.DrawOption(iUse24, 0, 69, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -3621,6 +3632,7 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Year, 1, 89, DateRow, "", "", 2);
                     LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
+					LCD.DrawOption(iUse24, 0, 69, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -3635,6 +3647,7 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                     LCD.DrawOption(Hour, 1, 49, TimeRow, "", "", 2);
                     LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
+					LCD.DrawOption(iUse24, 0, 69, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -3649,6 +3662,7 @@ void ReefAngelClass::SetupDateTime()
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                     LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                     LCD.DrawOption(Minute, 1, 69, TimeRow, "", "", 2);
+					LCD.DrawOption(iUse24, 0, 69, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -3656,6 +3670,22 @@ void ReefAngelClass::SetupDateTime()
                     }
                     break;
                 }
+				case USE24:
+				{
+					
+                    LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
+                    LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
+                    LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(iUse24, 1, 69, FormatRow, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+					break;
+				}
                 case OK:
                 {
                     if ( bDrawButtons )
@@ -3665,6 +3695,7 @@ void ReefAngelClass::SetupDateTime()
                         LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                         LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                         LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
+						LCD.DrawOption(iUse24, 0, 69, FormatRow, "", "", 2);
                         LCD.DrawOK(true);
                         LCD.DrawCancel(false);
                     }
@@ -3679,6 +3710,7 @@ void ReefAngelClass::SetupDateTime()
                         LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
                         LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
                         LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
+						LCD.DrawOption(iUse24, 0, 69, FormatRow, "", "", 2);
                         LCD.DrawOK(false);
                         LCD.DrawCancel(true);
                     }
@@ -3761,6 +3793,15 @@ void ReefAngelClass::SetupDateTime()
                     }
                     break;
                 }
+				case USE24:
+				{
+					iUse24 += 12;
+					if(iUse24 > 24)
+					{
+						iUse24 = 24;
+					}
+					break;
+				}
             }
             bRedraw = true;
         }
@@ -3836,6 +3877,15 @@ void ReefAngelClass::SetupDateTime()
                     }
                     break;
                 }
+				case USE24:
+				{
+					iUse24 -= 12;
+					if(iUse24 < 12)
+					{
+						iUse24 = 12;
+					}
+					break;
+				}
             }
             bRedraw = true;
         }
@@ -3879,6 +3929,7 @@ void ReefAngelClass::SetupDateTime()
         setTime(Hour, Minute, 0, Day, Month, Year);
         now();
         RTC.set(now());
+		InternalMemory.TimeUse24Hour_write(iUse24 == 24);
     }
 }
 #endif  // DateTimeSetup
