@@ -798,6 +798,18 @@ void InternalEEPROMClass::DelayedStart_write(const uint8_t value)
     write(Mem_B_DelayedStart, value);
 }
 
+uint8_t InternalEEPROMClass::TimeUse24Hour_read()
+{
+    return read(Mem_B_TimeUse24Hours);
+}
+
+void InternalEEPROMClass::TimeUse24Hour_write(uint8_t value)
+{
+	value = constrain(value, 0, 1);
+	
+    write(Mem_B_TimeUse24Hours, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {
@@ -1067,19 +1079,6 @@ unsigned long InternalEEPROMClass::IMCheck_read()
 void InternalEEPROMClass::IMCheck_write(const unsigned long value)
 {
 	write_dword(IMPointer, value);
-}
-
-int InternalEEPROMClass::TimeUse24Hour_read()
-{
-    return read_int(Mem_I_TimeUse24Hours);
-}
-
-void InternalEEPROMClass::TimeUse24Hour_write(int value)
-{
-	if(value < 0){ value = 0; }
-	else if(value > 1) { value = 1; }
-	
-    write_int(Mem_I_TimeUse24Hours, value);
 }
 
 

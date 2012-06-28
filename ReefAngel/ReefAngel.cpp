@@ -1694,12 +1694,16 @@ void ReefAngelClass::ShowInterface()
 #else
 				// display everything on the home screen except the graph
 				// the graph is drawn/updated when we exit the main menu & when the parameters are saved
+				#if defined(AVR_ATmega2560)
+				LCD.DrawDate(6, 112);
+				#else
 				if(InternalMemory.TimeUse24Hour_read())
 				{
 					LCD.DrawDateTimeISO8601(6, 112);
 				} else {
 					LCD.DrawDate(6, 112);
 				}
+				#endif // __AVR_ATmega2560_
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 				LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -3567,7 +3571,7 @@ void ReefAngelClass::SetupDateTime()
     bool bDrawButtons = true;
     byte Year, Month, Day, Hour, Minute;
     byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-	unsigned int iUse24;
+	uint8_t iUse24;
     byte DateRow = 45, TimeRow = 75, FormatRow = 90;
 
     Year = year() - 2000;

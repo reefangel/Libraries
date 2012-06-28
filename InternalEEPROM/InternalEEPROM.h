@@ -183,6 +183,8 @@ class InternalEEPROMClass {
         void RadionSlopeDurationI_write(const uint8_t value);        
         uint8_t DelayedStart_read();
         void DelayedStart_write(const uint8_t value);        
+		uint8_t TimeUse24Hour_read();
+		void TimeUse24Hour_write(uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();
@@ -237,8 +239,6 @@ class InternalEEPROMClass {
         void WaterLevelMax_write(const int value);
         int WaterLevelMin_read();
         void WaterLevelMin_write(const int value);
-		int TimeUse24Hour_read();
-		void TimeUse24Hour_write(int value);
         
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);
