@@ -262,8 +262,14 @@ const prog_char setupmenu_4_label[] PROGMEM = "Calibrate Sal";
 #ifdef ORPEXPANSION
 const prog_char setupmenu_5_label[] PROGMEM = "Calibrate ORP";
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+const prog_char setupmenu_6_label[] PROGMEM = "Calibrate PH Exp";
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+const prog_char setupmenu_7_label[] PROGMEM = "Calibrate Water";
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-const prog_char setupmenu_6_label[] PROGMEM = "Date / Time";
+const prog_char setupmenu_8_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char *setupmenu_items[] = {
 #ifdef WavemakerSetup
@@ -282,8 +288,14 @@ PROGMEM const char *setupmenu_items[] = {
 #ifdef ORPEXPANSION
                     setupmenu_5_label,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+					setupmenu_6_label,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+					setupmenu_7_label,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-                    setupmenu_6_label
+                    setupmenu_8_label
 #endif  // DateTimeSetup
                     };
 enum SetupMenuItem {
@@ -303,6 +315,12 @@ enum SetupMenuItem {
 #ifdef ORPEXPANSION
     SetupMenu_CalibrateORP,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+	SetupMenu_PHExpCalibration,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+	SetupMenu_WaterCalibration,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
     SetupMenu_DateTime
 #endif  // DateTimeSetup
@@ -2475,6 +2493,20 @@ void ReefAngelClass::ProcessButtonPressSetup()
             break;
         }
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+		case SetupMenu_PHExpCalibration:
+		{
+			SetupCalibratePHExp();
+			break;
+		}
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+		case SetupMenu_WaterCalibration:
+		{
+			SetupCalibrateWaterLevel();
+			break;
+		}
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
         case SetupMenu_DateTime:
         {
