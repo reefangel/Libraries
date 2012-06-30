@@ -133,11 +133,17 @@ const prog_char mainmenu_5_label[] PROGMEM = "Sal Calibration";
 #ifdef ORPEXPANSION
 const prog_char mainmenu_6_label[] PROGMEM = "ORP Calibration";
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+const prog_char mainmenu_7_label[] PROGMEM = "PH Exp Calibration";
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+const prog_char mainmenu_8_label[] PROGMEM = "Water Calibration";
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-const prog_char mainmenu_7_label[] PROGMEM = "Date / Time";
+const prog_char mainmenu_9_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-const prog_char mainmenu_8_label[] PROGMEM = "Version";
+const prog_char mainmenu_10_label[] PROGMEM = "Version";
 #endif  // VersionMenu
 PROGMEM const char *mainmenu_items[] = {
                     mainmenu_0_label,
@@ -151,11 +157,17 @@ PROGMEM const char *mainmenu_items[] = {
 #ifdef ORPEXPANSION
                     mainmenu_6_label,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+					mainmenu_7_label,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+					mainmenu_8_label,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-                    mainmenu_7_label,
+                    mainmenu_9_label,
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-                    mainmenu_8_label
+                    mainmenu_10_label
 #endif  // VersionMenu
                     };
 enum MainMenuItem {
@@ -170,6 +182,12 @@ enum MainMenuItem {
 #ifdef ORPEXPANSION
     MainMenu_ORPCalibration,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+	MainMenu_PHExpCalibration,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+	MainMenu_WaterCalibration,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
     MainMenu_DateTime,
 #endif  // DateTimeSetup
@@ -244,8 +262,14 @@ const prog_char setupmenu_4_label[] PROGMEM = "Calibrate Sal";
 #ifdef ORPEXPANSION
 const prog_char setupmenu_5_label[] PROGMEM = "Calibrate ORP";
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+const prog_char setupmenu_6_label[] PROGMEM = "Calibrate PH Exp";
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+const prog_char setupmenu_7_label[] PROGMEM = "Calibrate Water";
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-const prog_char setupmenu_6_label[] PROGMEM = "Date / Time";
+const prog_char setupmenu_8_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char *setupmenu_items[] = {
 #ifdef WavemakerSetup
@@ -264,8 +288,14 @@ PROGMEM const char *setupmenu_items[] = {
 #ifdef ORPEXPANSION
                     setupmenu_5_label,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+					setupmenu_6_label,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+					setupmenu_7_label,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-                    setupmenu_6_label
+                    setupmenu_8_label
 #endif  // DateTimeSetup
                     };
 enum SetupMenuItem {
@@ -285,6 +315,12 @@ enum SetupMenuItem {
 #ifdef ORPEXPANSION
     SetupMenu_CalibrateORP,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+	SetupMenu_PHExpCalibration,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+	SetupMenu_WaterCalibration,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
     SetupMenu_DateTime
 #endif  // DateTimeSetup
@@ -433,10 +469,10 @@ void ReefAngelClass::Init()
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;
-	
+
 	//0x5241494D
 	//0xCF06A31E
-	if (InternalMemory.IMCheck_read()!=0xCF06A31E) 
+	if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 	{
 		char temptext[25];
 		while(1)
@@ -1199,14 +1235,14 @@ void ReefAngelClass::CO2Control(byte Relay)
 {
     CO2Control(Relay,
                 InternalMemory.CO2ControlOff_read(),
-                InternalMemory.CO2ControlOn_read());	
+                InternalMemory.CO2ControlOn_read());
 }
 
 void ReefAngelClass::PHControl(byte Relay)
 {
 	PHControl(Relay,
                 InternalMemory.PHControlOn_read(),
-                InternalMemory.PHControlOff_read());	
+                InternalMemory.PHControlOff_read());
 }
 
 void ReefAngelClass::StandardATO(byte Relay)
@@ -1490,7 +1526,7 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 #ifdef PHEXPANSION
 	PROGMEMprint(BannerPHE);
 	WIFI_SERIAL.print(Params.PHExp, DEC);
-#endif  // PHEXPANSION	
+#endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
 	PROGMEMprint(BannerWL);
 	WIFI_SERIAL.print(WaterLevel.GetLevel(), DEC);
@@ -2306,6 +2342,20 @@ void ReefAngelClass::ProcessButtonPressMain()
             break;
         }
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+		case MainMenu_PHExpCalibration:
+		{
+			SetupCalibratePHExp();
+			break;
+		}
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+		case MainMenu_WaterCalibration:
+		{
+			SetupCalibrateWaterLevel();
+			break;
+		}
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
 		case MainMenu_DateTime:
 		{
@@ -2443,6 +2493,20 @@ void ReefAngelClass::ProcessButtonPressSetup()
             break;
         }
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+		case SetupMenu_PHExpCalibration:
+		{
+			SetupCalibratePHExp();
+			break;
+		}
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+		case SetupMenu_WaterCalibration:
+		{
+			SetupCalibrateWaterLevel();
+			break;
+		}
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
         case SetupMenu_DateTime:
         {
