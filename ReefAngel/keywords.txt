@@ -18,6 +18,7 @@ PWMParabola	KEYWORD2
 MoonPhase	KEYWORD2
 ConvertNumToString	KEYWORD2
 pingSerial	KEYWORD2
+MoonPhaseLabel	KEYWORD2
 
 # ReefAngel
 

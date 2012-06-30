@@ -131,6 +131,38 @@ void ConvertNumToString(char* string, int num, byte decimal)
 	}
 }
 
+char* MoonPhaseLabel()
+{
+  int m,d,y;
+  int yy,mm;
+  long K1,K2,K3,J;
+  double V;
+  byte PWMvalue;
+  m = month();
+  d = day();
+  y = year();
+  yy = y-((12-m)/10);
+  mm = m+9;
+  if (mm>=12) mm -= 12;
+  K1 = 365.25*(yy+4712);
+  K2 = 30.6*mm+.5;
+  K3 = int(int((yy/100)+49)*.75)-38;
+  J = K1+K2+d+59-K3;
+  V = (J-2451550.1)/29.530588853;
+  V -= floor(V);
+  if (V<0) V++;
+  if (V<0.0625) return "New Moon";
+  else if (V<0.1875) return "Waxing Crescent";
+  else if (V<0.3125) return "First Quarter";
+  else if (V<0.4375) return "Waxing Gibbous";
+  else if (V<0.5625) return "Fuul Moon";
+  else if (V<0.6875) return "Waning Gibbous";
+  else if (V<0.8125) return "Last Quarter";
+  else if (V<0.9375) return "Waning Crescent";
+  else return "New Moon";
+}
+
+
 int alphaBlend(int fgcolor, byte a)
 {
 	int r=((fgcolor>>11)&0x1f)<<3;
