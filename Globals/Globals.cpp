@@ -131,6 +131,7 @@ void ConvertNumToString(char* string, int num, byte decimal)
 	}
 }
 
+#ifdef MoonPhaseLabel
 char* MoonPhaseLabel()
 {
   int m,d,y;
@@ -161,7 +162,7 @@ char* MoonPhaseLabel()
   else if (V<0.9375) return "Waning Crescent";
   else return "New Moon";
 }
-
+#endif // MoonPhaseLabel
 
 int alphaBlend(int fgcolor, byte a)
 {

@@ -3002,19 +3002,23 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     byte offset_min = offset_hr+20;
     if ( bMetalHalide )
     {
+#ifdef MetalHalideSetup
         strcpy(msg, "Metal Halide Setup");
         h1 = InternalMemory.MHOnHour_read();
         m1 = InternalMemory.MHOnMinute_read();
         h2 = InternalMemory.MHOffHour_read();
         m2 = InternalMemory.MHOffMinute_read();
+#endif // MetalHalideSetup
     }
     else
     {
+#ifdef StandardLightSetup
         strcpy(msg, "Std Lights Setup");
         h1 = InternalMemory.StdLightsOnHour_read();
         m1 = InternalMemory.StdLightsOnMinute_read();
         h2 = InternalMemory.StdLightsOffHour_read();
         m2 = InternalMemory.StdLightsOffMinute_read();
+#endif // StandardLightSetup
     }
     ClearScreen(DefaultBGColor);
     // header / title
@@ -3235,17 +3239,21 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     {
         if ( bMetalHalide )
         {
+#ifdef MetalHalideSetup
             InternalMemory.MHOnHour_write(h1);
             InternalMemory.MHOnMinute_write(m1);
             InternalMemory.MHOffHour_write(h2);
             InternalMemory.MHOffMinute_write(m2);
+#endif MetalHalideSetup
         }
         else
         {
+#ifdef StandardLightSetup
             InternalMemory.StdLightsOnHour_write(h1);
             InternalMemory.StdLightsOnMinute_write(m1);
             InternalMemory.StdLightsOffHour_write(h2);
             InternalMemory.StdLightsOffMinute_write(m2);
+#endif // StandardLightSetup
         }
     }
 }
@@ -3327,6 +3335,7 @@ void ReefAngelClass::SetupCalibratePH()
 	}
 }
 
+#ifdef SetupCalibrateChoicePH
 void ReefAngelClass::SetupCalibrateChoicePH()
 {
 	enum choices {
@@ -3544,6 +3553,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
         InternalMemory.PHMax_write(PHMax);
 	}
 }
+#endif // SetupCalibrateChoicePH
 
 #ifdef SALINITYEXPANSION
 void ReefAngelClass::SetupCalibrateSalinity()
