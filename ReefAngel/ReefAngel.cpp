@@ -698,7 +698,7 @@ void ReefAngelClass::Refresh()
 	Params.PHExp=PH.Read();
 	if (Params.PHExp!=0)
 	{
-		Params.PHExp=map(Params.PH, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
+		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
 		Params.PHExp=constrain(Params.PHExp,100,1400);
 	}
 	LCD.Clear(DefaultBGColor,0,0,1,1);
@@ -763,7 +763,7 @@ void ReefAngelClass::Refresh()
 	Params.PHExp=tempph/20;
 	if (Params.PHExp!=0)
 	{
-		Params.PHExp=map(Params.PH, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
+		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
 		Params.PHExp=constrain(Params.PHExp,100,1400);
 	}
 	LCD.Clear(DefaultBGColor,0,0,1,1);
