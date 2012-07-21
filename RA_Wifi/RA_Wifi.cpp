@@ -482,7 +482,7 @@ void processHTTP()
 				for ( int x = VarsStart; x < VarsEnd; x++ )
 				{
 					m=InternalMemory.read(x);
-					if (m<17) WIFI_SERIAL.print("0");
+					if (m<16) WIFI_SERIAL.print("0");
 					WIFI_SERIAL.print(m,HEX);
 				}  // for x
 				PROGMEMprint(XML_MEM_CLOSE);
