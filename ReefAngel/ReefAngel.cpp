@@ -1102,7 +1102,8 @@ void ReefAngelClass::DosingPumpRepeat(byte DPRelay, int OffsetMinute, int Repeat
 		Relay.Off(DPRelay);
 	}
 	*/
-	Relay.Set(DPRelay,((elapsedSecsToday(now())-(OffsetMinute*60))%(RepeatMinute*60))<RunTime);
+	signed long t=(elapsedSecsToday(now())-((long)OffsetMinute*60));
+	Relay.Set(DPRelay,(t%((long)RepeatMinute*60))<RunTime && t>=0);
 }
 
 void ReefAngelClass::Wavemaker(byte WMRelay, int WMTimer)
