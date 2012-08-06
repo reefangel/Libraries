@@ -223,14 +223,13 @@ void RFClass::ChannelIntensityParabola(byte MinuteOffset)
 
 void RFClass::ChannelRadionParabola(byte Channel, byte Start, byte End, byte Duration)
 {
-	SetChannel(Channel,PWMSlope(
+	SetChannel(Channel,PWMParabola(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
 		InternalMemory.StdLightsOffMinute_read(),
 		Start,
 		End,
-		Duration,
 		RadionChannels[Channel]
 	));
 }
@@ -239,14 +238,13 @@ void RFClass::ChannelRadionParabola(byte Channel, byte Start, byte End, byte Dur
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
-	SetChannel(Channel,PWMSlope(
+	SetChannel(Channel,PWMParabola(
 		onTime/60,
 		onTime%60,
 		offTime/60,
 		offTime%60,
 		Start,
 		End,
-		Duration,
 		RadionChannels[Channel]
 	));
 }
