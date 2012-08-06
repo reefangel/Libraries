@@ -166,6 +166,7 @@ public:
 	void inline AddWifi() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
+	void inline AddCustomColors() {};
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
