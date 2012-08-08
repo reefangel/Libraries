@@ -144,7 +144,7 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define P(name)   static const prog_char name[] PROGMEM
 const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
 const prog_char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
-const prog_char BannerGET[] PROGMEM = "GET /status/submitp.asp?t1=";
+const prog_char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
 const prog_char BannerT2[] PROGMEM = "&t2=";
 const prog_char BannerT3[] PROGMEM = "&t3=";
 const prog_char BannerPH[] PROGMEM = "&ph=";
