@@ -2300,10 +2300,14 @@ void ReefAngelClass::ProcessButtonPressMain()
             break;
         }
 #endif  // ORPEXPANSION
-#ifdef DateTimeSetup
+#if defined DateTimeSetup || defined DateTime24Setup
 		case MainMenu_DateTime:
 		{
+			#ifdef DateTime24Setup
+            SetupDateTime24();
+#else
 			SetupDateTime();
+#endif
 			break;
 		}
 #endif  // DateTimeSetup
@@ -2437,7 +2441,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
             break;
         }
 #endif  // ORPEXPANSION
-#ifdef DateTimeSetup || DateTime24Setup
+#if defined DateTimeSetup || defined DateTime24Setup
         case SetupMenu_DateTime:
         {
 #ifdef DateTime24Setup
