@@ -1694,16 +1694,16 @@ void ReefAngelClass::ShowInterface()
 #else
 				// display everything on the home screen except the graph
 				// the graph is drawn/updated when we exit the main menu & when the parameters are saved
-				#if defined(AVR_ATmega2560)
-				LCD.DrawDate(6, 112);
-				#else
+#if defined(__AVR_ATmega2560__)
 				if(InternalMemory.TimeUse12Hour_read())
 				{
 					LCD.DrawDate(6, 112);
 				} else {
 					LCD.DrawDateTimeISO8601(6, 112);
 				}
-				#endif // __AVR_ATmega2560_
+#else
+				LCD.DrawDate(6, 112);
+#endif // __AVR_ATmega2560__
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 				LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
