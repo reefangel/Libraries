@@ -1478,8 +1478,9 @@ void RA_NokiaLCD::DrawOK(bool Selected)
 
 void RA_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
 {
-  char text[5] = {0};
+  char text[10] = {0};
   Clear(DefaultBGColor, x, y, x+20, y+10);
   itoa(i,text,10);
+  strcat(text , "   ");
   DrawText(CalibrateColor, DefaultBGColor, x, y, text);
 }

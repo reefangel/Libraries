@@ -22,7 +22,7 @@
 #ifndef	__REEFANGEL_H__
 #define __REEFANGEL_H__
 
-#define ReefAngel_Version "0.9.9"
+#define ReefAngel_Version "1.0.1"
 
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
@@ -267,6 +267,7 @@ public:
 #endif  // CUSTOM_MENU
 
     void SetupCalibratePH();
+    void SetupCalibrateChoicePH();
 #if defined ORPEXPANSION
     void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION

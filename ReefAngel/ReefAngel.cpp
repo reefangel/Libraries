@@ -133,11 +133,17 @@ const prog_char mainmenu_5_label[] PROGMEM = "Sal Calibration";
 #ifdef ORPEXPANSION
 const prog_char mainmenu_6_label[] PROGMEM = "ORP Calibration";
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+const prog_char mainmenu_7_label[] PROGMEM = "PH Exp Calibration";
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+const prog_char mainmenu_8_label[] PROGMEM = "Water Calibration";
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-const prog_char mainmenu_7_label[] PROGMEM = "Date / Time";
+const prog_char mainmenu_9_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-const prog_char mainmenu_8_label[] PROGMEM = "Version";
+const prog_char mainmenu_10_label[] PROGMEM = "Version";
 #endif  // VersionMenu
 PROGMEM const char *mainmenu_items[] = {
                     mainmenu_0_label,
@@ -151,11 +157,17 @@ PROGMEM const char *mainmenu_items[] = {
 #ifdef ORPEXPANSION
                     mainmenu_6_label,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+					mainmenu_7_label,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+					mainmenu_8_label,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-                    mainmenu_7_label,
+                    mainmenu_9_label,
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-                    mainmenu_8_label
+                    mainmenu_10_label
 #endif  // VersionMenu
                     };
 enum MainMenuItem {
@@ -170,6 +182,12 @@ enum MainMenuItem {
 #ifdef ORPEXPANSION
     MainMenu_ORPCalibration,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+	MainMenu_PHExpCalibration,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+	MainMenu_WaterCalibration,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
     MainMenu_DateTime,
 #endif  // DateTimeSetup
@@ -244,8 +262,14 @@ const prog_char setupmenu_4_label[] PROGMEM = "Calibrate Sal";
 #ifdef ORPEXPANSION
 const prog_char setupmenu_5_label[] PROGMEM = "Calibrate ORP";
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+const prog_char setupmenu_6_label[] PROGMEM = "Calibrate PH Exp";
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+const prog_char setupmenu_7_label[] PROGMEM = "Calibrate Water";
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-const prog_char setupmenu_6_label[] PROGMEM = "Date / Time";
+const prog_char setupmenu_8_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char *setupmenu_items[] = {
 #ifdef WavemakerSetup
@@ -264,8 +288,14 @@ PROGMEM const char *setupmenu_items[] = {
 #ifdef ORPEXPANSION
                     setupmenu_5_label,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+					setupmenu_6_label,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+					setupmenu_7_label,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
-                    setupmenu_6_label
+                    setupmenu_8_label
 #endif  // DateTimeSetup
                     };
 enum SetupMenuItem {
@@ -285,6 +315,12 @@ enum SetupMenuItem {
 #ifdef ORPEXPANSION
     SetupMenu_CalibrateORP,
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+	SetupMenu_PHExpCalibration,
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+	SetupMenu_WaterCalibration,
+#endif  // WATERLEVELEXPANSION
 #ifdef DateTimeSetup
     SetupMenu_DateTime
 #endif  // DateTimeSetup
@@ -433,10 +469,10 @@ void ReefAngelClass::Init()
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;
-	
+
 	//0x5241494D
 	//0xCF06A31E
-	if (InternalMemory.IMCheck_read()!=0xCF06A31E) 
+	if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 	{
 		char temptext[25];
 		while(1)
@@ -662,7 +698,7 @@ void ReefAngelClass::Refresh()
 	Params.PHExp=PH.Read();
 	if (Params.PHExp!=0)
 	{
-		Params.PHExp=map(Params.PH, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
+		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
 		Params.PHExp=constrain(Params.PHExp,100,1400);
 	}
 	LCD.Clear(DefaultBGColor,0,0,1,1);
@@ -695,12 +731,22 @@ void ReefAngelClass::Refresh()
 	Params.PH=constrain(Params.PH,100,1400);
 
 #if defined SALINITYEXPANSION
-	Params.Salinity=Salinity.Read();
+	unsigned long tempsal=0;
+    for (int a=0;a<20;a++)
+    {
+    	tempsal+=Salinity.Read();
+    }
+	Params.Salinity=tempsal/20;
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
-	Params.ORP=ORP.Read();
+	unsigned long temporp=0;
+    for (int a=0;a<20;a++)
+    {
+    	temporp+=ORP.Read();
+    }
+	Params.ORP=temporp/20;
 	if (Params.ORP!=0)
 	{
 		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
@@ -709,10 +755,15 @@ void ReefAngelClass::Refresh()
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined ORPEXPANSION
 #if defined PHEXPANSION
-	Params.PHExp=PH.Read();
+	unsigned long tempph=0;
+    for (int a=0;a<20;a++)
+    {
+    	tempph+=PH.Read();
+    }
+	Params.PHExp=tempph/20;
 	if (Params.PHExp!=0)
 	{
-		Params.PHExp=map(Params.PH, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
+		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
 		Params.PHExp=constrain(Params.PHExp,100,1400);
 	}
 	LCD.Clear(DefaultBGColor,0,0,1,1);
@@ -1184,14 +1235,14 @@ void ReefAngelClass::CO2Control(byte Relay)
 {
     CO2Control(Relay,
                 InternalMemory.CO2ControlOff_read(),
-                InternalMemory.CO2ControlOn_read());	
+                InternalMemory.CO2ControlOn_read());
 }
 
 void ReefAngelClass::PHControl(byte Relay)
 {
 	PHControl(Relay,
                 InternalMemory.PHControlOn_read(),
-                InternalMemory.PHControlOff_read());	
+                InternalMemory.PHControlOff_read());
 }
 
 void ReefAngelClass::StandardATO(byte Relay)
@@ -1475,7 +1526,7 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 #ifdef PHEXPANSION
 	PROGMEMprint(BannerPHE);
 	WIFI_SERIAL.print(Params.PHExp, DEC);
-#endif  // PHEXPANSION	
+#endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
 	PROGMEMprint(BannerWL);
 	WIFI_SERIAL.print(WaterLevel.GetLevel(), DEC);
@@ -2300,10 +2351,24 @@ void ReefAngelClass::ProcessButtonPressMain()
             break;
         }
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+		case MainMenu_PHExpCalibration:
+		{
+			SetupCalibratePHExp();
+			break;
+		}
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+		case MainMenu_WaterCalibration:
+		{
+			SetupCalibrateWaterLevel();
+			break;
+		}
+#endif  // WATERLEVELEXPANSION
 #if defined DateTimeSetup || defined DateTime24Setup
 		case MainMenu_DateTime:
 		{
-			#ifdef DateTime24Setup
+#ifdef DateTime24Setup
             SetupDateTime24();
 #else
 			SetupDateTime();
@@ -2441,6 +2506,20 @@ void ReefAngelClass::ProcessButtonPressSetup()
             break;
         }
 #endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+		case SetupMenu_PHExpCalibration:
+		{
+			SetupCalibratePHExp();
+			break;
+		}
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+		case SetupMenu_WaterCalibration:
+		{
+			SetupCalibrateWaterLevel();
+			break;
+		}
+#endif  // WATERLEVELEXPANSION
 #if defined DateTimeSetup || defined DateTime24Setup
         case SetupMenu_DateTime:
         {
@@ -2940,19 +3019,23 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     byte offset_min = offset_hr+20;
     if ( bMetalHalide )
     {
+#ifdef MetalHalideSetup
         strcpy(msg, "Metal Halide Setup");
         h1 = InternalMemory.MHOnHour_read();
         m1 = InternalMemory.MHOnMinute_read();
         h2 = InternalMemory.MHOffHour_read();
         m2 = InternalMemory.MHOffMinute_read();
+#endif // MetalHalideSetup
     }
     else
     {
+#ifdef StandardLightSetup
         strcpy(msg, "Std Lights Setup");
         h1 = InternalMemory.StdLightsOnHour_read();
         m1 = InternalMemory.StdLightsOnMinute_read();
         h2 = InternalMemory.StdLightsOffHour_read();
         m2 = InternalMemory.StdLightsOffMinute_read();
+#endif // StandardLightSetup
     }
     ClearScreen(DefaultBGColor);
     // header / title
@@ -3173,17 +3256,21 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     {
         if ( bMetalHalide )
         {
+#ifdef MetalHalideSetup
             InternalMemory.MHOnHour_write(h1);
             InternalMemory.MHOnMinute_write(m1);
             InternalMemory.MHOffHour_write(h2);
             InternalMemory.MHOffMinute_write(m2);
+#endif MetalHalideSetup
         }
         else
         {
+#ifdef StandardLightSetup
             InternalMemory.StdLightsOnHour_write(h1);
             InternalMemory.StdLightsOnMinute_write(m1);
             InternalMemory.StdLightsOffHour_write(h2);
             InternalMemory.StdLightsOffMinute_write(m2);
+#endif // StandardLightSetup
         }
     }
 }
@@ -3264,6 +3351,226 @@ void ReefAngelClass::SetupCalibratePH()
 		PHMax = iO[1];
 	}
 }
+
+#ifdef SetupCalibrateChoicePH
+void ReefAngelClass::SetupCalibrateChoicePH()
+{
+	enum choices {
+        TARGETPH,
+        CANCEL,
+        OK
+    };
+    byte sel = CANCEL;
+	
+    bool bOKSel = false;
+    bool bSave = false;
+    bool bDone = false;
+    bool bRedraw = true;
+    bool bDrawButtons = true;
+    unsigned int iStart[2] = {7,10};
+    unsigned int iTarget[2] = {0,0};
+    unsigned int iValue[2] = {0,0};
+    char msg[15];
+	unsigned int maxPh = 10;
+	unsigned int minPh = 4;
+    byte offset = 65;
+		
+    // draw labels
+    ClearScreen(DefaultBGColor);
+    for (int b=0;b<2;b++)
+    {
+    	if (b==1 && !bSave) break;
+    	bOKSel=false;
+    	bSave=false;
+    	bDone = false;
+		bRedraw = true;
+    	bDrawButtons = true;
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");		
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
+		
+		strcpy(msg, b==0 ? "First value\0" : "Second value\0");
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, msg);
+		
+		iTarget[b] = iStart[b];
+		if(b==1 && iTarget[0]==iTarget[b])
+		{
+			iTarget[b]--;
+		}
+	
+		do
+		{
+#if defined WDT || defined WDT_FORCE
+			wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+			iValue[b]=0;
+			for (int a=0;a<30;a++)
+			{
+				iValue[b] += analogRead(PHPin);
+			}
+			iValue[b]/=30;
+			LCD.DrawCalibrate(iValue[b], MENU_START_COL + offset, MENU_START_ROW*6);
+			
+			
+			if ( bRedraw )
+			{
+				switch ( sel )
+				{
+					case TARGETPH:
+					{
+						LCD.DrawOption(iTarget[b], 1, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
+						if ( bDrawButtons )
+						{
+							LCD.DrawOK(false);
+							LCD.DrawCancel(false);
+						}
+						break;
+					}
+					case OK:
+					{
+						if ( bDrawButtons )
+						{
+							LCD.DrawOption(iTarget[b], 0, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
+							LCD.DrawOK(true);
+							LCD.DrawCancel(false);
+						}
+						break;
+					}
+					case CANCEL:
+					{
+						if ( bDrawButtons )
+						{
+							LCD.DrawOption(iTarget[b], 0, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
+							LCD.DrawOK(false);
+							LCD.DrawCancel(true);
+						}
+						break;
+					}
+				}
+				bRedraw = false;
+				bDrawButtons = false;
+			}
+			
+			if ( Joystick.IsUp() )
+			{
+				if (sel == TARGETPH)
+				{
+					iTarget[b]++;
+					if(b==1 && iTarget[0]==iTarget[b])
+					{
+						if((iTarget[b] + 1) <= maxPh)
+						{
+							iTarget[b]++;
+						} else {
+							iTarget[b]--;
+						}
+					}
+					
+					if ( iTarget[b] > maxPh )
+					{
+						iTarget[b] = maxPh;
+					}
+					else 
+					{
+						bRedraw = true;
+					}
+				}
+			}
+			if ( Joystick.IsDown() )
+			{
+				if (sel == TARGETPH)
+				{
+					iTarget[b]--;
+					if(b==1 && iTarget[0]==iTarget[b])
+					{
+						if((iTarget[b] - 1) >= minPh)
+						{
+							iTarget[b]--;
+						} else {
+							iTarget[b]++;
+						}
+					}
+					
+					if ( iTarget[b] < minPh )
+					{
+						iTarget[b] = minPh;
+					}
+					else 
+					{
+						bRedraw = true;
+					}
+				}
+			}
+			
+			if ( Joystick.IsLeft() )
+			{
+				bRedraw = true;
+				bDrawButtons = true;
+				sel--;
+				if ( sel > OK )
+				{
+					sel = OK;
+				}
+			}
+			
+			if ( Joystick.IsRight() )
+			{
+				bRedraw = true;
+				bDrawButtons = true;
+				sel++;
+				if ( sel > OK )
+				{
+					sel = TARGETPH;
+				}
+			}
+			
+			if ( Joystick.IsButtonPressed() )
+			{
+				if ( sel == OK || sel == TARGETPH)
+				{
+					bDone = true;
+					bSave = true;
+				}
+				else if ( sel == CANCEL )
+				{
+					bDone = true;
+				}
+			}
+		} while ( ! bDone );
+    }
+	
+    ClearScreen(DefaultBGColor);
+	
+	if ( bSave )
+	{
+		if(iTarget[0] == 7 && iTarget[1] == 10)
+		{
+			PHMin = iValue[0];
+			PHMax = iValue[1];
+		} 
+		else 
+		{
+			if(iTarget[0] == 7)
+			{
+				PHMin = iValue[0];
+				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+			}
+			else if(iTarget[1] == 10)
+			{
+				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+				PHMax = iValue[1];
+			} 
+			else 
+			{
+				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
+			}
+		}
+        // save PHMin & PHMax to memory
+        InternalMemory.PHMin_write(PHMin);
+        InternalMemory.PHMax_write(PHMax);
+	}
+}
+#endif // SetupCalibrateChoicePH
 
 #ifdef SALINITYEXPANSION
 void ReefAngelClass::SetupCalibrateSalinity()
