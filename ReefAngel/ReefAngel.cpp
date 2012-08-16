@@ -4229,7 +4229,7 @@ void ReefAngelClass::SetupDateTime24()
     byte Year, Month, Day, Hour, Minute;
     byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
 	uint8_t iTimeformat;
-    byte DateRow = 45, TimeRow = 75, FormatRow = 90;
+    byte DateRow = 35, TimeRow = 60, FormatRow = 85;
 
     Year = year() - 2000;
     Month = month();
@@ -4242,10 +4242,11 @@ void ReefAngelClass::SetupDateTime24()
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
     LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, DateRow,"Date:");
     LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, TimeRow,"Time:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, FormatRow,"Format:");
     LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, DateRow, "/");
     LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, DateRow, "/");
-    LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, TimeRow, ":");
-    LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, FormatRow, "H");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, TimeRow, ":");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 95, FormatRow, "H");
 
     do
     {
@@ -4261,9 +4262,9 @@ void ReefAngelClass::SetupDateTime24()
                     LCD.DrawOption(Month, 1, 49, DateRow, "", "", 2);
                     LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-                    LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-                    LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOption(iTimeformat, 0, 69, FormatRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+					LCD.DrawOption(iTimeformat, 0, 82, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -4276,9 +4277,9 @@ void ReefAngelClass::SetupDateTime24()
                     LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
                     LCD.DrawOption(Day, 1, 69, DateRow, "", "", 2);
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-                    LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-                    LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOption(iTimeformat, 0, 69, FormatRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+					LCD.DrawOption(iTimeformat, 0, 82, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -4291,9 +4292,9 @@ void ReefAngelClass::SetupDateTime24()
                     LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
                     LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
                     LCD.DrawOption(Year, 1, 89, DateRow, "", "", 2);
-                    LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-                    LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOption(iTimeformat, 0, 69, FormatRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+					LCD.DrawOption(iTimeformat, 0, 82, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -4306,9 +4307,9 @@ void ReefAngelClass::SetupDateTime24()
                     LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
                     LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-                    LCD.DrawOption(Hour, 1, 49, TimeRow, "", "", 2);
-                    LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOption(iTimeformat, 0, 69, FormatRow, "", "", 2);
+                    LCD.DrawOption(Hour, 1, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+					LCD.DrawOption(iTimeformat, 0, 82, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -4321,9 +4322,9 @@ void ReefAngelClass::SetupDateTime24()
                     LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
                     LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-                    LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-                    LCD.DrawOption(Minute, 1, 69, TimeRow, "", "", 2);
-					LCD.DrawOption(iTimeformat, 0, 69, FormatRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 1, 89, TimeRow, "", "", 2);
+					LCD.DrawOption(iTimeformat, 0, 82, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -4338,9 +4339,9 @@ void ReefAngelClass::SetupDateTime24()
                     LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
                     LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
                     LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-                    LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-                    LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-                    LCD.DrawOption(iTimeformat, 1, 69, FormatRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+                    LCD.DrawOption(iTimeformat, 1, 82, FormatRow, "", "", 2);
                     if ( bDrawButtons )
                     {
                         LCD.DrawOK(false);
@@ -4355,9 +4356,9 @@ void ReefAngelClass::SetupDateTime24()
                         LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
                         LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
                         LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-                        LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-                        LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-						LCD.DrawOption(iTimeformat, 0, 69, FormatRow, "", "", 2);
+                        LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                        LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+						LCD.DrawOption(iTimeformat, 0, 82, FormatRow, "", "", 2);
                         LCD.DrawOK(true);
                         LCD.DrawCancel(false);
                     }
@@ -4370,9 +4371,9 @@ void ReefAngelClass::SetupDateTime24()
                         LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
                         LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
                         LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-                        LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-                        LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-						LCD.DrawOption(iTimeformat, 0, 69, FormatRow, "", "", 2);
+                        LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                        LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+						LCD.DrawOption(iTimeformat, 0, 82, FormatRow, "", "", 2);
                         LCD.DrawOK(false);
                         LCD.DrawCancel(true);
                     }
