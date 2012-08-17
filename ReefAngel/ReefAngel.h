@@ -22,7 +22,7 @@
 #ifndef	__REEFANGEL_H__
 #define __REEFANGEL_H__
 
-#define ReefAngel_Version "0.9.9"
+#define ReefAngel_Version "1.0.1"
 
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
@@ -267,6 +267,7 @@ public:
 #endif  // CUSTOM_MENU
 
     void SetupCalibratePH();
+    void SetupCalibrateChoicePH();
 #if defined ORPEXPANSION
     void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
@@ -279,9 +280,12 @@ public:
 #if defined WATERLEVELEXPANSION
     void SetupCalibrateWaterLevel();
 #endif  // defined WATERLEVELEXPANSION
-#ifdef DateTimeSetup
+#if defined DateTimeSetup && !defined DATETIME24
     void SetupDateTime();
 #endif  // DateTimeSetup
+#ifdef DATETIME24
+    void SetupDateTime24();
+#endif  // DATETIME24
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef DosingPumpSetup
     void SetupDosingPump();

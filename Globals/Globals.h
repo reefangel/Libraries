@@ -32,6 +32,11 @@
 
 #include <avr/pgmspace.h>
 
+#if defined(__AVR_ATmega2560__)
+#define wifi
+#define DateTimeSetup
+#endif //__AVR_ATmega2560__
+
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
 
@@ -346,9 +351,10 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_PHExpMax			  VarsStart+123
 #define Mem_I_WaterLevelMin			  VarsStart+125
 #define Mem_I_WaterLevelMax			  VarsStart+127
+#define Mem_B_TimeUse12Hours       	  VarsStart+129
 
-#define VarsEnd                 VarsStart+129
-// Next value starts VarsStart+129
+#define VarsEnd                 VarsStart+130
+// Next value starts VarsStart+130
 
 
 // EEProm Pointers
@@ -888,6 +894,10 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue);
 byte MoonPhase();
 void ConvertNumToString(char* string, int num, byte decimal);
+inline double LinearInterpolation(double x, double x1, double y1, double x2, double y2) { return y1 + (y2 - y1) / (x2 - x1) * (x - x1); }
+#ifdef MOONPHASELABEL
+char* MoonPhaseLabel();
+#endif // MOONPHASELABEL
 
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);

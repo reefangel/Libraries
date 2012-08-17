@@ -183,6 +183,8 @@ class InternalEEPROMClass {
         void RadionSlopeDurationI_write(const uint8_t value);        
         uint8_t DelayedStart_read();
         void DelayedStart_write(const uint8_t value);        
+		uint8_t TimeUse12Hour_read();
+		void TimeUse12Hour_write(uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();

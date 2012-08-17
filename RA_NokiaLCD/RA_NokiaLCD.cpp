@@ -1208,6 +1208,50 @@ void RA_NokiaLCD::DrawDate(byte x, byte y)
     DrawText(DateTextColor, DefaultBGColor, x, y, text);
 }
 
+#if defined(__AVR_ATmega2560__)
+// Draw date and time according to ISO 8601
+// Example: 2012-05-25 21:48:43
+void RA_NokiaLCD::DrawDateTimeISO8601(byte x, byte y)
+{
+    char text[20];
+    char temp2[]="  ";
+    char temp4[]="    ";
+    strcpy(text,"");
+	
+	// Date
+	itoa(year(),temp4,10);
+    strcat(text,temp4);
+    strcat(text,"-");
+	
+    itoa(month(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text,"-");
+	
+    itoa(day(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text," ");
+	
+	// Time
+    itoa(hour(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text,":");
+	
+    itoa(minute(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text,":");
+	
+    itoa(second(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    
+    DrawText(DateTextColor, DefaultBGColor, x, y, text);
+}
+#endif // __AVR_ATmega2560__
+
 void RA_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
 {
     Clear(OutletBorderColor,x,y,x+104,y);  //94
@@ -1434,8 +1478,9 @@ void RA_NokiaLCD::DrawOK(bool Selected)
 
 void RA_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
 {
-  char text[5] = {0};
+  char text[10] = {0};
   Clear(DefaultBGColor, x, y, x+20, y+10);
   itoa(i,text,10);
+  strcat(text , "   ");
   DrawText(CalibrateColor, DefaultBGColor, x, y, text);
 }
