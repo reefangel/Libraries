@@ -798,18 +798,6 @@ void InternalEEPROMClass::DelayedStart_write(const uint8_t value)
     write(Mem_B_DelayedStart, value);
 }
 
-uint8_t InternalEEPROMClass::TimeUse12Hour_read()
-{
-    return read(Mem_B_TimeUse12Hours);
-}
-
-void InternalEEPROMClass::TimeUse12Hour_write(uint8_t value)
-{
-	value = constrain(value, 0, 1);
-	
-    write(Mem_B_TimeUse12Hours, value);
-}
-
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {
