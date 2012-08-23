@@ -281,9 +281,12 @@ public:
 #if defined WATERLEVELEXPANSION
     void SetupCalibrateWaterLevel();
 #endif  // defined WATERLEVELEXPANSION
-#ifdef DateTimeSetup
+#if defined DateTimeSetup && !defined DATETIME24
     void SetupDateTime();
 #endif  // DateTimeSetup
+#ifdef DATETIME24
+    void SetupDateTime24();
+#endif  // DATETIME24
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef DosingPumpSetup
     void SetupDosingPump();

@@ -64,6 +64,9 @@ public:
 	void FillCircle(byte x, byte y, byte radius, byte fillcolor);
 	void DrawCircleOutletBox(byte x, byte y, byte RelayData, bool reverse = false);
 	void DrawDate(byte x, byte y);
+	#if defined(__AVR_ATmega2560__)
+	void DrawDateTimeISO8601(byte x, byte y);
+	#endif
 	void DrawOutletBox(byte x, byte y, byte RelayData);
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	void DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue);
