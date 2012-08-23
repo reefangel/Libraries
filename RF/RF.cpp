@@ -64,11 +64,15 @@ void RFClass::SetChannel(byte Channel, byte Value)
 
 void RFClass::RadionWrite()
 {
-	for (byte a=0;a<RF_CHANNELS;a++)
+	if (millis()-lastWrite>3000)
 	{
-		SetMode(Radion, RadionChannels[a]*2, a);
+		lastWrite=millis();
+		for (byte a=0;a<RF_CHANNELS;a++)
+		{
+			SetMode(Radion, RadionChannels[a]*2, a);
+		}
+		SetMode(Radion,0,Radion_Ready);
 	}
-	SetMode(Radion,0,Radion_Ready);
 }
 
 void RFClass::ChannelWhiteSlope()

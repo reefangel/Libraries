@@ -68,6 +68,7 @@ public:
 	void ChannelRadionParabola(byte Channel, byte Start, byte End, byte Duration);
 	void ChannelRadionParabola(byte Channel, byte Start, byte End, byte Duration, byte MinuteOffset);		
 private:
+	unsigned long lastWrite;
 };
 
 #endif  // __RF_H__
