@@ -3337,7 +3337,7 @@ void ReefAngelClass::SetupCalibratePH()
 	}
 }
 
-#ifdef SetupCalibrateChoicePH
+#ifdef SETUP_CALIBRATEPH_CHOICE
 void ReefAngelClass::SetupCalibrateChoicePH()
 {
 	enum choices {
@@ -3555,7 +3555,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
         InternalMemory.PHMax_write(PHMax);
 	}
 }
-#endif // SetupCalibrateChoicePH
+#endif // SETUP_CALIBRATEPH_CHOICE
 
 #ifdef SALINITYEXPANSION
 void ReefAngelClass::SetupCalibrateSalinity()
