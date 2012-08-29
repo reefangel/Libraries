@@ -2327,7 +2327,11 @@ void ReefAngelClass::ProcessButtonPressMain()
 		}
 		case MainMenu_PHCalibration:
 		{
+#if defined SETUP_CALIBRATEPH_CHOICE
+			SetupCalibrateChoicePH();
+#else
 			SetupCalibratePH();
+#endif
 			break;
 		}
 #ifdef SALINITYEXPANSION
@@ -2478,7 +2482,11 @@ void ReefAngelClass::ProcessButtonPressSetup()
 #endif  // DosingPumpIntervalSetup
         case SetupMenu_CalibratePH:
         {
+#if defined SETUP_CALIBRATEPH_CHOICE
+            SetupCalibrateChoicePH();
+#else
             SetupCalibratePH();
+#endif
             break;
         }
 #ifdef SALINITYEXPANSION
