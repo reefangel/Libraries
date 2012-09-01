@@ -25,7 +25,11 @@
 RA_JoystickClass::RA_JoystickClass()
 {
 	pinMode(okPin, INPUT);
+#ifdef REEFANGEL_ONE
+	digitalWrite(okPin, LOW); //pull down resistor on okPin
+#else	
 	digitalWrite(okPin, HIGH); //pull up resistor on okPin
+#endif //REEFANGEL_ONE
 }
 
 void RA_JoystickClass::Init()
@@ -53,7 +57,11 @@ bool RA_JoystickClass::IsButtonPressed()
 bool RA_JoystickClass::IsUp()
 {
 	JoystickCenter();
+#ifdef REEFANGEL_ONE
+	if ( (analogRead(VPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#else	
 	if ( (analogRead(VPin)>CalV+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#endif //REEFANGEL_ONE	
 	{
 		CheckTurbo();
 		return true;
@@ -67,7 +75,11 @@ bool RA_JoystickClass::IsUp()
 bool RA_JoystickClass::IsDown()
 {
 	JoystickCenter();
+#ifdef REEFANGEL_ONE
+	if ( (analogRead(HPin)<750 && analogRead(HPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#else	
 	if ( (analogRead(VPin)<CalV-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#endif //REEFANGEL_ONE	
 	{
 		CheckTurbo();
 		return true;
@@ -81,7 +93,11 @@ bool RA_JoystickClass::IsDown()
 bool RA_JoystickClass::IsRight()
 {
 	JoystickCenter();
+#ifdef REEFANGEL_ONE
+	if ( (analogRead(HPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#else	
 	if ( (analogRead(HPin)<CalH-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#endif //REEFANGEL_ONE	
 	{
 		CheckTurbo();
 		return true;
@@ -95,7 +111,11 @@ bool RA_JoystickClass::IsRight()
 bool RA_JoystickClass::IsLeft()
 {
 	JoystickCenter();
+#ifdef REEFANGEL_ONE
+	if ( (analogRead(VPin)<750 && analogRead(VPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#else	
 	if ( (analogRead(HPin)>CalH+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+#endif //REEFANGEL_ONE	
 	{
 		CheckTurbo();
 		return true;
@@ -108,15 +128,20 @@ bool RA_JoystickClass::IsLeft()
 
 void RA_JoystickClass::JoystickCenter()
 {
+#ifdef REEFANGEL_ONE
+	if ( (analogRead(VPin)<10) &&
+         (analogRead(HPin)<10) )
+#else
 	if ( (analogRead(VPin)<CalV+70) &&
          (analogRead(VPin)>CalV-70) &&
          (analogRead(HPin)<CalH+70) &&
          (analogRead(HPin)>CalH-70) )
+#endif //REEFANGEL_ONE
 	{
 		KeyCount = 0;
 		KeyTurbo = 1;
 		KeyKeep = 0;
-	}
+	}	
 }
 
 void RA_JoystickClass::CheckTurbo()
