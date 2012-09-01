@@ -1208,7 +1208,7 @@ void RA_NokiaLCD::DrawDate(byte x, byte y)
     DrawText(DateTextColor, DefaultBGColor, x, y, text);
 }
 
-#if defined(__AVR_ATmega2560__)
+#if defined(DATETIME24)
 // Draw date and time according to ISO 8601
 // Example: 2012-05-25 21:48:43
 void RA_NokiaLCD::DrawDateTimeISO8601(byte x, byte y)
@@ -1250,7 +1250,7 @@ void RA_NokiaLCD::DrawDateTimeISO8601(byte x, byte y)
     
     DrawText(DateTextColor, DefaultBGColor, x, y, text);
 }
-#endif // __AVR_ATmega2560__
+#endif // DATETIME24
 
 void RA_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
 {
