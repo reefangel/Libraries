@@ -2331,7 +2331,11 @@ void ReefAngelClass::ProcessButtonPressMain()
 		}
 		case MainMenu_PHCalibration:
 		{
+#if defined SETUP_CALIBRATEPH_CHOICE
+			SetupCalibrateChoicePH();
+#else
 			SetupCalibratePH();
+#endif
 			break;
 		}
 #ifdef SALINITYEXPANSION
@@ -2486,7 +2490,11 @@ void ReefAngelClass::ProcessButtonPressSetup()
 #endif  // DosingPumpIntervalSetup
         case SetupMenu_CalibratePH:
         {
+#if defined SETUP_CALIBRATEPH_CHOICE
+            SetupCalibrateChoicePH();
+#else
             SetupCalibratePH();
+#endif
             break;
         }
 #ifdef SALINITYEXPANSION
@@ -3349,7 +3357,7 @@ void ReefAngelClass::SetupCalibratePH()
 	}
 }
 
-#ifdef SetupCalibrateChoicePH
+#ifdef SETUP_CALIBRATEPH_CHOICE
 void ReefAngelClass::SetupCalibrateChoicePH()
 {
 	enum choices {
@@ -3539,35 +3547,15 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 	
 	if ( bSave )
 	{
-		if(iTarget[0] == 7 && iTarget[1] == 10)
-		{
-			PHMin = iValue[0];
-			PHMax = iValue[1];
-		} 
-		else 
-		{
-			if(iTarget[0] == 7)
-			{
-				PHMin = iValue[0];
-				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-			}
-			else if(iTarget[1] == 10)
-			{
-				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-				PHMax = iValue[1];
-			} 
-			else 
-			{
-				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-			}
-		}
+		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
+		PHMax = map(10.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
+		
         // save PHMin & PHMax to memory
         InternalMemory.PHMin_write(PHMin);
         InternalMemory.PHMax_write(PHMax);
 	}
 }
-#endif // SetupCalibrateChoicePH
+#endif // SETUP_CALIBRATEPH_CHOICE
 
 #ifdef SALINITYEXPANSION
 void ReefAngelClass::SetupCalibrateSalinity()
