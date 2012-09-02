@@ -36,6 +36,8 @@
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
+#include <Probe.h>
+#include <PH.h>
 
 #if defined ORPEXPANSION
 	#include <ORP.h>
@@ -44,7 +46,7 @@
 	#include <Salinity.h>
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
-	#include <PH.h>
+	#include <PHExp.h>
 #endif  // defined PHEXPANSION
 #if defined WATERLEVELEXPANSION
 	#include <WaterLevel.h>
@@ -106,7 +108,7 @@ public:
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
 	int PHExpMin, PHExpMax;
-	PHClass PH;
+	PHExpansionClass PHExp;
 #endif  // PHEXPANSION	
 #if defined WATERLEVELEXPANSION
 	WaterLevelClass WaterLevel;
@@ -268,9 +270,11 @@ public:
     void SetupLightsOptionDisplay(bool bMetalHalide);
 #endif  // SIMPLE_MENU
 #endif  // CUSTOM_MENU
+	PHInternalClass PHInt;
 
     void SetupCalibratePH();
-    void SetupCalibrateChoicePH();
+    void SetupCalibratePHBasic(ProbeBaseClass *probe, int& phMin, int& phMax);
+    void SetupCalibrateChoicePH(ProbeBaseClass *probe, int& phMin, int& phMax);
 #if defined ORPEXPANSION
     void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION

@@ -21,22 +21,13 @@
 
 #include "PH.h"
 #include <Globals.h>
-#include <Wire.h>
 
 
-PHClass::PHClass()
+PHInternalClass::PHInternalClass()
 {
 }
 
-int PHClass::Read()
+int PHInternalClass::Read()
 {
-	int iPH=0;
-	Wire.requestFrom(I2CPH, 2);
-	if (Wire.available())
-	{
-		iPH = Wire.read();
-		iPH = iPH<<8;
-		iPH += Wire.read();
-	}
-	return iPH;
+	return analogRead(PHPin);
 }
