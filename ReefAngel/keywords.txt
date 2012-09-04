@@ -33,6 +33,8 @@ AddRFExpansion	KEYWORD2
 AddDateTimeMenu	KEYWORD2
 AddCustomsColors	KEYWORD2
 Display24h	KEYWORD2
+One	KEYWORD2
+Mini	KEYWORD2
 DayLights	KEYWORD2
 DelayedStartLights	KEYWORD2
 ActinicLights	KEYWORD2

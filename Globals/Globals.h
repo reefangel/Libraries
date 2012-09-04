@@ -168,7 +168,11 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 //#define Piezo               16 
 
 //Digital I/O
+#ifdef REEFANGEL_MINI
+#define ledPin              6
+#else
 #define ledPin              7
+#endif //REEFANGEL_MINI
 #define tempPin             8
 #define actinicPWMPin       9
 #define daylightPWMPin      10
@@ -190,6 +194,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
+#define I2CRA_Slave			0x11
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
