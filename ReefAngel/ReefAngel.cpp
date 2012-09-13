@@ -27,14 +27,12 @@
 
 byte ButtonPress = 0;
 
-
 SIGNAL(PCINT0_vect) {
 	if (millis()-ButtonDebounce>600)
 	{
 		ButtonDebounce=millis();
 		ButtonPress++;
 	}
-
 }
 
 // Menu Headings
@@ -527,12 +525,16 @@ void ReefAngelClass::Init()
 
 
 
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined DisplayLEDPWM && ! defined RemoveAllLights && ! defined REEFANGEL_MINI
     // Restore PWM values
     PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
     PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
+#ifdef REEFANGEL_MINI
+    LED.RGB(0,0,0);
+#endif //REEFANGEL_MINI
+    
     // Set the default ports to be turned on & off during the 2 modes
     // To enable a port to be toggled, place a 1 in the appropriate position
     // Default to have ports 4, 5, & 8 toggled
@@ -608,7 +610,7 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	boolean LightRelayOn=false;
 	for (int l=0;l<8;l++)
 	{
@@ -625,7 +627,7 @@ void ReefAngelClass::Refresh()
 // issue #12: Revert back
 	analogWrite(actinicPWMPin, PWM.GetActinicValue()*2.55);
     analogWrite(daylightPWMPin, PWM.GetDaylightValue()*2.55);
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 
 #ifdef RFEXPANSION
 	byte RFRecv=0;
@@ -2581,13 +2583,13 @@ void ReefAngelClass::ProcessButtonPressLights()
 				Relay.RelayMaskOnE[i] = B00000000;
 			}
 #endif  // RelayExp
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 			// TODO should possibly store the PWM value to be reset instead of turning off completely
             // sets PWM to 0%
             PWM.SetActinic(0);
             PWM.SetDaylight(0);
             PWM.LightsOverride=false;
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
             Relay.Write();
             DisplayMenuEntry("Restore Lights");
             showmenu = false;
@@ -2617,7 +2619,7 @@ void ReefAngelClass::ProcessButtonPressLights()
             break;
         }
 #endif  // StandardLightSetup
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
         case LightsMenu_LEDPWM:
         {
             int v = InternalMemory.LEDPWMActinic_read();
@@ -2632,7 +2634,7 @@ void ReefAngelClass::ProcessButtonPressLights()
             }
             break;
         }
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;

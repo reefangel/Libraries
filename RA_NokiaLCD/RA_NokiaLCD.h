@@ -75,6 +75,7 @@ public:
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 	void DrawGraph(byte x, byte y);
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
+	void DrawImage(int swidth, int sheight, byte x, byte y, const prog_uchar *iPtr);
 
     // For Setup
     void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits = 2);

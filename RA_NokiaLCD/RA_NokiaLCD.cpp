@@ -32,7 +32,11 @@
 #define CS 3          // Digital 3 --> #CS
 #define CLK 4         // Digital 4 --> SCLK
 #define SDA 5         // Digital 5 --> SDATA
+#ifdef REEFANGEL_MINI
+#define RESET 7       // Digital 7 --> #RESET
+#else
 #define RESET 6       // Digital 6 --> #RESET
+#endif //REEFANGEL_MINI
 
 // Phillips PCF8833 Command Set
 #define NOP      0x00 	// nop
@@ -1345,6 +1349,23 @@ void RA_NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I
         {
             count+=1;
             if ((count<=swidth*sheight) && Wire.available()) SendData(~Wire.read());
+        }
+    }
+    while (count < swidth*sheight);
+}
+
+void RA_NokiaLCD::DrawImage(int swidth, int sheight, byte x, byte y, const prog_uchar *iPtr)
+{
+    int count = 0;
+    SetBox(x,y,swidth-1+x,sheight-1+y);
+    SendCMD(0x2c);
+
+    do
+    {
+        for (byte j = 0; j < 30; j++)
+        {
+            count+=1;
+            if (count<=swidth*sheight) SendData(~pgm_read_byte_near(iPtr++));
         }
     }
     while (count < swidth*sheight);
