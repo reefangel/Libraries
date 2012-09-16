@@ -1059,6 +1059,16 @@ int InternalEEPROMClass::WaterLevelMin_read()
     return read_int(Mem_I_WaterLevelMin);
 }
 
+void InternalEEPROMClass::SalTempComp_write(const int value)
+{
+    write_int(Mem_I_SalTempComp, value);
+}
+
+int InternalEEPROMClass::SalTempComp_read()
+{
+    return read_int(Mem_I_SalTempComp);
+}
+
 unsigned long InternalEEPROMClass::IMCheck_read()
 {
     return read_dword(IMPointer);
