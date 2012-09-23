@@ -1314,17 +1314,17 @@ void ReefAngelClass::DosingPumpRepeat2(byte Relay)
 void ReefAngelClass::Wavemaker1(byte WMRelay)
 {
 	Wavemaker(WMRelay,InternalMemory.WM1Timer_read());
-#ifdef WavemakerSetup
-	WM1Port = WMRelay;
-#endif
+//#ifdef WavemakerSetup
+//	WM1Port = WMRelay; deprecated by issue #47
+//#endif
 }
 
 void ReefAngelClass::Wavemaker2(byte WMRelay)
 {
 	Wavemaker(WMRelay,InternalMemory.WM2Timer_read());
-#ifdef WavemakerSetup
-	WM2Port = WMRelay;
-#endif
+//#ifdef WavemakerSetup
+//	WM2Port = WMRelay; deprecated by issue #47
+//#endif
 }
 
 #ifdef VersionMenu
@@ -2456,8 +2456,8 @@ void ReefAngelClass::ProcessButtonPressSetup()
             {
                 InternalMemory.WM1Timer_write(v);
                 InternalMemory.WM2Timer_write(y);
-                Relay.On(WM1Port);
-                Relay.On(WM2Port);
+//                Relay.On(WM1Port);
+//                Relay.On(WM2Port);
 //                Relay.Write();
             }
             break;
