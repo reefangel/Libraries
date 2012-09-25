@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
- /*
-  * Updated by:  Curt Binder
-  * Updates Released under Apache License, Version 2.0
-  */
 
-#ifndef __PH_H__
-#define __PH_H__
+#ifndef __PROBEBASE_H__
+#define __PROBEBASE_H__
 
-#include <Probe.h>
-#include <Globals.h>
-
-class PHInternalClass: public ProbeBaseClass
+class ProbeBaseClass
 {
 public:
-	PHInternalClass();
-	int Read();
-	
+	ProbeBaseClass();
+	virtual int Read() = 0;	
 };
 
-#endif  // __PH_H__
+#endif  // __PROBEBASE_H__

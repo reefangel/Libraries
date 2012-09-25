@@ -19,18 +19,24 @@
   * Updates Released under Apache License, Version 2.0
   */
 
-#ifndef __PH_H__
-#define __PH_H__
-
-#include <Probe.h>
+#include "PHExp.h"
 #include <Globals.h>
+#include <Wire.h>
 
-class PHInternalClass: public ProbeBaseClass
+
+PHExpansionClass::PHExpansionClass()
 {
-public:
-	PHInternalClass();
-	int Read();
-	
-};
+}
 
-#endif  // __PH_H__
+int PHExpansionClass::Read()
+{
+	int iPH=0;
+	Wire.requestFrom(I2CPH, 2);
+	if (Wire.available())
+	{
+		iPH = Wire.read();
+		iPH = iPH<<8;
+		iPH += Wire.read();
+	}
+	return iPH;
+}

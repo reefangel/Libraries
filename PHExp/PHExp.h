@@ -19,18 +19,18 @@
   * Updates Released under Apache License, Version 2.0
   */
 
-#ifndef __PH_H__
-#define __PH_H__
+#ifndef __PHEXPANSION_H__
+#define __PHEXPANSION_H__
 
 #include <Probe.h>
 #include <Globals.h>
 
-class PHInternalClass: public ProbeBaseClass
+class PHExpansionClass: public ProbeBaseClass
 {
 public:
-	PHInternalClass();
+	PHExpansionClass();
 	int Read();
 	
 };
 
-#endif  // __PH_H__
+#endif  // __PHEXPANSION_H__

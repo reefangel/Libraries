@@ -14,23 +14,6 @@
  * limitations under the License.
  */
 
- /*
-  * Updated by:  Curt Binder
-  * Updates Released under Apache License, Version 2.0
-  */
+#include "Probe.h"
 
-#ifndef __PH_H__
-#define __PH_H__
-
-#include <Probe.h>
-#include <Globals.h>
-
-class PHInternalClass: public ProbeBaseClass
-{
-public:
-	PHInternalClass();
-	int Read();
-	
-};
-
-#endif  // __PH_H__
+ProbeBaseClass::ProbeBaseClass(){}

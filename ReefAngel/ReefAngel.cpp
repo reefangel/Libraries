@@ -698,7 +698,7 @@ void ReefAngelClass::Refresh()
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined ORPEXPANSION
 #if defined PHEXPANSION
-	Params.PHExp=PH.Read();
+	Params.PHExp=PHExp.Read();
 	if (Params.PHExp!=0)
 	{
 		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
@@ -761,7 +761,7 @@ void ReefAngelClass::Refresh()
 	unsigned long tempph=0;
     for (int a=0;a<20;a++)
     {
-    	tempph+=PH.Read();
+    	tempph+=PHExp.Read();
     }
 	Params.PHExp=tempph/20;
 	if (Params.PHExp!=0)
@@ -2333,11 +2333,7 @@ void ReefAngelClass::ProcessButtonPressMain()
 		}
 		case MainMenu_PHCalibration:
 		{
-#if defined SETUP_CALIBRATEPH_CHOICE
-			SetupCalibrateChoicePH();
-#else
 			SetupCalibratePH();
-#endif
 			break;
 		}
 #ifdef SALINITYEXPANSION
@@ -2492,11 +2488,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
 #endif  // DosingPumpIntervalSetup
         case SetupMenu_CalibratePH:
         {
-#if defined SETUP_CALIBRATEPH_CHOICE
-            SetupCalibrateChoicePH();
-#else
             SetupCalibratePH();
-#endif
             break;
         }
 #ifdef SALINITYEXPANSION
@@ -3287,6 +3279,30 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 
 void ReefAngelClass::SetupCalibratePH()
 {
+	int phMin = PHMin;
+	int phMax = PHMax;
+
+#if defined SETUP_CALIBRATEPH_CHOICE
+			SetupCalibrateChoicePH(&PHInt, phMin, phMax);
+#else
+			SetupCalibratePHBasic(&PHInt, phMin, phMax);
+#endif
+	if ( phMin != PHMin )
+	{
+        // save PHMin to memory
+        InternalMemory.PHMin_write(phMin);
+        PHMin = phMin;
+	}
+	if ( phMax != PHMax )
+	{
+        // save PHMax to memory
+        InternalMemory.PHMax_write(phMax);
+		PHMax = phMax;
+	}
+}
+
+void ReefAngelClass::SetupCalibratePHBasic(ProbeBaseClass *probe, int& phMin, int& phMax)
+{
     bool bOKSel = false;
     bool bSave = false;
     bool bDone = false;
@@ -3314,7 +3330,7 @@ void ReefAngelClass::SetupCalibratePH()
 			iO[b]=0;
 			for (int a=0;a<30;a++)
 			{
-				iO[b] += analogRead(PHPin);
+				iO[b] += probe->Read();
 			}
 			iO[b]/=30;
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
@@ -3352,15 +3368,13 @@ void ReefAngelClass::SetupCalibratePH()
 	if ( bSave )
 	{
         // save PHMin & PHMax to memory
-        InternalMemory.PHMin_write(iO[0]);
-        PHMin = iO[0];
-        InternalMemory.PHMax_write(iO[1]);
-		PHMax = iO[1];
+        phMin = iO[0];
+        phMax = iO[1];
 	}
 }
 
 #ifdef SETUP_CALIBRATEPH_CHOICE
-void ReefAngelClass::SetupCalibrateChoicePH()
+void ReefAngelClass::SetupCalibrateChoicePH(ProbeBaseClass *probe, int& phMin, int& phMax)
 {
 	enum choices {
         TARGETPH,
@@ -3412,7 +3426,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 			iValue[b]=0;
 			for (int a=0;a<30;a++)
 			{
-				iValue[b] += analogRead(PHPin);
+				iValue[b] += probe->Read();
 			}
 			iValue[b]/=30;
 			LCD.DrawCalibrate(iValue[b], MENU_START_COL + offset, MENU_START_ROW*6);
@@ -3549,12 +3563,8 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 	
 	if ( bSave )
 	{
-		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
-		PHMax = map(10.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
-		
-        // save PHMin & PHMax to memory
-        InternalMemory.PHMin_write(PHMin);
-        InternalMemory.PHMax_write(PHMax);
+		phMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
+		phMax = map(10.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
 	}
 }
 #endif // SETUP_CALIBRATEPH_CHOICE
@@ -3704,75 +3714,26 @@ void ReefAngelClass::SetupCalibrateORP()
 #ifdef PHEXPANSION
 void ReefAngelClass::SetupCalibratePHExp()
 {
-    bool bOKSel = false;
-    bool bSave = false;
-    bool bDone = false;
-    bool bDrawButtons = true;
-    unsigned int iO[2] = {0,0};
-    unsigned int iCal[2] = {7,10};
-    byte offset = 65;
-    // draw labels
-    ClearScreen(DefaultBGColor);
-    for (int b=0;b<2;b++)
-    {
-    	if (b==1 && !bSave) break;
-    	bOKSel=false;
-    	bSave=false;
-    	bDone = false;
-    	bDrawButtons = true;
-    	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate PH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "pH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL + 18, MENU_START_ROW*5, (int)iCal[b]);
-		do
-		{
-#if defined WDT || defined WDT_FORCE
-			wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-			iO[b]=0;
-			for (int a=0;a<15;a++)
-			{
-				iO[b] += PH.Read();
-			}
-			iO[b]/=15;
-			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
-			if (  bDrawButtons )
-			{
-				if ( bOKSel )
-				{
-					LCD.DrawOK(true);
-					LCD.DrawCancel(false);
-				}
-				else
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(true);
-				}
-				bDrawButtons = false;
-			}
-			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
-			{
-				// toggle the selection
-				bOKSel = !bOKSel;
-				bDrawButtons = true;
-			}
-			if ( Joystick.IsButtonPressed() )
-			{
-				bDone = true;
-				if ( bOKSel )
-				{
-					bSave = true;
-				}
-			}
-		} while ( ! bDone );
-    }
-    ClearScreen(DefaultBGColor);
-	if ( bSave )
+    
+	int phMin = PHExpMin;
+	int phMax = PHExpMax;
+
+#if defined SETUP_CALIBRATEPH_CHOICE
+			SetupCalibrateChoicePH(&PHExp, phMin, phMax);
+#else
+			SetupCalibratePHBasic(&PHExp, phMin, phMax);
+#endif
+	if ( phMin != PHExpMin )
 	{
-		// save PHExpMin & PHExpMax to memory
-		InternalMemory.PHExpMin_write(iO[0]);
-		PHExpMin = iO[0];
-		InternalMemory.PHExpMax_write(iO[1]);
-		PHExpMax = iO[1];
+        // save PHExpMin to memory
+        InternalMemory.PHExpMin_write(phMin);
+        PHExpMin = phMin;
+	}
+	if ( phMax != PHExpMax )
+	{
+        // save PHExpMax to memory
+        InternalMemory.PHExpMax_write(phMax);
+        PHExpMax = phMax;
 	}
 }
 #endif  // PHEXPANSION
