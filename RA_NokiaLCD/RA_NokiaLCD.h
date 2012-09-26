@@ -64,6 +64,9 @@ public:
 	void FillCircle(byte x, byte y, byte radius, byte fillcolor);
 	void DrawCircleOutletBox(byte x, byte y, byte RelayData, bool reverse = false);
 	void DrawDate(byte x, byte y);
+#if defined(DATETIME24)
+	void DrawDateTimeISO8601(byte x, byte y);
+#endif // defined(DATETIME24)
 	void DrawOutletBox(byte x, byte y, byte RelayData);
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	void DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue);
@@ -72,6 +75,7 @@ public:
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 	void DrawGraph(byte x, byte y);
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
+	void DrawImage(int swidth, int sheight, byte x, byte y, const prog_uchar *iPtr);
 
     // For Setup
     void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits = 2);

@@ -28,6 +28,16 @@ LEDClass::LEDClass()
 	digitalWrite(ledPin, LOW);
 }
 
+#ifdef REEFANGEL_MINI
+	void LEDClass::RGB(byte R, byte G, byte B)
+	{
+		analogWrite(ledPin,255-R);
+		analogWrite(actinicPWMPin,255-G);
+		analogWrite(daylightPWMPin,255-B);
+	}
+#endif //REEFANGEL_MINI
+
+
 //void LEDClass::On()
 //{
 //	digitalWrite(ledPin, HIGH);

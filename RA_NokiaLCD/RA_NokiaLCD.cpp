@@ -32,7 +32,11 @@
 #define CS 3          // Digital 3 --> #CS
 #define CLK 4         // Digital 4 --> SCLK
 #define SDA 5         // Digital 5 --> SDATA
+#ifdef REEFANGEL_MINI
+#define RESET 7       // Digital 7 --> #RESET
+#else
 #define RESET 6       // Digital 6 --> #RESET
+#endif //REEFANGEL_MINI
 
 // Phillips PCF8833 Command Set
 #define NOP      0x00 	// nop
@@ -1208,6 +1212,50 @@ void RA_NokiaLCD::DrawDate(byte x, byte y)
     DrawText(DateTextColor, DefaultBGColor, x, y, text);
 }
 
+#if defined(DATETIME24)
+// Draw date and time according to ISO 8601
+// Example: 2012-05-25 21:48:43
+void RA_NokiaLCD::DrawDateTimeISO8601(byte x, byte y)
+{
+    char text[20];
+    char temp2[]="  ";
+    char temp4[]="    ";
+    strcpy(text,"");
+	
+	// Date
+	itoa(year(),temp4,10);
+    strcat(text,temp4);
+    strcat(text,"-");
+	
+    itoa(month(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text,"-");
+	
+    itoa(day(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text," ");
+	
+	// Time
+    itoa(hour(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text,":");
+	
+    itoa(minute(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    strcat(text,":");
+	
+    itoa(second(),temp2,10);
+    if (temp2[1]==0) strcat(text,"0");
+    strcat(text,temp2);
+    
+    DrawText(DateTextColor, DefaultBGColor, x, y, text);
+}
+#endif // DATETIME24
+
 void RA_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
 {
     Clear(OutletBorderColor,x,y,x+104,y);  //94
@@ -1301,6 +1349,23 @@ void RA_NokiaLCD::DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I
         {
             count+=1;
             if ((count<=swidth*sheight) && Wire.available()) SendData(~Wire.read());
+        }
+    }
+    while (count < swidth*sheight);
+}
+
+void RA_NokiaLCD::DrawImage(int swidth, int sheight, byte x, byte y, const prog_uchar *iPtr)
+{
+    int count = 0;
+    SetBox(x,y,swidth-1+x,sheight-1+y);
+    SendCMD(0x2c);
+
+    do
+    {
+        for (byte j = 0; j < 30; j++)
+        {
+            count+=1;
+            if (count<=swidth*sheight) SendData(~pgm_read_byte_near(iPtr++));
         }
     }
     while (count < swidth*sheight);

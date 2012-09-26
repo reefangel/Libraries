@@ -149,11 +149,11 @@ public:
 	byte LightsOnPortsE[MAX_RELAY_EXPANSION_MODULES];
 #endif  // RelayExp
 #endif  // RemoveAllLights
-#ifdef WavemakerSetup
+//#ifdef WavemakerSetup
 	// TODO find a better way to save the wavemaker ports for restarting once timers are updated from setup screen
-	byte WM1Port;
-	byte WM2Port;
-#endif  // WavemakerSetup
+//	byte WM1Port;	deprecated by issue #47
+//	byte WM2Port;	deprecated by issue #47
+//#endif  // WavemakerSetup
 
 	byte OverheatProbe;
 	byte TempProbe;
@@ -166,6 +166,11 @@ public:
 	void inline AddWifi() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
+	void inline AddCustomColors() {};
+	void inline Display24h() {};
+	void inline UseFlexiblePhCalibration() {};
+	void inline One() {};
+	void inline Mini() {};
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
@@ -280,9 +285,14 @@ public:
 #if defined WATERLEVELEXPANSION
     void SetupCalibrateWaterLevel();
 #endif  // defined WATERLEVELEXPANSION
-#ifdef DateTimeSetup
+#if defined DateTimeSetup
+#ifdef DATETIME24
+    void SetupDateTime24();
+#else
     void SetupDateTime();
+#endif  // DATETIME24
 #endif  // DateTimeSetup
+
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef DosingPumpSetup
     void SetupDosingPump();

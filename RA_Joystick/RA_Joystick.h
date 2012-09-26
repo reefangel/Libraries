@@ -43,6 +43,9 @@ private:
 	unsigned long KeyKeep;
 	byte KeyTurbo;
 	byte KeyCount;
+#ifdef REEFANGEL_MINI	
+	unsigned long ButtonDebounce;
+#endif // REEFANGEL_MINI
 };
 
 #endif  // __RA_JOYSTICK_H__

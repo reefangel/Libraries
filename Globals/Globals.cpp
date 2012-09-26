@@ -156,7 +156,7 @@ char* MoonPhaseLabel()
   else if (V<0.1875) return "Waxing Crescent";
   else if (V<0.3125) return "First Quarter";
   else if (V<0.4375) return "Waxing Gibbous";
-  else if (V<0.5625) return "Fuul Moon";
+  else if (V<0.5625) return "Full Moon";
   else if (V<0.6875) return "Waning Gibbous";
   else if (V<0.8125) return "Last Quarter";
   else if (V<0.9375) return "Waning Crescent";

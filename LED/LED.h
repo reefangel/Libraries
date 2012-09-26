@@ -30,6 +30,9 @@ public:
 	LEDClass();
 	inline void On() { digitalWrite(ledPin, HIGH); }
 	inline void Off() { digitalWrite(ledPin, LOW); }
+#ifdef REEFANGEL_MINI
+	void RGB(byte R, byte G, byte B);
+#endif //REEFANGEL_MINI
 };
 
 

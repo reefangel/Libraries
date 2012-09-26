@@ -31,6 +31,10 @@ AddWifi	KEYWORD2
 StandardLights	KEYWORD2
 AddRFExpansion	KEYWORD2
 AddDateTimeMenu	KEYWORD2
+AddCustomsColors	KEYWORD2
+Display24h	KEYWORD2
+One	KEYWORD2
+Mini	KEYWORD2
 DayLights	KEYWORD2
 DelayedStartLights	KEYWORD2
 ActinicLights	KEYWORD2
@@ -126,6 +130,18 @@ Channel2PWMParabola	KEYWORD2
 Channel3PWMParabola	KEYWORD2
 Channel4PWMParabola	KEYWORD2
 Channel5PWMParabola	KEYWORD2
+ChannelWhiteSlope	KEYWORD2
+ChannelRoyalBlueSlope	KEYWORD2
+ChannelRedSlope	KEYWORD2
+ChannelGreenSlope	KEYWORD2
+ChannelBlueSlope	KEYWORD2
+ChannelIntensitySlope	KEYWORD2
+ChannelWhiteParabola	KEYWORD2
+ChannelRoyalBlueParabola	KEYWORD2
+ChannelRedParabola	KEYWORD2
+ChannelGreenParabola	KEYWORD2
+ChannelBlueParabola	KEYWORD2
+ChannelIntensityParabola	KEYWORD2
 #Relay
 
 On	KEYWORD2
@@ -386,6 +402,8 @@ WaterLevelMax_read	KEYWORD2
 WaterLevelMax_write	KEYWORD2
 WaterLevelMin_read	KEYWORD2
 WaterLevelMin_write	KEYWORD2
+SalTempComp_read	KEYWORD2
+SalTempComp_write	KEYWORD2
 
 IMCheck_read	KEYWORD2
 IMCheck_write	KEYWORD2

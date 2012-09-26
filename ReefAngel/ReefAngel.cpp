@@ -27,14 +27,12 @@
 
 byte ButtonPress = 0;
 
-
 SIGNAL(PCINT0_vect) {
 	if (millis()-ButtonDebounce>600)
 	{
 		ButtonDebounce=millis();
 		ButtonPress++;
 	}
-
 }
 
 // Menu Headings
@@ -527,12 +525,16 @@ void ReefAngelClass::Init()
 
 
 
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined DisplayLEDPWM && ! defined RemoveAllLights && ! defined REEFANGEL_MINI
     // Restore PWM values
     PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
     PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
+#ifdef REEFANGEL_MINI
+    LED.RGB(0,0,0);
+#endif //REEFANGEL_MINI
+    
     // Set the default ports to be turned on & off during the 2 modes
     // To enable a port to be toggled, place a 1 in the appropriate position
     // Default to have ports 4, 5, & 8 toggled
@@ -608,7 +610,7 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	boolean LightRelayOn=false;
 	for (int l=0;l<8;l++)
 	{
@@ -625,7 +627,7 @@ void ReefAngelClass::Refresh()
 // issue #12: Revert back
 	analogWrite(actinicPWMPin, PWM.GetActinicValue()*2.55);
     analogWrite(daylightPWMPin, PWM.GetDaylightValue()*2.55);
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 
 #ifdef RFEXPANSION
 	byte RFRecv=0;
@@ -640,6 +642,7 @@ void ReefAngelClass::Refresh()
 		Timer[FEEDING_TIMER].ForceTrigger();
 	}
 	if (DisplayedMenu!=FEEDING_MODE && RF.UseMemory) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
+	RF.RadionWrite();
 #endif  // RFEXPANSION
 #ifdef AI_LED
     if (millis()-AI.AImillis>AI.StreamDelay)
@@ -1102,7 +1105,8 @@ void ReefAngelClass::DosingPumpRepeat(byte DPRelay, int OffsetMinute, int Repeat
 		Relay.Off(DPRelay);
 	}
 	*/
-	Relay.Set(DPRelay,((elapsedSecsToday(now())-(OffsetMinute*60))%(RepeatMinute*60))<RunTime);
+	signed long t=(elapsedSecsToday(now())-((long)OffsetMinute*60));
+	Relay.Set(DPRelay,(t%((long)RepeatMinute*60))<RunTime && t>=0);
 }
 
 void ReefAngelClass::Wavemaker(byte WMRelay, int WMTimer)
@@ -1310,17 +1314,17 @@ void ReefAngelClass::DosingPumpRepeat2(byte Relay)
 void ReefAngelClass::Wavemaker1(byte WMRelay)
 {
 	Wavemaker(WMRelay,InternalMemory.WM1Timer_read());
-#ifdef WavemakerSetup
-	WM1Port = WMRelay;
-#endif
+//#ifdef WavemakerSetup
+//	WM1Port = WMRelay; deprecated by issue #47
+//#endif
 }
 
 void ReefAngelClass::Wavemaker2(byte WMRelay)
 {
 	Wavemaker(WMRelay,InternalMemory.WM2Timer_read());
-#ifdef WavemakerSetup
-	WM2Port = WMRelay;
-#endif
+//#ifdef WavemakerSetup
+//	WM2Port = WMRelay; deprecated by issue #47
+//#endif
 }
 
 #ifdef VersionMenu
@@ -1745,7 +1749,11 @@ void ReefAngelClass::ShowInterface()
 #else
 				// display everything on the home screen except the graph
 				// the graph is drawn/updated when we exit the main menu & when the parameters are saved
+#ifdef DATETIME24
+				LCD.DrawDateTimeISO8601(6, 112);
+#else
 				LCD.DrawDate(6, 112);
+#endif // DATETIME24
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 				LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -2325,7 +2333,11 @@ void ReefAngelClass::ProcessButtonPressMain()
 		}
 		case MainMenu_PHCalibration:
 		{
+#if defined SETUP_CALIBRATEPH_CHOICE
+			SetupCalibrateChoicePH();
+#else
 			SetupCalibratePH();
+#endif
 			break;
 		}
 #ifdef SALINITYEXPANSION
@@ -2356,10 +2368,14 @@ void ReefAngelClass::ProcessButtonPressMain()
 			break;
 		}
 #endif  // WATERLEVELEXPANSION
-#ifdef DateTimeSetup
+#if defined DateTimeSetup
 		case MainMenu_DateTime:
 		{
+#ifdef DATETIME24
+            SetupDateTime24();
+#else
 			SetupDateTime();
+#endif //DATETIME24
 			break;
 		}
 #endif  // DateTimeSetup
@@ -2440,8 +2456,8 @@ void ReefAngelClass::ProcessButtonPressSetup()
             {
                 InternalMemory.WM1Timer_write(v);
                 InternalMemory.WM2Timer_write(y);
-                Relay.On(WM1Port);
-                Relay.On(WM2Port);
+//                Relay.On(WM1Port);
+//                Relay.On(WM2Port);
 //                Relay.Write();
             }
             break;
@@ -2476,7 +2492,11 @@ void ReefAngelClass::ProcessButtonPressSetup()
 #endif  // DosingPumpIntervalSetup
         case SetupMenu_CalibratePH:
         {
+#if defined SETUP_CALIBRATEPH_CHOICE
+            SetupCalibrateChoicePH();
+#else
             SetupCalibratePH();
+#endif
             break;
         }
 #ifdef SALINITYEXPANSION
@@ -2507,10 +2527,14 @@ void ReefAngelClass::ProcessButtonPressSetup()
 			break;
 		}
 #endif  // WATERLEVELEXPANSION
-#ifdef DateTimeSetup
+#if defined DateTimeSetup
         case SetupMenu_DateTime:
         {
-            SetupDateTime();
+#ifdef DATETIME24
+            SetupDateTime24();
+#else
+			SetupDateTime();
+#endif
             break;
         }
 #endif  // DateTimeSetup
@@ -2559,13 +2583,13 @@ void ReefAngelClass::ProcessButtonPressLights()
 				Relay.RelayMaskOnE[i] = B00000000;
 			}
 #endif  // RelayExp
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 			// TODO should possibly store the PWM value to be reset instead of turning off completely
             // sets PWM to 0%
             PWM.SetActinic(0);
             PWM.SetDaylight(0);
             PWM.LightsOverride=false;
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
             Relay.Write();
             DisplayMenuEntry("Restore Lights");
             showmenu = false;
@@ -2595,7 +2619,7 @@ void ReefAngelClass::ProcessButtonPressLights()
             break;
         }
 #endif  // StandardLightSetup
-#ifdef DisplayLEDPWM
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
         case LightsMenu_LEDPWM:
         {
             int v = InternalMemory.LEDPWMActinic_read();
@@ -2610,7 +2634,7 @@ void ReefAngelClass::ProcessButtonPressLights()
             }
             break;
         }
-#endif  // DisplayLEDPWM
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
         default:
         {
             SelectedMenuItem = DEFAULT_MENU_ITEM;
@@ -3335,7 +3359,7 @@ void ReefAngelClass::SetupCalibratePH()
 	}
 }
 
-#ifdef SetupCalibrateChoicePH
+#ifdef SETUP_CALIBRATEPH_CHOICE
 void ReefAngelClass::SetupCalibrateChoicePH()
 {
 	enum choices {
@@ -3525,35 +3549,15 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 	
 	if ( bSave )
 	{
-		if(iTarget[0] == 7 && iTarget[1] == 10)
-		{
-			PHMin = iValue[0];
-			PHMax = iValue[1];
-		} 
-		else 
-		{
-			if(iTarget[0] == 7)
-			{
-				PHMin = iValue[0];
-				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-			}
-			else if(iTarget[1] == 10)
-			{
-				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-				PHMax = iValue[1];
-			} 
-			else 
-			{
-				PHMin = LinearInterpolation(7.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-				PHMax = LinearInterpolation(10.0, iTarget[0], iValue[0], iTarget[1], iValue[1]);
-			}
-		}
+		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
+		PHMax = map(10.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
+		
         // save PHMin & PHMax to memory
         InternalMemory.PHMin_write(PHMin);
         InternalMemory.PHMax_write(PHMax);
 	}
 }
-#endif // SetupCalibrateChoicePH
+#endif // SETUP_CALIBRATEPH_CHOICE
 
 #ifdef SALINITYEXPANSION
 void ReefAngelClass::SetupCalibrateSalinity()
@@ -3849,7 +3853,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 }
 #endif  // WATERLEVELEXPANSION
 
-#ifdef DateTimeSetup
+#if defined DateTimeSetup && !defined DATETIME24
 void ReefAngelClass::SetupDateTime()
 {
     enum choices {
@@ -4189,6 +4193,352 @@ void ReefAngelClass::SetupDateTime()
     }
 }
 #endif  // DateTimeSetup
+
+
+#if defined DateTimeSetup && defined DATETIME24
+void ReefAngelClass::SetupDateTime24()
+{
+    enum choices {
+        YEAR,
+        MONTH,
+        DAY,
+        HOUR,
+        MINUTE,
+        OK,
+        CANCEL
+    };
+    byte sel = YEAR;
+    bool bSave = false;
+    bool bDone = false;
+    bool bRedraw = true;
+    bool bDrawButtons = true;
+    byte Year, Month, Day, Hour, Minute;
+    byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+	uint8_t iTimeformat;
+    byte DateRow = 35, TimeRow = 60, FormatRow = 85;
+
+    Year = year() - 2000;
+    Month = month();
+    Day = day();
+    Hour = hour();
+    Minute = minute();
+
+    ClearScreen(DefaultBGColor);
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, DateRow,"Date:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, TimeRow,"Time:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 57, DateRow, "20");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, DateRow, "-");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 102, DateRow, "-");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, TimeRow, ":");
+
+    do
+    {
+#if defined WDT || defined WDT_FORCE
+		wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+        if ( bRedraw )
+        {
+            switch ( sel )
+            {
+				case YEAR:
+				{
+                    LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
+                    LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
+                    LCD.DrawOption(Year, 1, 69, DateRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+					if ( bDrawButtons )
+					{
+						LCD.DrawOK(false);
+						LCD.DrawCancel(false);
+					}
+					break;
+				}
+                case MONTH:
+                {
+                    LCD.DrawOption(Month, 1, 89, DateRow, "", "", 2);
+                    LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
+                    LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case DAY:
+                {
+                    LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
+                    LCD.DrawOption(Day, 1, 109, DateRow, "", "", 2);
+                    LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case HOUR:
+                {
+                    LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
+                    LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
+                    LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
+                    LCD.DrawOption(Hour, 1, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case MINUTE:
+                {
+                    LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
+                    LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
+                    LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
+                    LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                    LCD.DrawOption(Minute, 1, 89, TimeRow, "", "", 2);
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+
+                case OK:
+                {
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
+                        LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
+                        LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
+                        LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                        LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+                        LCD.DrawOK(true);
+                        LCD.DrawCancel(false);
+                    }
+                    break;
+                }
+                case CANCEL:
+                {
+                    if ( bDrawButtons )
+                    {
+                        LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
+                        LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
+                        LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
+                        LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
+                        LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
+                        LCD.DrawOK(false);
+                        LCD.DrawCancel(true);
+                    }
+                    break;
+                }
+            }
+
+            bRedraw = false;
+            bDrawButtons = false;
+        }
+        if ( Joystick.IsUp() )
+        {
+            switch ( sel )
+            {
+                case MONTH:
+                {
+                    Month++;
+                    if ( Month > 12 )
+                    {
+                        Month = 1;
+                    }
+                    break;
+                }
+                case DAY:
+                {
+                    Day++;
+                    // lookup days in a month table
+                    if ( ! IsLeapYear(2000+Year) )
+                    {
+                        // not leap year
+                        if ( Day > MonthDays[Month] )
+                        {
+                            Day = 1;
+                        }
+                    }
+                    else
+                    {
+                        // leap year, only special case is February
+                        if ( Month == 2 )
+                        {
+                            if ( Day > 29 )
+                            {
+                                Day = 1;
+                            }
+                        }
+                        else
+                        {
+                            if ( Day > MonthDays[Month] )
+                            {
+                                Day = 1;
+                            }
+                        }
+                    }
+                    break;
+                }
+                case YEAR:
+                {
+                    Year++;
+                    if ( Year > 99 )
+                    {
+                        Year = 0;
+                    }
+                    break;
+                }
+                case HOUR:
+                {
+                    Hour++;
+                    if ( Hour > 23 )
+                    {
+                        Hour = 0;
+                    }
+                    break;
+                }
+                case MINUTE:
+                {
+                    Minute++;
+                    if ( Minute > 59 )
+                    {
+                        Minute = 0;
+                    }
+                    break;
+                }
+            }
+            bRedraw = true;
+        }
+        if ( Joystick.IsDown() )
+        {
+            switch ( sel )
+            {
+                case MONTH:
+                {
+                    Month--;
+                    if ( Month < 1 || Month > 12 )
+                    {
+                        Month = 12;
+                    }
+                    break;
+                }
+                case DAY:
+                {
+                    Day--;
+                    // lookup days in a month table
+                    if ( ! IsLeapYear(2000+Year) )
+                    {
+                        // not leap year
+                        if ( Day < 1 || Day > MonthDays[Month] )
+                        {
+                            Day = MonthDays[Month];
+                        }
+                    }
+                    else
+                    {
+                        // leap year, only special case is February
+                        if ( Month == 2 )
+                        {
+                            if ( Day < 1 || Day > MonthDays[Month] )
+                            {
+                                Day = 29;
+                            }
+                        }
+                        else
+                        {
+                            if ( Day < 1 || Day > MonthDays[Month] )
+                            {
+                                Day = MonthDays[Month];
+                            }
+                        }
+                    }
+                    break;
+                }
+                case YEAR:
+                {
+                    Year--;
+                    if ( Year > 99 )
+                    {
+                        Year = 99;
+                    }
+                    break;
+                }
+                case HOUR:
+                {
+                    Hour--;
+                    if ( Hour > 23 )
+                    {
+                        Hour = 23;
+                    }
+                    break;
+                }
+                case MINUTE:
+                {
+                    Minute--;
+                    if ( Minute > 59 )
+                    {
+                        Minute = 59;
+                    }
+                    break;
+                }
+            }
+            bRedraw = true;
+        }
+        if ( Joystick.IsLeft() )
+        {
+            bRedraw = true;
+            bDrawButtons = true;
+            sel--;
+            if ( sel > CANCEL )
+            {
+                sel = CANCEL;
+            }
+        }
+        if ( Joystick.IsRight() )
+        {
+            bRedraw = true;
+            bDrawButtons = true;
+            sel++;
+            if ( sel > CANCEL )
+            {
+                sel = YEAR;
+            }
+        }
+        if ( Joystick.IsButtonPressed() )
+        {
+            if ( sel == OK )
+            {
+                bDone = true;
+                bSave = true;
+            }
+            else if ( sel == CANCEL )
+            {
+                bDone = true;
+            }
+        }
+    } while ( ! bDone );
+
+    if ( bSave )
+    {
+        // Set Date & Time
+        setTime(Hour, Minute, 0, Day, Month, Year);
+        now();
+        RTC.set(now());
+    }
+}
+
+#endif  // DATETIME24
 
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef DosingPumpSetup

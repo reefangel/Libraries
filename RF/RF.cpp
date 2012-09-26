@@ -64,11 +64,15 @@ void RFClass::SetChannel(byte Channel, byte Value)
 
 void RFClass::RadionWrite()
 {
-	for (byte a=0;a<RF_CHANNELS;a++)
+	if (millis()-lastWrite>3000)
 	{
-		SetMode(Radion, RadionChannels[a]*2, a);
+		lastWrite=millis();
+		for (byte a=0;a<RF_CHANNELS;a++)
+		{
+			SetMode(Radion, RadionChannels[a]*2, a);
+		}
+		SetMode(Radion,0,Radion_Ready);
 	}
-	SetMode(Radion,0,Radion_Ready);
 }
 
 void RFClass::ChannelWhiteSlope()
@@ -223,14 +227,13 @@ void RFClass::ChannelIntensityParabola(byte MinuteOffset)
 
 void RFClass::ChannelRadionParabola(byte Channel, byte Start, byte End, byte Duration)
 {
-	SetChannel(Channel,PWMSlope(
+	SetChannel(Channel,PWMParabola(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
 		InternalMemory.StdLightsOffMinute_read(),
 		Start,
 		End,
-		Duration,
 		RadionChannels[Channel]
 	));
 }
@@ -239,14 +242,13 @@ void RFClass::ChannelRadionParabola(byte Channel, byte Start, byte End, byte Dur
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
-	SetChannel(Channel,PWMSlope(
+	SetChannel(Channel,PWMParabola(
 		onTime/60,
 		onTime%60,
 		offTime/60,
 		offTime%60,
 		Start,
 		End,
-		Duration,
 		RadionChannels[Channel]
 	));
 }
