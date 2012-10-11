@@ -176,6 +176,19 @@ void RelayClass::Write()
 #endif  // RelayExp
 }
 
+boolean RelayClass::Status(byte ID)
+{
+    if ( ID < 9 ) return bitRead((RelayData & RelayMaskOff) | RelayMaskOn, ID-1);
+#ifdef RelayExp
+   if ( (ID > 10) && (ID < 89) )
+   {
+      byte EID = byte(ID/10);
+      return bitRead((RelayDataE[EID-1] & RelayMaskOffE[EID-1]) | RelayMaskOnE[EID-1], (ID%10)-1);
+   }
+#endif  // RelayExp
+   return false;
+}
+
 #ifdef SaveRelaysPresent
 boolean RelayClass::IsRelayPresent (byte module)
 {

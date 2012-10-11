@@ -43,7 +43,7 @@ public:
 	void Toggle(byte ID);
 	void Set(byte ID, boolean Status);
 	void Write();
-	inline boolean Status(byte Port)  { return bitRead((RelayData & RelayMaskOff) | RelayMaskOn,Port-1); }
+	boolean Status(byte ID);
 #ifdef SaveRelaysPresent
 	boolean IsRelayPresent (byte module);
 	boolean RelayPresent;
