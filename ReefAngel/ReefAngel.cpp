@@ -447,6 +447,16 @@ ReefAngelClass::ReefAngelClass()
 
 void ReefAngelClass::Init()
 {
+#if defined WDT || defined WDT_FORCE
+	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
+	if ( wdtenabled ) wdt_enable(WDTO_1S);
+#if defined(__AVR_ATmega2560__)
+	wdt_enable(WDTO_1S);
+#endif  // __AVR_ATmega2560__
+#endif  // defined WDT || defined WDT_FORCE
+	
+	Wire.onReceive(NULL);
+	Wire.onRequest(NULL);
 	Wire.begin();
 	Serial.begin(57600);
 #ifdef __PLUS_SPECIAL_WIFI__
@@ -576,14 +586,6 @@ void ReefAngelClass::Init()
     // Initialize the Nested Menus
     InitMenus();
 #endif  // CUSTOM_MENU
-
-#if defined WDT || defined WDT_FORCE
-	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
-	if ( wdtenabled ) wdt_enable(WDTO_1S);
-#if defined(__AVR_ATmega2560__)
-	wdt_enable(WDTO_1S);
-#endif  // __AVR_ATmega2560__
-#endif  // defined WDT || defined WDT_FORCE
 
 #ifdef wifi
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
