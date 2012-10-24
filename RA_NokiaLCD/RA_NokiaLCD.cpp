@@ -696,8 +696,8 @@ void RA_NokiaLCD::Init()
     RESET1
     delay(100);
 
-    //Software Reset
-    SendCMD(SWRESET);
+//    //Software Reset
+//    SendCMD(SWRESET);
 
     //Sleep Out
     SendCMD(SLEEPOUT);
