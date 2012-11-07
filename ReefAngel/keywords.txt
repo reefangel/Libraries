@@ -168,6 +168,8 @@ SetMode	KEYWORD2
 RFCheck	KEYWORD2
 GetChannel	KEYWORD2
 RadionWrite	KEYWORD2
+TurnOn	KEYWORD2
+TurnOff	KEYWORD2
 
 #AI
 
