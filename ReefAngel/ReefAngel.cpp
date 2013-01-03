@@ -534,7 +534,7 @@ void ReefAngelClass::Init()
 #ifdef REEFANGEL_MINI
     LED.RGB(0,0,0);
 #endif //REEFANGEL_MINI
-    
+
     // Set the default ports to be turned on & off during the 2 modes
     // To enable a port to be toggled, place a 1 in the appropriate position
     // Default to have ports 4, 5, & 8 toggled
@@ -3368,7 +3368,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
         OK
     };
     byte sel = CANCEL;
-	
+
     bool bOKSel = false;
     bool bSave = false;
     bool bDone = false;
@@ -3381,7 +3381,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 	unsigned int maxPh = 10;
 	unsigned int minPh = 4;
     byte offset = 65;
-		
+
     // draw labels
     ClearScreen(DefaultBGColor);
     for (int b=0;b<2;b++)
@@ -3392,18 +3392,18 @@ void ReefAngelClass::SetupCalibrateChoicePH()
     	bDone = false;
 		bRedraw = true;
     	bDrawButtons = true;
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");		
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");
 		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
-		
+
 		strcpy(msg, b==0 ? "First value\0" : "Second value\0");
 		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, msg);
-		
+
 		iTarget[b] = iStart[b];
 		if(b==1 && iTarget[0]==iTarget[b])
 		{
 			iTarget[b]--;
 		}
-	
+
 		do
 		{
 #if defined WDT || defined WDT_FORCE
@@ -3416,8 +3416,8 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 			}
 			iValue[b]/=30;
 			LCD.DrawCalibrate(iValue[b], MENU_START_COL + offset, MENU_START_ROW*6);
-			
-			
+
+
 			if ( bRedraw )
 			{
 				switch ( sel )
@@ -3456,7 +3456,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 				bRedraw = false;
 				bDrawButtons = false;
 			}
-			
+
 			if ( Joystick.IsUp() )
 			{
 				if (sel == TARGETPH)
@@ -3471,12 +3471,12 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 							iTarget[b]--;
 						}
 					}
-					
+
 					if ( iTarget[b] > maxPh )
 					{
 						iTarget[b] = maxPh;
 					}
-					else 
+					else
 					{
 						bRedraw = true;
 					}
@@ -3496,18 +3496,18 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 							iTarget[b]++;
 						}
 					}
-					
+
 					if ( iTarget[b] < minPh )
 					{
 						iTarget[b] = minPh;
 					}
-					else 
+					else
 					{
 						bRedraw = true;
 					}
 				}
 			}
-			
+
 			if ( Joystick.IsLeft() )
 			{
 				bRedraw = true;
@@ -3518,7 +3518,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 					sel = OK;
 				}
 			}
-			
+
 			if ( Joystick.IsRight() )
 			{
 				bRedraw = true;
@@ -3529,7 +3529,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 					sel = TARGETPH;
 				}
 			}
-			
+
 			if ( Joystick.IsButtonPressed() )
 			{
 				if ( sel == OK || sel == TARGETPH)
@@ -3544,14 +3544,14 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 			}
 		} while ( ! bDone );
     }
-	
+
     ClearScreen(DefaultBGColor);
-	
+
 	if ( bSave )
 	{
 		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
 		PHMax = map(10.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
-		
+
         // save PHMin & PHMax to memory
         InternalMemory.PHMin_write(PHMin);
         InternalMemory.PHMax_write(PHMax);
