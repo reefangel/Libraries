@@ -28,7 +28,6 @@
 #endif  // COLORS_PDE
 #include <Arduino.h>
 #include <Time.h>
-#include <OneWire.h>
 
 #include <avr/pgmspace.h>
 
@@ -165,7 +164,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define HPin                1
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
-//#define Piezo               16 
+//#define Piezo               16
 
 //Digital I/O
 #ifdef REEFANGEL_MINI
@@ -208,9 +207,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define STORE_PARAMS_TIMER		5
 
 // Temp Sensor References
-#define T1_PROBE		1
-#define T2_PROBE		2
-#define T3_PROBE		3
+#define T1_PROBE		0
+#define T2_PROBE		1
+#define T3_PROBE		2
 
 /*
 EEPROM locations
@@ -681,18 +680,16 @@ Used by the AI Functions
 #define RoyalBlue		2
 const byte RawChannel[]={67,65,66};
 
+#define MAX_TEMP_SENSORS 3
+
 // Parameters structure, moved from RA_NokiaLCD.h to a more central location
 typedef struct  {
-  int Temp[4];
+  int Temp[MAX_TEMP_SENSORS];
   int PH;
   int Salinity;
   int ORP;
   int PHExp;
 } ParamsStruct;
-
-// Temperature units
-#define Celsius		1
-#define Fahrenheit	0
 
 //ReefTouch Block
 
@@ -880,7 +877,6 @@ typedef struct {
 
 // external globally defined variables
 extern byte ButtonPress;  // Defined in ReefAngel.cpp, used for joystick button presses
-extern OneWire ds;  // Defined in TempSensor.cpp, used for TempSensorClass
 // delayed on variables, Defined in Relay.cpp
 extern uint32_t LastStart;
 extern byte DelayedOnPorts;

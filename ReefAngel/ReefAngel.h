@@ -22,11 +22,12 @@
 #ifndef	__REEFANGEL_H__
 #define __REEFANGEL_H__
 
-#define ReefAngel_Version "1.0.2"
+#define ReefAngel_Version "1.0.X MJD"
 
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
 #include <Time.h>
+#include <DS1307RTC.h>
 #include <RA_NokiaLCD.h>
 #include <RA_ATO.h>
 #include <RA_Joystick.h>
@@ -107,10 +108,10 @@ public:
 #if defined PHEXPANSION
 	int PHExpMin, PHExpMax;
 	PHClass PH;
-#endif  // PHEXPANSION	
+#endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION
 	WaterLevelClass WaterLevel;
-#endif  // WATERLEVELEXPANSION	
+#endif  // WATERLEVELEXPANSION
 #if defined RFEXPANSION
 	RFClass RF;
 #endif  // defined RFEXPANSION
@@ -158,9 +159,17 @@ public:
 	byte OverheatProbe;
 	byte TempProbe;
 
-	void Init();
+	void Init(int useUnits=DEGREE_F);
 	void Refresh();
-	void SetTemperatureUnit(byte unit);
+    /**
+     * Allow ReefAngel to execute periodic tasks while waiting for a lengthy
+     * asynchronous operation.
+     */
+    void Yield();
+    /**
+    * @deprecated
+    */
+	void SetTemperatureUnit(int unit);
 	void ConvertTempUnit();
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
@@ -327,6 +336,8 @@ private:
 	byte CurrentRelayState;
 #endif  // SaveRelayState
 
+private:
+    int units;
 };
 
 #ifdef CUSTOM_MAIN
