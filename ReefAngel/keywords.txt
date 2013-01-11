@@ -97,6 +97,7 @@ DrawCalibrate	KEYWORD2
 DrawCircleOutline	KEYWORD2
 FillCircle	KEYWORD2
 DrawCircleOutletBox	KEYWORD2
+DrawCircleOutletBoxHorizontal	KEYWORD2
 
 #PWM
 
