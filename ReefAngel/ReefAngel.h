@@ -178,6 +178,9 @@ public:
 	void CO2Control(byte CO2Relay, int LowPH, int HighPH);
 	void PHControl(byte PHControlRelay, int LowPH, int HighPH);
 	void StandardATO(byte ATORelay, int ATOTimeout);
+#ifdef WATERLEVELEXPANSION	
+	void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+#endif  // WATERLEVELEXPANSION	
 	void SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
 	void DosingPump(byte DPRelay, byte OnHour, byte OnMinute, int RunTime);
