@@ -50,7 +50,7 @@ byte WaterLevelClass::GetLevel()
 	if (t!=0)
 	{
 		t=map(t, InternalMemory.WaterLevelMin_read(), InternalMemory.WaterLevelMax_read(), 0, 100); // apply the calibration to the sensor reading
-		t=constrain(t,0,100);
+		t=constrain(t,0,200);
 	}
 	return t;
 }
