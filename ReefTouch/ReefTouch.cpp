@@ -178,15 +178,15 @@ void ReefTouchClass::ShowInterface()
 				//Temperature
 				j=35+i;
 				LargeFont.SetColor(WHITE,BKCOLOR,true);
-				LargeFont.DrawCenterNumber((LCD.GetWidth()/4)-20,j,Params.Temp1,10);
-				LargeFont.DrawCenterNumber(LCD.GetWidth()/2,j,Params.Temp2,10);
-				LargeFont.DrawCenterNumber((LCD.GetWidth()*3/4)+20,j,Params.Temp3,10);
+				LargeFont.DrawCenterNumber((LCD.GetWidth()/4)-20,j,Params.Temp[T1_PROBE],10);
+				LargeFont.DrawCenterNumber(LCD.GetWidth()/2,j,Params.Temp[T2_PROBE],10);
+				LargeFont.DrawCenterNumber((LCD.GetWidth()*3/4)+20,j,Params.Temp[T3_PROBE],10);
 		
 				//pH, Salinity and ORP
 				j+=50+i;
 				LargeFont.SetColor(WHITE,BKCOLOR,true);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()/4)-20,j,Params.PH,100);
-				LargeFont.DrawCenterNumber(LCD.GetWidth()/2,j,Params.Sal,10);
+				LargeFont.DrawCenterNumber(LCD.GetWidth()/2,j,Params.Salinity,10);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()*3/4)+20,j,Params.ORP,10);
 				
 				// PWM Bars
@@ -1581,6 +1581,7 @@ void TouchScreen::GetTouch()
 	a= SPI.transfer(0);
 	b= SPI.transfer(0);
 	uX=(a<<5|b>>3);
+//	Serial.println(uX);
 
 	SPI.transfer(0x90);
 	a= SPI.transfer(0);
@@ -1602,7 +1603,8 @@ void TouchScreen::GetTouch()
 	pressure/=uZ1;
 	pressure*=100;
 
-	if (pressure>TouchPressure) uX=0;
+//	Serial.println(pressure);
+//	if (pressure>TouchPressure) uX=0;
 
 	TP1;
 	SPCR=0x50;
@@ -1637,6 +1639,7 @@ void TouchScreen::GetTouch()
 	}
 	if (X <= 0) X = 0;
 	if (Y <= 0) Y = 0;
+	
 }
 
 boolean TouchScreen::IsTouched()
@@ -1697,6 +1700,7 @@ void TiltClass::Refresh()
 	ACC0;
 	x=Read(0x6);
 	y=Read(0x7);
+//	Serial.println(x);
 	ACC1;
 	//if (Tilt.GetX()>-TT_SENSITIVITY && Tilt.GetX()<TT_SENSITIVITY && Tilt.GetY()>-TT_SENSITIVITY && Tilt.GetY()<TT_SENSITIVITY) LCD.SetOrientation(1);
 	if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) ReefTouch.LCD.SetOrientation(1);
