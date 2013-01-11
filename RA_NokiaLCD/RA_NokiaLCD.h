@@ -63,6 +63,7 @@ public:
 	void DrawCircleOutline(byte x, byte y, byte radius, byte bordercolor);
 	void FillCircle(byte x, byte y, byte radius, byte fillcolor);
 	void DrawCircleOutletBox(byte x, byte y, byte RelayData, bool reverse = false);
+	void DrawCircleOutletBoxHorizontal(byte x, byte y, byte RelayData);	
 	void DrawDate(byte x, byte y);
 #if defined(DATETIME24)
 	void DrawDateTimeISO8601(byte x, byte y);

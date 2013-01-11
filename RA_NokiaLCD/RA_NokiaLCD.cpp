@@ -697,8 +697,8 @@ void RA_NokiaLCD::Init()
     RESET1
     delay(100);
 
-    //Software Reset
-    SendCMD(SWRESET);
+//    //Software Reset
+//    SendCMD(SWRESET);
 
     //Sleep Out
     SendCMD(SLEEPOUT);
@@ -1170,6 +1170,45 @@ void RA_NokiaLCD::DrawCircleOutletBox(byte x, byte y, byte RelayData, bool rever
 			FillCircle(b+x,y+30,3,OutletOffBGColor);
 		}
 	}
+}
+
+void RA_NokiaLCD::DrawCircleOutletBoxHorizontal(byte x, byte y, byte RelayData)
+{
+   // altered version of DrawCircleOutletBox by JerkyJunky
+   // designed for a layout where the plugs are aligned like:
+   // 8 6 4 2
+   // 7 5 3 1
+   
+   //Variables:
+   byte offset = 5;      //distance between given x,y location and the center of first circle
+   byte a = 0;            //our counter of relay port
+   byte b = 3;            //horizontal column counter
+   byte c = 1;            //vertical row counter
+   
+   //Main Loop - Starting at port 1 work our way up and left
+   for (a=0;a<8;a++)
+   {
+      DrawCircleOutline((b*10) + x + offset, (c*10) + y + offset, 5, OutletBorderColor);
+      //check if relay is active and color appropriately
+      if ((RelayData&(1<<a))==1<<a)
+      {
+         FillCircle((b*10) + x + offset, (c*10) + y + offset, 3, OutletOnBGColor);
+      }
+      else
+      {
+         FillCircle((b*10) + x + offset, (c*10) + y + offset, 3, OutletOffBGColor);
+      }
+      //adjust counters for next circle (up and left)
+      if (c == 0)
+      {
+         c = 1;
+         b = b - 1;
+      }
+      else
+      {
+         c = c - 1;
+      }
+   }
 }
 
 void RA_NokiaLCD::DrawDate(byte x, byte y)

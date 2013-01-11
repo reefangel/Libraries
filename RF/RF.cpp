@@ -26,25 +26,43 @@
 RFClass::RFClass()
 {
 	UseMemory=true;
+	VortechEnable=true;
+}
+
+void RFClass::SendData(byte mode, byte speed, byte duration)
+{
+	Wire.beginTransmission(I2CRF); // transmit to device #16
+	Wire.write('$');              // sends $
+	Wire.write('$');              // sends $
+	Wire.write('$');              // sends $
+	Wire.write(mode);              // sends mode
+	Wire.write(speed);              // sends speed
+	Wire.write(duration);              // sends duration
+	Wire.endTransmission();    // stop transmitting
 }
 
 void RFClass::SetMode(byte mode, byte speed, byte duration)
 {
-    if (mode<Slave_Start)
-    {
-    	Mode=mode;
-    	Speed=speed;
-    	Duration=duration;
-    	speed*=2.55;
-    }
-    Wire.beginTransmission(I2CRF); // transmit to device #16
-    Wire.write('$');              // sends $
-    Wire.write('$');              // sends $
-    Wire.write('$');              // sends $
-    Wire.write(mode);              // sends mode
-    Wire.write(speed);              // sends speed
-    Wire.write(duration);              // sends duration
-    Wire.endTransmission();    // stop transmitting
+	if (VortechEnable)
+	{
+		if (mode<Slave_Start && mode!=TurnOn)
+		{
+			Mode=mode;
+			Speed=speed;
+			Duration=duration;
+			speed*=2.55;
+			SendData(mode, speed, duration);
+		}
+		if (mode==TurnOff) VortechEnable=false;
+	}
+	else
+	{
+		if (mode==TurnOn)
+		{
+			VortechEnable=true;
+			SendData(mode, speed, duration);
+		}
+	}
 }
 
 byte RFClass::RFCheck()

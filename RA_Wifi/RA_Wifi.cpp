@@ -640,8 +640,8 @@ void processHTTP()
 			}
 			case REQ_FEEDING:
 			{
-				// Start up the feeding mode only if we are on the home screen
-				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU )
+				// Start up the feeding mode only if we are on the home screen or from Water change
+				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU || ReefAngel.DisplayedMenu==WATERCHANGE_MODE )
 				{
 					//ReefAngel.ClearScreen(DefaultBGColor);
 					ReefAngel.FeedingModeStart();

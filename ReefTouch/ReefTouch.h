@@ -119,14 +119,14 @@ static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST,
 #define LED1 sbi(PORTH, 4)
 
 
-typedef struct  { 
-  int Temp1; 
-  int Temp2;
-  int Temp3;
-  int PH;
-  int Sal;
-  int ORP;
-} ParamsStruct;
+//typedef struct  { 
+//  int Temp1; 
+//  int Temp2;
+//  int Temp3;
+//  int PH;
+//  int Sal;
+//  int ORP;
+//} ParamsStruct;
 
 
 class FontClass

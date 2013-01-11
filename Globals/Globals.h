@@ -655,6 +655,8 @@ Used by the RF Expansion Module
 #define Night_Stop	  8
 #define Night         9
 #define Storm         10
+#define TurnOff       20
+#define TurnOn        21
 #define Custom        11
 #define Slave_Start   97
 #define Slave_Stop    98

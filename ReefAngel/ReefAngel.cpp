@@ -454,6 +454,16 @@ ReefAngelClass::ReefAngelClass()
 void ReefAngelClass::Init(int useUnits)
 {
     units = useUnits;
+#if defined WDT || defined WDT_FORCE
+	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
+	if ( wdtenabled ) wdt_enable(WDTO_1S);
+#if defined(__AVR_ATmega2560__)
+	wdt_enable(WDTO_1S);
+#endif  // __AVR_ATmega2560__
+#endif  // defined WDT || defined WDT_FORCE
+
+	Wire.onReceive(NULL);
+	Wire.onRequest(NULL);
 	Wire.begin();
 	Serial.begin(57600);
 	TempSensor.Init();
@@ -583,14 +593,6 @@ void ReefAngelClass::Init(int useUnits)
     // Initialize the Nested Menus
     InitMenus();
 #endif  // CUSTOM_MENU
-
-#if defined WDT || defined WDT_FORCE
-	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
-	if ( wdtenabled ) wdt_enable(WDTO_1S);
-#if defined(__AVR_ATmega2560__)
-	wdt_enable(WDTO_1S);
-#endif  // __AVR_ATmega2560__
-#endif  // defined WDT || defined WDT_FORCE
 
 #ifdef wifi
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
@@ -947,6 +949,54 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 #endif  // ENABLE_ATO_LOGGING
 	}
 }
+
+#ifdef WATERLEVELEXPANSION
+void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
+{
+    // Input:  Relay port and timeout value (max number of seconds that ATO pump is allowed to run)
+	// Input:  Low and High Water Level to start and stop ATO pump
+	unsigned long TempTimeout = ATOTimeout;
+	TempTimeout *= 1000;
+
+	/*
+	Is the low level is reached (meaning we need to top off) and are we not currently topping off
+	Then we set the timer to be now and start the topping pump
+	*/
+    if ( WaterLevel.GetLevel()<LowLevel && ( !LowATO.IsTopping()) )
+    {
+        LowATO.Timer = millis();
+        LowATO.StartTopping();
+        Relay.On(ATORelay);
+    }
+
+    // If the high level is reached, this is a safeguard to prevent over running of the top off pump
+    if ( WaterLevel.GetLevel()>HighLevel )
+    {
+		LowATO.StopTopping();  // stop the low ato timer
+		Relay.Off(ATORelay);
+    }
+
+    /*
+    If the current time minus the start time of the ATO pump is greater than the specified timeout value
+    AND the ATO pump is currently running:
+    We turn on the status LED and shut off the ATO pump
+    This prevents the ATO pump from contniously running.
+    */
+	if ( (millis()-LowATO.Timer > TempTimeout) && LowATO.IsTopping() )
+	{
+		LED.On();
+#ifdef ENABLE_EXCEED_FLAGS
+		InternalMemory.write(ATO_Exceed_Flag, 1);
+#endif  // ENABLE_EXCEED_FLAGS
+		Relay.Off(ATORelay);
+#ifdef ENABLE_ATO_LOGGING
+		// bump the counter if a timeout occurs
+		AtoEventCount++;
+		if ( AtoEventCount >= MAX_ATO_LOG_EVENTS ) { AtoEventCount = 0; }
+#endif  // ENABLE_ATO_LOGGING
+	}
+}
+#endif  // WATERLEVELEXPANSION
 
 void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval)
 {
