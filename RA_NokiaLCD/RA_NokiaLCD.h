@@ -69,6 +69,7 @@ public:
 	void DrawDateTimeISO8601(byte x, byte y);
 #endif // defined(DATETIME24)
 	void DrawOutletBox(byte x, byte y, byte RelayData);
+    void DrawLabelledOutletBox(byte x, byte y, byte RelayData, const char * labels);
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	void DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue);
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights

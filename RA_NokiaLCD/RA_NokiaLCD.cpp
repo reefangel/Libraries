@@ -20,6 +20,7 @@
   */
 
 #include <Globals.h>
+#include <limits.h>
 #include <Time.h>
 #include "RA_NokiaLCD.h"
 #include <Wire.h>
@@ -1177,13 +1178,13 @@ void RA_NokiaLCD::DrawCircleOutletBoxHorizontal(byte x, byte y, byte RelayData)
    // designed for a layout where the plugs are aligned like:
    // 8 6 4 2
    // 7 5 3 1
-   
+
    //Variables:
    byte offset = 5;      //distance between given x,y location and the center of first circle
    byte a = 0;            //our counter of relay port
    byte b = 3;            //horizontal column counter
    byte c = 1;            //vertical row counter
-   
+
    //Main Loop - Starting at port 1 work our way up and left
    for (a=0;a<8;a++)
    {
@@ -1260,43 +1261,64 @@ void RA_NokiaLCD::DrawDateTimeISO8601(byte x, byte y)
     char temp2[]="  ";
     char temp4[]="    ";
     strcpy(text,"");
-	
+
 	// Date
 	itoa(year(),temp4,10);
     strcat(text,temp4);
     strcat(text,"-");
-	
+
     itoa(month(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text,"-");
-	
+
     itoa(day(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text," ");
-	
+
 	// Time
     itoa(hour(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text,":");
-	
+
     itoa(minute(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text,":");
-	
+
     itoa(second(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
-    
+
     DrawText(DateTextColor, DefaultBGColor, x, y, text);
 }
 #endif // DATETIME24
 
+/**
+ * Draw a  relay outlet box at the x-y coordinates using the provided relay data. Ports
+ * are labelled "1" through "8".
+ *
+ * @param x X coordinate for the relay outlet box.
+ * @param y Y coordinate for the relay outlet box.
+ * @param RelayData state data for the outlet box, one bit per port.
+ */
 void RA_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
 {
+    DrawLabelledOutletBox(x, y, RelayData, "12345678");
+}
+
+/**
+ * Draw a labelled relay outlet box at the x-y coordinates using the provided relay data.
+ *
+ * @param x X coordinate for the relay outlet box.
+ * @param y Y coordinate for the relay outlet box.
+ * @param RelayData state data for the outlet box, one bit per port.
+ * @param labels labels for each relay port.
+ */
+void RA_NokiaLCD::DrawLabelledOutletBox(byte x, byte y, byte RelayData, const char * labels)
+    {
     Clear(OutletBorderColor,x,y,x+104,y);  //94
     Clear(OutletBorderColor,x,y+12,x+104,y+12);
     for (byte a=0;a<8;a++)
@@ -1310,22 +1332,21 @@ void RA_NokiaLCD::DrawOutletBox(byte x, byte y,byte RelayData)
             fcolor = OutletOnFGColor;
         }
         Clear(bcolor,x+(a*13),y+1,x+13+(a*13),y+11);
-        itoa(a+1,temp,10);
+        temp[0] = labels[a];
         DrawText(fcolor,bcolor,x+4+(a*13),y+3,temp);
     }
 }
 
-void RA_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal)
+void RA_NokiaLCD::DrawSingleMonitor(int value, byte fcolor, byte x, byte y, byte decimal)
 {
-	char text[7];
-	if ( Temp == 0xFFFF ) Temp = 0;
-	if (( Temp == 0 ) && ( decimal > 1 ))
+	char text[12];
+	if (value == INT_MIN)
 	{
-		strcpy(text, "Error");
+	    strcpy_P(text, PSTR(" n/a"));
 	}
 	else
 	{
-		ConvertNumToString(text, Temp, decimal);
+		ConvertNumToString(text, value, decimal);
 	}
     Clear(DefaultBGColor,x,y,x+30,y+8);
     DrawText(fcolor,DefaultBGColor,x,y,text);

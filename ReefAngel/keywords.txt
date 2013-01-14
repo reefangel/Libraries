@@ -81,7 +81,7 @@ BacklightOn	KEYWORD2
 BacklightOff	KEYWORD2
 Clear	KEYWORD2
 DrawText	KEYWORD2
-DrawLargeText	KEYWORD2	
+DrawLargeText	KEYWORD2
 DrawHugeText	KEYWORD2
 PutPixel	KEYWORD2
 SetContrast	KEYWORD2
@@ -379,9 +379,9 @@ RadionSlopeStartI_write	KEYWORD2
 RadionSlopeEndI_read	KEYWORD2
 RadionSlopeEndI_write	KEYWORD2
 RadionSlopeDurationI_read	KEYWORD2
-RadionSlopeDurationI_write	KEYWORD2        
+RadionSlopeDurationI_write	KEYWORD2
 DelayedStart_read	KEYWORD2
-DelayedStart_write	KEYWORD2   
+DelayedStart_write	KEYWORD2
 ATOExtendedTimeout_read	KEYWORD2
 ATOExtendedTimeout_write	KEYWORD2
 ATOHighExtendedTimeout_read	KEYWORD2
@@ -416,7 +416,7 @@ write	KEYWORD2
 read_int	KEYWORD2
 write_int	KEYWORD2
 write_dword	KEYWORD2
-        	
+
 #######################################
 # Instances (KEYWORD2)
 #######################################
@@ -586,8 +586,8 @@ Mode	LITERAL2
 Speed	LITERAL2
 Duration	LITERAL2
 RadionChannels	LITERAL2
-Celsius	LITERAL2
-Fahrenheit	LITERAL2 
+DEGREE_C	LITERAL2
+DEGREE_F	LITERAL2
 
 MAIN_RELAY	LITERAL2
 EXP1_RELAY	LITERAL2

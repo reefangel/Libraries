@@ -35,6 +35,13 @@ SIGNAL(PCINT0_vect) {
 	}
 }
 
+#ifdef DirectTempSensor
+// Tying this to DirectTempSensor is legacy. It should be reconsidered.
+#define READINGS_FOR_AVERAGE 1  // one ping only ;-)
+#else
+#define READINGS_FOR_AVERAGE 20
+#endif
+
 // Menu Headings
 const prog_char Menu_0_label[] PROGMEM = "Main:";
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
@@ -445,8 +452,9 @@ ReefAngelClass::ReefAngelClass()
 	PCICR |= 1;
 }
 
-void ReefAngelClass::Init()
+void ReefAngelClass::Init(int useUnits)
 {
+    units = useUnits;
 #if defined WDT || defined WDT_FORCE
 	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
 	if ( wdtenabled ) wdt_enable(WDTO_1S);
@@ -454,11 +462,12 @@ void ReefAngelClass::Init()
 	wdt_enable(WDTO_1S);
 #endif  // __AVR_ATmega2560__
 #endif  // defined WDT || defined WDT_FORCE
-	
+
 	Wire.onReceive(NULL);
 	Wire.onRequest(NULL);
 	Wire.begin();
 	Serial.begin(57600);
+	TempSensor.begin();
 #ifdef __PLUS_SPECIAL_WIFI__
 	Serial1.begin(57600);
 #endif // __PLUS_SPECIAL_WIFI__
@@ -468,7 +477,6 @@ void ReefAngelClass::Init()
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
 	LCD.Init();
 	Joystick.Init();
-	TempSensor.Init();
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
 	setSyncInterval(SECS_PER_HOUR);  // Changed to sync every hour.
 	RAStart=now();
@@ -544,7 +552,7 @@ void ReefAngelClass::Init()
 #ifdef REEFANGEL_MINI
     LED.RGB(0,0,0);
 #endif //REEFANGEL_MINI
-    
+
     // Set the default ports to be turned on & off during the 2 modes
     // To enable a port to be toggled, place a 1 in the appropriate position
     // Default to have ports 4, 5, & 8 toggled
@@ -608,10 +616,6 @@ void ReefAngelClass::Init()
 
 void ReefAngelClass::Refresh()
 {
-    pingSerial();
-#if defined WDT || defined WDT_FORCE
-	wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
 #if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	boolean LightRelayOn=false;
 	for (int l=0;l<8;l++)
@@ -660,98 +664,62 @@ void ReefAngelClass::Refresh()
 	IO.GetChannel();
 #endif  // IOEXPANSION
 	Relay.Write();
-	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
-	now();
-#ifdef DirectTempSensor
-	LCD.PutPixel(DefaultBGColor,1,1);
-	Params.Temp[T1_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT1);
-	LCD.PutPixel(DefaultBGColor,1,1);
-	Params.Temp[T2_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT2);
-	LCD.PutPixel(DefaultBGColor,1,1);
-	Params.Temp[T3_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT3);
-	LCD.PutPixel(DefaultBGColor,1,1);
-	Params.PH=analogRead(PHPin);
-	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
-	Params.PH=constrain(Params.PH,100,1400);
-	LCD.PutPixel(DefaultBGColor,1,1);
-#if defined SALINITYEXPANSION
-	Params.Salinity=Salinity.Read();
-	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
-	// Salinity Compensation was contributed by ahmedess
-	// http://forum.reefangel.com/viewtopic.php?p=7386#p7386
-	if (Salinity.TemperatureCompensation)
-	{
-		double SalCompensation;
-		if (TempSensor.unit && Params.Temp[T1_PROBE])
-		SalCompensation=Params.Salinity/(1+((Params.Temp[T1_PROBE]-250)*0.0024));
-		else
-		SalCompensation=Params.Salinity/(1+((Params.Temp[T1_PROBE]-770)*0.001333));
-		Params.Salinity=round(SalCompensation);
-	}
-	LCD.PutPixel(DefaultBGColor,1,1);
-#endif  // defined SALINITYEXPANSION
-#if defined ORPEXPANSION
-	Params.ORP=ORP.Read();
-	if (Params.ORP!=0)
-	{
-		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
-		Params.ORP=constrain(Params.ORP,0,550);
-	}
-	LCD.PutPixel(DefaultBGColor,1,1);
-#endif  // defined ORPEXPANSION
-#if defined PHEXPANSION
-	Params.PHExp=PH.Read();
-	if (Params.PHExp!=0)
-	{
-		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
-		Params.PHExp=constrain(Params.PHExp,100,1400);
-	}
-	LCD.Clear(DefaultBGColor,0,0,1,1);
-#endif  // defined PHEXPANSION
-	TempSensor.RequestConversion();
-	LCD.PutPixel(DefaultBGColor,1,1);
-#else  // DirectTempSensor
-    int x = TempSensor.ReadTemperature(TempSensor.addrT1);
-    LCD.PutPixel(DefaultBGColor,1,1);
-    int y;
-    y = x - Params.Temp[T1_PROBE];
-    // check to make sure the temp readings aren't beyond max allowed
-    if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T1_PROBE] == 0 || ~x) Params.Temp[T1_PROBE] = x;
-    x = TempSensor.ReadTemperature(TempSensor.addrT2);
-    LCD.PutPixel(DefaultBGColor,1,1);
-    y = x - Params.Temp[T2_PROBE];
-    if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T2_PROBE] == 0 || ~x) Params.Temp[T2_PROBE] = x;
-    x = TempSensor.ReadTemperature(TempSensor.addrT3);
-    LCD.PutPixel(DefaultBGColor,1,1);
-    y = x - Params.Temp[T3_PROBE];
-    if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T3_PROBE] == 0 || ~x) Params.Temp[T3_PROBE] = x;
+
+	// Read sensors.
+
+	if(!TempSensor.ConversionDone()) goto COMMON_EXIT;
+
+    for(int each = 0; each < MAX_TEMP_SENSORS; each++)
+    {
+        LCD.PutPixel(DefaultBGColor,1,1);
+        int x = TempSensor.ReadTemperature(each);
+
+		if ( units == DEGREE_F )
+		{
+		    // convert to troglodyte units.
+		    x = x * 1.8 + 320;
+		}
+
+#ifndef DirectTempSensor
+        int y = x - Params.Temp[each];
+        // check to make sure the temp reading swings aren't beyond max allowed
+        if ( abs(y) >= MAX_TEMP_SWING && Params.Temp[each] != 0 && x)
+            continue;
+#endif // !DirectTempSensor
+        Params.Temp[each] = x;
+    }
+
+    // averaged pH reading
     Params.PH=0;
-    for (int a=0;a<20;a++)
+    for (int a=1;a<=READINGS_FOR_AVERAGE;a++)
     {
     	Params.PH+=analogRead(PHPin);
     }
-    Params.PH/=20;
+    Params.PH/=READINGS_FOR_AVERAGE;
     LCD.PutPixel(DefaultBGColor,1,1);
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 	Params.PH=constrain(Params.PH,100,1400);
 
 #if defined SALINITYEXPANSION
+    // averaged salinty reading
 	unsigned long tempsal=0;
-    for (int a=0;a<20;a++)
+    for (int a=1;a<=READINGS_FOR_AVERAGE;a++)
     {
     	tempsal+=Salinity.Read();
     }
-	Params.Salinity=tempsal/20;
+	Params.Salinity=tempsal/READINGS_FOR_AVERAGE;
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined SALINITYEXPANSION
+
 #if defined ORPEXPANSION
+    // averaged ORP reading
 	unsigned long temporp=0;
-    for (int a=0;a<20;a++)
+    for (int a=1;a<=READINGS_FOR_AVERAGE;a++)
     {
     	temporp+=ORP.Read();
     }
-	Params.ORP=temporp/20;
+	Params.ORP=temporp/READINGS_FOR_AVERAGE;
 	if (Params.ORP!=0)
 	{
 		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
@@ -759,37 +727,59 @@ void ReefAngelClass::Refresh()
 	}
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined ORPEXPANSION
+
 #if defined PHEXPANSION
+    // averaged pH reading from expansion
 	unsigned long tempph=0;
-    for (int a=0;a<20;a++)
+    for (int a=1;a<=READINGS_FOR_AVERAGE;a++)
     {
     	tempph+=PH.Read();
     }
-	Params.PHExp=tempph/20;
+	Params.PHExp=tempph/READINGS_FOR_AVERAGE;
 	if (Params.PHExp!=0)
 	{
 		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
 		Params.PHExp=constrain(Params.PHExp,100,1400);
 	}
-	LCD.Clear(DefaultBGColor,0,0,1,1);
+	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined PHEXPANSION
+
 	TempSensor.RequestConversion();
-#endif  // DirectTempSensor
+
+COMMON_EXIT:
+	LCD.Clear(DefaultBGColor,0,0,1,1);
+    Yield();
 }
 
-void ReefAngelClass::SetTemperatureUnit(byte unit)
+void ReefAngelClass::Yield()
+{
+#if defined WDT || defined WDT_FORCE
+			wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+    now();
+    pingSerial();
+}
+
+/**
+* This should go away!
+* @deprecated Set units in constructor in initialization.
+*/
+void ReefAngelClass::SetTemperatureUnit(int useUnits)
 {
     // 0 (or DEGREE_F) for farenheit
     // 1 (or DEGREE_C) for celsius
-    TempSensor.unit = unit;
+    units = useUnits;
 }
 
+/**
+* XXX mduigou I would prefer to see everything internally in Celcius and only convert to Fahrenheit for display. Switching units is dangerous and potentially error prone. (viz Mars Climate Orbiter )
+*/
 void ReefAngelClass::ConvertTempUnit()
 {
     // check to see if the internal memory values are set correctly
     // if they are not, convert them from F to C or vice versa
     int x;
-    if ( TempSensor.unit )
+    if ( units )
     {
     	// C
     	// if the values are larger than the highest temp, then we know we have F stored
@@ -964,7 +954,7 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	}
 }
 
-#ifdef WATERLEVELEXPANSION	
+#ifdef WATERLEVELEXPANSION
 void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
 {
     // Input:  Relay port and timeout value (max number of seconds that ATO pump is allowed to run)
@@ -1010,7 +1000,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 #endif  // ENABLE_ATO_LOGGING
 	}
 }
-#endif  // WATERLEVELEXPANSION	
+#endif  // WATERLEVELEXPANSION
 
 void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval)
 {
@@ -2708,7 +2698,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
             int y = InternalMemory.HeaterTempOff_read();
             int min, max;
             char *s = "0";
-            if ( TempSensor.unit )
+            if ( units )
             {
             	min = DEGREE_C_LOW_TEMP;
             	max = DEGREE_C_HIGH_TEMP;
@@ -2733,7 +2723,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
             int y = InternalMemory.ChillerTempOff_read();
             int min, max;
             char *s = "0";
-            if ( TempSensor.unit )
+            if ( units )
             {
             	min = DEGREE_C_LOW_TEMP;
             	max = DEGREE_C_HIGH_TEMP;
@@ -2760,7 +2750,7 @@ void ReefAngelClass::ProcessButtonPressTemps()
             int min, max;
             char *s = "0";
             byte d;
-            if ( TempSensor.unit )
+            if ( units )
             {
             	min = DEGREE_C_OVERHEAT_LOW_TEMP;
             	max = DEGREE_C_OVERHEAT_HIGH_TEMP;
@@ -3418,7 +3408,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
         OK
     };
     byte sel = CANCEL;
-	
+
     bool bOKSel = false;
     bool bSave = false;
     bool bDone = false;
@@ -3431,7 +3421,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 	unsigned int maxPh = 10;
 	unsigned int minPh = 4;
     byte offset = 65;
-		
+
     // draw labels
     ClearScreen(DefaultBGColor);
     for (int b=0;b<2;b++)
@@ -3442,18 +3432,18 @@ void ReefAngelClass::SetupCalibrateChoicePH()
     	bDone = false;
 		bRedraw = true;
     	bDrawButtons = true;
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");		
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");
 		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
-		
+
 		strcpy(msg, b==0 ? "First value\0" : "Second value\0");
 		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, msg);
-		
+
 		iTarget[b] = iStart[b];
 		if(b==1 && iTarget[0]==iTarget[b])
 		{
 			iTarget[b]--;
 		}
-	
+
 		do
 		{
 #if defined WDT || defined WDT_FORCE
@@ -3466,8 +3456,8 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 			}
 			iValue[b]/=30;
 			LCD.DrawCalibrate(iValue[b], MENU_START_COL + offset, MENU_START_ROW*6);
-			
-			
+
+
 			if ( bRedraw )
 			{
 				switch ( sel )
@@ -3506,7 +3496,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 				bRedraw = false;
 				bDrawButtons = false;
 			}
-			
+
 			if ( Joystick.IsUp() )
 			{
 				if (sel == TARGETPH)
@@ -3521,12 +3511,12 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 							iTarget[b]--;
 						}
 					}
-					
+
 					if ( iTarget[b] > maxPh )
 					{
 						iTarget[b] = maxPh;
 					}
-					else 
+					else
 					{
 						bRedraw = true;
 					}
@@ -3546,18 +3536,18 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 							iTarget[b]++;
 						}
 					}
-					
+
 					if ( iTarget[b] < minPh )
 					{
 						iTarget[b] = minPh;
 					}
-					else 
+					else
 					{
 						bRedraw = true;
 					}
 				}
 			}
-			
+
 			if ( Joystick.IsLeft() )
 			{
 				bRedraw = true;
@@ -3568,7 +3558,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 					sel = OK;
 				}
 			}
-			
+
 			if ( Joystick.IsRight() )
 			{
 				bRedraw = true;
@@ -3579,7 +3569,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 					sel = TARGETPH;
 				}
 			}
-			
+
 			if ( Joystick.IsButtonPressed() )
 			{
 				if ( sel == OK || sel == TARGETPH)
@@ -3594,14 +3584,14 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 			}
 		} while ( ! bDone );
     }
-	
+
     ClearScreen(DefaultBGColor);
-	
+
 	if ( bSave )
 	{
 		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
 		PHMax = map(10.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
-		
+
         // save PHMin & PHMax to memory
         InternalMemory.PHMin_write(PHMin);
         InternalMemory.PHMax_write(PHMax);
