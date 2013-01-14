@@ -118,8 +118,15 @@ byte MoonPhase()
 
 void ConvertNumToString(char* string, int num, byte decimal)
 {
+    if((num < 0) && (num + decimal > 0))
+    {
+        // handle fractional negatives
+        *string++ = '-';
+    }
+
 	itoa(num/decimal,string,10);
 	if(decimal > 1) {
+	    // decimal portion.
 	    string += strlen(string);
     	*string++ = '.';
         num = abs(num%decimal);

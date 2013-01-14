@@ -19,6 +19,11 @@
   * Updates Released under Apache License, Version 2.0
   */
 
+ /*
+  * Updated by:  Mike Duigou
+  * Updates Released under Apache License, Version 2.0
+  */
+
 #include <limits.h>
 
 #include "RA_TempSensor.h"
@@ -27,10 +32,15 @@
 #include <OneWire.h>
 #include <ReefAngel.h>
 
-// Initial default temperature (25.0C)
-#define INITAL_DEFAULT_TEMP 250
+#define ONEWIRE_DS18B20_RESCAN_INTERVAL  ((uint32_t) (20 * 1000))
 
-#define ONEWIRE_DS18B20_FAMILY ((uint8_t) 0x28)
+// Initial default temperature (26.5C)
+#define INITAL_DEFAULT_TEMP                         ((int) 26.5)
+
+// power on initial temperature (85.0C)
+#define ONEWIRE_DS18B20_FAMILY_POWERON_DEFAULT_TEMP ((int) 850)
+
+#define ONEWIRE_DS18B20_FAMILY           ((uint8_t) 0x28)
 
 #define ONEWIRE_DS18B20_CONVERT		     ((uint8_t) 0x44)
 
@@ -59,43 +69,8 @@
 
 OneWire ds(tempPin);
 
-static void debug(const char* msg, OneWireTempSensor sensor) {
-    unsigned long now = millis();
-    Serial.print( msg );
-    Serial.print( "  " );
-    Serial.print( "addr: " );
-    Serial.print( sensor.addr[0], HEX );
-    Serial.print( " " );
-    Serial.print( sensor.addr[1], HEX );
-    Serial.print( " " );
-    Serial.print( sensor.addr[2], HEX );
-    Serial.print( " " );
-    Serial.print( sensor.addr[3], HEX );
-    Serial.print( " " );
-    Serial.print( sensor.addr[4], HEX );
-    Serial.print( " " );
-    Serial.print( sensor.addr[5], HEX );
-    Serial.print( " " );
-    Serial.print( sensor.addr[6], HEX );
-    Serial.print( " " );
-    Serial.print( sensor.addr[7], HEX );
-    Serial.print( " reqd: " );
-    unsigned long since = now - sensor.lastRequested;
-    Serial.print( since, HEX );
-    Serial.print( "ms read: " );
-    since = now - sensor.lastRead;
-    Serial.print( since, HEX );
-    Serial.print( "ms interval: " );
-    since = sensor.lastRequested - sensor.lastRead;
-    Serial.print( since, HEX );
-    Serial.print( "ms temp: " );
-   Serial.print( sensor.lastTempRead, HEX );
-    Serial.println();
-}
-
-void RA_TempSensorClass::Init()
+void RA_TempSensorClass::begin()
 {
-        searches = 1;
         all_sensors = 0;
         temp_sensors = 0;
         last_probe_search = ULONG_MAX;
@@ -107,43 +82,49 @@ unsigned int RA_TempSensorClass::SensorSearch()
 {
     temp_sensors = 0;
     all_sensors = 0;
-	if( !ds.reset() ) {
-	    Serial.println("No presence");
-	}
-	while ((temp_sensors < MAX_TEMP_SENSORS) && ds.search(sensors[temp_sensors].addr))
-	{
-	    all_sensors++;
-		if(sensors[temp_sensors].addr[0]==ONEWIRE_DS18B20_FAMILY)
-		{
-		    if( OneWire::crc8( sensors[temp_sensors].addr, 7) != sensors[temp_sensors].addr[7])
-		    {
-		    Serial.println("CRC is not valid!");
-		    }
-		    sensors[temp_sensors].lastRequested = sensors[temp_sensors].lastRead = 0;
-			temp_sensors++;
-		}
-		ReefAngel.Yield();
-	}
-	ds.reset_search();
+	if( ds.reset() ) {
+	    // something lives!
+    	while ((temp_sensors < MAX_TEMP_SENSORS) && ds.search(sensors[temp_sensors].addr))
+        {
+            ReefAngel.Yield();
+            all_sensors++;
+            if(sensors[temp_sensors].addr[0]==ONEWIRE_DS18B20_FAMILY)
+            {
+                if( OneWire::crc8(sensors[temp_sensors].addr, ONEWIRE_ADDR_LENGTH - 1) != sensors[temp_sensors].addr[ONEWIRE_ADDR_LENGTH - 1])
+                {
+                continue;
+                }
+                sensors[temp_sensors].lastTempRead = INITAL_DEFAULT_TEMP;
+                temp_sensors++;
+            }
 
-	searches++;
+        }
+        ds.reset_search();
+        ReefAngel.Yield();
+
+        // clear empty slots.
+        for(int clear = temp_sensors; clear < MAX_TEMP_SENSORS; clear++)
+        {
+            sensors[clear].addr[0] = 0;
+        }
+    }
+
+    last_probe_search = millis();
 
 	return temp_sensors;
 }
 
-unsigned int RA_TempSensorClass::Sensors()
+unsigned int RA_TempSensorClass::Sensors() const
 {
     return temp_sensors;
 }
 
 void RA_TempSensorClass::RequestConversion()
 {
-    unsigned long now = millis();
-//    if((temp_sensors < MAX_TEMP_SENSORS) &&
-//      (now - last_probe_search > (60 * 1000)))
+    if((temp_sensors < MAX_TEMP_SENSORS) &&
+      ((ULONG_MAX == last_probe_search) || (millis() - last_probe_search > ONEWIRE_DS18B20_RESCAN_INTERVAL)))
     {
       SensorSearch();
-      last_probe_search = now;
     }
 
     for(int each = 0; each < temp_sensors; each++)
@@ -152,47 +133,51 @@ void RA_TempSensorClass::RequestConversion()
     }
 }
 
-bool RA_TempSensorClass::ConversionDone()
+bool RA_TempSensorClass::ConversionDone() const
 {
-    return 1 == ds.read_bit() ||  temp_sensors == 0;
+    bool done = (temp_sensors == 0) || 1 == ds.read_bit();
+
+    return done;
 }
 
-void RA_TempSensorClass::SendRequest(OneWireTempSensor sensor)
+void RA_TempSensorClass::SendRequest(OneWireTempSensor& sensor)
 {
 	if(sensor.addr[0]==ONEWIRE_DS18B20_FAMILY)
 	{
-        debug("req ", sensor);
-
         ds.reset();
 		ReefAngel.Yield();
 		ds.select(sensor.addr);
 		ReefAngel.Yield();
 		ds.write(ONEWIRE_DS18B20_CONVERT);
         ReefAngel.Yield();
-
-        sensor.lastRequested = millis();
 	}
 }
 
-int RA_TempSensorClass::ReadTemperature(int probe)
+int RA_TempSensorClass::ReadTemperature(int sensor)
 {
-    if(probe == 2) {
-        return searches * 1000 + all_sensors * 10 + temp_sensors;
+    if (sensor >= temp_sensors)
+    {
+        return INT_MIN;
     }
 
-    return ReadTemperature(sensors[probe]);
+    int temp = ReadTemperature(sensors[sensor]);
+
+    if((INT_MIN == temp) && (sensor == temp_sensors - 1))
+    {
+        // remove this sensor completely.
+        temp_sensors--;
+    }
+
+    return temp;
 }
 
-int RA_TempSensorClass::ReadTemperature(OneWireTempSensor sensor)
+int RA_TempSensorClass::ReadTemperature(OneWireTempSensor& sensor)
 {
-	unsigned int temp = INT_MIN;
+	int temp = INT_MIN;
 	uint8_t data[ONEWIRE_DS18B20_SCRATCH_LENGTH];
 
-
-    if((sensor.addr[0]==ONEWIRE_DS18B20_FAMILY) && (millis() - sensor.lastRequested < 750))
+    if(sensor.addr[0]==ONEWIRE_DS18B20_FAMILY)
     {
-        debug("read", sensor);
-
 		ds.reset();
 		ReefAngel.Yield();
 		ds.select(sensor.addr);
@@ -203,19 +188,30 @@ int RA_TempSensorClass::ReadTemperature(OneWireTempSensor sensor)
 		ds.read_bytes(data, 2);
 		ReefAngel.Yield();
 
-		// de-bounce power-on reading of 85C degrees
-		if ((millis()<1000) && (data[0]==0x50) && (data[1]==0x05))
-		{
-		    temp = INITAL_DEFAULT_TEMP;
-		}
-		else
-		{
-            temp=(data[1] << 8)+data[0]; //take the two bytes from the response relating to temperature
-		    temp= (temp * 10) >> 4; // (multiply by 10 and divide by 16)
-		}
+        temp = (data[ONEWIRE_DS18B20_SCRATCH_TEMP_MSB] << 8) + data[ONEWIRE_DS18B20_SCRATCH_TEMP_LSB];
+        temp = (temp * 10) >> 4; // (multiply by 10 and divide by 16 for 10ths of a degree)
+        if(-1 == temp)
+        {
+            // -1 is what we get if the sensor cannot be contacted.
+            // read remainder of scratch
+            ds.read_bytes(&data[2], ONEWIRE_DS18B20_SCRATCH_LENGTH - 2);
+            ReefAngel.Yield();
+            if( OneWire::crc8( data, ONEWIRE_DS18B20_SCRATCH_LENGTH - 1) != data[ONEWIRE_DS18B20_SCRATCH_CRC])
+            {
+                // bad CRC. Sensor is missing or suspect.
+                sensor.addr[0] = 0; // disable this sensor
+                temp = INT_MIN;
+            }
+        }
+        else if((ONEWIRE_DS18B20_FAMILY_POWERON_DEFAULT_TEMP == temp) && (millis()<1000))
+        {
+            // de-bounce power-on reading of 85C degrees
+            temp = INITAL_DEFAULT_TEMP;
+        }
 
-		sensor.lastRead = millis();
+#ifndef NDEBUG
 		sensor.lastTempRead = temp;
+#endif
     }
 
 	return temp;

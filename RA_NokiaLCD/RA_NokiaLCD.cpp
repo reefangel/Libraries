@@ -1178,13 +1178,13 @@ void RA_NokiaLCD::DrawCircleOutletBoxHorizontal(byte x, byte y, byte RelayData)
    // designed for a layout where the plugs are aligned like:
    // 8 6 4 2
    // 7 5 3 1
-   
+
    //Variables:
    byte offset = 5;      //distance between given x,y location and the center of first circle
    byte a = 0;            //our counter of relay port
    byte b = 3;            //horizontal column counter
    byte c = 1;            //vertical row counter
-   
+
    //Main Loop - Starting at port 1 work our way up and left
    for (a=0;a<8;a++)
    {
@@ -1339,15 +1339,11 @@ void RA_NokiaLCD::DrawLabelledOutletBox(byte x, byte y, byte RelayData, const ch
 
 void RA_NokiaLCD::DrawSingleMonitor(int value, byte fcolor, byte x, byte y, byte decimal)
 {
-	char text[10];
+	char text[12];
 	if (value == INT_MIN)
 	{
 	    strcpy_P(text, PSTR(" n/a"));
 	}
-//	else if (( value == 0 ) && ( decimal > 1 ))
-//	{
-//		strcpy_P(text, PSTR("Error"));
-//	}
 	else
 	{
 		ConvertNumToString(text, value, decimal);

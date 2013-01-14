@@ -159,6 +159,11 @@ public:
 	byte OverheatProbe;
 	byte TempProbe;
 
+    /**
+    *  Initialize the Reef Angel.
+    *
+    *  @param useUnits The temperature units to use, either DEGREE_C or DEGREE_F.
+    */
 	void Init(int useUnits=DEGREE_F);
 	void Refresh();
     /**
@@ -167,9 +172,12 @@ public:
      */
     void Yield();
     /**
-    * @deprecated
+    * Set the temperature units to be used for display.
+    *
+    * @deprecated Set units via Init() and don't change while running!
+    * @param useUnits The temperature units to use, either DEGREE_C or DEGREE_F.
     */
-	void SetTemperatureUnit(int unit);
+	void SetTemperatureUnit(int useUnits);
 	void ConvertTempUnit();
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};

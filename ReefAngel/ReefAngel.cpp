@@ -36,6 +36,7 @@ SIGNAL(PCINT0_vect) {
 }
 
 #ifdef DirectTempSensor
+// Tying this to DirectTempSensor is legacy. It should be reconsidered.
 #define READINGS_FOR_AVERAGE 1  // one ping only ;-)
 #else
 #define READINGS_FOR_AVERAGE 20
@@ -466,7 +467,7 @@ void ReefAngelClass::Init(int useUnits)
 	Wire.onRequest(NULL);
 	Wire.begin();
 	Serial.begin(57600);
-	TempSensor.Init();
+	TempSensor.begin();
 #ifdef __PLUS_SPECIAL_WIFI__
 	Serial1.begin(57600);
 #endif // __PLUS_SPECIAL_WIFI__
@@ -674,13 +675,16 @@ void ReefAngelClass::Refresh()
         int x = TempSensor.ReadTemperature(each);
 
 		if ( units == DEGREE_F )
+		{
+		    // convert to troglodyte units.
 		    x = x * 1.8 + 320;
+		}
 
 #ifndef DirectTempSensor
         int y = x - Params.Temp[each];
         // check to make sure the temp reading swings aren't beyond max allowed
-//        if ( abs(y) >= MAX_TEMP_SWING && Params.Temp[each] != 0 && x)
-//            continue;
+        if ( abs(y) >= MAX_TEMP_SWING && Params.Temp[each] != 0 && x)
+            continue;
 #endif // !DirectTempSensor
         Params.Temp[each] = x;
     }

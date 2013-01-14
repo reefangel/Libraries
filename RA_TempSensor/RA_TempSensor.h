@@ -18,6 +18,10 @@
   * Updated by:  Curt Binder
   * Updates Released under Apache License, Version 2.0
   */
+ /*
+  * Updated by:  Mike Duigou
+  * Updates Released under Apache License, Version 2.0
+  */
 
 #ifndef __RA_TEMPSENSOR_H__
 #define __RA_TEMPSENSOR_H__
@@ -30,22 +34,26 @@
 typedef uint8_t OneWireAddr[ONEWIRE_ADDR_LENGTH];
 
 typedef struct OneWireTempSensor {
-   unsigned long lastRequested;
-   unsigned long lastRead;
+#ifndef NDEBUG
    int lastTempRead;
+#endif
    OneWireAddr addr;
 } OneWireTempSensor;
 
 class RA_TempSensorClass
 {
 public:
-	void Init();
+    /**
+    * Initializes OneWire bus on temp pin, enumerates sensors and starts a temp conversion.
+    */
+	void begin();
+
 	/**
-	* Returns the number of temperature sensors available
+	* Returns the number of temperature sensors available.
 	*
 	* @return number of sensors available.
 	*/
-	unsigned int Sensors();
+	unsigned int Sensors() const;
 
 	/**
 	*   Request temperature conversion from all of the available sensors.
@@ -59,18 +67,17 @@ public:
 	*
 	*   @return <tt>true</tt> if the temperature conversion is complete otherwise false.
 	*/
-	bool ConversionDone();
+	bool ConversionDone() const;
 
     /**
     * Return temperature in Celsius 10ths of a degree.
     *
-    * @param probe Which temperature probe to read. Must be <tt>0 <= probe < Sensors()</tt>
+    * @param sensor Which temperature probe to read. Must be <tt>0 <= probe < Sensors()</tt>
     * @return temperature in Celsius 10ths of a degree. ie. 25.6C == 256
     */
-	int ReadTemperature(int probe);
+	int ReadTemperature(int sensor);
 
 private:
-    unsigned int searches;
     unsigned int all_sensors;
     unsigned int temp_sensors;
     unsigned long last_probe_search;
@@ -88,7 +95,7 @@ private:
     *
     * @param addr uniq addr of DS18B20 (Family 0x28) probe
     */
-	void SendRequest(OneWireTempSensor sensor);
+	void SendRequest(OneWireTempSensor& sensor);
 
     /**
     * Return temperature in Celsius 10ths of a degree.
@@ -96,7 +103,7 @@ private:
     * @param addr uniq addr of DS18B20 (Family 0x28) probe
     * @return temperature in Celsius 10ths of a degree. ie. 25.6C == 256
     */
-    int ReadTemperature(OneWireTempSensor sensor);
+    int ReadTemperature(OneWireTempSensor& sensor);
 };
 
 #endif // __RA_TEMPSENSOR_H__
