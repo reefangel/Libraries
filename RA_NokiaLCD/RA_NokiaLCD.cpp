@@ -586,8 +586,20 @@ const prog_uint16_t num_16x16[] PROGMEM = {
 };
 #endif  // NUMBERS_16x16
 
+const prog_uchar init_code_Nokia[] PROGMEM = {
+0x11, 0x03, 0x29, 0x13, 0x21
+};
+
+const prog_uchar init_code_S6B33B[] PROGMEM = {
+0x2c, 0x02, 0x01, 0x20, 0x0f, 0x26, 0x0f, 0x28, 0x01, 0x2e, 0x45, 0x00, 0x53, 0x00, 0x10, 0x03, 0x24, 0x22, 0x30, 0x3d,
+0x32, 0x0e, 0x40, 0x80, 0x42, 0x00, 0x83, 0x43, 0x00, 0x83, 0x34, 0x8d, 0x2a, 0x45, 0x2b, 0x69, 0x22, 0x11, 0x55, 0x00,
+0x56, 0x00, 0x57, 0x9f, 0x59, 0x00, 0x00, 0x9f, 0x00, 0x51
+};
+
+
 RA_NokiaLCD::RA_NokiaLCD()
 {
+	lcd_screen=false;
 #if defined(__AVR_ATmega2560__)
     pinMode(BL,OUTPUT);
     pinMode(CS,OUTPUT);
@@ -643,15 +655,40 @@ void RA_NokiaLCD::SendCMD(byte data)
     ShiftBits(data);
 }
 
+
+void RA_NokiaLCD::SendColor12Bit(byte color)
+{
+	int R=(color&0xE0)>>5;
+	if (R>=4) R=((R*2)+1); else R=R<<1;
+	int G=(color&0x1C)>>2;
+	if (G>=4) G=((G*2)+1)<<4; else G=G<<5;
+	int B=(color&0x03)*5;
+	SendData(R);
+	SendData(G+B);
+}
+
 void RA_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
 {
-    SendCMD(CASET);   // page start/end ram
-    SendData(x1);     // for some reason starts at 2
-    SendData(x2);
+	if (!lcd_screen)
+	{
+	    SendCMD(CASET);   // page start/end ram
+	    SendData(x1);     // for some reason starts at 2
+	    SendData(x2);
 
-    SendCMD(PASET);   // column start/end ram
-    SendData(y1);
-    SendData(y2);
+	    SendCMD(PASET);   // column start/end ram
+	    SendData(y1);
+	    SendData(y2);
+	}
+	else
+	{
+		SendCMD(0x42);
+		SendCMD(y1);     // for some reason starts at 2
+		SendCMD(y2);
+
+	    SendCMD(0x43);   // column start/end ram
+	    SendCMD(x1);
+	    SendCMD(x2);
+	}
 }
 
 void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
@@ -670,7 +707,7 @@ void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
     SetBox(xmin,ymin,xmax,ymax);
 
     // WRITE MEMORY
-    SendCMD(RAMWR);
+	if (!lcd_screen) SendCMD(RAMWR);
 
     // loop on total number of pixels / 2
     for (i = 0; i < ((xmax - xmin + 1) * (ymax - ymin + 1)) ; i++)
@@ -680,7 +717,11 @@ void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
         //SendData((color << 4) | ((color & 0xF0) >> 4));
         //SendData(((color >> 4) & 0xF0) | (color & 0x0F));
         //SendData((color & 0xF0) | (color >> 8));
-        SendData(~color);
+        
+    	if (!lcd_screen)
+    		SendData(~color);
+    	else
+    		SendColor12Bit(color);    		
     }
 }
 
@@ -696,42 +737,32 @@ void RA_NokiaLCD::Init()
     RESET1
     delay(100);
 
-//    //Software Reset
-//    SendCMD(SWRESET);
+    if (!lcd_screen)
+    {
+        for (int a=0;a<SIZE(init_code_Nokia);a++)
+        	SendCMD(pgm_read_byte_near(init_code_Nokia + a));
 
-    //Sleep Out
-    SendCMD(SLEEPOUT);
+        SendCMD(SETCON);
+        SendData(0x38);
 
-    //Booster ON
-    SendCMD(BSTRON);
+        //Memory data access control
+        SendCMD(MADCTL);
 
+        //SendData(8|64);   //rgb + MirrorX
+        //SendData(8|128);   //rgb + MirrorY
+        SendData(0xc0);
 
-    //Display On
-    SendCMD(DISPON);
+        SendCMD(COLMOD);
+        SendData(2);   //16-Bit per Pixel
+        Clear(DefaultBGColor,0,0,131,131);
+    }
+    else
+    {
+        for (int a=0;a<SIZE(init_code_S6B33B);a++)
+        	SendCMD(pgm_read_byte_near(init_code_S6B33B + a));
+        Clear(DefaultBGColor,2,2,129,129);
+    }
 
-    //Normal display mode
-    SendCMD(NORON);
-
-    //Display inversion on
-    SendCMD(INVON);
-
-    //Data order
-    //SendCMD(0xBA);
-
-    SendCMD(SETCON);
-    SendData(0x38);
-
-    //Memory data access control
-    SendCMD(MADCTL);
-
-    //SendData(8|64);   //rgb + MirrorX
-    //SendData(8|128);   //rgb + MirrorY
-    SendData(0xc0);
-
-    SendCMD(COLMOD);
-    SendData(2);   //16-Bit per Pixel
-
-    Clear(DefaultBGColor,0,0,131,131);
 
 }
 
@@ -953,13 +984,13 @@ void RA_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor, byte x, byte y,char c)
 {
     byte i;
     SetBox(x,y,x,y+7);
-    SendCMD(RAMWR);
+    if (!lcd_screen) SendCMD(RAMWR);
     for(i=0;i<8;i++)
     {
-        if (1<<i & c)
-            SendData(~fcolor);
-        else
-            SendData(~bcolor);
+		if (1<<i & c)
+			if (!lcd_screen) SendData(~fcolor); else SendColor12Bit(fcolor);				
+		else
+			if (!lcd_screen) SendData(~bcolor); else SendColor12Bit(bcolor);				
     }
 }
 
@@ -1007,8 +1038,15 @@ void RA_NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y,long text)
 void RA_NokiaLCD::PutPixel(byte color, byte x, byte y)
 {
 	SetBox(x,y,x+1,y+1);
-    SendCMD(RAMWR);
-    SendData(~color);
+	if (!lcd_screen)
+	{
+		SendCMD(RAMWR);
+		SendData(~color);
+	}
+	else
+	{
+    	SendColor12Bit(color);   
+	}
 }
 
 void RA_NokiaLCD::SetContrast(byte Contrast)

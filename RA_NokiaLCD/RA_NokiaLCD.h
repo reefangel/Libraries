@@ -38,6 +38,7 @@ class RA_NokiaLCD
 
 public:
     RA_NokiaLCD();
+    boolean lcd_screen;
 
 	void Init();
 	void Sleep();
@@ -88,6 +89,7 @@ private:
 	void SetBox(byte x1, byte y1, byte x2, byte y2);
 	void SendCMD(byte data);
 	void SendData(byte data);
+	void SendColor12Bit(byte color);
 	void ShiftBits(byte b);
 	void DrawTextLine(byte fcolor, byte bcolor, byte x, byte y, char c);
 #if defined FONT_8x8 || defined FONT_8x16 || defined FONT_12x16 || defined NUMBERS_8x8 || defined NUMBERS_8x16 || defined NUMBERS_12x16

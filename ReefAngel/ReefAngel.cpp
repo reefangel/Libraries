@@ -1809,6 +1809,10 @@ void ReefAngelClass::ShowInterface()
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
 				LCD.DrawMonitor(15, 60, Params);
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined WDT || defined WDT_FORCE
+				wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+
 				byte TempRelay = Relay.RelayData;
 				TempRelay &= Relay.RelayMaskOff;
 				TempRelay |= Relay.RelayMaskOn;
@@ -1854,6 +1858,9 @@ void ReefAngelClass::ShowInterface()
 					pingSerial();
 					LCD.PutPixel(DefaultBGColor,1,1);
 					if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
+#if defined WDT || defined WDT_FORCE
+					wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 #ifdef CUSTOM_MAIN
 					DrawCustomGraph();
 #else
@@ -2187,6 +2194,9 @@ void ReefAngelClass::DisplayMenuEntry(char *text)
 void ReefAngelClass::ExitMenu()
 {
 	// Handles the cleanup to return to the main screen
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 	ClearScreen(DefaultBGColor);
 	Timer[LCD_TIMER].Start();
 	DisplayedMenu = DEFAULT_MENU;
