@@ -992,7 +992,7 @@ void CheckWifi(){};
 
 void pingSerial()
 {
-#ifdef wifi
+#if defined wifi && not defined NOWIFI
     if ( WIFI_SERIAL.available() > 0 ) processHTTP();
 #endif  // wifi
 }

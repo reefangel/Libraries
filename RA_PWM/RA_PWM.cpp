@@ -30,6 +30,7 @@ RA_PWMClass::RA_PWMClass()
     DaylightPWMValue = 0;
     LightsOverride = false;
 #ifdef PWMEXPANSION
+    Present=false;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
 	{
 		ExpansionChannel[a]=0;
@@ -218,7 +219,7 @@ void RA_PWMClass::Expansion(byte cmd, byte data)
 	Wire.write('$');
 	Wire.write(cmd);				// send the command
 	Wire.write((int)(data*2.55));			// send the data
-	Wire.endTransmission();		// stop transmitting
+	Present=Wire.endTransmission();		// stop transmitting
 	if (cmd<PWM_EXPANSION_CHANNELS) ExpansionChannel[cmd]=data;
 }
 

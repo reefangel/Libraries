@@ -39,6 +39,7 @@ class RA_NokiaLCD
 public:
     RA_NokiaLCD();
 
+#ifndef REEFTOUCH
 	void Init();
 	void Sleep();
 	void Wake();
@@ -100,7 +101,9 @@ private:
 public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);
 	void DrawSingleGraph(byte color, byte x, byte y, int EEaddr);
+#endif //  REEFTOUCH
 
 };
+
 
 #endif  // __RA_NOKIALCD_H__

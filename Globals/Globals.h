@@ -29,6 +29,7 @@
 #include <Arduino.h>
 #include <Time.h>
 #include <OneWire.h>
+#include <SD.h>
 
 #include <avr/pgmspace.h>
 
@@ -163,6 +164,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 //Analog I/O
 #define VPin                0
 #define HPin                1
+#define VBAT				2
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
 //#define Piezo               16 
@@ -179,6 +181,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define SDPin				49
+#define HW_SPI_Pin			53
 
 // I2C Addresses
 #define I2CEEPROM1          0x50
@@ -385,6 +389,9 @@ When adding more variables, use the previous value plus 1 or 2
 #define CONVERT_TO_C(x)	((x) - 320)/1.8
 #define CONVERT_TO_F(x)	((x) * 1.8) + 320
 
+#define BUFFPIXEL 20 // Number of pixels to read from SD card for BMP drawing
+
+
 #define MAX_TEMP_SWING      50  // Maximum value of temp change that can occur in 1 second, 100 = 10.0 F Degrees, 50 = 5.0 F Degrees
 // WEB_BANNER_QTY - Quantity of Parameters when sending the web banner, default is 12 but changes as we have more relays installed
 #ifdef RelayExp
@@ -467,6 +474,46 @@ When adding more variables, use the previous value plus 1 or 2
 #define PWM_CMD_TSTORM2			8	// Thunderstorm 2 command, use data default
 
 #ifndef COLORS_PDE
+
+#ifdef REEFTOUCH
+// Reef Touch Colors
+#define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
+#define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
+#define COLOR_ROYALBLUE             RGB565(0x45, 0x71, 0xda)
+#define COLOR_LIGHTBLUE             RGB565(0xad, 0xd8, 0xe6)
+#define COLOR_RED                   RGB565(0xFF, 0x00, 0x00)
+#define COLOR_GREEN                 RGB565(0x00, 0xFF, 0x00)
+#define COLOR_BLUE                  RGB565(0x00, 0x00, 0xFF)
+#define COLOR_YELLOW                RGB565(0xFF, 0xFF, 0x00)
+#define COLOR_MAGENTA               RGB565(0xFF, 0x00, 0xFF)
+#define COLOR_CYAN                  RGB565(0x00, 0xFF, 0xFF)
+#define COLOR_GRAY                  RGB565(0x80, 0x80, 0x40)
+#define COLOR_SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define COLOR_GOLD                  RGB565(0xA0, 0xA0, 0x40)
+#define COLOR_ORANGE				RGB565(0xFF, 0x80, 0x00)
+#define TOPBAR_BC					COLOR_WHITE
+#define TOPBAR_FC					COLOR_BLACK
+#define BOTTOMBAR_BC				COLOR_WHITE
+#define BOTTOMBAR_FC				COLOR_BLACK
+#define BKCOLOR						COLOR_BLACK
+#define WARNING_TEXT				COLOR_GOLD
+#define DIVISION					RGB565(0x40, 0x40, 0x40)
+#define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
+#define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
+#define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
+#define RFLABELBAR1					RGB565(0x46, 0xd1, 0xFF)
+#define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
+#define IOLABELBAR					RGB565(0x89, 0x21, 0xaa)
+#define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
+#define PWMWHITE					COLOR_ORANGE
+#define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
+#define PWMRED						COLOR_RED
+#define PWMGREEN					COLOR_GREEN
+#define PWMBLUE						COLOR_BLUE
+#define PWMINTENSITY				COLOR_MAGENTA
+#define DefaultBGColor				BKCOLOR
+#else //  REEFTOUCH
+
 //  Global Colors
 #define COLOR_BLACK                 0x00
 #define COLOR_NAVY                  0x02
@@ -602,6 +649,8 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define DefaultFGColor      COLOR_BLACK  // Default text color
 #define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
 
+#endif //  REEFTOUCH
+
 #endif  // COLORS_PDE
 
 /*
@@ -724,42 +773,27 @@ typedef struct {
     long reserved1;
 } Img2;
 
-// Reef Touch Colors
-#define BLACK                       RGB565(0x00, 0x00, 0x00)
-#define WHITE                       RGB565(0xFF, 0xFF, 0xFF)
-#define RED                         RGB565(0xFF, 0x00, 0x00)
-#define GREEN                       RGB565(0x00, 0xFF, 0x00)
-#define BLUE                        RGB565(0x00, 0x00, 0xFF)
-#define YELLOW                      RGB565(0xFF, 0xFF, 0x00)
-#define MAGENTA                     RGB565(0xFF, 0x00, 0xFF)
-#define CYAN                        RGB565(0x00, 0xFF, 0xFF)
-#define GRAY                        RGB565(0x80, 0x80, 0x40)
-#define SILVER                      RGB565(0xA0, 0xA0, 0x80)
-#define GOLD                        RGB565(0xA0, 0xA0, 0x40)
-#define ORANGE						RGB565(0xFF, 0x80, 0x00)
-#define TOPBAR_BC					RGB565(0x3A, 0x8C, 0x98)
-#define TOPBAR_FC					WHITE
-#define BKCOLOR						BLACK
-#define DIVISION					RGB565(0x40, 0x40, 0x40)
-#define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
-#define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
-#define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
-#define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
-#define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
-
 //Internal EEPROM
 #define TS_CALIBRATION_ADDRESS 		0x0
 #define TT_COMPENSATION_ADDRESS 	0x10
-#define	Probe1Name					0x20
-#define	Probe2Name					0x30
-#define	Probe3Name					0x40
 
-#define	PWMChannel1					0x50
-#define	PWMChannel2					0x60
-#define	PWMChannel3					0x70
-#define	PWMChannel4					0x80
-#define	PWMChannel5					0x90
-#define	PWMChannel6					0xa0
+#define	Probe1Name					0x400
+#define	Probe2Name					0x410
+#define	Probe3Name					0x420
+
+#define	PWMChannel1					0x430
+#define	PWMChannel2					0x440
+#define	PWMChannel3					0x450
+#define	PWMChannel4					0x460
+#define	PWMChannel5					0x470
+#define	PWMChannel6					0x480
+
+#define	IOChannel1					0x490
+#define	IOChannel2					0x4a0
+#define	IOChannel3					0x4b0
+#define	IOChannel4					0x4c0
+#define	IOChannel5					0x4d0
+#define	IOChannel6					0x4e0
 
 #define	R1Name						0x500
 #define	R2Name						0x510
@@ -834,6 +868,9 @@ typedef struct {
 #define	R87Name						0x960
 #define	R88Name						0x970
 
+#define ATOLowName					0xa00
+#define ATOHighName					0xa10
+
 // IsRelayPresent function from Don Edvalson
 #define MAIN_RELAY 0xff
 #define EXP1_RELAY 0
@@ -858,7 +895,9 @@ typedef struct {
 #define EXP_BOX_8			9
 #define PWM_SCREEN			10
 #define RF_SCREEN			11
-#define AI_SCREEN			12
+#define RF_SCREEN1			12
+#define AI_SCREEN			13
+#define IO_SCREEN			14
 
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
@@ -868,17 +907,106 @@ typedef struct {
 #define TouchPressure					900
 #define MAX_RELAY_EXPANSION_MODULES		8
 #define FONT_HEADER 					7
-#define TS_CALIBRATION_XMIN				365
-#define TS_CALIBRATION_XMAX				3825
-#define TS_CALIBRATION_YMIN				218
-#define TS_CALIBRATION_YMAX				3571
-#define TS_CALIBRATION_DELTA			250
-#define MAX_SCREENS						12 // Highest ID for main screens
+#define TS_CALIBRATION_XMIN				500
+#define TS_CALIBRATION_XMAX				3600
+#define TS_CALIBRATION_YMIN				500
+#define TS_CALIBRATION_YMAX				3600
+#define TS_CALIBRATION_DELTA			500
+#define MAX_SCREENS						14 // Highest ID for main screens
+
+#ifdef REEFTOUCH
+
+uint16_t read16(File f);
+uint32_t read32(File f);
+
+#define ILI9341
+//#define HX8347D
+
+const prog_char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
+const prog_char NoIMLine2[] PROGMEM = "File";
+const prog_char NoIMLine3[] PROGMEM = "Sketchbook";
+const prog_char NoIMLine4[] PROGMEM = "Example Codes";
+const prog_char NoIMLine5[] PROGMEM = "InitialInternalMemory";
+
+// Touch PROGMEM Strings
+// Calibration
+const prog_char CALI1[] PROGMEM = "Touch Screen";
+const prog_char CALI2[] PROGMEM = "Calibration";
+const prog_char CALI3[] PROGMEM = "and Tilt";
+const prog_char CALI4[] PROGMEM = "Compensation";
+const prog_char CALI5[] PROGMEM = "Please place the screen on";
+const prog_char CALI6[] PROGMEM = "top of a flat surface and";
+const prog_char CALI7[] PROGMEM = "touch the red circle";
+
+// Labels
+const prog_char LABEL_TEMP[] PROGMEM = "Temp ";
+const prog_char LABEL_RELAY[] PROGMEM = "Relay ";
+const prog_char LABEL_CHANNEL[] PROGMEM = "Ch. ";
+const prog_char LABEL_PH[] PROGMEM = "pH";
+const prog_char LABEL_SALINITY[] PROGMEM = "Salinity";
+const prog_char LABEL_ORP[] PROGMEM = "ORP";
+const prog_char LABEL_PHE[] PROGMEM = "PH Exp";
+const prog_char LABEL_WL[] PROGMEM = "Water Lvl";
+const prog_char LABEL_ACTINIC[] PROGMEM = "Actinic";
+const prog_char LABEL_DAYLIGHT[] PROGMEM = "Daylight";
+const prog_char LABEL_AI_WHITE[] PROGMEM = "White";
+const prog_char LABEL_AI_BLUE[] PROGMEM = "Blue";
+const prog_char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
+static PROGMEM const char *LABEL_AI[] = {LABEL_AI_WHITE, LABEL_AI_BLUE, LABEL_AI_ROYAL_BLUE};
+const prog_char LABEL_RF_WHITE[] PROGMEM = "White";
+const prog_char LABEL_RF_ROYAL_BLUE[] PROGMEM = "R. Blue";
+const prog_char LABEL_RF_RED[] PROGMEM = "Red";
+const prog_char LABEL_RF_BLUE[] PROGMEM = "Green";
+const prog_char LABEL_RF_GREEN[] PROGMEM = "Blue";
+const prog_char LABEL_RF_INTENSITY[] PROGMEM = "Intensity";
+static PROGMEM const char *LABEL_RF[] = {LABEL_RF_WHITE, LABEL_RF_ROYAL_BLUE, LABEL_RF_RED, LABEL_RF_BLUE, LABEL_RF_GREEN, LABEL_RF_INTENSITY};
+const prog_char LABEL_ATOHIGHPORT[] PROGMEM = "ATO Low";
+const prog_char LABEL_ATOLOWPORT[] PROGMEM = "ATO High";
+const prog_char LABEL_IOPORT[] PROGMEM = "Input Port ";
+const prog_char LABEL_MODE[] PROGMEM = "Mode";
+const prog_char LABEL_DURATION[] PROGMEM = "Duration";
+const prog_char LABEL_SPEED[] PROGMEM = "Speed";
+
+// Headers
+const prog_char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";
+const prog_char EXP_RELAY_1_LABEL[] PROGMEM = "Exp. Relay Box 1";
+const prog_char EXP_RELAY_2_LABEL[] PROGMEM = "Exp. Relay Box 2";
+const prog_char EXP_RELAY_3_LABEL[] PROGMEM = "Exp. Relay Box 3";
+const prog_char EXP_RELAY_4_LABEL[] PROGMEM = "Exp. Relay Box 4";
+const prog_char EXP_RELAY_5_LABEL[] PROGMEM = "Exp. Relay Box 5";
+const prog_char EXP_RELAY_6_LABEL[] PROGMEM = "Exp. Relay Box 6";
+const prog_char EXP_RELAY_7_LABEL[] PROGMEM = "Exp. Relay Box 7";
+const prog_char EXP_RELAY_8_LABEL[] PROGMEM = "Exp. Relay Box 8";
+const prog_char PWM_EXPANSION_LABEL[] PROGMEM = "PWM Expansion";
+const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
+const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
+const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
+const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
+static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL};
+
+// RF Modes
+const prog_char RF_CONSTANT[] PROGMEM = "Constant";
+const prog_char RF_LAGOONAL[] PROGMEM = "Lagoonal";
+const prog_char RF_REEFCREST[] PROGMEM = "Reef Crest";
+const prog_char RF_SHORTWAVE[] PROGMEM = "Short Wave";
+const prog_char RF_LONGWAVE[] PROGMEM = "Long Wave";
+const prog_char RF_NTM[] PROGMEM = "Nutrient Transport";
+const prog_char RF_TSM[] PROGMEM = "Tidal Swell";
+const prog_char RF_FEEDING[] PROGMEM = "Feeding";
+const prog_char RF_NIGHT[] PROGMEM = "Night";
+const prog_char RF_SLAVE[] PROGMEM = "Slave Check";
+const prog_char RF_None[] PROGMEM = "None";
+static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
+
+#endif //  REEFTOUCH
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))
 // color definition
 #define RGB565(r, g, b) ((uint16_t)(((r >> 3) << 11)| ((g >> 2) << 5)| (b >> 3)))
+
+#define sbi(port,bitnum)		port |= _BV(bitnum)
+#define cbi(port,bitnum)		port &= ~(_BV(bitnum))
 
 // external globally defined variables
 extern byte ButtonPress;  // Defined in ReefAngel.cpp, used for joystick button presses

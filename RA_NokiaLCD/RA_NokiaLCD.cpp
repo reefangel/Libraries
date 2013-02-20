@@ -27,6 +27,8 @@
 #include <Memory.h>
 #include <avr/pgmspace.h>
 
+#ifndef REEFTOUCH
+
 // Define Software SPI Pin Signal
 #define BL 2          // Digital 2 --> BL
 #define CS 3          // Digital 3 --> #CS
@@ -88,9 +90,6 @@
 #define RDID1    0xDA 	// read ID1
 #define RDID2    0xDB 	// read ID2
 #define RDID3    0xDC 	// read ID3
-
-#define cbi(reg, bit) (reg&=~(1<<bit))
-#define sbi(reg, bit) (reg|= (1<<bit))
 
 #if defined(__AVR_ATmega2560__)
 #define BL0 cbi(PORTE,4);
@@ -1544,3 +1543,5 @@ void RA_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
   strcat(text , "   ");
   DrawText(CalibrateColor, DefaultBGColor, x, y, text);
 }
+
+#endif //  REEFTOUCH

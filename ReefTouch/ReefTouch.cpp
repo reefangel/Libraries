@@ -7,7 +7,7 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless requiCOLOR_RED by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -33,6 +33,8 @@ ReefTouchClass::ReefTouchClass()
 	PORTD|=(1<<7); //PD7 pull up
 	DDRL|=(1<<7); //PL7 (Output) - ACC Chip Select
 	PORTL|=(1<<7); //PL7 pull up
+	DDRL|=(1<<4); //PL4 (Output) - RD
+	PORTL|=(1<<4); //PL4 pull up
 	DDRH|=(1<<4); //PH4 (Output) - Status LED
 	//PORTH|=(1<<4); //PH4 pull up
 	SPCR=0x50;
@@ -42,12 +44,17 @@ void ReefTouchClass::Init()
 {
 	Serial.begin(57600);
 	SPI.begin();
+	Wire.onReceive(NULL);
+	Wire.onRequest(NULL);
 	Wire.begin();
+//	setSyncProvider(RTC.get);   // the function to get the time from the RTC
+	setSyncInterval(SECS_PER_HOUR);  // Changed to sync every hour.
 	LCD.Init();
 	SmallFont.SetFont(f8x8);
 	Font.SetFont(f12x12);
 	LargeFont.SetFont(ArialBold20);
-	OkButton.Create(RGB565(0xA0, 0xFF, 0xA0),RED,"Ok");
+	OkButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Ok");
+	CancelButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Cancel");
 	TS.Init();
 	MMC_Init();
 	Tilt.Init();
@@ -55,18 +62,19 @@ void ReefTouchClass::Init()
 //	File.Open("splash.im2");
 //	LCD.DrawImage(File,0,0);
 
-//	LCD.FullClear(WHITE);
+//	LCD.FullClear(COLOR_WHITE);
 //	LCD.DrawLogo(57,35,logo1);
 //	LCD.DrawLogo(23,200,logo);
 	
-	BL1;
 	Splash=true;
 	MilitaryTime=false;
+	TouchEnabled=true;
 	DisplayedScreen=MAIN_SCREEN;
-	ExpansionFlag=B00000011;
-	RelayExpansionFlag=B01000000;
+	ExpansionFlag=0;
+	RelayExpansionFlag=0;
 	setTime(1308161400);  // Unix time
 	now();
+	BL1;
 }
 
 void ReefTouchClass::Refresh()
@@ -74,8 +82,14 @@ void ReefTouchClass::Refresh()
 	if ((millis()>SplashDuration) && Splash)
 	{
 		Splash=false;
-		if (TS.IsCalibrationNeeded()) CalibrateTouchScreen();
+		if (TS.IsCalibrationNeeded())
+		{
+			BL1;
+			CalibrateTouchScreen();
+			SaveInitialSettings();
+		}
 		LCD.FullClear(BKCOLOR);
+		BL1;
 	}
 	if (!Splash)
 	{
@@ -93,6 +107,7 @@ void ReefTouchClass::ShowInterface()
 			int i,j;
 			char tempname[15];
 
+			TouchEnabled=true;
 			//Draw Top Bar
 			if (LCD.GetOrientation()%2==0) i=0; else i=12;
 			if (LastOrientation != LCD.GetOrientation())
@@ -103,21 +118,39 @@ void ReefTouchClass::ShowInterface()
 				LCD.DrawRectangle(TOPBAR_BC,0,0,LCD.GetWidth(),27,true);
 				for (int a=0;a<=5;a++)
 				{
-					LCD.DrawLine(alphaBlend(WHITE,(5-a)*10),0,28+a,LCD.GetWidth(),28+a);
+					LCD.DrawLine(alphaBlend(COLOR_WHITE,(5-a)*15),0,28+a,LCD.GetWidth(),28+a);
 				}
+				//Bottom Bar
+				LCD.DrawRectangle(BOTTOMBAR_BC,0,LCD.GetHeight()-27,LCD.GetWidth(),LCD.GetHeight(),true);
+				for (int a=0;a<=5;a++)
+				{
+					LCD.DrawLine(alphaBlend(COLOR_WHITE,(5-a)*15),0,LCD.GetHeight()-28-a,LCD.GetWidth(),LCD.GetHeight()-28-a);
+				}
+				//Logo
+				LCD.DrawBMP(5,2,ICONLOGO);
+				//Arrows
+				LCD.DrawBMP(10,LCD.GetHeight()-25,ARROWLEFT);
+				LCD.DrawBMP(LCD.GetWidth()-10-23,LCD.GetHeight()-25,ARROWRIGHT);
+				//Menu Dividers and arrow
+				LCD.DrawBMP(LCD.GetWidth()/2-50,LCD.GetHeight()-25,DIVIDER);
+				LCD.DrawBMP(LCD.GetWidth()/2+50,LCD.GetHeight()-25,DIVIDER);
+				LCD.DrawBMP(LCD.GetWidth()/2-3,LCD.GetHeight()-25,ARROWMENU);
+				ReefTouch.Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
+				ReefTouch.Font.DrawCenterText(LCD.GetWidth()/2,LCD.GetHeight()-15,"Menu");
+				
 			}			
-			LCD.DrawDateTime(5,10,MilitaryTime);
+			LCD.DrawDateTime(55,10,MilitaryTime);
 			
 			if (DisplayedScreen==MAIN_SCREEN)
 			{
-				//Draw Top Bar
 				if (NeedsRedraw)
 				{
 					NeedsRedraw=false;
 					
+					LCD.Clear(COLOR_BLACK,0,34,LCD.GetWidth(),LCD.GetHeight()-34);					
 					//Temperature
-					j=68+i;
-					Font.SetColor(GOLD,BKCOLOR,true);
+					j=60+i;
+					Font.SetColor(COLOR_GOLD,BKCOLOR,true);
 					eeprom_read_block((void*)&tempname, (void*)Probe1Name, sizeof(tempname));
 					Font.DrawCenterText((LCD.GetWidth()/4)-20,j,tempname);
 					eeprom_read_block((void*)&tempname, (void*)Probe2Name, sizeof(tempname));
@@ -126,85 +159,85 @@ void ReefTouchClass::ShowInterface()
 					Font.DrawCenterText((LCD.GetWidth()*3/4)+20,j,tempname);
 		
 					//pH, Salinity and ORP
-					j+=50+i;
-					Font.SetColor(GOLD,BKCOLOR,true);
+					j+=45+i;
+					Font.SetColor(COLOR_GOLD,BKCOLOR,true);
 					Font.DrawCenterTextP((LCD.GetWidth()/4)-20,j,PH);
 					Font.DrawCenterTextP(LCD.GetWidth()/2,j,SALINITY);
 					Font.DrawCenterTextP((LCD.GetWidth()*3/4)+20,j,ORP);
 					
 					j+=18+i;
-					//Yellow Bar
+					//COLOR_MAGENTA Bar
 					for (int a=0;a<=5;a++)
 					{
-						LCD.DrawLine(alphaBlend(MAGENTA,(5-a)*10),a,33,a,j);
+						LCD.DrawLine(alphaBlend(COLOR_MAGENTA,(5-a)*10),a,33,a,j);
 					}
 		
 					//Division
 					LCD.DrawLine(DIVISION,0,j,LCD.GetWidth(),j);
 		
-					//Green Bar
+					//COLOR_GREEN Bar
 					for (int a=0;a<=5;a++)
 					{
-						LCD.DrawLine(alphaBlend(GREEN,(5-a)*10),a,j,a,j+70+(i*5/2));
+						LCD.DrawLine(alphaBlend(COLOR_GREEN,(5-a)*10),a,j,a,j+60+(i*5/2));
 					}
-					j+=10+i;
+					j+=5+i;
 		
 					//PWM Bars
-					LCD.Clear(WHITE,10,j,130,j+20);
-					for (int a=0;a<10;a++) LCD.DrawPixel(RED,78,j+(a*2));
-					Font.DrawTextP(BLACK,WHITE,15,j+5,ACTINIC);
+					LCD.Clear(COLOR_WHITE,10,j,130,j+20);
+					for (int a=0;a<10;a++) LCD.DrawPixel(COLOR_RED,78,j+(a*2));
+					Font.DrawTextP(COLOR_BLACK,COLOR_WHITE,15,j+5,ACTINIC);
 					j+=30+(i/2);
-					LCD.Clear(WHITE,10,j,130,j+20);
-					for (int a=0;a<10;a++) LCD.DrawPixel(RED,78,j+(a*2));
-					Font.DrawTextP(BLACK,WHITE,15,j+5,DAYLIGHT);
+					LCD.Clear(COLOR_WHITE,10,j,130,j+20);
+					for (int a=0;a<10;a++) LCD.DrawPixel(COLOR_RED,78,j+(a*2));
+					Font.DrawTextP(COLOR_BLACK,COLOR_WHITE,15,j+5,DAYLIGHT);
 		
-					j+=30+i;
+					j+=25+i;
 					//Division
 					LCD.DrawLine(DIVISION,0,j,LCD.GetWidth(),j);
 		
-					//Red Bar
+					//COLOR_RED Bar
 					for (int a=0;a<=5;a++)
 					{
-						LCD.DrawLine(alphaBlend(RED,(5-a)*10),a,j,a,LCD.GetHeight());
+						LCD.DrawLine(alphaBlend(COLOR_RED,(5-a)*10),a,j,a,LCD.GetHeight()-32);
 					}
 					
-					j+=13+(i/2);
+					j+=10+(i/2);
 					
 					//ATO Ports
-					Font.DrawTextP(WHITE,BLACK,(LCD.GetWidth()/10)+25,j,ATOHIGHPORT);
-					Font.DrawTextP(WHITE,BLACK,(LCD.GetWidth()*6/10)+25,j,ATOLOWPORT);
+					Font.DrawTextP(COLOR_WHITE,COLOR_BLACK,(LCD.GetWidth()/10)+25,j,ATOHIGHPORT);
+					Font.DrawTextP(COLOR_WHITE,COLOR_BLACK,(LCD.GetWidth()*6/10)+25,j,ATOLOWPORT);
 				}
 				
 				//Temperature
-				j=35+i;
-				LargeFont.SetColor(WHITE,BKCOLOR,true);
+				j=27+i;
+				LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()/4)-20,j,Params.Temp[T1_PROBE],10);
 				LargeFont.DrawCenterNumber(LCD.GetWidth()/2,j,Params.Temp[T2_PROBE],10);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()*3/4)+20,j,Params.Temp[T3_PROBE],10);
 		
 				//pH, Salinity and ORP
-				j+=50+i;
-				LargeFont.SetColor(WHITE,BKCOLOR,true);
+				j+=45+i;
+				LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()/4)-20,j,Params.PH,100);
 				LargeFont.DrawCenterNumber(LCD.GetWidth()/2,j,Params.Salinity,10);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()*3/4)+20,j,Params.ORP,10);
 				
 				// PWM Bars
-				Font.SetColor(BLACK,WHITE,false);
-				j+=61+(i*2);
-				for (int a=0;a<(LCD.GetWidth()-139)*PWM.GetActinicValue()/100;a++) LCD.DrawLine(alphaBlend(BLUE,WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
-				LCD.Clear(BLACK,((LCD.GetWidth()-139)*PWM.GetActinicValue()/100)+130,j,LCD.GetWidth(),j+20);
+				Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
+				j+=56+(i*2);
+				for (int a=0;a<(LCD.GetWidth()-139)*PWM.GetActinicValue()/100;a++) LCD.DrawLine(alphaBlend(COLOR_BLUE,COLOR_WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
+				LCD.Clear(COLOR_BLACK,((LCD.GetWidth()-139)*PWM.GetActinicValue()/100)+130,j,LCD.GetWidth(),j+20);
 				Font.DrawText(85,j+5,PWM.GetActinicValue());
 				Font.DrawText("%   ");
 				j+=30+(i/2);
-				for (int a=0;a<(LCD.GetWidth()-139)*PWM.GetDaylightValue()/100;a++) LCD.DrawLine(alphaBlend(ORANGE,WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
-				LCD.Clear(BLACK,((LCD.GetWidth()-139)*PWM.GetDaylightValue()/100)+130,j,LCD.GetWidth(),j+20);
+				for (int a=0;a<(LCD.GetWidth()-139)*PWM.GetDaylightValue()/100;a++) LCD.DrawLine(alphaBlend(COLOR_ORANGE,COLOR_WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
+				LCD.Clear(COLOR_BLACK,((LCD.GetWidth()-139)*PWM.GetDaylightValue()/100)+130,j,LCD.GetWidth(),j+20);
 				Font.DrawText(85,j+5,PWM.GetDaylightValue());
 				Font.DrawText("%   ");
 				
 				
 				// ATO Buttons
-				j+=40+(i*3/2);
+				j+=32+(i*3/2);
 				LCD.DrawBMP(LCD.GetWidth()/10,j,REDBUTTON);
 				LCD.DrawBMP(LCD.GetWidth()*6/10,j,GREENBUTTON);
 			}
@@ -226,170 +259,202 @@ void ReefTouchClass::ShowInterface()
 				TempRelay&=TempRelayOff;
 				TempRelay|=TempRelayOn;
 				
-				if (LastRelayData!=TempRelay) NeedsRedraw=true;
-				LastRelayData=TempRelay;
+//				if (LastRelayData!=TempRelay) NeedsRedraw=true;
+//				LastRelayData=TempRelay;
 
+				int l=LCD.GetWidth();
+				byte k=l/4;
+				int colorstatus;
 				if (NeedsRedraw)
 				{
 					NeedsRedraw=false;
 
+					LCD.Clear(COLOR_BLACK,0,34,LCD.GetWidth(),LCD.GetHeight()-34);					
 					//Gray Bar
-					for (int a=0;a<=25;a++) LCD.DrawLine(alphaBlend(RELAYBOXLABELBAR/DisplayedScreen,a*4),0,40+a,LCD.GetWidth(),40+a);
-					LargeFont.SetColor(WHITE,BKCOLOR,true);
+					for (int a=0;a<=25;a++) LCD.DrawLine(alphaBlend(RELAYBOXLABELBAR/DisplayedScreen,a*3),0,40+a,LCD.GetWidth(),40+a);
+					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+					LargeFont.DrawCenterTextP((LCD.GetWidth()/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
 					LargeFont.DrawCenterTextP((LCD.GetWidth()/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
 					
-					// Relay Ports
+					// Relay Ports Labels
+					j=25+(i/2);
 					
-					j=50+(i/2);
-					Font.SetColor(WHITE,BKCOLOR,true);
-					
-					int l=LCD.GetWidth();
-					byte k=l/4;
 					for (int a=1;a<9;a++)
 					{
 						if (a==5)
 						{
-							j=50+(i/2);
+							j=25+(i/2);
 							k*=3;
 						}
 						j+=40+i;
-						if (a<5)
-						{
-							if (bitRead(TempRelay,a-1))
-							{
-								for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(RELAYGREEN,c),c,j-10,c,j+20);
-								LCD.Clear(RELAYGREEN,100,j-10,(l/2)-10,j+20);
-							}
-							else
-							{
-								for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(RED,c),c,j-10,c,j+20);
-								LCD.Clear(RED,100,j-10,(l/2)-10,j+20);
-							}
-							if (bitRead(TempRelayOn,a-1) || !bitRead(TempRelayOff,a-1)) LCD.DrawRectangle(YELLOW,(l/2)-15,j-10,(l/2)-10,j+20,true);
-						}
-						else
-						{
-							if (bitRead(TempRelay,a-1))
-							{
-								for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(RELAYGREEN,c),l-c,j-10,l-c,j+20);
-								LCD.Clear(RELAYGREEN,(l/2)+10,j-10,l-100,j+20);
-							}
-							else
-							{
-								for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(RED,c),l-c,j-10,l-c,j+20);
-								LCD.Clear(RED,(l/2)+10,j-10,l-100,j+20);
-							}
-							if (bitRead(TempRelayOn,a-1) || !bitRead(TempRelayOff,a-1)) LCD.DrawRectangle(YELLOW,(l/2)+10,j-10,(l/2)+15,j+20,true);
-						}
 						eeprom_read_block((void*)&tempname, (void*)(R1Name+((a-1)*0x10)+((DisplayedScreen-1)*0x80)), sizeof(tempname));
+						Font.SetColor(COLOR_WHITE,BKCOLOR,true);
 						Font.DrawCenterText(k,j,tempname);
 					}
 				}
+
+				// Relay Ports Status
+				j=30+(i/2);
+				k=l/4;
+				for (int a=1;a<9;a++)
+				{
+					if (a==5)
+					{
+						j=30+(i/2);
+						k*=3;
+					}
+					j+=40+i;
+					if (a<5)
+					{
+						if (bitRead(TempRelay,a-1))
+						{
+							for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(RELAYGREEN,c),c,j+10,c,j+30);
+							colorstatus=RELAYGREEN;
+						}
+						else
+						{
+							for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(COLOR_RED,c),c,j+10,c,j+30);
+							colorstatus=COLOR_RED;
+						}
+						if (bitRead(TempRelayOn,a-1) || !bitRead(TempRelayOff,a-1)) colorstatus=COLOR_YELLOW;
+						LCD.Clear(colorstatus,100,j+10,(l/2)-10,j+30);
+					}
+					else
+					{
+						if (bitRead(TempRelay,a-1))
+						{
+							for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(RELAYGREEN,c),l-c,j+10,l-c,j+30);
+							colorstatus=RELAYGREEN;
+						}
+						else
+						{
+							for (int c=0;c<=100;c++) LCD.DrawLine(alphaBlend(COLOR_RED,c),l-c,j+10,l-c,j+30);
+							colorstatus=COLOR_RED;
+						}
+						if (bitRead(TempRelayOn,a-1) || !bitRead(TempRelayOff,a-1)) colorstatus=COLOR_YELLOW;
+						LCD.Clear(colorstatus,(l/2)+10,j+10,l-100,j+30);
+					}
+				}				
 			}
-#ifdef PWMEXPANSION
 			else if(DisplayedScreen==PWM_SCREEN)
 			{
 				if (NeedsRedraw)
 				{
 					NeedsRedraw=false;
+					LCD.Clear(COLOR_BLACK,0,34,LCD.GetWidth(),LCD.GetHeight()-34);					
 					//Gray Bar
 					for (int a=0;a<=25;a++) LCD.DrawLine(alphaBlend(PWMLABELBAR,a*4),0,40+a,LCD.GetWidth(),40+a);
-					LargeFont.SetColor(WHITE,BKCOLOR,true);
+					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+					LargeFont.DrawCenterTextP((LCD.GetWidth()/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
 					LargeFont.DrawCenterTextP((LCD.GetWidth()/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
 
-					j=50+(i/2);
-					Font.SetColor(BKCOLOR,WHITE,true);
+					j=45+(i/2);
+					Font.SetColor(BKCOLOR,COLOR_WHITE,true);
 					for (int a=1;a<7;a++)
 					{
-						j+=25+i;
-						LCD.Clear(WHITE,10,j,130,j+20);
-						for (int a=0;a<10;a++) LCD.DrawPixel(RED,88,j+(a*2));
+						j+=22+i;
+						LCD.Clear(COLOR_WHITE,10,j,130,j+20);
+						for (int a=0;a<10;a++) LCD.DrawPixel(COLOR_RED,88,j+(a*2));
 						eeprom_read_block((void*)&tempname, (void*)(PWMChannel1+((a-1)*0x10)), sizeof(tempname));
 						Font.DrawText(15,j+5,tempname);
 					}					
 				}	
 				
 				// PWM Bars
-				j=50+(i/2);
-				Font.SetColor(BLACK,WHITE,false);
+				j=45+(i/2);
+				Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
 				for (int p=0;p<6;p++)
 				{
-					j+=25+i;
-					for (int a=0;a<(LCD.GetWidth()-139)*PWM.ExpansionChannel[p]/100;a++) LCD.DrawLine(alphaBlend(GREEN,WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
-					LCD.Clear(BLACK,((LCD.GetWidth()-139)*PWM.ExpansionChannel[p]/100)+130,j,LCD.GetWidth(),j+20);
-					Font.DrawText(95,j+5,PWM.ExpansionChannel[p]);
+					j+=22+i;
+//					for (int a=0;a<(LCD.GetWidth()-139)*PWM.ExpansionChannel[p]/100;a++) LCD.DrawLine(alphaBlend(COLOR_GREEN,COLOR_WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
+//					LCD.Clear(COLOR_BLACK,((LCD.GetWidth()-139)*PWM.ExpansionChannel[p]/100)+130,j,LCD.GetWidth(),j+20);
+//					Font.DrawText(95,j+5,PWM.ExpansionChannel[p]);
 					Font.DrawText("%   ");
 				}
 			}
-#endif // PWMEXPANSION
-#ifdef RFEXPANSION			
 			else if(DisplayedScreen==RF_SCREEN)
 			{
 				if (NeedsRedraw)
 				{
 					NeedsRedraw=false;
+					LCD.Clear(COLOR_BLACK,0,34,LCD.GetWidth(),LCD.GetHeight()-34);					
 					//Gray Bar
 					for (int a=0;a<=25;a++) LCD.DrawLine(alphaBlend(RFLABELBAR,a*4),0,40+a,LCD.GetWidth(),40+a);
-					LargeFont.SetColor(WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((LCD.GetWidth()/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
-					Font.SetColor(GOLD,BKCOLOR,true);
+					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+					LargeFont.DrawCenterTextP((LCD.GetWidth()/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+					LargeFont.DrawCenterTextP((LCD.GetWidth()/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));					
 					
-					j=100+(i*2);
+					Font.SetColor(COLOR_GOLD,BKCOLOR,true);
+					j=80+(i*2);
 					Font.DrawCenterTextP((LCD.GetWidth()/2),j,MODE);
-					j+=55+(i*2);
+					j+=50+(i*2);
 					Font.DrawCenterTextP((LCD.GetWidth()/2),j,SPEED);
-					j+=55+(i*2);
+					j+=50+(i*2);
 					Font.DrawCenterTextP((LCD.GetWidth()/2),j,DURATION);
 				}
-				j=67+(i*2);
+				j=47+(i*2);
 				LargeFont.DrawCenterTextP((LCD.GetWidth()/2),j,(char * )pgm_read_word(&(rf_items[0])));
-				j+=55+(i*2);
+				j+=50+(i*2);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()/2),j,100,0);
-				j+=55+(i*2);
+				j+=50+(i*2);
 				LargeFont.DrawCenterNumber((LCD.GetWidth()/2),j,4,0);
 			}
-#endif // RFEXPANSION
-#ifdef AI_LED	
 			else if(DisplayedScreen==AI_SCREEN)
 			{
 				if (NeedsRedraw)
 				{
 					NeedsRedraw=false;
+					LCD.Clear(COLOR_BLACK,0,34,LCD.GetWidth(),LCD.GetHeight()-34);					
 					//Gray Bar
 					for (int a=0;a<=25;a++) LCD.DrawLine(alphaBlend(AILABELBAR,a*4),0,40+a,LCD.GetWidth(),40+a);
-					LargeFont.SetColor(WHITE,BKCOLOR,true);
+					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+					LargeFont.DrawCenterTextP((LCD.GetWidth()/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
 					LargeFont.DrawCenterTextP((LCD.GetWidth()/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));
-
+					
 					j=35;
-					Font.SetColor(BKCOLOR,WHITE,true);
+					Font.SetColor(BKCOLOR,COLOR_WHITE,true);
 					for (int a=1;a<4;a++)
 					{
-						j+=50+(i*2);
-						LCD.Clear(WHITE,10,j,130,j+20);
-						for (int a=0;a<10;a++) LCD.DrawPixel(RED,93,j+(a*2));
+						j+=40+(i*2);
+						LCD.Clear(COLOR_WHITE,10,j,130,j+20);
+						for (int a=0;a<10;a++) LCD.DrawPixel(COLOR_RED,93,j+(a*2));
 					}					
-					j=85+(i*2);
+					j=75+(i*2);
 					Font.DrawTextP(15,j+5,AI_WHITE);
-					j+=50+(i*2);
+					j+=40+(i*2);
 					Font.DrawTextP(15,j+5,AI_BLUE);
-					j+=50+(i*2);
+					j+=40+(i*2);
 					Font.DrawTextP(15,j+5,AI_ROYAL_BLUE);
 
 				}	
 				
 				// PWM Bars
 				j=35;
-				Font.SetColor(BLACK,WHITE,false);
+				Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
 				for (int p=0;p<3;p++)
 				{
-					j+=50+(i*2);
-					for (int a=0;a<(LCD.GetWidth()-139)*AI.GetChannel(p)/100;a++) LCD.DrawLine(alphaBlend(GREEN,WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
-					LCD.Clear(BLACK,((LCD.GetWidth()-139)*AI.GetChannel(p)/100)+130,j,LCD.GetWidth(),j+20);
+					j+=40+(i*2);
+					for (int a=0;a<(LCD.GetWidth()-139)*AI.GetChannel(p)/100;a++) LCD.DrawLine(alphaBlend(COLOR_GREEN,COLOR_WHITE,(a*100)/(LCD.GetWidth()-139)),130+a,j,130+a,j+20);
+					LCD.Clear(COLOR_BLACK,((LCD.GetWidth()-139)*AI.GetChannel(p)/100)+130,j,LCD.GetWidth(),j+20);
 					Font.DrawText(100,j+5,AI.GetChannel(p));
 					Font.DrawText("%   ");
 				}
 			}
-#endif // AI_LED
+		}
+		else
+		{
+			if (TouchEnabled)
+			{
+				TouchEnabled=false;
+				if (TS.X<50 && TS.Y>LCD.GetHeight()-30)
+					ChangeDisplayedScreen(-1);
+				if (TS.X>LCD.GetWidth()-50 && TS.Y>LCD.GetHeight()-30)
+					ChangeDisplayedScreen(1);
+			}
 		}
 	}
 	//for ( byte a = 0; a < 6; a++ ) PWM.Expansion(a, int(2.55*PWM.ExpansionChannel[a]));
@@ -399,11 +464,75 @@ void ReefTouchClass::CalibrateTouchScreen()
 	boolean calibrated=false;
 	long CalibrationPoints[4]={24,32,213,287};
 	long TouchedPoints[4];
-	int eindex=0;
 
+	LCD.SetOrientation(1);
+	while (!calibrated)
+	{
+		LCD.FullClear(COLOR_WHITE);
+		LargeFont.SetColor(COLOR_GOLD,COLOR_WHITE,true);
+		LargeFont.DrawCenterTextP(120,45,CALI1);
+		LargeFont.DrawCenterTextP(120,75,CALI2);
+		LargeFont.DrawCenterTextP(120,105,CALI3);
+		LargeFont.DrawCenterTextP(120,135,CALI4);
+		Font.SetColor(COLOR_BLACK,COLOR_WHITE,true);
+		Font.DrawCenterTextP(120,190,CALI5);
+		Font.DrawCenterTextP(120,205,CALI6);
+		Font.DrawCenterTextP(120,220,CALI7);
+		for(byte a = 0; a<2; a++)
+		{
+			LCD.DrawCircle(COLOR_RED,CalibrationPoints[a*2], CalibrationPoints[(a*2)+1], 5, false);
+			while (!TS.IsTouched());
+			TS.GetTouch();
+//			Serial.println(TS.uX,DEC);
+//			Serial.println(TS.uY,DEC);
+			if (a==0)
+			{
+				SmallFont.DrawText(COLOR_SILVER,COLOR_WHITE,40,25,TS.uX);			
+				SmallFont.DrawText(COLOR_SILVER,COLOR_WHITE,40,35,TS.uY);
+			}
+			else
+			{
+				SmallFont.DrawText(COLOR_SILVER,COLOR_WHITE,175,280,TS.uX);			
+				SmallFont.DrawText(COLOR_SILVER,COLOR_WHITE,175,290,TS.uY);
+			}
+			TouchedPoints[a*2] = TS.uX;
+			TouchedPoints[(a*2)+1] = TS.uY;
+			LCD.DrawCircle(COLOR_BLUE,CalibrationPoints[a*2], CalibrationPoints[(a*2)+1], 4, true);
+			delay(500);
+		}
+		TS.calibration.XMin=map(0,CalibrationPoints[0],CalibrationPoints[2],TouchedPoints[0],TouchedPoints[2]);
+		TS.calibration.XMax=map(239,CalibrationPoints[0],CalibrationPoints[2],TouchedPoints[0],TouchedPoints[2]);
+		TS.calibration.YMin=map(0,CalibrationPoints[1],CalibrationPoints[3],TouchedPoints[1],TouchedPoints[3]);
+		TS.calibration.YMax=map(319,CalibrationPoints[1],CalibrationPoints[3],TouchedPoints[1],TouchedPoints[3]);
+		if (
+			TS.calibration.XMin > TS_CALIBRATION_XMIN - TS_CALIBRATION_DELTA && 
+			TS.calibration.XMin < TS_CALIBRATION_XMIN + TS_CALIBRATION_DELTA &&
+			TS.calibration.XMax > TS_CALIBRATION_XMAX - TS_CALIBRATION_DELTA && 
+			TS.calibration.XMax < TS_CALIBRATION_XMAX + TS_CALIBRATION_DELTA &&
+			TS.calibration.YMin > TS_CALIBRATION_YMIN - TS_CALIBRATION_DELTA &&
+			TS.calibration.YMin < TS_CALIBRATION_YMIN + TS_CALIBRATION_DELTA &&
+			TS.calibration.YMax > TS_CALIBRATION_YMAX - TS_CALIBRATION_DELTA &&
+			TS.calibration.YMax < TS_CALIBRATION_YMAX + TS_CALIBRATION_DELTA
+			) calibrated=true;
+//		calibrated=true;
+	}
+    TS.SaveCalibration();
+    Tilt.CompensateAccelerometer();
+	LCD.Clear(COLOR_WHITE,0,180,239,270);
+	OkButton.SetPosition(88,200);
+	OkButton.Show();
+	do TS.GetTouch(); while(!ReefTouch.OkButton.IsPressed());
+	OkButton.Hide();
+	LCD.FullClear(COLOR_WHITE);
+	
+}
+
+void ReefTouchClass::SaveInitialSettings()
+{
 	// Initialize EEPROM strings
 	char tempname[15];
 	char temp[3];
+	int eindex=0;
 	
 	// Temperature Probes
 	for (int a=0; a<3; a++)
@@ -439,69 +568,7 @@ void ReefTouchClass::CalibrateTouchScreen()
 		itoa(a+1,temp,10);
 		strcat(tempname,temp);
 		eeprom_write_block((void*)&tempname, (void*)(PWMChannel1+(a*0x10)), sizeof(tempname));
-	}
-	
-	
-	LCD.SetOrientation(1);
-	while (!calibrated)
-	{
-		LCD.FullClear(WHITE);
-		LargeFont.SetColor(GOLD,WHITE,true);
-		LargeFont.DrawCenterTextP(120,45,CALI1);
-		LargeFont.DrawCenterTextP(120,75,CALI2);
-		LargeFont.DrawCenterTextP(120,105,CALI3);
-		LargeFont.DrawCenterTextP(120,135,CALI4);
-		Font.SetColor(BLACK,WHITE,true);
-		Font.DrawCenterTextP(120,190,CALI5);
-		Font.DrawCenterTextP(120,205,CALI6);
-		Font.DrawCenterTextP(120,220,CALI7);
-		for(byte a = 0; a<2; a++)
-		{
-			LCD.DrawCircle(RED,CalibrationPoints[a*2], CalibrationPoints[(a*2)+1], 5, false);
-			while (!TS.IsTouched());
-			TS.GetTouch();
-//			Serial.println(TS.uX,DEC);
-//			Serial.println(TS.uY,DEC);
-			if (a==0)
-			{
-				SmallFont.DrawText(SILVER,WHITE,40,25,TS.uX);			
-				SmallFont.DrawText(SILVER,WHITE,40,35,TS.uY);
-			}
-			else
-			{
-				SmallFont.DrawText(SILVER,WHITE,175,280,TS.uX);			
-				SmallFont.DrawText(SILVER,WHITE,175,290,TS.uY);
-			}
-			TouchedPoints[a*2] = TS.uX;
-			TouchedPoints[(a*2)+1] = TS.uY;
-			LCD.DrawCircle(BLUE,CalibrationPoints[a*2], CalibrationPoints[(a*2)+1], 4, true);
-			delay(500);
-		}
-		TS.calibration.XMin=map(0,CalibrationPoints[0],CalibrationPoints[2],TouchedPoints[0],TouchedPoints[2]);
-		TS.calibration.XMax=map(239,CalibrationPoints[0],CalibrationPoints[2],TouchedPoints[0],TouchedPoints[2]);
-		TS.calibration.YMin=map(0,CalibrationPoints[1],CalibrationPoints[3],TouchedPoints[1],TouchedPoints[3]);
-		TS.calibration.YMax=map(319,CalibrationPoints[1],CalibrationPoints[3],TouchedPoints[1],TouchedPoints[3]);
-		if (
-			TS.calibration.XMin > TS_CALIBRATION_XMIN - TS_CALIBRATION_DELTA && 
-			TS.calibration.XMin < TS_CALIBRATION_XMIN + TS_CALIBRATION_DELTA &&
-			TS.calibration.XMax > TS_CALIBRATION_XMAX - TS_CALIBRATION_DELTA && 
-			TS.calibration.XMax < TS_CALIBRATION_XMAX + TS_CALIBRATION_DELTA &&
-			TS.calibration.YMin > TS_CALIBRATION_YMIN - TS_CALIBRATION_DELTA &&
-			TS.calibration.YMin < TS_CALIBRATION_YMIN + TS_CALIBRATION_DELTA &&
-			TS.calibration.YMax > TS_CALIBRATION_YMAX - TS_CALIBRATION_DELTA &&
-			TS.calibration.YMax < TS_CALIBRATION_YMAX + TS_CALIBRATION_DELTA
-			) calibrated=true;
-//		calibrated=true;
-	}
-    TS.SaveCalibration();
-    Tilt.CompensateAccelerometer();
-	LCD.Clear(WHITE,0,180,239,270);
-	OkButton.SetPosition(88,200);
-	OkButton.Show();
-	do TS.GetTouch(); while(!ReefTouch.OkButton.IsPressed());
-	OkButton.Hide();
-	LCD.FullClear(WHITE);
-	
+	}	
 }
 
 void ReefTouchClass::ChangeDisplayedScreen(signed char index)
@@ -541,7 +608,6 @@ void ReefTouchClass::ChangeDisplayedScreen(signed char index)
 			}
 		}
 	if (DisplayedScreen>MAX_SCREENS) DisplayedScreen=0;
-	LCD.Clear(BLACK,0,33,LCD.GetWidth(),LCD.GetHeight());
 }
 
 void TFT::Init()
@@ -554,7 +620,9 @@ void TFT::Init()
 	RST1;
 	delay(15);
 
-
+#define HX8347D 
+	
+#ifdef HX8347D
 	//CMO2.8+HX8347D
 	//Driving ability Setting
 	SendComData(0x00EA,0x0000); //PTBA[15:8]
@@ -645,7 +713,135 @@ void TFT::Init()
 	SendComData(0x0008,0x0001);
 	SendComData(0x0009,0x003F); //Row End
 
-	SendCom(0x00,0x22);   
+#endif
+	
+#ifdef ILI9341
+	  SendCom(0x00,0x01);
+	  delay(10);
+	  SendCom(0x00,0x28);
+
+	  SendCom(0x00,0xcf);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x83);
+	  SendData(0x00,0x30);
+
+	  SendCom(0x00,0xed);
+	  SendData(0x00,0x64);
+	  SendData(0x00,0x03);
+	  SendData(0x00,0x12);
+	  SendData(0x00,0x81);
+
+	  SendCom(0x00,0xe8);
+	  SendData(0x00,0x85);
+	  SendData(0x00,0x01);
+	  SendData(0x00,0x79);
+
+	  SendCom(0x00,0xcb);
+	  SendData(0x00,0x39);
+	  SendData(0x00,0x2c);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x34);
+	  SendData(0x00,0x02);
+
+	  SendCom(0x00,0xf7);
+	  SendData(0x00,0x20);
+
+	  SendCom(0x00,0xea);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x00);
+
+	  SendCom(0x00,0xc0);
+	  SendData(0x00,0x26);
+
+	  SendCom(0x00,0xc1);
+	  SendData(0x00,0x11);
+
+	  SendCom(0x00,0xc5);
+	  SendData(0x00,0x35);
+	  SendData(0x00,0x3e);
+
+	  SendCom(0x00,0xc7);
+	  SendData(0x00,0xbe);
+
+	  SendCom(0x00,0x36);
+	  SendData(0x00,0x48);
+
+	  SendCom(0x00,0x3a);
+	  SendData(0x00,0x55);
+
+	  SendCom(0x00,0xb1);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x1B);
+
+	  SendCom(0x00,0xf2);
+	  SendData(0x00,0x08);
+
+	  SendCom(0x00,0x26);
+	  SendData(0x00,0x01);
+
+	  SendCom(0x00,0xe0);
+	  SendData(0x00,0x1f);
+	  SendData(0x00,0x1a);
+	  SendData(0x00,0x18);
+	  SendData(0x00,0x0a);
+	  SendData(0x00,0x0f);
+	  SendData(0x00,0x06);
+	  SendData(0x00,0x45);
+	  SendData(0x00,0x87);
+	  SendData(0x00,0x32);
+	  SendData(0x00,0x0a);
+	  SendData(0x00,0x07);
+	  SendData(0x00,0x02);
+	  SendData(0x00,0x07);
+	  SendData(0x00,0x05);
+	  SendData(0x00,0x00);
+
+	  SendCom(0x00,0xe1);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x25);
+	  SendData(0x00,0x27);
+	  SendData(0x00,0x05);
+	  SendData(0x00,0x10);
+	  SendData(0x00,0x09);
+	  SendData(0x00,0x3a);
+	  SendData(0x00,0x78);
+	  SendData(0x00,0x4d);
+	  SendData(0x00,0x05);
+	  SendData(0x00,0x18);
+	  SendData(0x00,0x0d);
+	  SendData(0x00,0x38);
+	  SendData(0x00,0x3a);
+	  SendData(0x00,0x1f);
+
+	  SendCom(0x00,0x2a);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0xEF);
+
+	  SendCom(0x00,0x2b);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x00);
+	  SendData(0x00,0x01);
+	  SendData(0x00,0x3F);
+
+	  SendCom(0x00,0xb7);
+	  SendData(0x00,0x07);
+
+	  SendCom(0x00,0xb6);
+	  SendData(0x00,0x0a);
+	  SendData(0x00,0x82);
+	  SendData(0x00,0x27);
+	  SendData(0x00,0x00);
+
+	  SendCom(0x00,0x11);
+	  delay(100);
+	  SendCom(0x00,0x29);
+	  delay(100);
+	  SendCom(0x00,0x2c);
+
+#endif
+	
 }
 
 void TFT::SendComData(int Com,int Data)
@@ -679,6 +875,9 @@ void TFT::WriteBus(byte H,byte L)
 void TFT::Clear(int color, int x1, int y1, int x2, int y2)
 {
 	SetBox(x1,y1,x2,y2);
+#ifdef ILI9341
+	SendCom(0x00,0x2C);   /* Write RAM Memory */
+#endif
 	SendData(color>>8,color&0x00ff);
 	CS0;
 	for(int i=0;i<(y2-y1+1);i++)
@@ -695,6 +894,7 @@ void TFT::Clear(int color, int x1, int y1, int x2, int y2)
 
 void TFT::SetBox(int x1, int y1, int x2, int y2)
 {
+#ifdef HX8347D	
 	SendComData(0x0002,x1>>8);     // Column address start2
 	SendComData(0x0003,x1);    // Column address start1
 	SendComData(0x0004,x2>>8);     // Column address end2
@@ -703,12 +903,29 @@ void TFT::SetBox(int x1, int y1, int x2, int y2)
 	SendComData(0x0007,y1);    // Row address start1
 	SendComData(0x0008,y2>>8);     // Row address end2
 	SendComData(0x0009,y2);    // Row address end1
-	SendCom(0x00,0x22);      
+	SendCom(0x00,0x22);
+#endif
+#ifdef ILI9341
+	SendCom(0x00,0x2A);                                                      /* Column Command address       */
+	SendData(0x00,x1>>8);
+	SendData(0x00,x1);
+	SendData(0x00,x2>>8);	
+	SendData(0x00,x2);	
+	SendCom(0x00,0x2B);                                                      /* Column Command address       */
+	SendData(0x00,y1>>8);
+	SendData(0x00,y1);
+	SendData(0x00,y2>>8);	
+	SendData(0x00,y2);	
+#endif
+	
 }
 
 void TFT::DrawPixel(int color, int x, int y)
 {
 	SetBox(x, y, x, y);
+#ifdef ILI9341
+	SendCom(0x00,0x2C);   /* Write RAM Memory */
+#endif
 	SendData(color>>8,color&0x00ff);
 //	CS0;
 //	WR0;
@@ -770,22 +987,42 @@ void LCDClass::SetOrientation(byte O)
 		switch (O)
 		{
 		case 1:
+#ifdef HX8347D	
 			TFT::SendComData(0x0016,0x000f); // Normal Rotation
+#endif
+#ifdef ILI9341
+			TFT::SendComData(0x0036,0x0048); // Normal Rotation
+#endif
 			w=239;
 			h=319;
 			break;
 		case 2:
+#ifdef HX8347D	
 			TFT::SendComData(0x0016,0x00af); // 90 Rotation
+#endif
+#ifdef ILI9341
+			TFT::SendComData(0x0036,0x0028); // Normal Rotation
+#endif
 			w=319;
 			h=239;
 			break;
 		case 3:
+#ifdef HX8347D	
 			TFT::SendComData(0x0016,0x00cf); // 180 Rotation
+#endif
+#ifdef ILI9341
+			TFT::SendComData(0x0036,0x0088); // Normal Rotation
+#endif
 			w=239;
 			h=319;
 			break;
 		case 4:
+#ifdef HX8347D	
 			TFT::SendComData(0x0016,0x006f); // 270 Rotation
+#endif
+#ifdef ILI9341
+			TFT::SendComData(0x0036,0x00e8); // Normal Rotation
+#endif
 			w=319;
 			h=239;
 			break;
@@ -1033,6 +1270,9 @@ void LCDClass::DrawBMP(int ix, int iy, const prog_uchar *iPtr)
 	int h  =pgm_read_byte_near(iPtr++)+1;
 	iPtr+=3;
 	TFT::SetBox(ix, iy, w+ix-1, h+iy-1);
+#ifdef ILI9341
+		TFT::SendCom(0x00,0x2C);   /* Write RAM Memory */
+#endif		
 	for (int a=0; a<w*h; a++)
 	{
 //		if ((i=pgm_read_byte_near(iPtr++))==0) i=255;
@@ -1144,14 +1384,14 @@ void LCDClass::DrawDateTime(int x, int y, boolean militarytime)
 	if (year()<2010) strcat(text,"0");
 	itoa(year()-2000,temp,10);
 	strcat(text,temp);
-	ReefTouch.Font.DrawText(GetWidth()-ReefTouch.Font.TextWidth(text),y,text);
+	ReefTouch.Font.DrawText(GetWidth()-ReefTouch.Font.TextWidth(text)-30,y,text);
 }
 
 
 FontClass::FontClass()
 {
-	FC = WHITE;
-	BC = BLACK;
+	FC = COLOR_WHITE;
+	BC = COLOR_BLACK;
 	x = 0;
 	y = 0;
 	Transparent = false;
@@ -1619,10 +1859,18 @@ void TouchScreen::GetTouch()
 		Y=constrain(Y,0,319);
 		break;
 	case 2:
+#ifdef HX8347D	
 		X=map(uY,calibration.YMax,calibration.YMin,0,319);
 		Y=map(uX,calibration.XMin,calibration.XMax,0,239);
 		X=constrain(X,0,319);
 		Y=constrain(Y,0,239);
+#endif
+#ifdef ILI9341
+		X=map(uY,calibration.YMax,calibration.YMin,319,0);
+		Y=map(uX,calibration.XMin,calibration.XMax,239,0);
+		X=constrain(X,0,319);
+		Y=constrain(Y,0,239);
+#endif		
 		break;
 	case 3:
 		X=map(uX,calibration.XMax,calibration.XMin,0,239);
@@ -1631,10 +1879,18 @@ void TouchScreen::GetTouch()
 		Y=constrain(Y,0,319);
 		break;
 	case 4:
+#ifdef HX8347D	
 		X=map(uY,calibration.YMin,calibration.YMax,0,319);
 		Y=map(uX,calibration.XMax,calibration.XMin,0,239);
 		X=constrain(X,0,319);
 		Y=constrain(Y,0,239);
+#endif
+#ifdef ILI9341
+		X=map(uY,calibration.YMin,calibration.YMax,319,0);
+		Y=map(uX,calibration.XMax,calibration.XMin,239,0);
+		X=constrain(X,0,319);
+		Y=constrain(Y,0,239);
+#endif		
 		break;
 	}
 	if (X <= 0) X = 0;
@@ -1648,21 +1904,21 @@ boolean TouchScreen::IsTouched()
 	if (t) 
 	{
 		GetTouch();
-		if (FirstX==0 && FirstY==0)
-		{
-			FirstX=X;
-			FirstY=Y;
-		}
-		if (X-FirstX>TouchSlideDelta) SlideIndex++;
-		if (FirstX-X>TouchSlideDelta) SlideIndex--;
+//		if (FirstX==0 && FirstY==0)
+//		{
+//			FirstX=X;
+//			FirstY=Y;
+//		}
+//		if (X-FirstX>TouchSlideDelta) SlideIndex++;
+//		if (FirstX-X>TouchSlideDelta) SlideIndex--;
 	}
-	else
-	{
-		FirstX=FirstY=0;
-		if (SlideIndex>0) ReefTouch.ChangeDisplayedScreen(1);
-		if (SlideIndex<0) ReefTouch.ChangeDisplayedScreen(-1);
-		SlideIndex=0;
-	}
+//	else
+//	{
+//		FirstX=FirstY=0;
+//		if (SlideIndex>0) ReefTouch.ChangeDisplayedScreen(1);
+//		if (SlideIndex<0) ReefTouch.ChangeDisplayedScreen(-1);
+//		SlideIndex=0;
+//	}
 	return t;
 }
 
@@ -1700,8 +1956,9 @@ void TiltClass::Refresh()
 	ACC0;
 	x=Read(0x6);
 	y=Read(0x7);
-//	Serial.println(x);
 	ACC1;
+	if (x<0) x=0;
+	if (y<0) y=0;
 	//if (Tilt.GetX()>-TT_SENSITIVITY && Tilt.GetX()<TT_SENSITIVITY && Tilt.GetY()>-TT_SENSITIVITY && Tilt.GetY()<TT_SENSITIVITY) LCD.SetOrientation(1);
 	if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) ReefTouch.LCD.SetOrientation(1);
 	if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) ReefTouch.LCD.SetOrientation(2);
@@ -1743,6 +2000,8 @@ void TiltClass::ApplyCompensation()
 
 ButtonClass::ButtonClass()
 {
+	x1=0;
+	y1=0;
 }
 
 void ButtonClass::Create(int icolor, int itextcolor, char *istr)
@@ -1758,29 +2017,163 @@ void ButtonClass::SetPosition(int ix1, int iy1)
 	y1=iy1;
 }
 
+void ButtonClass::SetLabel(char *istr)
+{
+	str=istr;
+}
+
 void ButtonClass::Show()
 {
 	visible=true;
 	ReefTouch.LargeFont.DrawText(x1+25,y1+11,str);
 	x2=ReefTouch.LargeFont.GetX()+25;
 	ReefTouch.LCD.DrawRoundRect(RGB565(0xD0, 0xD0, 0xD0),x1+1,y1+1,x2+1,y1+41,10,false);
-	ReefTouch.LCD.DrawRoundRect(BLACK,x1,y1,x2,y1+40,10,false);
+	ReefTouch.LCD.DrawRoundRect(COLOR_BLACK,x1,y1,x2,y1+40,10,false);
 	ReefTouch.LCD.DrawRoundRect(color,x1+1,y1+1,x2-1,y1+39,10,true);
-	ReefTouch.LargeFont.SetColor(BLACK,SILVER,true);
-	ReefTouch.LargeFont.DrawText(x1+26,y1+10,str);
-	ReefTouch.LargeFont.SetColor(textcolor,SILVER,true);
-	ReefTouch.LargeFont.DrawText(x1+25,y1+9,str);
+	ReefTouch.LargeFont.SetColor(COLOR_BLACK,COLOR_SILVER,true);
+	ReefTouch.LargeFont.DrawText(x1+26,y1+5,str);
+	ReefTouch.LargeFont.SetColor(textcolor,COLOR_SILVER,true);
+	ReefTouch.LargeFont.DrawText(x1+25,y1+4,str);
 }
 
 void ButtonClass::Hide()
 {
 	visible=false;
-	ReefTouch.LCD.Clear(WHITE,x1,y1,x2+1,y1+41);
+	ReefTouch.LCD.Clear(BKCOLOR,x1,y1,x2+1,y1+41);
 }
 
 boolean ButtonClass::IsPressed()
 {
 	return (ReefTouch.TS.X > x1 && ReefTouch.TS.X < x2 && ReefTouch.TS.Y > y1 && ReefTouch.TS.Y < y1+40);
+}
+
+SliderClass::SliderClass()
+{
+	min=0;
+	max=0;
+	current=0;
+	x1=0;
+	y1=0;
+	NeedsRedraw=true;
+}
+
+void SliderClass::Create(int icolor, int itextcolor, char *istr)
+{
+	color=icolor;
+	textcolor=itextcolor;
+	str=istr;
+}
+
+void SliderClass::SetPosition(int ix1, int iy1)
+{
+	x1=ix1;
+	y1=iy1;
+}
+
+void SliderClass::SetMin(int value)
+{
+	min=value;
+}
+
+void SliderClass::SetMax(int value)
+{
+	max=value;
+}
+
+void SliderClass::SetCurrent(int value)
+{
+	current=value;
+}
+
+void SliderClass::SetLabel(char *istr)
+{
+	str=istr;
+}
+
+void SliderClass::DrawMarker()
+{
+	int currentX=map(current,min,max,41,ReefTouch.LCD.GetWidth()-41);
+//	ReefTouch.LCD.Clear(BKCOLOR,currentX-2,y1+31,currentX-2,y1+32);
+//	ReefTouch.LCD.Clear(BKCOLOR,currentX-2,y1+59,currentX-2,y1+60);
+//	ReefTouch.LCD.Clear(BKCOLOR,currentX+2,y1+31,currentX+2,y1+32);
+//	ReefTouch.LCD.Clear(BKCOLOR,currentX+2,y1+59,currentX+2,y1+60);
+//	for (int a=currentX-2;a<=currentX+2;a++) ReefTouch.LCD.DrawLine(alphaBlend(color,BKCOLOR,((a-40)*100)/(ReefTouch.LCD.GetWidth()-80)),a,y1+33,a,y1+58);
+	for (int a=0;a<ReefTouch.LCD.GetWidth()-80;a++) ReefTouch.LCD.DrawLine(alphaBlend(color,BKCOLOR,(a*100)/(ReefTouch.LCD.GetWidth()-80)),40+a,y1+33,40+a,y1+58);
+	ReefTouch.LCD.Clear(BKCOLOR,0,y1+31,ReefTouch.LCD.GetWidth(),y1+32);
+	ReefTouch.LCD.Clear(BKCOLOR,0,y1+59,ReefTouch.LCD.GetWidth(),y1+60);
+	ReefTouch.LCD.Clear(COLOR_GRAY,currentX-1,y1+31,currentX+1,y1+60);
+	ReefTouch.LCD.Clear(COLOR_RED,currentX,y1+32,currentX,y1+59);
+	ReefTouch.LargeFont.SetColor(textcolor,BKCOLOR,false);
+	char c[10];
+	char temp[10];
+	itoa(current,temp,10);
+	strcpy(c," ");
+	strcat(c,temp);
+	strcat(c," ");
+	ReefTouch.LargeFont.DrawCenterText(ReefTouch.LCD.GetWidth()/2,y1,c);
+}
+
+void SliderClass::Show()
+{
+	visible=true;
+	NeedsRedraw=false;
+	ReefTouch.LCD.Clear(BKCOLOR,40,y1,ReefTouch.LCD.GetWidth()-40,y1+75);
+	ReefTouch.Font.SetColor(textcolor,BKCOLOR,true);
+	ReefTouch.Font.DrawCenterText(ReefTouch.LCD.GetWidth()/2,y1+63,str);
+	for (int a=0;a<ReefTouch.LCD.GetWidth()-80;a++) ReefTouch.LCD.DrawLine(alphaBlend(color,BKCOLOR,(a*100)/(ReefTouch.LCD.GetWidth()-80)),40+a,y1+33,40+a,y1+58);
+	ReefTouch.LargeFont.SetColor(textcolor,BKCOLOR,true);
+	ReefTouch.LargeFont.DrawCenterNumber(ReefTouch.LCD.GetWidth()/2,y1,current,0);
+	ReefTouch.LCD.DrawBMP(10,y1+33,MINUS);
+	ReefTouch.LCD.DrawBMP(ReefTouch.LCD.GetWidth()-35,y1+33,PLUS);
+	DrawMarker();
+}
+
+void SliderClass::Hide()
+{
+	visible=false;
+	ReefTouch.LCD.Clear(BKCOLOR,0,y1,ReefTouch.LCD.GetWidth(),y1+72);
+}
+
+int SliderClass::GetCurrent()
+{
+	return current;
+}
+
+boolean SliderClass::IsTouched()
+{
+	if (IsPlusPressed())
+	{
+		current++;
+		if (current>max) current=max;
+		DrawMarker();
+		delay(100);
+	}
+	if (IsMinusPressed())
+	{
+		current--;
+		if (current<min) current=min;
+		DrawMarker();
+		delay(100);
+	}
+	if (ReefTouch.TS.X > 40 && ReefTouch.TS.X < (ReefTouch.LCD.GetWidth()-40) && ReefTouch.TS.Y > y1+25 && ReefTouch.TS.Y < y1+60)
+	{
+		current=map(ReefTouch.TS.X,40,ReefTouch.LCD.GetWidth()-40,min,max);
+		DrawMarker();
+	}
+	if (NeedsRedraw)
+	{
+		Show();
+	}	
+}
+
+boolean SliderClass::IsPlusPressed()
+{
+	return (ReefTouch.TS.X > (ReefTouch.LCD.GetWidth()-35) && ReefTouch.TS.Y > y1+28 && ReefTouch.TS.Y < y1+63);
+}
+
+boolean SliderClass::IsMinusPressed()
+{
+	return (ReefTouch.TS.X < 35 && ReefTouch.TS.Y > y1+28 && ReefTouch.TS.Y < y1+63);
 }
 
 ReefTouchClass ReefTouch = ReefTouchClass();

@@ -17,6 +17,36 @@
 #ifndef __RA_COLORS_H__
 #define __RA_COLORS_H__
 
+#ifdef REEFTOUCH
+// Reef Touch Colors
+#define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
+#define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
+#define COLOR_RED                   RGB565(0xFF, 0x00, 0x00)
+#define COLOR_GREEN                 RGB565(0x00, 0xFF, 0x00)
+#define COLOR_BLUE                  RGB565(0x00, 0x00, 0xFF)
+#define COLOR_YELLOW                RGB565(0xFF, 0xFF, 0x00)
+#define COLOR_MAGENTA               RGB565(0xFF, 0x00, 0xFF)
+#define COLOR_CYAN                  RGB565(0x00, 0xFF, 0xFF)
+#define COLOR_GRAY                  RGB565(0x80, 0x80, 0x40)
+#define COLOR_SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define COLOR_GOLD                  RGB565(0xA0, 0xA0, 0x40)
+#define COLOR_ORANGE				RGB565(0xFF, 0x80, 0x00)
+#define TOPBAR_BC					COLOR_WHITE
+#define TOPBAR_FC					COLOR_BLACK
+#define BOTTOMBAR_BC				COLOR_WHITE
+#define BOTTOMBAR_FC				COLOR_BLACK
+#define BKCOLOR						COLOR_BLACK
+#define WARNING_TEXT				COLOR_GOLD
+#define DIVISION					RGB565(0x40, 0x40, 0x40)
+#define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
+#define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
+#define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
+#define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
+#define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
+#define DefaultBGColor				BKCOLOR
+
+#else //  REEFTOUCH
+
 //  Global Colors
 #define COLOR_BLACK                 0x00
 #define COLOR_NAVY                  0x02
@@ -110,5 +140,7 @@
 #define COLOR_YELLOW                0xFC
 #define COLOR_LIGHTGOLDENRODYELLOW  0xFE
 #define COLOR_WHITE                 0xFF
+
+#endif //  REEFTOUCH
 
 #endif  // __RA_COLORS_H__

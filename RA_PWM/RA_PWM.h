@@ -44,6 +44,8 @@ public:
 	void StandardDaylight();
 	void StandardActinic(byte MinuteOffset);
 	void StandardDaylight(byte MinuteOffset);
+	inline byte GetActinicValue() { return ActinicPWMValue; }
+	inline byte GetDaylightValue() { return DaylightPWMValue; }
 	
 #ifdef PWMEXPANSION
 	byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
@@ -80,10 +82,9 @@ public:
 	void Channel5PWMParabola(byte MinuteOffset);
 	void ChannelPWMParabola(byte Channel, byte Start, byte End);
 	void ChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);	
-
+	boolean inline IsPresent() { return Present; }
+	boolean Present;
 #endif  // PWMEXPANSION
-	inline byte GetActinicValue() { return ActinicPWMValue; }
-	inline byte GetDaylightValue() { return DaylightPWMValue; }
 
 private:
 	byte ActinicPWMValue;

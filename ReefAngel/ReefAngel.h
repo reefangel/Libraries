@@ -27,7 +27,16 @@
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
 #include <Time.h>
+#ifdef REEFTOUCH
+#include <RA_TouchLCD.h>
+#include <RA_TFT.h>
+#include <RA_TS.h>
+#include <RA_Tilt.h>
+#include <Font.h>
+#include <SPI.h>
+#else //  REEFTOUCH
 #include <RA_NokiaLCD.h>
+#endif //  REEFTOUCH
 #include <RA_ATO.h>
 #include <RA_Joystick.h>
 #include <LED.h>
@@ -36,6 +45,7 @@
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
+#include <SD.h>
 
 #if defined ORPEXPANSION
 	#include <ORP.h>
@@ -77,6 +87,74 @@
 static unsigned long ButtonDebounce;
 static unsigned long RAStart;
 
+#ifdef REEFTOUCH
+class ButtonClass
+{
+	public:
+		ButtonClass();
+		void Create(int color, int textcolor, char *str);
+		void inline SetPosition(int ix1, int iy1) { x1=ix1; y1=iy1; };
+		void inline SetLabel(char *value) { str=value; };
+		void Show();
+		void Hide();
+		boolean IsPressed();
+	private:
+		int color, x1, x2, y1, textcolor;
+		char *str;
+		boolean visible;
+};
+
+class ProgressBarClass
+{
+	public:
+		ProgressBarClass();
+		void Create(int color, int bkcolor, int textcolor, char *str);
+		void inline SetPosition(int ix1, int iy1) { x1=ix1; y1=iy1; };
+		void SetCurrent(int value);
+		int inline GetCurrent() { return current; };
+		void inline SetLabel(char *value) { str=value; };
+		void inline SetColor(int value) { color=value; };
+		void inline SetBackColor(int value) { bkcolor=value; };
+		void inline SetTextColor(int value) { textcolor=value; };
+		void Show();
+		void Hide();
+		boolean IsPressed();
+		boolean NeedsRedraw;
+	private:
+		int color, bkcolor, x1, y1, textcolor;
+		int min,max,current;
+		char *str;
+		boolean visible;
+};
+
+class SliderClass
+{
+	public:
+		SliderClass();
+		void Create(int color, int textcolor, char *str);
+		void inline SetPosition(int ix1, int iy1) { x1=ix1; y1=iy1; };
+		void inline SetMin(int value) { min=value; };
+		void inline SetMax(int value) { max=value; };
+		void inline SetCurrent(int value) { current=value; };
+		int inline GetMin() { return min; };
+		int inline GetMax() { return max; };
+		int inline GetCurrent() { return current; };
+		void inline SetLabel(char *value) { str=value; };
+		void DrawMarker();
+		void Show();
+		void Hide();
+		boolean IsTouched();
+		boolean IsPlusPressed();
+		boolean IsMinusPressed();
+	private:
+		int color, x1, y1, textcolor;
+		int min,max,current;
+		char *str;
+		boolean visible;
+		boolean NeedsRedraw;
+	
+};
+#endif //  REEFTOUCH
 
 class ReefAngelClass
 {
@@ -85,7 +163,28 @@ public:
 	int PHMin,PHMax;
 	ParamsStruct Params;
 	ReefAngelClass();
+#ifdef REEFTOUCH
+	RA_TouchLCD TouchLCD;
+	RA_TFT TFT;
+	FontClass SmallFont;
+	FontClass Font;
+	FontClass LargeFont;
+	RA_TS TS;
+	RA_Tilt Tilt;
+	ButtonClass OkButton;
+	ButtonClass CancelButton;
+	ProgressBarClass PB[6];
+	
+	boolean Splash;
+	byte LastOrientation;
+	boolean MilitaryTime;
+	signed char DisplayedScreen;
+	boolean NeedsRedraw;
+	boolean TouchEnabled;
+	byte orientation;
+#else //  REEFTOUCH
 	RA_NokiaLCD LCD;
+#endif //  REEFTOUCH
 	RA_JoystickClass Joystick;
 	LEDClass LED;
 	DS1307RTC RTC;
@@ -169,8 +268,9 @@ public:
 	void inline AddCustomColors() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
-	void inline One() {};
-	void inline Mini() {};
+	void inline Mini() {}; // deprecated
+	void inline Touch() {};
+	void inline NoWifi() {};
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
@@ -238,7 +338,15 @@ public:
 	void WaterChangeModeStart();
 	void ATOClear();
 	void OverheatClear();
+	void RefreshScreen();
 
+#ifdef REEFTOUCH
+	void SetOrientation(byte o);
+	void CalibrateTouchScreen();
+	void SaveInitialSettings();
+	void ChangeDisplayedScreen(signed char index);
+#endif //  REEFTOUCH
+	
     // Nested Menu Functions
 #ifdef CUSTOM_MENU
 	void InitMenu(int ptr, byte qty);
@@ -306,6 +414,8 @@ public:
     byte CustomVar[8];
 #endif //CUSTOM_VARIABLES
 
+	inline int GetBatteryVoltage() { return analogRead(VBAT)*.48828; };
+
 private:
 	bool showmenu;
 	time_t menutimeout;
@@ -319,7 +429,7 @@ public:
 private:
 	byte PreviousMenu;
 	bool redrawmenu;
-
+	
 //#ifdef wifi
 //	// WebBanner variables
 //	int webbannerpointer;

@@ -30,11 +30,10 @@
 #include <ArialBold20.h>
 #include <SDFile.h>
 #include <ReefAngel_Logo.h>
-#include <Green.h>
-#include <Red.h>
+#include <Icons.h>
 #include <Globals.h>
 #include <OneWire.h>
-#include <RT_PWM.h>
+#include <RA_PWM.h>
 #include <Relay.h>
 #include <AI.h>
 
@@ -64,7 +63,7 @@ const prog_char ATOHIGHPORT[] PROGMEM = "ATO Low";
 const prog_char ATOLOWPORT[] PROGMEM = "ATO High";
 const prog_char MODE[] PROGMEM = "Mode";
 const prog_char DURATION[] PROGMEM = "Duration";
-const prog_char SPEED[] PROGMEM = "Max. Speed";
+const prog_char SPEED[] PROGMEM = "Speed";
 
 // Headers
 const prog_char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";
@@ -78,8 +77,10 @@ const prog_char EXP_RELAY_7_LABEL[] PROGMEM = "Exp. Relay Box 7";
 const prog_char EXP_RELAY_8_LABEL[] PROGMEM = "Exp. Relay Box 8";
 const prog_char PWM_EXPANSION_LABEL[] PROGMEM = "PWM Expansion";
 const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
+const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
 const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, AI_LABEL};
+const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
+static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -128,6 +129,32 @@ static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST,
 //  int ORP;
 //} ParamsStruct;
 
+
+#define BLACK                 RGB565(0x00, 0x00, 0x00)
+#define WHITE                 RGB565(0xFF, 0xFF, 0xFF)
+#define RED                   RGB565(0xFF, 0x00, 0x00)
+#define GREEN                 RGB565(0x00, 0xFF, 0x00)
+#define BLUE                  RGB565(0x00, 0x00, 0xFF)
+#define YELLOW                RGB565(0xFF, 0xFF, 0x00)
+#define MAGENTA               RGB565(0xFF, 0x00, 0xFF)
+#define CYAN                  RGB565(0x00, 0xFF, 0xFF)
+#define GRAY                  RGB565(0x80, 0x80, 0x40)
+#define SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define GOLD                  RGB565(0xA0, 0xA0, 0x40)
+#define ORANGE				RGB565(0xFF, 0x80, 0x00)
+#define TOPBAR_BC					WHITE
+#define TOPBAR_FC					BLACK
+#define BOTTOMBAR_BC				WHITE
+#define BOTTOMBAR_FC				BLACK
+#define BKCOLOR						WHITE
+#define WARNING_TEXT				GOLD
+#define DIVISION					RGB565(0x40, 0x40, 0x40)
+#define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
+#define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
+#define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
+#define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
+#define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
+#define DefaultBGColor				BKCOLOR
 
 class FontClass
 {
@@ -254,6 +281,7 @@ class ButtonClass
 		ButtonClass();
 		void Create(int color, int textcolor, char *str);
 		void SetPosition(int x1, int y1);
+		void SetLabel(char *str);
 		void Show();
 		void Hide();
 		boolean IsPressed();
@@ -261,6 +289,32 @@ class ButtonClass
 		int color, x1, x2, y1, textcolor;
 		char *str;
 		boolean visible;
+};
+
+class SliderClass
+{
+	public:
+		SliderClass();
+		void Create(int color, int textcolor, char *str);
+		void SetPosition(int x1, int y1);
+		void SetMin(int value);
+		void SetMax(int value);
+		void SetCurrent(int value);
+		void SetLabel(char *str);
+		void DrawMarker();
+		void Show();
+		void Hide();
+		int GetCurrent();
+		boolean IsTouched();
+		boolean IsPlusPressed();
+		boolean IsMinusPressed();
+	private:
+		int color, x1, y1, textcolor;
+		int min,max,current;
+		char *str;
+		boolean visible;
+		boolean NeedsRedraw;
+	
 };
 
 class ReefTouchClass
@@ -276,32 +330,37 @@ class ReefTouchClass
 		FontClass LargeFont;
 		TiltClass Tilt;
 		ButtonClass OkButton;
-		RT_PWMClass PWM;
+		ButtonClass CancelButton;
+		RA_PWMClass PWM;
 		RelayClass Relay;
-#ifdef AI_LED
 		AIClass AI;
-#endif
 		byte _buffer[MAX_APP_BUFFER];	// Applications run in this buffer
 		SDFile File;
 		boolean Splash;
 		byte LastOrientation;
-		byte LastRelayData;
 		boolean MilitaryTime;
 		signed char DisplayedScreen;
 		boolean NeedsRedraw;
+		boolean TouchEnabled;
+		
 		void Init();
 		void Refresh();
 		void ShowInterface();
 		void CalibrateTouchScreen();
+		void SaveInitialSettings();
 		void ChangeDisplayedScreen(signed char index);
 	private:
 		byte ExpansionFlag;
 		// Expansion Flag
-		// 00000111
-		//      |||_ PWM Expansion
-		//      ||__ RF Expansion
-		//      |___ AI Expansion
-		
+		// 11111111
+		// ||||||||_ PWM Expansion
+		// |||||||__ RF Expansion
+		// ||||||___ AI Expansion
+		// |||||____ Salinity
+		// ||||_____ ORP
+		// |||______ I/O
+		// ||_______ PH Expansion
+		// |________ Water Level		
 		byte RelayExpansionFlag;
 		// Relay Expansion Flag
 		// 11111111

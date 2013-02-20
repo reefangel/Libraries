@@ -202,6 +202,36 @@ int alphaBlend(int fgcolor, int bgcolor, byte a)
 	return RGB565(r,g,b);
 }
 
+#ifdef REEFTOUCH
+/*********************************************/
+// These read data from the SD card file and convert them to big endian 
+// (the data is stored in little endian format!)
+
+// LITTLE ENDIAN!
+uint16_t read16(File f) 
+{
+  uint16_t d;
+  uint8_t b;
+  b = f.read();
+  d = f.read();
+  d <<= 8;
+  d |= b;
+  return d;
+}
+
+// LITTLE ENDIAN!
+uint32_t read32(File f) 
+{
+  uint32_t d;
+  uint16_t b;
+
+  b = read16(f);
+  d = read16(f);
+  d <<= 16;
+  d |= b;
+  return d;
+}
+#endif //  REEFTOUCH
 
 // for pure virtual functions
 void __cxa_pure_virtual(void){};
