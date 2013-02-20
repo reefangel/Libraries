@@ -2757,8 +2757,13 @@ void ReefAngelClass::ShowInterface()
 				}
 
 				LastStart = now();  // Set the time normal mode is started
+#ifdef REEFTOUCH
+				if ( TS.IsTouched() )
+				{
+#else //  REEFTOUCH
 				if ( Joystick.IsButtonPressed() )
 				{
+#endif //  REEFTOUCH
 					// joystick button pressed, so we stop the feeding mode
 					bDone = true;
 				}
@@ -2791,8 +2796,13 @@ void ReefAngelClass::ShowInterface()
 			case WATERCHANGE_MODE:
 			{
 				LastStart = now();  // Set the time normal mode is started
+#ifdef REEFTOUCH
+				if ( TS.IsTouched() )
+				{
+#else //  REEFTOUCH
 				if ( Joystick.IsButtonPressed() )
 				{
+#endif //  REEFTOUCH
 					// we're finished, so let's clear the screen and return
 #ifdef SaveRelayState
 					Relay.RelayData = CurrentRelayState;
@@ -2840,8 +2850,13 @@ void ReefAngelClass::ShowInterface()
 			default:
 			{
 				// we are viewing another screen, primarily the DisplayMenuEntry screen
+#ifdef REEFTOUCH
+				if ( TS.IsTouched() )
+				{
+#else //  REEFTOUCH
 				if ( Joystick.IsButtonPressed() )
 				{
+#endif //  REEFTOUCH
 					// button is pressed, so we gotta exit out, show the menu & redraw it too
 					redrawmenu = true;
 					showmenu = true;

@@ -184,8 +184,8 @@ public:
 	byte orientation;
 #else //  REEFTOUCH
 	RA_NokiaLCD LCD;
-#endif //  REEFTOUCH
 	RA_JoystickClass Joystick;
+#endif //  REEFTOUCH
 	LEDClass LED;
 	DS1307RTC RTC;
 	RA_ATOHighClass HighATO;
