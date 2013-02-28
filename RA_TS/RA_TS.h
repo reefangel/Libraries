@@ -40,6 +40,7 @@ class RA_TS
 		void SaveCalibration();
 		void GetTouch();
 		boolean IsTouched();
+		boolean IsTouchedInside(int x1, int y1, int x2, int y2);
 		boolean IsCalibrationNeeded();
 		int FirstX, FirstY;
 		signed char SlideIndex;
@@ -48,5 +49,6 @@ class RA_TS
 		boolean CalibrationNeeded;
 		void ApplyCalibration();
 		byte orientation;
+		boolean touchinsideenabled;
 };
 #endif // __RA_TS_H__

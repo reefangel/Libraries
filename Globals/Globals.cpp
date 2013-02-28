@@ -202,7 +202,7 @@ int alphaBlend(int fgcolor, int bgcolor, byte a)
 	return RGB565(r,g,b);
 }
 
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 /*********************************************/
 // These read data from the SD card file and convert them to big endian 
 // (the data is stored in little endian format!)

@@ -57,7 +57,7 @@ public:
 	void DrawSDImage(char *bmp, int x, int y);
 	void DrawSDRawImage(char *bmp, int x, int y, int w, int h);
 	void DrawDateTime(int x, int y, boolean militarytime, FontClass Font);
-	void DrawRelayStatus(int x, int y, boolean status, boolean override);
+	void DrawRelayStatus(int x, int y, boolean status);
 private:
 	int w,h;
 	byte orientation;		

@@ -438,11 +438,11 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 {
 	File dataFile = SD.open(bmp);
+	
 	if (dataFile) {
 		uint16_t p;
 		uint8_t g, b;
 		unsigned long i, j;
-
 		uint8_t sdbuffer[2 * BUFFPIXEL];  // 2 * pixels to buffer
 		uint8_t buffidx = 2*BUFFPIXEL;
 
@@ -512,14 +512,13 @@ void RA_TouchLCD::DrawDateTime(int x, int y, boolean militarytime, FontClass Fon
 	if (year()<2010) strcat(text,"0");
 	itoa(year()-2000,temp,10);
 	strcat(text,temp);
-	Font.DrawText(GetWidth()-Font.TextWidth(text)-30,y,text);
+	Font.DrawText(GetWidth()-Font.TextWidth(text)-35,y,text);
 }
 
-void RA_TouchLCD::DrawRelayStatus(int x, int y, boolean status, boolean override)
+void RA_TouchLCD::DrawRelayStatus(int x, int y, boolean status)
 {
 	int color;
 	if (status) color=RELAYGREEN; else color=COLOR_RED; 
-	if (override) color=COLOR_YELLOW;
 	for (int c=0;c<=6;c++) DrawLine(alphaBlend(color,(10-c)*10),x+c+4,y,x+c+4,y+17);
 	for (int c=4;c<=10;c++) DrawLine(alphaBlend(color,c*10),x+c+14,y,x+c+14,y+17);
 	Clear(alphaBlend(color,40),x+11,y,x+17,y+17);

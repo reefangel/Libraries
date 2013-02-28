@@ -42,6 +42,10 @@ public:
 	inline void StopTopping() { topping = false; }
 #endif  // ENABLE_ATO_LOGGING
 	unsigned long Timer;
+#ifdef REEFTOUCHDISPLAY
+    bool activestatus;
+    void inline SetActive(bool status) { activestatus=status; }
+#endif // REEFTOUCHDISPLAY
 
 private:
     bool topping;
@@ -50,13 +54,21 @@ private:
 class RA_ATOHighClass : public RA_ATOClass
 {
 public:
+#ifdef REEFTOUCHDISPLAY
+    inline bool IsActive() { return activestatus; }
+#else // REEFTOUCHDISPLAY
     inline bool IsActive() { return !digitalRead(highATOPin); }
+#endif // REEFTOUCHDISPLAY
 };
 
 class RA_ATOLowClass : public RA_ATOClass
 {
 public:
+#ifdef REEFTOUCHDISPLAY
+    inline bool IsActive() { return activestatus; }
+#else // REEFTOUCHDISPLAY
     inline bool IsActive() { return !digitalRead(lowATOPin); }
+#endif // REEFTOUCHDISPLAY
 };
 
 #endif  // __RA_ATO_H__

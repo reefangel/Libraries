@@ -27,7 +27,7 @@
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
 #include <Time.h>
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 #include <RA_TouchLCD.h>
 #include <RA_TFT.h>
 #include <RA_TS.h>
@@ -87,7 +87,7 @@
 static unsigned long ButtonDebounce;
 static unsigned long RAStart;
 
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 class ButtonClass
 {
 	public:
@@ -162,8 +162,9 @@ class ReefAngelClass
 public:
 	int PHMin,PHMax;
 	ParamsStruct Params;
+	byte Flags;
 	ReefAngelClass();
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	RA_TouchLCD TouchLCD;
 	RA_TFT TFT;
 	FontClass SmallFont;
@@ -236,6 +237,9 @@ public:
 	byte FeedingModePorts;
 	byte WaterChangePorts;
 	byte OverheatShutoffPorts;
+	byte EM;
+	byte REM;
+	
 #ifdef RelayExp
 	// Expansion Module ports
 	byte FeedingModePortsE[MAX_RELAY_EXPANSION_MODULES];
@@ -270,7 +274,11 @@ public:
 	void inline UseFlexiblePhCalibration() {};
 	void inline Mini() {}; // deprecated
 	void inline Touch() {};
+	void inline TouchDisplay() {};
 	void inline NoWifi() {};
+	void inline NoSD() {};
+	void inline NoTilt() {};
+	void UpdateTouchDisplay();
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
@@ -330,8 +338,6 @@ public:
 	void Portal(char *username);
 	void Portal(char *username, char*key);
 	void SendPortal(char *username, char*key);
-	byte EM;
-	byte REM;
 #endif  // wifi
 
 	void FeedingModeStart();
@@ -340,7 +346,7 @@ public:
 	void OverheatClear();
 	void RefreshScreen();
 
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	void SetOrientation(byte o);
 	void CalibrateTouchScreen();
 	void SaveInitialSettings();
@@ -420,6 +426,7 @@ private:
 	bool showmenu;
 	time_t menutimeout;
 	byte taddr;
+	bool SDFound;
 
 	// Nested Menu variables
 	int menusptr[Total_Menus];
@@ -474,6 +481,15 @@ void MenuEntry8();
 void MenuEntry9();
 #endif  // CUSTOM_MENU_ENTRIES >= 9
 #endif  // CUSTOM_MENU
+
+#ifdef REEFTOUCHDISPLAY
+void receiveEvent(int howMany);
+void SendMaster(byte ID, byte data1, byte data2);
+#endif REEFTOUCHDISPLAY 
+#ifdef I2CMASTER 
+void receiveEventMaster(int howMany);
+#endif // I2CMASTER 
+
 
 extern ReefAngelClass ReefAngel;  // make an instance for the user
 

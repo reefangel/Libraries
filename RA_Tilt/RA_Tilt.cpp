@@ -67,7 +67,6 @@ void RA_Tilt::Refresh()
 	if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=3;
 	if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=4;
 #endif //  HX8347D
-	
 }
 
 void RA_Tilt::CompensateAccelerometer()

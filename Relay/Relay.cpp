@@ -148,6 +148,7 @@ void RelayClass::Set(byte ID, boolean Status)
 
 void RelayClass::Write()
 {
+#ifndef REEFTOUCHDISPLAY
     byte TempRelay = RelayData;
 	byte present = 0;
     TempRelay &= RelayMaskOff;
@@ -174,6 +175,7 @@ void RelayClass::Write()
 #endif  // SaveRelaysPresent
 	}
 #endif  // RelayExp
+#endif  // REEFTOUCHDISPLAY
 }
 
 boolean RelayClass::Status(byte ID)

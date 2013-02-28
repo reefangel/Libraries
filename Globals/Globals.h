@@ -38,6 +38,20 @@
 #define DateTimeSetup
 #endif //__AVR_ATmega2560__
 
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#define DisplayLEDPWM
+#define PWMEXPANSION
+#define DisplayLEDPWM
+#define IOEXPANSION
+#define RFEXPANSION
+#define SALINITYEXPANSION
+#define ORPEXPANSION
+#define RelayExp
+#define PHEXPANSION
+#define WATERLEVELEXPANSION
+#define PWMEXPANSION
+#endif // REEFTOUCH
+
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
 
@@ -68,6 +82,10 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define Port3Bit   1<<2
 #define Port2Bit   1<<1
 #define Port1Bit   1<<0
+
+// Flag bits
+#define OverheatFlag   	1
+#define ATOTimeOutFlag	0
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
@@ -198,7 +216,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
-#define I2CRA_Slave			0x11
+#define I2CRA_Master		0x11
+#define I2CRA_TouchDisplay	0x12
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
@@ -475,7 +494,7 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -901,7 +920,7 @@ typedef struct {
 
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
-#define SplashDuration					10
+#define SplashDuration					5000
 #define TouchSample						5
 #define TouchSlideDelta					20
 #define TouchPressure					900
@@ -914,7 +933,7 @@ typedef struct {
 #define TS_CALIBRATION_DELTA			500
 #define MAX_SCREENS						14 // Highest ID for main screens
 
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 
 uint16_t read16(File f);
 uint32_t read32(File f);
@@ -966,6 +985,7 @@ const prog_char LABEL_IOPORT[] PROGMEM = "Input Port ";
 const prog_char LABEL_MODE[] PROGMEM = "Mode";
 const prog_char LABEL_DURATION[] PROGMEM = "Duration";
 const prog_char LABEL_SPEED[] PROGMEM = "Speed";
+const prog_char LABEL_OVERRIDE[] PROGMEM = "Override";
 
 // Headers
 const prog_char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";
@@ -997,6 +1017,11 @@ const prog_char RF_NIGHT[] PROGMEM = "Night";
 const prog_char RF_SLAVE[] PROGMEM = "Slave Check";
 const prog_char RF_None[] PROGMEM = "None";
 static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
+
+const prog_char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
+const prog_char WATER_CHANGE_LABEL[] PROGMEM = "Water Change";
+const prog_char TOUCH_END_LABEL[] PROGMEM = "Touch screen to quit";
+
 
 #endif //  REEFTOUCH
 
