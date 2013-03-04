@@ -50,6 +50,7 @@
 #define PHEXPANSION
 #define WATERLEVELEXPANSION
 #define PWMEXPANSION
+#define AI_LED
 #endif // REEFTOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
@@ -1024,6 +1025,54 @@ const prog_char TOUCH_END_LABEL[] PROGMEM = "Touch screen to quit";
 
 
 #endif //  REEFTOUCH
+
+#ifdef PWMEXPANSION
+	#define PWMEbit		1
+#else
+	#define PWMEbit		0
+#endif  // PWMEXPANSION
+
+#ifdef RFEXPANSION
+	#define RFEbit		2
+#else
+	#define RFEbit		0
+#endif  // RFEXPANSION
+
+#ifdef AI_LED
+	#define AIbit		4
+#else
+	#define AIbit		0
+#endif  // AI_LED
+
+#ifdef SALINITYEXPANSION
+	#define Salbit		8
+#else
+	#define Salbit		0
+#endif  // SALINITYEXPANSION
+
+#ifdef ORPEXPANSION
+	#define ORPbit		16
+#else
+	#define ORPbit		0
+#endif  // ORPEXPANSION
+
+#ifdef IOEXPANSION
+	#define IObit		32
+#else
+	#define IObit		0
+#endif  // IOEXPANSION
+
+#ifdef PHEXPANSION
+	#define PHbit		64
+#else
+	#define PHbit		0
+#endif  // PHEXPANSION
+
+#ifdef WATERLEVELEXPANSION
+	#define WLbit		128
+#else
+	#define WLbit		0
+#endif  // WATERLEVELEXPANSION
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

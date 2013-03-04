@@ -41,6 +41,8 @@ byte IOClass::GetChannel()
 
 boolean IOClass::GetChannel(byte Channel)
 {
+#if not defined REEFTOUCHDISPLAY
 	GetChannel();
+#endif  // REEFTOUCHDISPLAY	
 	return bitRead(IOPorts,Channel);
 }

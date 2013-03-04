@@ -166,9 +166,6 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 
 #ifdef PWMEXPANSION
 	const prog_char BannerPWME[] PROGMEM = "&pwme";
-	#define PWMEbit		1
-#else
-	#define PWMEbit		0
 #endif  // PWMEXPANSION
 
 #ifdef RFEXPANSION
@@ -181,53 +178,32 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 	const prog_char BannerRFG[] PROGMEM = "&rfg=";
 	const prog_char BannerRFB[] PROGMEM = "&rfb=";
 	const prog_char BannerRFI[] PROGMEM = "&rfi=";
-	#define RFEbit		2
-#else
-	#define RFEbit		0
 #endif  // RFEXPANSION
 
 #ifdef AI_LED
 	const prog_char BannerAIW[] PROGMEM = "&aiw=";
 	const prog_char BannerAIB[] PROGMEM = "&aib=";
 	const prog_char BannerAIRB[] PROGMEM = "&airb=";
-	#define AIbit		4
-#else
-	#define AIbit		0
 #endif  // AI_LED
 
 #ifdef SALINITYEXPANSION
 	const prog_char BannerSal[] PROGMEM = "&sal=";
-	#define Salbit		8
-#else
-	#define Salbit		0
 #endif  // SALINITYEXPANSION
 
 #ifdef ORPEXPANSION
 	const prog_char BannerORP[] PROGMEM = "&orp=";
-	#define ORPbit		16
-#else
-	#define ORPbit		0
 #endif  // ORPEXPANSION
 
 #ifdef IOEXPANSION
 	const prog_char BannerIO[] PROGMEM = "&io=";
-	#define IObit		32
-#else
-	#define IObit		0
 #endif  // IOEXPANSION
 
 #ifdef PHEXPANSION
 	const prog_char BannerPHE[] PROGMEM = "&phe=";
-	#define PHbit		64
-#else
-	#define PHbit		0
 #endif  // PHEXPANSION
 
 #ifdef WATERLEVELEXPANSION
 	const prog_char BannerWL[] PROGMEM = "&wl=";
-	#define WLbit		128
-#else
-	#define WLbit		0
 #endif  // WATERLEVELEXPANSION
 	
 #ifdef CUSTOM_VARIABLES

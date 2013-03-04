@@ -656,7 +656,7 @@ void ReefAngelClass::Init()
     InitMenus();
 #endif  // CUSTOM_MENU
 
-#ifdef wifi
+#if defined wifi || defined I2CMASTER
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
@@ -725,6 +725,7 @@ void ReefAngelClass::Refresh()
 	}
 #endif //  REEFTOUCH
 	
+#if not defined REEFTOUCHDISPLAY
 #ifdef RFEXPANSION
 	byte RFRecv=0;
 	RFRecv=RF.RFCheck();
@@ -753,6 +754,8 @@ void ReefAngelClass::Refresh()
 #ifdef IOEXPANSION
 	IO.GetChannel();
 #endif  // IOEXPANSION
+#endif  // REEFTOUCHDISPLAY	
+	
 	Relay.Write();
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
@@ -2223,7 +2226,7 @@ void ReefAngelClass::ShowInterface()
 									//Temperature, pH
 									x=twidth*3/21;
 									if (numexp==0) i=7;
-									j=60+i;
+									j=64+i;
 									Font.SetColor(COLOR_GOLD,BKCOLOR,true);
 									eeprom_read_block((void*)&tempname, (void*)Probe1Name, sizeof(tempname));
 									Font.DrawCenterText(x,j,tempname);
@@ -2237,7 +2240,7 @@ void ReefAngelClass::ShowInterface()
 									Font.DrawCenterTextP(x,j,LABEL_PH);
 
 									x=twidth*3/21;
-									if (numexp>0) j+=45+i;
+									if (numexp>0) j+=43+i;
 									//Salinity
 									if ((EM&(1<<3))!=0)
 									{
@@ -2300,7 +2303,7 @@ void ReefAngelClass::ShowInterface()
 									TouchLCD.DrawLine(alphaBlend(COLOR_RED,(5-a)*10),a,j,a,theight-34);
 								}
 								
-								j+=10+(i/2);
+								j+=8+(i*3/4);
 								
 								//ATO Ports
 								Font.DrawTextP(COLOR_WHITE,COLOR_BLACK,(twidth/10)+25,j,LABEL_ATOHIGHPORT);
@@ -2323,7 +2326,7 @@ void ReefAngelClass::ShowInterface()
 						
 								//pH
 								x=twidth*3/16;
-								j+=45+i;
+								j+=43+i;
 								LargeFont.DrawCenterNumber(x,j,Params.PH,100);
 								x+=twidth*5/16;
 								//Salinity
@@ -2366,7 +2369,7 @@ void ReefAngelClass::ShowInterface()
 								x=twidth*3/21;
 								if (numexp==0) i=7;
 								//Temperature
-								j=27+i;
+								j=32+i;
 								LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
 								LargeFont.DrawCenterNumber(x,j,Params.Temp[T1_PROBE],10);
 								x+=twidth*5/21;
@@ -2377,7 +2380,7 @@ void ReefAngelClass::ShowInterface()
 								LargeFont.DrawCenterNumber(x,j,Params.PH,100);
 
 								x=twidth*3/21;
-								if (numexp>0) j+=45+i;								
+								if (numexp>0) j+=43+i;								
 								//Salinity
 								if ((EM&(1<<3))!=0)
 								{
@@ -2405,7 +2408,7 @@ void ReefAngelClass::ShowInterface()
 							
 							// Progress Bars
 //							Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
-							j+=56+(i*2);
+							j+=55+(i*2);
 							PB[0].SetPosition(10,j);
 							PB[0].SetColor(COLOR_ORANGE);
 							PB[0].SetLabel("Daylight");
@@ -2416,7 +2419,7 @@ void ReefAngelClass::ShowInterface()
 //							TouchLCD.Clear(COLOR_BLACK,((twidth-139)*PWM.GetActinicValue()/100)+130,j,twidth,j+20);
 //							Font.DrawText(85,j+5,PWM.GetActinicValue());
 //							Font.DrawText("%   ");
-							j+=30+(i/2);
+							j+=29+(i/2);
 							PB[1].SetPosition(10,j);
 							PB[1].SetColor(COLOR_ROYALBLUE);
 							PB[1].SetLabel("Actinic");
@@ -2427,10 +2430,14 @@ void ReefAngelClass::ShowInterface()
 //							TouchLCD.Clear(COLOR_BLACK,((twidth-139)*PWM.GetDaylightValue()/100)+130,j,twidth,j+20);
 //							Font.DrawText(85,j+5,PWM.GetDaylightValue());
 //							Font.DrawText("%   ");
-							
+							j+=19+i;
+							if (i==4) // Orientation is portrait
+							{
+								j+=3;
+							}
 							
 							// ATO Buttons
-							j+=30+(i*3/2);
+							j+=11+(i*3/4);
 							if (HighATO.IsActive())
 								TouchLCD.DrawBMP(twidth/10,j,GREENBUTTON);
 							else
@@ -2569,7 +2576,7 @@ void ReefAngelClass::ShowInterface()
 								LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
 								LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-1])));					
 								j=60;
-								Font.SetColor(COLOR_GOLD,BKCOLOR,true);
+								Font.SetColor(COLOR_GOLD,BKCOLOR,false);
 								j+=40+(i*2);
 								Font.DrawCenterTextP((twidth/2),j,LABEL_MODE);
 								j+=45+(i*2);
@@ -2577,13 +2584,20 @@ void ReefAngelClass::ShowInterface()
 								j+=45+(i*2);
 								Font.DrawCenterTextP((twidth/2),j,LABEL_DURATION);
 							}
-							j=25;
+							j=27;
 							j+=40+(i*2);
-							LargeFont.DrawCenterTextP((twidth/2),j,(char * )pgm_read_word(&(rf_items[0])));
+							LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
+							char temp[25];
+							char rf_mode[35];
+							strcpy_P(temp,(char * )pgm_read_word(&(rf_items[RF.Mode])));
+							strcpy(rf_mode,"   ");
+							strcat(rf_mode,temp);
+							strcat(rf_mode,"   ");
+							LargeFont.DrawCenterText((twidth/2),j,rf_mode);
 							j+=45+(i*2);
-							LargeFont.DrawCenterNumber((twidth/2),j,100,0);
+							LargeFont.DrawCenterNumber((twidth/2),j,RF.Speed,0);
 							j+=45+(i*2);
-							LargeFont.DrawCenterNumber((twidth/2),j,4,0);
+							LargeFont.DrawCenterNumber((twidth/2),j,RF.Duration,0);
 						}
 						else if(DisplayedScreen==RF_SCREEN1)
 						{
@@ -2609,7 +2623,7 @@ void ReefAngelClass::ShowInterface()
 					            int ptr = pgm_read_word(&(LABEL_RF[a]));								
 								strcpy_P(tempname, (char *)ptr);
 								PB[a].SetPosition(10,j);
-								PB[a].SetColor(COLOR_GREEN);
+								PB[a].SetColor(rfcolor[a]);
 								PB[a].SetLabel(tempname);
 								PB[a].SetCurrent(RF.GetChannel(a));
 								PB[a].Show();
@@ -3044,8 +3058,14 @@ void ReefAngelClass::UpdateTouchDisplay()
 	// ID 2 - PWM Daylight, Actinic and Exp. Channels
 	Wire.beginTransmission(I2CRA_TouchDisplay);
 	Wire.write(2);
+#ifdef DisplayLEDPWM
 	Wire.write(PWM.GetDaylightValue());
 	Wire.write(PWM.GetActinicValue());
+#else
+	Wire.write(0);
+	Wire.write(0);
+#endif  // DisplayLEDPWM
+	
 #ifdef PWMEXPANSION
 	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 		Wire.write(PWM.GetChannelValue(a));
@@ -3057,7 +3077,46 @@ void ReefAngelClass::UpdateTouchDisplay()
 	delay(10);
 	wdt_reset();
 	
+	// ID 3 - RF Mode, Speed and Duration - AI Channels
+#ifdef RFEXPANSION
+	Wire.beginTransmission(I2CRA_TouchDisplay);
+	Wire.write(3);
+	Wire.write(RF.Mode);
+	Wire.write(RF.Speed);
+	Wire.write(RF.Duration);
+#ifdef AI_LED
+	Wire.write(AI.GetChannel(0));
+	Wire.write(AI.GetChannel(1));
+	Wire.write(AI.GetChannel(2));
+#else
+	Wire.write(0);
+	Wire.write(0);
+	Wire.write(0);
+#endif // AI_LED
+#ifdef IOEXPANSION
+	Wire.write(IO.IOPorts);
+#else
+	Wire.write(0);
+#endif // IOEXPANSION
+	Wire.write(0);
+	Wire.endTransmission();	
+	delay(10);
+	wdt_reset();
+#endif //  RFEXPANSION
 
+	// ID 4 - RF Radion Channels
+#ifdef RFEXPANSION
+	Wire.beginTransmission(I2CRA_TouchDisplay);
+	Wire.write(4);
+	for (int a=0;a<RF_CHANNELS;a++)
+		Wire.write(RF.RadionChannels[a]);
+	Wire.write(0);
+	Wire.write(0);
+	Wire.endTransmission();	
+	delay(10);
+	wdt_reset();
+#endif //  RFEXPANSION
+	
 	if (DisplayedMenu==FEEDING_MODE)
 	{
 		// ID 0 - Feeding Timer
@@ -6083,6 +6142,23 @@ void receiveEvent(int howMany) {
 			ReefAngel.PWM.SetActinic(d[2]);
 			for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 				ReefAngel.PWM.SetChannel(a,d[a+3]);
+			break;
+		case 3:
+			ReefAngel.RF.Mode=d[1];
+			ReefAngel.RF.Speed=d[2];
+			ReefAngel.RF.Duration=d[3];
+			ReefAngel.AI.SetChannel(0,d[4]);
+			ReefAngel.AI.SetChannel(1,d[5]);
+			ReefAngel.AI.SetChannel(2,d[6]);
+			ReefAngel.IO.IOPorts=d[7];
+			break;
+		case 4:
+			ReefAngel.RF.RadionChannels[0]=d[1];
+			ReefAngel.RF.RadionChannels[1]=d[2];
+			ReefAngel.RF.RadionChannels[2]=d[3];
+			ReefAngel.RF.RadionChannels[3]=d[4];
+			ReefAngel.RF.RadionChannels[4]=d[5];
+			ReefAngel.RF.RadionChannels[5]=d[6];
 			break;
 		}
 	}
