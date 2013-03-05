@@ -496,6 +496,7 @@ void ReefAngelClass::Init()
 	TS.Init();
 	OkButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Ok");
 	CancelButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Cancel");
+	Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
 	for(int a=0;a<6;a++)
 		PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");
 #if not defined NOTILT
@@ -1965,11 +1966,11 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 {
 	NeedsRedraw=true;
 	DisplayedScreen+=index;
-	if (DisplayedScreen<0) DisplayedScreen=MAX_SCREENS;
+	if (DisplayedScreen<0) DisplayedScreen=MAX_SCREENS-1;
 	if (DisplayedScreen>RELAY_BOX)
 		if (index>0)
 		{
-			for (int a=DisplayedScreen;a<=MAX_SCREENS;a++)
+			for (int a=DisplayedScreen;a<MAX_SCREENS;a++)
 			{
 				if (a<10)
 				{
@@ -2006,7 +2007,7 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 				DisplayedScreen--;
 			}
 		}
-	if (DisplayedScreen>MAX_SCREENS) DisplayedScreen=0;
+	if (DisplayedScreen>=MAX_SCREENS) DisplayedScreen=0;
 }
 
 #endif  // REEFTOUCH
@@ -2414,22 +2415,32 @@ void ReefAngelClass::ShowInterface()
 							PB[0].SetLabel("Daylight");
 							PB[0].SetCurrent(PWM.GetDaylightValue());
 							PB[0].Show();
+							if (TS.IsTouchedInside(0,j-2,twidth,j+22))
+							{
+								RecallScreen=DisplayedScreen;
+								DisplayedScreen=DIMMING_OVERRIDE;
+								NeedsRedraw=true;
+								Slider.SetColor(COLOR_ORANGE);							
+								Slider.SetCurrent(PWM.GetDaylightValue());
+								Slider.SetLabel("Daylight");
+							}
 							
-//							for (int a=0;a<(twidth-139)*PWM.GetActinicValue()/100;a++) TouchLCD.DrawLine(alphaBlend(COLOR_BLUE,COLOR_WHITE,(a*100)/(twidth-139)),130+a,j,130+a,j+20);
-//							TouchLCD.Clear(COLOR_BLACK,((twidth-139)*PWM.GetActinicValue()/100)+130,j,twidth,j+20);
-//							Font.DrawText(85,j+5,PWM.GetActinicValue());
-//							Font.DrawText("%   ");
 							j+=29+(i/2);
 							PB[1].SetPosition(10,j);
 							PB[1].SetColor(COLOR_ROYALBLUE);
 							PB[1].SetLabel("Actinic");
 							PB[1].SetCurrent(PWM.GetActinicValue());
 							PB[1].Show();
+							if (TS.IsTouchedInside(0,j-2,twidth,j+22))
+							{
+								RecallScreen=DisplayedScreen;
+								NeedsRedraw=true;
+								DisplayedScreen=DIMMING_OVERRIDE;
+								Slider.SetColor(COLOR_ROYALBLUE);
+								Slider.SetCurrent(PWM.GetActinicValue());
+								Slider.SetLabel("Actinic");
+							}
 							
-//							for (int a=0;a<(twidth-139)*PWM.GetDaylightValue()/100;a++) TouchLCD.DrawLine(alphaBlend(COLOR_ORANGE,COLOR_WHITE,(a*100)/(twidth-139)),130+a,j,130+a,j+20);
-//							TouchLCD.Clear(COLOR_BLACK,((twidth-139)*PWM.GetDaylightValue()/100)+130,j,twidth,j+20);
-//							Font.DrawText(85,j+5,PWM.GetDaylightValue());
-//							Font.DrawText("%   ");
 							j+=19+i;
 							if (i==4) // Orientation is portrait
 							{
@@ -2693,7 +2704,34 @@ void ReefAngelClass::ShowInterface()
 									TouchLCD.DrawBMP(twidth/6,j+3,REDBUTTON);
 							}								
 
-						}							
+						}
+						else if(DisplayedScreen==DIMMING_OVERRIDE)
+						{
+							bool bDone=false;
+							if (NeedsRedraw)
+							{
+								NeedsRedraw=false;
+								TouchLCD.Clear(COLOR_WHITE,0,28,twidth,theight);					
+								OkButton.SetPosition(twidth/2-40,theight*5/9);
+								OkButton.Show();
+								CancelButton.SetPosition(twidth/2-65,theight*7/9);
+								CancelButton.Show();
+								Slider.SetPosition(0,theight/8);
+								Slider.Show();
+							}
+							TS.GetTouch();
+							if (OkButton.IsPressed()) 
+							{
+								bDone=true;
+								SendMaster(2,Slider.GetOverrideID(),Slider.GetCurrent()); 	// Send Override Request
+							}
+							if (CancelButton.IsPressed()) bDone=true;
+							if (bDone)
+							{
+								DisplayedScreen=RecallScreen;
+								NeedsRedraw=true;
+							}
+						}
 					}
 					else
 					{
@@ -2701,13 +2739,19 @@ void ReefAngelClass::ShowInterface()
 						TouchLCD.SetBacklight(100);
 						Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
 						Timer[LCD_TIMER].Start();  // start timer
-						if (TouchEnabled)
+						if (TouchEnabled && DisplayedScreen<MAX_SCREENS)
 						{
 							TouchEnabled=false;
 							if (TS.X<50 && TS.Y>theight-30)
 								ChangeDisplayedScreen(-1);
 							if (TS.X>twidth-50 && TS.Y>theight-30)
 								ChangeDisplayedScreen(1);
+						}
+						else
+						{
+							// if we are displaying overrides, refresh sliders
+							TS.GetTouch();
+							Slider.Refresh();
 						}
 					}
 				}	
@@ -6205,10 +6249,10 @@ void receiveEventMaster(int howMany)
 		for(int a=0;a<3;a++) d[a]=Wire.read();
 		switch (d[0])
 		{
-		case 0:
+		case 0: // Simulate button press
 			if (d[1]==1 && d[2]==1) ButtonPress++;
 			break;
-		case 1:
+		case 1: // Override relay ports
 			byte o_relay=d[1];
 			byte o_type=d[2];
 			if (o_type==0)  // Turn port off
@@ -6260,6 +6304,10 @@ void receiveEventMaster(int howMany)
 #endif  // RelayExp
 			}
 			break;
+		case 2: // Override Dimming ports
+			byte o_portid=d[1];
+			byte o_value=d[2];
+			break;
 		}
 	}
 	else
@@ -6288,7 +6336,7 @@ void ButtonClass::Create(int icolor, int itextcolor, char *istr)
 void ButtonClass::Show()
 {
 	visible=true;
-	ReefAngel.LargeFont.DrawText(x1+25,y1+11,str);
+	ReefAngel.LargeFont.DrawText(x1+25,y1+5,str);
 	x2=ReefAngel.LargeFont.GetX()+25;
 	ReefAngel.TouchLCD.DrawRoundRect(RGB565(0xD0, 0xD0, 0xD0),x1+1,y1+1,x2+1,y1+41,10,false);
 	ReefAngel.TouchLCD.DrawRoundRect(COLOR_BLACK,x1,y1,x2,y1+40,10,false);
@@ -6365,7 +6413,7 @@ boolean ProgressBarClass::IsPressed()
 SliderClass::SliderClass()
 {
 	min=0;
-	max=0;
+	max=100;
 	current=0;
 	x1=0;
 	y1=0;
@@ -6387,12 +6435,12 @@ void SliderClass::DrawMarker()
 //	ReefAngel.TouchLCD.Clear(BKCOLOR,currentX+2,y1+31,currentX+2,y1+32);
 //	ReefAngel.TouchLCD.Clear(BKCOLOR,currentX+2,y1+59,currentX+2,y1+60);
 //	for (int a=currentX-2;a<=currentX+2;a++) ReefAngel.TouchLCD.DrawLine(alphaBlend(color,BKCOLOR,((a-40)*100)/(ReefAngel.TouchLCD.GetWidth()-80)),a,y1+33,a,y1+58);
-	for (int a=0;a<ReefAngel.TouchLCD.GetWidth()-80;a++) ReefAngel.TouchLCD.DrawLine(alphaBlend(color,BKCOLOR,(a*100)/(ReefAngel.TouchLCD.GetWidth()-80)),40+a,y1+33,40+a,y1+58);
-	ReefAngel.TouchLCD.Clear(BKCOLOR,0,y1+31,ReefAngel.TouchLCD.GetWidth(),y1+32);
-	ReefAngel.TouchLCD.Clear(BKCOLOR,0,y1+59,ReefAngel.TouchLCD.GetWidth(),y1+60);
+	for (int a=0;a<ReefAngel.TouchLCD.GetWidth()-80;a++) ReefAngel.TouchLCD.DrawLine(alphaBlend(color,COLOR_WHITE,(a*100)/(ReefAngel.TouchLCD.GetWidth()-80)),40+a,y1+33,40+a,y1+58);
+	ReefAngel.TouchLCD.Clear(COLOR_WHITE,0,y1+31,ReefAngel.TouchLCD.GetWidth(),y1+32);
+	ReefAngel.TouchLCD.Clear(COLOR_WHITE,0,y1+59,ReefAngel.TouchLCD.GetWidth(),y1+60);
 	ReefAngel.TouchLCD.Clear(COLOR_GRAY,currentX-1,y1+31,currentX+1,y1+60);
 	ReefAngel.TouchLCD.Clear(COLOR_RED,currentX,y1+32,currentX,y1+59);
-	ReefAngel.LargeFont.SetColor(textcolor,BKCOLOR,false);
+	ReefAngel.LargeFont.SetColor(textcolor,COLOR_WHITE,false);
 	char c[10];
 	char temp[10];
 	itoa(current,temp,10);
@@ -6406,11 +6454,11 @@ void SliderClass::Show()
 {
 	visible=true;
 	NeedsRedraw=false;
-	ReefAngel.TouchLCD.Clear(BKCOLOR,40,y1,ReefAngel.TouchLCD.GetWidth()-40,y1+75);
-	ReefAngel.Font.SetColor(textcolor,BKCOLOR,true);
+	ReefAngel.TouchLCD.Clear(COLOR_WHITE,40,y1,ReefAngel.TouchLCD.GetWidth()-40,y1+75);
+	ReefAngel.Font.SetColor(textcolor,COLOR_WHITE,true);
 	ReefAngel.Font.DrawCenterText(ReefAngel.TouchLCD.GetWidth()/2,y1+63,str);
-	for (int a=0;a<ReefAngel.TouchLCD.GetWidth()-80;a++) ReefAngel.TouchLCD.DrawLine(alphaBlend(color,BKCOLOR,(a*100)/(ReefAngel.TouchLCD.GetWidth()-80)),40+a,y1+33,40+a,y1+58);
-	ReefAngel.LargeFont.SetColor(textcolor,BKCOLOR,true);
+	for (int a=0;a<ReefAngel.TouchLCD.GetWidth()-80;a++) ReefAngel.TouchLCD.DrawLine(alphaBlend(color,COLOR_WHITE,(a*100)/(ReefAngel.TouchLCD.GetWidth()-80)),40+a,y1+33,40+a,y1+58);
+	ReefAngel.LargeFont.SetColor(textcolor,COLOR_WHITE,true);
 	ReefAngel.LargeFont.DrawCenterNumber(ReefAngel.TouchLCD.GetWidth()/2,y1,current,0);
 	ReefAngel.TouchLCD.DrawBMP(10,y1+33,MINUS);
 	ReefAngel.TouchLCD.DrawBMP(ReefAngel.TouchLCD.GetWidth()-35,y1+33,PLUS);
@@ -6423,7 +6471,7 @@ void SliderClass::Hide()
 	ReefAngel.TouchLCD.Clear(BKCOLOR,0,y1,ReefAngel.TouchLCD.GetWidth(),y1+72);
 }
 
-boolean SliderClass::IsTouched()
+boolean SliderClass::Refresh()
 {
 	if (IsPlusPressed())
 	{
@@ -6447,7 +6495,7 @@ boolean SliderClass::IsTouched()
 	if (NeedsRedraw)
 	{
 		Show();
-	}	
+	}
 }
 
 boolean SliderClass::IsPlusPressed()

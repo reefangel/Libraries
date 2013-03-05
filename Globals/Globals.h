@@ -918,6 +918,8 @@ typedef struct {
 #define RF_SCREEN1			12
 #define AI_SCREEN			13
 #define IO_SCREEN			14
+#define DIMMING_OVERRIDE	127
+#define MAX_SCREENS						15 // Highest ID for main screens
 
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
@@ -932,7 +934,6 @@ typedef struct {
 #define TS_CALIBRATION_YMIN				500
 #define TS_CALIBRATION_YMAX				3600
 #define TS_CALIBRATION_DELTA			500
-#define MAX_SCREENS						14 // Highest ID for main screens
 
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 

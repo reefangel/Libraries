@@ -136,19 +136,23 @@ class SliderClass
 		void inline SetMin(int value) { min=value; };
 		void inline SetMax(int value) { max=value; };
 		void inline SetCurrent(int value) { current=value; };
+		void inline SetOverrideID(int value) { overrideid=value; };
 		int inline GetMin() { return min; };
 		int inline GetMax() { return max; };
 		int inline GetCurrent() { return current; };
+		int inline GetOverrideID() { return overrideid; };
+		void inline SetColor(int value) { color=value; };
 		void inline SetLabel(char *value) { str=value; };
 		void DrawMarker();
 		void Show();
 		void Hide();
-		boolean IsTouched();
+		boolean Refresh();
 		boolean IsPlusPressed();
 		boolean IsMinusPressed();
 	private:
 		int color, x1, y1, textcolor;
 		int min,max,current;
+		byte overrideid;
 		char *str;
 		boolean visible;
 		boolean NeedsRedraw;
@@ -175,11 +179,13 @@ public:
 	ButtonClass OkButton;
 	ButtonClass CancelButton;
 	ProgressBarClass PB[6];
+	SliderClass Slider;
 	
 	boolean Splash;
 	byte LastOrientation;
 	boolean MilitaryTime;
 	signed char DisplayedScreen;
+	signed char RecallScreen;
 	boolean NeedsRedraw;
 	boolean TouchEnabled;
 	byte orientation;
