@@ -186,8 +186,9 @@ public:
 	boolean MilitaryTime;
 	signed char DisplayedScreen;
 	signed char RecallScreen;
-	boolean NeedsRedraw;
-	boolean TouchEnabled;
+	bool NeedsRedraw;
+	bool TouchEnabled;
+	bool Sleeping;
 	byte orientation;
 #else //  REEFTOUCH
 	RA_NokiaLCD LCD;
