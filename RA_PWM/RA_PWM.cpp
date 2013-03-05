@@ -28,24 +28,32 @@ RA_PWMClass::RA_PWMClass()
     // initialize variables
     ActinicPWMValue = 0;
     DaylightPWMValue = 0;
-    LightsOverride = false;
+    ActinicPWMOverride = 255; // Anything over 100 disables override
+    DaylightPWMOverride = 255; // Anything over 100 disables override
+    LightsOverride = false; // Earlier version of override that uses internal memory
 #ifdef PWMEXPANSION
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
 	{
 		ExpansionChannel[a]=0;
+		ExpansionChannelOverride[a]=255;
 	}
 #endif  // PWMEXPANSION
 }
 
-void RA_PWMClass::SetActinic(byte value)
+byte RA_PWMClass::GetActinicValue()
 {
-    ActinicPWMValue = value;
-
+	if (ActinicPWMOverride<100)
+		return ActinicPWMOverride;
+	else
+		return ActinicPWMValue;
 }
 
-void RA_PWMClass::SetDaylight(byte value)
+byte RA_PWMClass::GetDaylightValue()
 {
-    DaylightPWMValue = value;
+	if (DaylightPWMOverride<100)
+		return DaylightPWMOverride;
+	else
+		return DaylightPWMValue;
 }
 
 void RA_PWMClass::ActinicPWMSlope(byte MinuteOffset)
@@ -205,11 +213,6 @@ void RA_PWMClass::StandardDaylight(byte MinuteOffset)
 
 #ifdef PWMEXPANSION
 
-void RA_PWMClass::SetChannel(byte Channel, byte Value)
-{
-	if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value;
-}
-
 void RA_PWMClass::Expansion(byte cmd, byte data)
 {
 	Wire.beginTransmission(I2CPWM);  // transmit to device #8, consider having this user defined possibly
@@ -238,6 +241,16 @@ void RA_PWMClass::ExpansionWrite()
 		Expansion(a,ExpansionChannel[a]);
 	}	
 }
+
+byte RA_PWMClass::GetChannelValue(byte Channel)
+{
+	if (ExpansionChannelOverride[Channel]<100)
+		return ExpansionChannelOverride[Channel];
+	else
+		return ExpansionChannel[Channel];
+}
+
+
 
 void RA_PWMClass::Channel0PWMSlope()
 {

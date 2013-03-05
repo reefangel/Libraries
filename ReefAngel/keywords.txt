@@ -103,6 +103,8 @@ DrawCircleOutletBoxHorizontal	KEYWORD2
 
 SetActinic	KEYWORD2
 SetDaylight	KEYWORD2
+SetActinicOverride	KEYWORD2
+SetDaylightOverride	KEYWORD2
 ActinicPWMSlope	KEYWORD2
 DaylightPWMSlope	KEYWORD2
 ActinicPWMSlope	KEYWORD2
@@ -114,6 +116,7 @@ DaylightPWMParabola	KEYWORD2
 StandardDaylight	KEYWORD2
 StandardActinic	KEYWORD2
 SetChannel	KEYWORD2
+SetChannelOverride	KEYWORD2
 Expansion	KEYWORD2
 ExpansionSetPercent	KEYWORD2
 ExpansionWrite	KEYWORD2
