@@ -236,6 +236,21 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define T2_PROBE		2
 #define T3_PROBE		3
 
+// PWM Override IDs
+#define OVERRIDE_DAYLIGHT	0
+#define OVERRIDE_ACTINIC	1
+#define OVERRIDE_CHANNEL0	2
+#define OVERRIDE_CHANNEL1	3
+#define OVERRIDE_CHANNEL2	4
+#define OVERRIDE_CHANNEL3	5
+#define OVERRIDE_CHANNEL4	6
+#define OVERRIDE_CHANNEL5	7
+
+// Message IDs
+#define MESSAGE_BUTTON	0
+#define MESSAGE_RELAY_OVERRIDE	1
+#define MESSAGE_PWM_OVERRIDE	2
+
 /*
 EEPROM locations
 
@@ -1024,6 +1039,8 @@ const prog_char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
 const prog_char WATER_CHANGE_LABEL[] PROGMEM = "Water Change";
 const prog_char TOUCH_END_LABEL[] PROGMEM = "Touch screen to quit";
 
+const prog_char PWM_OVERRIDE_LABEL1[] PROGMEM = "Adjust and press Ok to override";
+const prog_char PWM_OVERRIDE_LABEL2[] PROGMEM = "To disable override, press Cancel";
 
 #endif //  REEFTOUCH
 

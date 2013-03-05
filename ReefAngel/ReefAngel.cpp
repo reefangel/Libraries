@@ -497,6 +497,7 @@ void ReefAngelClass::Init()
 	OkButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Ok");
 	CancelButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Cancel");
 	Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
+	Slider.Refresh();
 	for(int a=0;a<6;a++)
 		PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");
 #if not defined NOTILT
@@ -2422,6 +2423,7 @@ void ReefAngelClass::ShowInterface()
 								NeedsRedraw=true;
 								Slider.SetColor(COLOR_ORANGE);							
 								Slider.SetCurrent(PWM.GetDaylightValue());
+								Slider.SetOverrideID(OVERRIDE_DAYLIGHT);
 								Slider.SetLabel("Daylight");
 							}
 							
@@ -2438,6 +2440,7 @@ void ReefAngelClass::ShowInterface()
 								DisplayedScreen=DIMMING_OVERRIDE;
 								Slider.SetColor(COLOR_ROYALBLUE);
 								Slider.SetCurrent(PWM.GetActinicValue());
+								Slider.SetOverrideID(OVERRIDE_ACTINIC);
 								Slider.SetLabel("Actinic");
 							}
 							
@@ -2531,15 +2534,15 @@ void ReefAngelClass::ShowInterface()
 								if (TS.IsTouchedInside(rx-10,j-10,rx+35,j+30))
 								{
 									if (bitRead(TempRelayOn,a-1))
-										SendMaster(1,a+(DisplayedScreen-1)*10,0);
+										SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,0);
 									else if (!bitRead(TempRelayOff,a-1))
-										SendMaster(1,a+(DisplayedScreen-1)*10,1);
+										SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,1);
 									else if (!bitRead(TempRelayOn,a-1) && bitRead(TempRelayOff,a-1))
-										SendMaster(1,a+(DisplayedScreen-1)*10,!bitRead(TempRelay,a-1));
+										SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,!bitRead(TempRelay,a-1));
 								}
 								if (TS.IsTouchedInside(k-30,j-5,k+25,j+20))
 								{
-									SendMaster(1,a+(DisplayedScreen-1)*10,2);
+									SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,2);
 								}
 							}				
 						}
@@ -2711,21 +2714,28 @@ void ReefAngelClass::ShowInterface()
 							if (NeedsRedraw)
 							{
 								NeedsRedraw=false;
-								TouchLCD.Clear(COLOR_WHITE,0,28,twidth,theight);					
+								TouchLCD.Clear(COLOR_WHITE,0,28,twidth,theight);	
+								Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
+								Font.DrawTextP(10,105,PWM_OVERRIDE_LABEL1);
+								Font.DrawTextP(10,117,PWM_OVERRIDE_LABEL2);
 								OkButton.SetPosition(twidth/2-40,theight*5/9);
 								OkButton.Show();
 								CancelButton.SetPosition(twidth/2-65,theight*7/9);
 								CancelButton.Show();
-								Slider.SetPosition(0,theight/8);
+								Slider.SetPosition(0,20);
 								Slider.Show();
 							}
 							TS.GetTouch();
 							if (OkButton.IsPressed()) 
 							{
 								bDone=true;
-								SendMaster(2,Slider.GetOverrideID(),Slider.GetCurrent()); 	// Send Override Request
+								SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),Slider.GetCurrent()); 	// Send Override Request
 							}
-							if (CancelButton.IsPressed()) bDone=true;
+							if (CancelButton.IsPressed()) 
+							{
+								bDone=true;
+								SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),255); 	// Send Cancel Override Request
+							}
 							if (bDone)
 							{
 								DisplayedScreen=RecallScreen;
@@ -2946,7 +2956,7 @@ void ReefAngelClass::ShowInterface()
 #endif  // RFEXPANSION
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 					NeedsRedraw=true;
-					SendMaster(0,1,1); 	// Simulate button press
+					SendMaster(MESSAGE_BUTTON,1,1); 	// Simulate button press
 #endif //  REEFTOUCH
 					ExitMenu();
 				}
@@ -3003,7 +3013,7 @@ void ReefAngelClass::ShowInterface()
 #endif  // RelayExp
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 					NeedsRedraw=true;
-					SendMaster(0,1,1); 	// Simulate button press
+					SendMaster(MESSAGE_BUTTON,1,1); 	// Simulate button press
 #endif //  REEFTOUCH					
 					ExitMenu();
 				}
@@ -6249,65 +6259,75 @@ void receiveEventMaster(int howMany)
 		for(int a=0;a<3;a++) d[a]=Wire.read();
 		switch (d[0])
 		{
-		case 0: // Simulate button press
+		case MESSAGE_BUTTON: // Simulate button press
+		{
 			if (d[1]==1 && d[2]==1) ButtonPress++;
 			break;
-		case 1: // Override relay ports
-			byte o_relay=d[1];
-			byte o_type=d[2];
-			if (o_type==0)  // Turn port off
+		}
+		case MESSAGE_RELAY_OVERRIDE: // Override relay ports
+		{
+			byte override_relay=d[1];
+			byte override_type=d[2];
+			if (override_type==0)  // Turn port off
 			{
-				if ( o_relay < 9 )
+				if ( override_relay < 9 )
 				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+					bitClear(ReefAngel.Relay.RelayMaskOn,override_relay-1);
+					bitClear(ReefAngel.Relay.RelayMaskOff,override_relay-1);
 				}
 #ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
+				if ( (override_relay > 10) && (override_relay < 89) )
 				{
-					byte EID = byte(o_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+					byte EID = byte(override_relay/10);
+					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
+					bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
 				}
 #endif  // RelayExp
 			}
-			else if (o_type==1)  // Turn port on
+			else if (override_type==1)  // Turn port on
 			{
-				if ( o_relay < 9 )
+				if ( override_relay < 9 )
 				{
-					bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+					bitSet(ReefAngel.Relay.RelayMaskOn,override_relay-1);
+					bitSet(ReefAngel.Relay.RelayMaskOff,override_relay-1);
 				}
 #ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
+				if ( (override_relay > 10) && (override_relay < 89) )
 				{
-					byte EID = byte(o_relay/10);
-					bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+					byte EID = byte(override_relay/10);
+					bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
+					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
 				}
 #endif  // RelayExp
 			}
-			else if (o_type==2)  // Set port back to Auto
+			else if (override_type==2)  // Set port back to Auto
 			{
-				if ( o_relay < 9 )
+				if ( override_relay < 9 )
 				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+					bitClear(ReefAngel.Relay.RelayMaskOn,override_relay-1);
+					bitSet(ReefAngel.Relay.RelayMaskOff,override_relay-1);
 				}
 #ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
+				if ( (override_relay > 10) && (override_relay < 89) )
 				{
-					byte EID = byte(o_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+					byte EID = byte(override_relay/10);
+					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
+					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
 				}
 #endif  // RelayExp
 			}
 			break;
-		case 2: // Override Dimming ports
+		}
+		case MESSAGE_PWM_OVERRIDE: // Override Dimming ports
+		{	
 			byte o_portid=d[1];
 			byte o_value=d[2];
+			if (o_portid==OVERRIDE_DAYLIGHT) // Daylight channel
+				ReefAngel.PWM.SetDaylightOverride(o_value);
+			else if (o_portid==OVERRIDE_ACTINIC) // Actinic channel
+				ReefAngel.PWM.SetActinicOverride(o_value);
 			break;
+		}
 		}
 	}
 	else
@@ -6336,6 +6356,7 @@ void ButtonClass::Create(int icolor, int itextcolor, char *istr)
 void ButtonClass::Show()
 {
 	visible=true;
+	ReefAngel.LargeFont.SetColor(COLOR_BLACK,COLOR_SILVER,true);
 	ReefAngel.LargeFont.DrawText(x1+25,y1+5,str);
 	x2=ReefAngel.LargeFont.GetX()+25;
 	ReefAngel.TouchLCD.DrawRoundRect(RGB565(0xD0, 0xD0, 0xD0),x1+1,y1+1,x2+1,y1+41,10,false);
