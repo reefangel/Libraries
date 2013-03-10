@@ -351,6 +351,8 @@ public:
 	void WaterChangeModeStart();
 	void ATOClear();
 	void OverheatClear();
+	void LightsOn();
+	void LightsOff();
 	void RefreshScreen();
 
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
@@ -359,7 +361,7 @@ public:
 	void SaveInitialSettings();
 	void ChangeDisplayedScreen(signed char index);
 #endif //  REEFTOUCH
-	
+
     // Nested Menu Functions
 #ifdef CUSTOM_MENU
 	void InitMenu(int ptr, byte qty);

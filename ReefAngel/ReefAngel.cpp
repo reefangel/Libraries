@@ -1821,6 +1821,42 @@ void ReefAngelClass::OverheatClear()
 	Relay.Write();
 }
 
+void ReefAngelClass::LightsOn()
+{
+    // turn on ports
+    Relay.RelayMaskOn = LightsOnPorts;
+#ifdef RelayExp
+	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		Relay.RelayMaskOnE[i] = LightsOnPortsE[i];
+	}
+#endif  // RelayExp
+#ifdef DisplayLEDPWM
+    PWM.LightsOverride=true;
+#endif  // DisplayLEDPWM
+    Relay.Write();
+}
+
+void ReefAngelClass::LightsOff()
+{
+    // reset ports
+    Relay.RelayMaskOn = B00000000;
+#ifdef RelayExp
+	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		Relay.RelayMaskOnE[i] = B00000000;
+	}
+#endif  // RelayExp
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+	// TODO should possibly store the PWM value to be reset instead of turning off completely
+    // sets PWM to 0%
+    PWM.SetActinic(0);
+    PWM.SetDaylight(0);
+    PWM.LightsOverride=false;
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
+    Relay.Write();
+}
+
 void ReefAngelClass::RefreshScreen()
 {
 #if not defined REEFTOUCH && not defined REEFTOUCHDISPLAY
@@ -3816,41 +3852,15 @@ void ReefAngelClass::ProcessButtonPressLights()
     {
         case LightsMenu_On:
         {
-            // turn on ports
-            Relay.RelayMaskOn = LightsOnPorts;
-#ifdef RelayExp
-			for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-			{
-				Relay.RelayMaskOnE[i] = LightsOnPortsE[i];
-			}
-#endif  // RelayExp
-#ifdef DisplayLEDPWM
-            PWM.LightsOverride=true;
-#endif  // DisplayLEDPWM
-            Relay.Write();
+        	LightsOn();
             DisplayMenuEntry("Lights On");
-            showmenu = false;
+        	showmenu = false;
             break;
         }
         case LightsMenu_Off:
         {
-            // reset ports
-            Relay.RelayMaskOn = B00000000;
-#ifdef RelayExp
-			for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-			{
-				Relay.RelayMaskOnE[i] = B00000000;
-			}
-#endif  // RelayExp
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-			// TODO should possibly store the PWM value to be reset instead of turning off completely
-            // sets PWM to 0%
-            PWM.SetActinic(0);
-            PWM.SetDaylight(0);
-            PWM.LightsOverride=false;
-#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
-            Relay.Write();
-            DisplayMenuEntry("Restore Lights");
+        	LightsOff();
+            DisplayMenuEntry("Restore Lights");	
             showmenu = false;
             break;
         }
