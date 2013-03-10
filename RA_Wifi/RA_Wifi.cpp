@@ -176,6 +176,8 @@ void pushbuffer(byte inStr)
 //            else if (strncmp("GET /cr", m_pushback, 7)==0) reqtype = -REQ_CAL_RELOAD;
             else if (strncmp("GET /mt", m_pushback, 7)==0) reqtype = -REQ_ALARM_ATO;
             else if (strncmp("GET /mo", m_pushback, 7)==0) reqtype = -REQ_ALARM_OVERHEAT;
+            else if (strncmp("GET /l0", m_pushback, 7)==0) reqtype = -REQ_LIGHTSOFF;
+            else if (strncmp("GET /l1", m_pushback, 7)==0) reqtype = -REQ_LIGHTSON;
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -643,7 +645,7 @@ void processHTTP()
 				// Start up the feeding mode only if we are on the home screen or from Water change
 				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU || ReefAngel.DisplayedMenu==WATERCHANGE_MODE )
 				{
-					//ReefAngel.ClearScreen(DefaultBGColor);
+					ReefAngel.ClearScreen(DefaultBGColor);
 					ReefAngel.FeedingModeStart();
 					ModeResponse(true);
 				}
@@ -658,7 +660,7 @@ void processHTTP()
 				// Start up the water change mode only if we are on the home screen
 				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU )
 				{
-					//ReefAngel.ClearScreen(DefaultBGColor);
+					ReefAngel.ClearScreen(DefaultBGColor);
 					ReefAngel.WaterChangeModeStart();
 					ModeResponse(true);
 				}
@@ -702,6 +704,20 @@ void processHTTP()
 				ModeResponse(true);
 				break;
 			}
+			case REQ_LIGHTSON:
+			{
+				// Turn Lights On
+				ReefAngel.LightsOn();
+				ModeResponse(true);
+				break;
+			}			
+			case REQ_LIGHTSOFF:
+			{
+				// Turn Lights Off
+				ReefAngel.LightsOff();
+				ModeResponse(true);
+				break;
+			}			
 			default:
 			case REQ_UNKNOWN:
 			{

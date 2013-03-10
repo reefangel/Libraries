@@ -238,6 +238,8 @@ public:
 	void WaterChangeModeStart();
 	void ATOClear();
 	void OverheatClear();
+	void LightsOn();
+	void LightsOff();
 
     // Nested Menu Functions
 #ifdef CUSTOM_MENU
