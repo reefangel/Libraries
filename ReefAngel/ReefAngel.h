@@ -232,6 +232,7 @@ public:
 	void SendPortal(char *username, char*key);
 	byte EM;
 	byte REM;
+	char *portalusername;
 #endif  // wifi
 
 	void FeedingModeStart();

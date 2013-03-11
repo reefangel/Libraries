@@ -277,8 +277,9 @@ void processHTTP()
 			case REQ_R_STATUS:
 			{
 				char temp[6];
-				int s=132;
-				//<RA><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><REM></REM></RA>
+				int s=141;
+				//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><REM></REM></RA>
+				s += strlen(ReefAngel.portalusername);
 				s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 				s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
 				s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
@@ -798,6 +799,8 @@ void SendXMLData(bool fAtoLog /*= false*/)
 {
 	// This function is used for sending the XML data on the wifi interface
 	// It prints the strings from program memory instead of RAM
+	PROGMEMprint(XML_ID);
+	WIFI_SERIAL.print(ReefAngel.portalusername);
 	PROGMEMprint(XML_T1);
 	WIFI_SERIAL.print(ReefAngel.Params.Temp[T1_PROBE]);
 	PROGMEMprint(XML_T2);

@@ -589,6 +589,7 @@ void ReefAngelClass::Init()
 
 #ifdef wifi
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
+	portalusername="";
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
 	{
@@ -1465,15 +1466,16 @@ void ReefAngelClass::Portal(char *username)
 	    	LastRelayDataE[EID]=TempRelay;
 	    }
 	}
-
 #endif  // RelayExp
 	 */
 	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
+	portalusername=username;
 }
 
 void ReefAngelClass::Portal(char *username, char *key)
 {
 	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
+	portalusername=username;
 }
 
 void ReefAngelClass::SendPortal(char *username, char*key)
