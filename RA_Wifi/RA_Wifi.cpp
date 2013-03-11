@@ -672,9 +672,17 @@ void processHTTP()
 			}
 			case REQ_BTN_PRESS:
 			{
-				// Simulate a button press to stop the modes
-				ButtonPress++;
-				ModeResponse(true);
+				// Only accept button press for feeding and water change mode
+				if ( ReefAngel.DisplayedMenu == FEEDING_MODE || ReefAngel.DisplayedMenu==WATERCHANGE_MODE )
+				{
+					// Simulate a button press to stop the modes
+					ButtonPress++;
+					ModeResponse(true);
+				}
+				else
+				{
+					ModeResponse(false);
+				}
 				break;
 			}
 //			case REQ_CAL_RELOAD:
