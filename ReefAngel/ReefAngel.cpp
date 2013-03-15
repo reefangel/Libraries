@@ -464,7 +464,7 @@ void ReefAngelClass::Init()
 	Wire.onReceive(receiveEventMaster);
 	Wire.onRequest(NULL);
 	Wire.begin(I2CRA_Master);
-#else
+#else // REEFTOUCHDISPLAY
 	Wire.onReceive(NULL);
 	Wire.onRequest(NULL);
 	Wire.begin();
@@ -525,11 +525,11 @@ void ReefAngelClass::Init()
 		TouchLCD.FullClear(BKCOLOR);	
 	}
 	TouchLCD.SetBacklight(100);
-#else
+#else //  defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	Joystick.Init();
 	LCD.Init();
 	LCD.BacklightOn();
-#endif //  REEFTOUCH
+#endif //  defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	Flags = 0;
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
@@ -554,7 +554,7 @@ void ReefAngelClass::Init()
 			Font.DrawTextP(10,180,NoIMLine4);
 			Font.DrawTextP(10,195,NoIMLine5);
 			wdt_reset();
-#else
+#else // defined REEFTOUCH || defined REEFTOUCHDISPLAY
 			strcpy_P(temptext, NoIMCheck);
 			LCD.DrawText(ModeScreenColor,DefaultBGColor,13,50,temptext);
 			strcpy_P(temptext, NoIMCheck1);
@@ -2573,15 +2573,45 @@ void ReefAngelClass::ShowInterface()
 									if (TS.IsTouchedInside(rx-10,j-10,rx+35,j+30))
 									{
 										if (bitRead(TempRelayOn,a-1))
+										{
+#ifdef REEFTOUCHDISPLAY
 											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,0);
+#endif // REEFTOUCHDISPLAY
+											bitClear(Relay.RelayMaskOn,a-1);
+											bitClear(Relay.RelayMaskOff,a-1);
+										}
 										else if (!bitRead(TempRelayOff,a-1))
+										{
+#ifdef REEFTOUCHDISPLAY
 											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,1);
+#endif // REEFTOUCHDISPLAY
+											bitSet(Relay.RelayMaskOn,a-1);
+											bitSet(Relay.RelayMaskOff,a-1);
+										}
 										else if (!bitRead(TempRelayOn,a-1) && bitRead(TempRelayOff,a-1))
+										{
+#ifdef REEFTOUCHDISPLAY
 											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,!bitRead(TempRelay,a-1));
+#endif // REEFTOUCHDISPLAY
+											if (bitRead(TempRelay,a-1))
+											{
+												bitClear(Relay.RelayMaskOn,a-1);
+												bitClear(Relay.RelayMaskOff,a-1);
+											}
+											else
+											{
+												bitSet(Relay.RelayMaskOn,a-1);
+												bitSet(Relay.RelayMaskOff,a-1);
+											}
+										}
 									}
 									if (TS.IsTouchedInside(k-30,j-5,k+25,j+20))
 									{
+#ifdef REEFTOUCHDISPLAY
 										SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,2);
+#endif // REEFTOUCHDISPLAY
+										bitClear(Relay.RelayMaskOn,a-1);
+										bitSet(Relay.RelayMaskOff,a-1);
 									}
 								}				
 							}
@@ -2768,12 +2798,24 @@ void ReefAngelClass::ShowInterface()
 								if (OkButton.IsPressed()) 
 								{
 									bDone=true;
+#ifdef REEFTOUCHDISPLAY
 									SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),Slider.GetCurrent()); 	// Send Override Request
+#endif // REEFTOUCHDISPLAY
+									if (Slider.GetOverrideID()==OVERRIDE_DAYLIGHT)
+										ReefAngel.PWM.SetDaylightOverride(Slider.GetCurrent());
+									else
+										ReefAngel.PWM.SetActinicOverride(Slider.GetCurrent());
 								}
 								if (CancelButton.IsPressed()) 
 								{
 									bDone=true;
+#ifdef REEFTOUCHDISPLAY
 									SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),255); 	// Send Cancel Override Request
+#endif // REEFTOUCHDISPLAY
+									if (Slider.GetOverrideID()==OVERRIDE_DAYLIGHT)
+										ReefAngel.PWM.SetDaylightOverride(255);
+									else
+										ReefAngel.PWM.SetActinicOverride(255);
 								}
 								if (bDone)
 								{
@@ -2798,6 +2840,7 @@ void ReefAngelClass::ShowInterface()
 						{
 							if (TouchEnabled && DisplayedScreen<MAX_SCREENS)
 							{
+								TouchEnabled=false;
 								if (TS.X<50 && TS.Y>theight-30)
 									ChangeDisplayedScreen(-1);
 								if (TS.X>twidth-50 && TS.Y>theight-30)
@@ -3003,7 +3046,9 @@ void ReefAngelClass::ShowInterface()
 #endif  // RFEXPANSION
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 					NeedsRedraw=true;
+#ifdef REEFTOUCHDISPLAY
 					SendMaster(MESSAGE_BUTTON,1,1); 	// Simulate button press
+#endif // REEFTOUCHDISPLAY
 #endif //  REEFTOUCH
 					ExitMenu();
 				}
@@ -3060,7 +3105,9 @@ void ReefAngelClass::ShowInterface()
 #endif  // RelayExp
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 					NeedsRedraw=true;
+#ifdef REEFTOUCHDISPLAY
 					SendMaster(MESSAGE_BUTTON,1,1); 	// Simulate button press
+#endif // REEFTOUCHDISPLAY
 #endif //  REEFTOUCH					
 					ExitMenu();
 				}
