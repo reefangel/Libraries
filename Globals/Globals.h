@@ -939,7 +939,7 @@ typedef struct {
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
 #define SplashDuration					5000
-#define TouchSample						5
+#define TouchSample						10
 #define TouchSlideDelta					20
 #define TouchPressure					900
 #define MAX_RELAY_EXPANSION_MODULES		8

@@ -1191,6 +1191,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
 		bitSet(Flags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
         InternalMemory.write(ATO_Single_Exceed_Flag, 1);
+        Serial.println("Test");
 #endif  // ENABLE_EXCEED_FLAGS
         Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
@@ -2570,7 +2571,7 @@ void ReefAngelClass::ShowInterface()
 									else
 										TouchLCD.Clear(BKCOLOR,k-23,j+18,k+23,j+26);
 									TouchLCD.DrawRelayStatus(rx,j,bitRead(TempRelay,a-1));
-									if (TS.IsTouchedInside(rx-10,j-10,rx+35,j+30))
+									if (TS.IsTouchedInside(rx-10,j-13,rx+35,j+33))
 									{
 										if (bitRead(TempRelayOn,a-1))
 										{
@@ -2605,7 +2606,7 @@ void ReefAngelClass::ShowInterface()
 											}
 										}
 									}
-									if (TS.IsTouchedInside(k-30,j-5,k+25,j+20))
+									if (TS.IsTouchedInside(k-35,j-13,k+25,j+33))
 									{
 #ifdef REEFTOUCHDISPLAY
 										SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,2);
