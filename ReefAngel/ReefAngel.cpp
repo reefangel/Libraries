@@ -675,10 +675,10 @@ void ReefAngelClass::Init()
 		CustomVar[EID]=0;
 	}
 #endif //CUSTOM_VARIABLES
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined REEFTOUCHDISPLAY
 	EM=0;
 	REM=0;
-#endif //  REEFTOUCH	
+#endif //  REEFTOUCHDISPLAY	
 }
 
 void ReefAngelClass::Refresh()
@@ -2096,7 +2096,14 @@ void ReefAngelClass::InitMenus()
 
 void ReefAngelClass::ShowInterface()
 {
-    Refresh();
+	byte numexp=0;
+	if ((EM&(1<<3))!=0) numexp++;
+	if ((EM&(1<<4))!=0) numexp++;
+	if ((EM&(1<<6))!=0) numexp++;
+	if ((EM&(1<<7))!=0) numexp++;
+	
+
+	Refresh();
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	int twidth=TouchLCD.GetWidth();
 	int theight=TouchLCD.GetHeight();
@@ -2135,19 +2142,22 @@ void ReefAngelClass::ShowInterface()
 					// Screensaver timeout expired
 					TouchLCD.SetBacklight(0);
 					Sleeping=true;
+					DisplayedScreen==MAIN_SCREEN;
+					NeedsRedraw=true;
 				}
 #ifdef CUSTOM_MAIN
 				DrawCustomMain();
 #else  // CUSTOM_MAIN		
 				if (!Splash)
 				{
+					int i,j;
+					char tempname[15];
+					byte TempRelay,TempRelayOn,TempRelayOff;
+
 					if (!TS.IsTouched())
 					{
 						if (!Sleeping)
 						{
-							int i,j;
-							char tempname[15];
-	
 							TouchEnabled=true;
 							//Draw Top Bar
 							if (orientation%2==0) i=0; else i=12;
@@ -2176,8 +2186,7 @@ void ReefAngelClass::ShowInterface()
 								TouchLCD.DrawBMP(twidth/2-3,theight-25,ARROWMENU);
 								Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
 								Font.DrawCenterText(twidth/2,theight-15,"Menu");
-								
-							}			
+							}
 							TouchLCD.DrawDateTime(55,10,MilitaryTime,Font);
 							if (bitRead(Flags,OverheatFlag))
 							{
@@ -2195,14 +2204,8 @@ void ReefAngelClass::ShowInterface()
 							}
 							if (DisplayedScreen==MAIN_SCREEN)
 							{
-								byte numexp=0;
 								int x=0;
 	
-								if ((EM&(1<<3))!=0) numexp++;
-								if ((EM&(1<<4))!=0) numexp++;
-								if ((EM&(1<<6))!=0) numexp++;
-								if ((EM&(1<<7))!=0) numexp++;
-								
 								if (NeedsRedraw)
 								{
 									NeedsRedraw=false;
@@ -2309,20 +2312,10 @@ void ReefAngelClass::ShowInterface()
 									}
 									
 									j+=18+i;
-									//COLOR_MAGENTA Bar
-									for (int a=0;a<=5;a++)
-									{
-										TouchLCD.DrawLine(alphaBlend(COLOR_MAGENTA,(5-a)*10),a,33,a,j);
-									}
 						
 									//Division
 									TouchLCD.DrawLine(DIVISION,0,j,twidth,j);
 						
-									//COLOR_GREEN Bar
-									for (int a=0;a<=5;a++)
-									{
-										TouchLCD.DrawLine(alphaBlend(COLOR_GREEN,(5-a)*10),a,j,a,j+60+(i*5/2));
-									}
 									j+=5+i;
 						
 									//PWM Bars
@@ -2339,12 +2332,6 @@ void ReefAngelClass::ShowInterface()
 									//Division
 									TouchLCD.DrawLine(DIVISION,0,j,twidth,j);
 						
-									//COLOR_RED Bar
-									for (int a=0;a<=5;a++)
-									{
-										TouchLCD.DrawLine(alphaBlend(COLOR_RED,(5-a)*10),a,j,a,theight-34);
-									}
-									
 									j+=8+(i*3/4);
 									
 									//ATO Ports
@@ -2456,33 +2443,12 @@ void ReefAngelClass::ShowInterface()
 								PB[0].SetLabel("Daylight");
 								PB[0].SetCurrent(PWM.GetDaylightValue());
 								PB[0].Show();
-								if (TS.IsTouchedInside(0,j-2,twidth,j+22))
-								{
-									RecallScreen=DisplayedScreen;
-									DisplayedScreen=DIMMING_OVERRIDE;
-									NeedsRedraw=true;
-									Slider.SetColor(COLOR_ORANGE);							
-									Slider.SetCurrent(PWM.GetDaylightValue());
-									Slider.SetOverrideID(OVERRIDE_DAYLIGHT);
-									Slider.SetLabel("Daylight");
-								}
-								
 								j+=29+(i/2);
 								PB[1].SetPosition(10,j);
 								PB[1].SetColor(COLOR_ROYALBLUE);
 								PB[1].SetLabel("Actinic");
 								PB[1].SetCurrent(PWM.GetActinicValue());
 								PB[1].Show();
-								if (TS.IsTouchedInside(0,j-2,twidth,j+22))
-								{
-									RecallScreen=DisplayedScreen;
-									NeedsRedraw=true;
-									DisplayedScreen=DIMMING_OVERRIDE;
-									Slider.SetColor(COLOR_ROYALBLUE);
-									Slider.SetCurrent(PWM.GetActinicValue());
-									Slider.SetOverrideID(OVERRIDE_ACTINIC);
-									Slider.SetLabel("Actinic");
-								}
 								
 								j+=19+i;
 								if (i==4) // Orientation is portrait
@@ -2506,7 +2472,10 @@ void ReefAngelClass::ShowInterface()
 							}
 							else if (DisplayedScreen>=RELAY_BOX && DisplayedScreen<=EXP_BOX_8)
 							{
-								byte TempRelay,TempRelayOn,TempRelayOff;
+								int l=twidth;
+								byte k;							
+								int rx;
+
 								if (DisplayedScreen==RELAY_BOX)
 								{
 									TempRelay=Relay.RelayData;
@@ -2522,10 +2491,6 @@ void ReefAngelClass::ShowInterface()
 								TempRelay&=TempRelayOff;
 								TempRelay|=TempRelayOn;
 	
-								int l=twidth;
-								byte k;							
-								int rx;
-								
 								if (NeedsRedraw)
 								{
 									NeedsRedraw=false;
@@ -2571,49 +2536,49 @@ void ReefAngelClass::ShowInterface()
 									else
 										TouchLCD.Clear(BKCOLOR,k-23,j+18,k+23,j+26);
 									TouchLCD.DrawRelayStatus(rx,j,bitRead(TempRelay,a-1));
-									if (TS.IsTouchedInside(rx-10,j-13,rx+35,j+33))
-									{
-										if (bitRead(TempRelayOn,a-1))
-										{
-#ifdef REEFTOUCHDISPLAY
-											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,0);
-#endif // REEFTOUCHDISPLAY
-											bitClear(Relay.RelayMaskOn,a-1);
-											bitClear(Relay.RelayMaskOff,a-1);
-										}
-										else if (!bitRead(TempRelayOff,a-1))
-										{
-#ifdef REEFTOUCHDISPLAY
-											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,1);
-#endif // REEFTOUCHDISPLAY
-											bitSet(Relay.RelayMaskOn,a-1);
-											bitSet(Relay.RelayMaskOff,a-1);
-										}
-										else if (!bitRead(TempRelayOn,a-1) && bitRead(TempRelayOff,a-1))
-										{
-#ifdef REEFTOUCHDISPLAY
-											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,!bitRead(TempRelay,a-1));
-#endif // REEFTOUCHDISPLAY
-											if (bitRead(TempRelay,a-1))
-											{
-												bitClear(Relay.RelayMaskOn,a-1);
-												bitClear(Relay.RelayMaskOff,a-1);
-											}
-											else
-											{
-												bitSet(Relay.RelayMaskOn,a-1);
-												bitSet(Relay.RelayMaskOff,a-1);
-											}
-										}
-									}
-									if (TS.IsTouchedInside(k-35,j-13,k+25,j+33))
-									{
-#ifdef REEFTOUCHDISPLAY
-										SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,2);
-#endif // REEFTOUCHDISPLAY
-										bitClear(Relay.RelayMaskOn,a-1);
-										bitSet(Relay.RelayMaskOff,a-1);
-									}
+//									if (TS.IsTouchedInside(rx-10,j-13,rx+35,j+33))
+//									{
+//										if (bitRead(TempRelayOn,a-1))
+//										{
+//#ifdef REEFTOUCHDISPLAY
+//											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,0);
+//#endif // REEFTOUCHDISPLAY
+//											bitClear(Relay.RelayMaskOn,a-1);
+//											bitClear(Relay.RelayMaskOff,a-1);
+//										}
+//										else if (!bitRead(TempRelayOff,a-1))
+//										{
+//#ifdef REEFTOUCHDISPLAY
+//											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,1);
+//#endif // REEFTOUCHDISPLAY
+//											bitSet(Relay.RelayMaskOn,a-1);
+//											bitSet(Relay.RelayMaskOff,a-1);
+//										}
+//										else if (!bitRead(TempRelayOn,a-1) && bitRead(TempRelayOff,a-1))
+//										{
+//#ifdef REEFTOUCHDISPLAY
+//											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,!bitRead(TempRelay,a-1));
+//#endif // REEFTOUCHDISPLAY
+//											if (bitRead(TempRelay,a-1))
+//											{
+//												bitClear(Relay.RelayMaskOn,a-1);
+//												bitClear(Relay.RelayMaskOff,a-1);
+//											}
+//											else
+//											{
+//												bitSet(Relay.RelayMaskOn,a-1);
+//												bitSet(Relay.RelayMaskOff,a-1);
+//											}
+//										}
+//									}
+//									if (TS.IsTouchedInside(k-35,j-13,k+25,j+33))
+//									{
+//#ifdef REEFTOUCHDISPLAY
+//										SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,2);
+//#endif // REEFTOUCHDISPLAY
+//										bitClear(Relay.RelayMaskOn,a-1);
+//										bitSet(Relay.RelayMaskOff,a-1);
+//									}
 								}				
 							}
 							else if(DisplayedScreen==PWM_SCREEN)
@@ -2820,6 +2785,7 @@ void ReefAngelClass::ShowInterface()
 								}
 								if (bDone)
 								{
+									TouchEnabled=false;
 									DisplayedScreen=RecallScreen;
 									NeedsRedraw=true;
 								}
@@ -2841,17 +2807,144 @@ void ReefAngelClass::ShowInterface()
 						{
 							if (TouchEnabled && DisplayedScreen<MAX_SCREENS)
 							{
+								int j;
 								TouchEnabled=false;
-								if (TS.X<50 && TS.Y>theight-30)
+								if (TS.X<50 && TS.Y>theight-30 && TS.X>0)
 									ChangeDisplayedScreen(-1);
 								if (TS.X>twidth-50 && TS.Y>theight-30)
 									ChangeDisplayedScreen(1);
+								
+								if(DisplayedScreen==MAIN_SCREEN)
+								{
+									if (orientation%2==0)
+									{
+										//landscape
+										if (numexp>0)
+											j=127;
+										else
+											j=105;
+									}
+									else
+									{
+										//portrait
+										if (numexp>2)
+											j=187;
+										else
+											j=172;
+											
+									}
+									if (TS.IsTouchedInside(0,j-5,twidth,j+25))
+									{
+										RecallScreen=DisplayedScreen;
+										DisplayedScreen=DIMMING_OVERRIDE;
+										NeedsRedraw=true;
+										Slider.SetColor(COLOR_ORANGE);							
+										Slider.SetCurrent(PWM.GetDaylightValue());
+										Slider.SetOverrideID(OVERRIDE_DAYLIGHT);
+										Slider.SetLabel("Daylight");
+									}
+									j+=35;
+									if (TS.IsTouchedInside(0,j-5,twidth,j+25))
+									{
+										RecallScreen=DisplayedScreen;
+										NeedsRedraw=true;
+										DisplayedScreen=DIMMING_OVERRIDE;
+										Slider.SetColor(COLOR_ROYALBLUE);
+										Slider.SetCurrent(PWM.GetActinicValue());
+										Slider.SetOverrideID(OVERRIDE_ACTINIC);
+										Slider.SetLabel("Actinic");
+									}
+								}
+								else if (DisplayedScreen>=RELAY_BOX && DisplayedScreen<=EXP_BOX_8)
+								{
+									int k,l,x,x1,h;
+									
+									if (DisplayedScreen==RELAY_BOX)
+									{
+										TempRelay=Relay.RelayData;
+										TempRelayOn=Relay.RelayMaskOn;
+										TempRelayOff=Relay.RelayMaskOff;
+									}
+									else
+									{
+										TempRelay=Relay.RelayDataE[DisplayedScreen-2];
+										TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-2];
+										TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-2];
+									}
+									TempRelay&=TempRelayOff;
+									TempRelay|=TempRelayOn;
+									
+									if (orientation%2==0) // Orientation is landscape
+									{
+										j=53;
+										l=34;
+										h=16;
+									}
+									else
+									{
+										j=43;
+										l=52;
+										h=24;
+									}
+									k=j;
+									x=0;
+									x1=45;
+									for (int a=1;a<9;a++)
+									{
+
+										if (a==5)
+										{
+											k=j;
+											x=twidth-45;
+											x1=twidth-118;
+										}
+										k+=l;
+										if (TS.IsTouchedInside(x,k-h,x+45,k+h))
+										{
+											if (bitRead(TempRelayOn,a-1))
+											{
+	#ifdef REEFTOUCHDISPLAY
+												SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,0);
+	#endif // REEFTOUCHDISPLAY
+												Relay.Override(a+(DisplayedScreen-1)*10,0);
+											}
+											else if (!bitRead(TempRelayOff,a-1))
+											{
+	#ifdef REEFTOUCHDISPLAY
+												SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,1);
+	#endif // REEFTOUCHDISPLAY
+												Relay.Override(a+(DisplayedScreen-1)*10,1);
+											}
+											else if (!bitRead(TempRelayOn,a-1) && bitRead(TempRelayOff,a-1))
+											{
+	#ifdef REEFTOUCHDISPLAY
+												SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,!bitRead(TempRelay,a-1));
+	#endif // REEFTOUCHDISPLAY
+												if (bitRead(TempRelay,a-1))
+												{
+													Relay.Override(a+(DisplayedScreen-1)*10,0);
+												}
+												else
+												{
+													Relay.Override(a+(DisplayedScreen-1)*10,1);
+												}
+											}
+										}
+										if (TS.IsTouchedInside(x1,k-h,x1+74,k+h))
+										{
+	#ifdef REEFTOUCHDISPLAY
+											SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-1)*10,2);
+	#endif // REEFTOUCHDISPLAY
+											Relay.Override(a+(DisplayedScreen-1)*10,2);
+										}
+									}										
+								}
 							}
 							else
 							{
 								// if we are displaying overrides, refresh sliders
-								TS.GetTouch();
-								Slider.Refresh();
+								if(DisplayedScreen==DIMMING_OVERRIDE)
+									Slider.Refresh();
 							}
 						}
 					}
@@ -6335,56 +6428,57 @@ void receiveEventMaster(int howMany)
 		}
 		case MESSAGE_RELAY_OVERRIDE: // Override relay ports
 		{
-			byte override_relay=d[1];
-			byte override_type=d[2];
-			if (override_type==0)  // Turn port off
-			{
-				if ( override_relay < 9 )
-				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,override_relay-1);
-					bitClear(ReefAngel.Relay.RelayMaskOff,override_relay-1);
-				}
-#ifdef RelayExp
-				if ( (override_relay > 10) && (override_relay < 89) )
-				{
-					byte EID = byte(override_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
-					bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-			else if (override_type==1)  // Turn port on
-			{
-				if ( override_relay < 9 )
-				{
-					bitSet(ReefAngel.Relay.RelayMaskOn,override_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,override_relay-1);
-				}
-#ifdef RelayExp
-				if ( (override_relay > 10) && (override_relay < 89) )
-				{
-					byte EID = byte(override_relay/10);
-					bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-			else if (override_type==2)  // Set port back to Auto
-			{
-				if ( override_relay < 9 )
-				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,override_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,override_relay-1);
-				}
-#ifdef RelayExp
-				if ( (override_relay > 10) && (override_relay < 89) )
-				{
-					byte EID = byte(override_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
+			ReefAngel.Relay.Override(d[1],d[2]);
+//			byte override_relay=d[1];
+//			byte override_type=d[2];
+//			if (override_type==0)  // Turn port off
+//			{
+//				if ( override_relay < 9 )
+//				{
+//					bitClear(ReefAngel.Relay.RelayMaskOn,override_relay-1);
+//					bitClear(ReefAngel.Relay.RelayMaskOff,override_relay-1);
+//				}
+//#ifdef RelayExp
+//				if ( (override_relay > 10) && (override_relay < 89) )
+//				{
+//					byte EID = byte(override_relay/10);
+//					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
+//					bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
+//				}
+//#endif  // RelayExp
+//			}
+//			else if (override_type==1)  // Turn port on
+//			{
+//				if ( override_relay < 9 )
+//				{
+//					bitSet(ReefAngel.Relay.RelayMaskOn,override_relay-1);
+//					bitSet(ReefAngel.Relay.RelayMaskOff,override_relay-1);
+//				}
+//#ifdef RelayExp
+//				if ( (override_relay > 10) && (override_relay < 89) )
+//				{
+//					byte EID = byte(override_relay/10);
+//					bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
+//					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
+//				}
+//#endif  // RelayExp
+//			}
+//			else if (override_type==2)  // Set port back to Auto
+//			{
+//				if ( override_relay < 9 )
+//				{
+//					bitClear(ReefAngel.Relay.RelayMaskOn,override_relay-1);
+//					bitSet(ReefAngel.Relay.RelayMaskOff,override_relay-1);
+//				}
+//#ifdef RelayExp
+//				if ( (override_relay > 10) && (override_relay < 89) )
+//				{
+//					byte EID = byte(override_relay/10);
+//					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(override_relay%10)-1);
+//					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(override_relay%10)-1);
+//				}
+//#endif  // RelayExp
+//			}
 			break;
 		}
 		case MESSAGE_PWM_OVERRIDE: // Override Dimming ports
