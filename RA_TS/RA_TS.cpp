@@ -173,23 +173,24 @@ boolean RA_TS::IsTouched()
 
 boolean RA_TS::IsTouchedInside(int x1, int y1, int x2, int y2)
 {
-	if (IsTouched()) // check touch
-	{
+//	if (IsTouched()) // check touch
+//	{
 		if (X>x1 && X<x2 && Y>y1 && Y<y2 && touchinsideenabled) // Let's see if it touch was inside the box
 		{
-			return true;
 			touchinsideenabled=false;
+			return true;
 		}
 		else
 		{
+			touchinsideenabled=true;
 			return false;
 		}
-	}
-	else
-	{
-		touchinsideenabled=true;
-		return false;
-	}
+//	}
+//	else
+//	{
+//		touchinsideenabled=true;
+//		return false;
+//	}
 }
 
 boolean RA_TS::IsCalibrationNeeded()
