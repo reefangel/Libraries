@@ -499,7 +499,7 @@ void RA_TouchLCD::DrawDateTime(int x, int y, boolean militarytime, FontClass Fon
 	s=second();
 	if (s<10) Font.DrawText("0");
 	Font.DrawText(s);
-	if (!militarytime) if(hour()>=12) Font.DrawText(x+50,y,"PM"); else Font.DrawText(x+50,y,"AM");
+	if (!militarytime) if(hour()>=12) Font.DrawText("PM"); else Font.DrawText("AM");
 	strcpy(text,"");
 	if (month()<10) strcat(text,"0");
 	itoa(month(),temp,10);
