@@ -190,6 +190,7 @@ public:
 	bool TouchEnabled;
 	bool Sleeping;
 	byte orientation;
+	byte LongTouch;
 #else //  REEFTOUCH
 	RA_NokiaLCD LCD;
 	RA_JoystickClass Joystick;

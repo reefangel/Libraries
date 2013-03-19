@@ -2156,6 +2156,7 @@ void ReefAngelClass::ShowInterface()
 
 					if (!TS.IsTouched())
 					{
+						LongTouch=0;
 						if (!Sleeping)
 						{
 							TouchEnabled=true;
@@ -2798,6 +2799,17 @@ void ReefAngelClass::ShowInterface()
 						TouchLCD.SetBacklight(100);
 						Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
 						Timer[LCD_TIMER].Start();  // start timer
+						// Check for Soft Reset of screen
+						// If top left corner is long touched, we reinitialize the LCD. 
+						if (TS.X<50 && TS.Y<50) // top left corner
+						{
+							if (LongTouch++==255) // 255 count is about 6 seconds
+							{	
+								LongTouch=0;
+								NeedsRedraw=true;
+								TouchLCD.Init();
+							}
+						}
 						if (TouchEnabled && Sleeping)
 						{
 							TouchEnabled=false;
