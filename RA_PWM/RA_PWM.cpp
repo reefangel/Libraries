@@ -212,6 +212,19 @@ void RA_PWMClass::StandardDaylight(byte MinuteOffset)
 			));
 }
 
+void RA_PWMClass::Override(byte Channel, byte Value)
+{
+	if (Channel==OVERRIDE_DAYLIGHT) // Daylight channel
+		SetDaylightOverride(Value);
+	else if (Channel==OVERRIDE_ACTINIC) // Actinic channel
+		SetActinicOverride(Value);
+#ifdef PWMEXPANSION
+	else if (Channel>=OVERRIDE_CHANNEL0 && Channel<=OVERRIDE_CHANNEL5) // Dimming Expansion channel 0-5
+		SetChannelOverride(Channel-OVERRIDE_CHANNEL0,Value);
+#endif // PWMEXPANSION
+
+}
+
 #ifdef PWMEXPANSION
 
 void RA_PWMClass::Expansion(byte cmd, byte data)

@@ -48,6 +48,7 @@ public:
 	void StandardDaylight();
 	void StandardActinic(byte MinuteOffset);
 	void StandardDaylight(byte MinuteOffset);
+	void Override(byte Channel, byte Value);
 	
 #ifdef PWMEXPANSION
 	byte ExpansionChannel[PWM_EXPANSION_CHANNELS];

@@ -498,6 +498,7 @@ void ReefAngelClass::Init()
 	OkButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Ok");
 	CancelButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Cancel");
 	Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
+	Slider.SetPosition(0,20);
 	Slider.Refresh();
 	for(int a=0;a<6;a++)
 		PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");
@@ -2746,7 +2747,6 @@ void ReefAngelClass::ShowInterface()
 							}
 							else if(DisplayedScreen==DIMMING_OVERRIDE)
 							{
-								bool bDone=false;
 								if (NeedsRedraw)
 								{
 									NeedsRedraw=false;
@@ -2758,37 +2758,8 @@ void ReefAngelClass::ShowInterface()
 									OkButton.Show();
 									CancelButton.SetPosition(twidth/2-65,theight*7/9);
 									CancelButton.Show();
-									Slider.SetPosition(0,20);
 									Slider.Show();
-								}
-								TS.GetTouch();
-								if (OkButton.IsPressed()) 
-								{
-									bDone=true;
-#ifdef REEFTOUCHDISPLAY
-									SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),Slider.GetCurrent()); 	// Send Override Request
-#endif // REEFTOUCHDISPLAY
-									if (Slider.GetOverrideID()==OVERRIDE_DAYLIGHT)
-										ReefAngel.PWM.SetDaylightOverride(Slider.GetCurrent());
-									else
-										ReefAngel.PWM.SetActinicOverride(Slider.GetCurrent());
-								}
-								if (CancelButton.IsPressed()) 
-								{
-									bDone=true;
-#ifdef REEFTOUCHDISPLAY
-									SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),255); 	// Send Cancel Override Request
-#endif // REEFTOUCHDISPLAY
-									if (Slider.GetOverrideID()==OVERRIDE_DAYLIGHT)
-										ReefAngel.PWM.SetDaylightOverride(255);
-									else
-										ReefAngel.PWM.SetActinicOverride(255);
-								}
-								if (bDone)
-								{
-									TouchEnabled=false;
-									DisplayedScreen=RecallScreen;
-									NeedsRedraw=true;
+//									Slider.Refresh();
 								}
 							}
 						}
@@ -2951,12 +2922,75 @@ void ReefAngelClass::ShowInterface()
 										}
 									}										
 								}
+								else if (DisplayedScreen==PWM_SCREEN)
+								{
+									int j,h,k;
+									if (orientation%2==0)
+									{
+										//landscape
+										j=60;
+										h=10;
+										k=22;
+									}
+									else
+									{
+										//portrait
+										j=65;
+										h=15;
+										k=34;
+									}									
+									for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+									{
+										j+=k;
+										if (TS.IsTouchedInside(0,j-h,twidth,j+h))
+										{
+											RecallScreen=DisplayedScreen;
+											NeedsRedraw=true;
+											DisplayedScreen=DIMMING_OVERRIDE;
+											Slider.SetColor(COLOR_GREEN);
+											Slider.SetCurrent(PWM.GetChannelValue(a));
+											Slider.SetOverrideID(OVERRIDE_CHANNEL0+a);
+											eeprom_read_block((void*)&tempname, (void*)(PWMChannel1+((a)*0x10)), sizeof(tempname));
+											Slider.SetLabel(tempname);
+										}
+									}
+								}
 							}
 							else
 							{
 								// if we are displaying overrides, refresh sliders
 								if(DisplayedScreen==DIMMING_OVERRIDE)
+								{
+									if (TouchEnabled)
+									{
+										TouchEnabled=false;
+										bool bDone=false;
+										TS.GetTouch();
+										if (OkButton.IsPressed()) 
+										{
+											bDone=true;
+		#ifdef REEFTOUCHDISPLAY
+											SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),Slider.GetCurrent()); 	// Send Override Request
+		#endif // REEFTOUCHDISPLAY
+											ReefAngel.PWM.Override(Slider.GetOverrideID(),Slider.GetCurrent());
+										}
+										if (CancelButton.IsPressed()) 
+										{
+											bDone=true;
+		#ifdef REEFTOUCHDISPLAY
+											SendMaster(MESSAGE_PWM_OVERRIDE,Slider.GetOverrideID(),255); 	// Send Cancel Override Request
+		#endif // REEFTOUCHDISPLAY
+											ReefAngel.PWM.Override(Slider.GetOverrideID(),255);
+										}
+										if (bDone)
+										{
+											TouchEnabled=false;
+											DisplayedScreen=RecallScreen;
+											NeedsRedraw=true;
+										}
+									}
 									Slider.Refresh();
+								}
 							}
 						}
 					}
@@ -6495,12 +6529,15 @@ void receiveEventMaster(int howMany)
 		}
 		case MESSAGE_PWM_OVERRIDE: // Override Dimming ports
 		{	
-			byte o_portid=d[1];
-			byte o_value=d[2];
-			if (o_portid==OVERRIDE_DAYLIGHT) // Daylight channel
-				ReefAngel.PWM.SetDaylightOverride(o_value);
-			else if (o_portid==OVERRIDE_ACTINIC) // Actinic channel
-				ReefAngel.PWM.SetActinicOverride(o_value);
+			ReefAngel.PWM.Override(d[1],d[2]);
+//			byte o_portid=d[1];
+//			byte o_value=d[2];
+//			if (o_portid==OVERRIDE_DAYLIGHT) // Daylight channel
+//				ReefAngel.PWM.SetDaylightOverride(o_value);
+//			else if (o_portid==OVERRIDE_ACTINIC) // Actinic channel
+//				ReefAngel.PWM.SetActinicOverride(o_value);
+//			else if (o_portid>=OVERRIDE_CHANNEL0 && o_portid<=OVERRIDE_CHANNEL5) // Dimming Expansion channel 0-5
+//				ReefAngel.PWM.SetChannelOverride(o_portid-OVERRIDE_CHANNEL0,o_value);
 			break;
 		}
 		}
