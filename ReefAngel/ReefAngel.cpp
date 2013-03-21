@@ -2992,7 +2992,41 @@ void ReefAngelClass::ShowInterface()
 										}
 									}
 								}
-
+								else if (DisplayedScreen==RF_SCREEN1)
+								{
+									int j,h,k;
+									if (orientation%2==0)
+									{
+										//landscape
+										j=60;
+										h=10;
+										k=22;
+									}
+									else
+									{
+										//portrait
+										j=65;
+										h=15;
+										k=34;
+									}									
+									int rfcolor[] = {COLOR_ORANGE,COLOR_ROYALBLUE,COLOR_RED,COLOR_GREEN,COLOR_LIGHTBLUE,COLOR_MAGENTA};
+									for (int a=0;a<RF_CHANNELS;a++)
+									{
+										j+=k;
+										if (TS.IsTouchedInside(0,j-h,twidth,j+h))
+										{
+											RecallScreen=DisplayedScreen;
+											NeedsRedraw=true;
+											DisplayedScreen=DIMMING_OVERRIDE;
+											Slider.SetColor(rfcolor[a]);
+											Slider.SetCurrent(RF.GetChannel(a));
+											Slider.SetOverrideID(OVERRIDE_RF_WHITE+a);
+											int ptr = pgm_read_word(&(LABEL_RF[a]));								
+											strcpy_P(tempname, (char *)ptr);
+											Slider.SetLabel(tempname);
+										}
+									}
+								}
 							}
 							else
 							{
@@ -3016,6 +3050,8 @@ void ReefAngelClass::ShowInterface()
 												ReefAngel.PWM.Override(oid,ovalue);
 											if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
 												ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,ovalue);
+											if (oid>=OVERRIDE_RF_WHITE && oid<=OVERRIDE_RF_INTENSITY)
+												ReefAngel.RF.Override(oid-OVERRIDE_RF_WHITE,ovalue);
 										}
 										if (CancelButton.IsPressed()) 
 										{
@@ -3027,6 +3063,8 @@ void ReefAngelClass::ShowInterface()
 												ReefAngel.PWM.Override(oid,255);
 											if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
 												ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,255);
+											if (oid>=OVERRIDE_RF_WHITE && oid<=OVERRIDE_RF_INTENSITY)
+												ReefAngel.RF.Override(oid-OVERRIDE_RF_WHITE,255);
 										}
 										if (bDone)
 										{
@@ -6579,6 +6617,8 @@ void receiveEventMaster(int howMany)
 				ReefAngel.PWM.Override(d[1],d[2]);
 			if (d[1]>=OVERRIDE_AI_WHITE && d[1]<=OVERRIDE_AI_BLUE)
 				ReefAngel.AI.Override(d[1]-OVERRIDE_AI_WHITE,d[2]);
+			if (d[1]>=OVERRIDE_RF_WHITE && d[1]<=OVERRIDE_RF_INTENSITY)
+				ReefAngel.RF.Override(d[1]-OVERRIDE_RF_WHITE,d[2]);
 //			byte o_portid=d[1];
 //			byte o_value=d[2];
 //			if (o_portid==OVERRIDE_DAYLIGHT) // Daylight channel

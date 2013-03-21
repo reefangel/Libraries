@@ -35,11 +35,13 @@ public:
 	byte Duration;
 	boolean VortechEnable;
 	byte RadionChannels[RF_CHANNELS];
+	byte RadionChannelsOverride[RF_CHANNELS];
 	void SetMode(byte mode, byte speed, byte duration);
 	void SendData(byte mode, byte speed, byte duration);
 	byte RFCheck();
-	void SetChannel(byte Channel, byte Value);
-	inline byte GetChannel(byte channel) {return RadionChannels[channel];}
+	void inline SetChannel(byte Channel, byte Value) { if (Channel<RF_CHANNELS) RadionChannels[Channel]=Value; };
+	void inline SetChannelOverride(byte Channel, byte Value) { if (Channel<RF_CHANNELS) RadionChannelsOverride[Channel]=Value; };
+	byte GetChannel(byte Channel);
 	void RadionWrite();
 	void ChannelWhiteSlope();	
 	void ChannelRoyalBlueSlope();		
@@ -71,6 +73,7 @@ public:
 	void ChannelRadionParabola(byte Channel, byte Start, byte End, byte Duration, byte MinuteOffset);
 	inline void VortechOff() {SetMode(TurnOff,0,0);}
 	inline void VortechOn() {SetMode(TurnOn,0,0);}
+	void inline Override(byte Channel, byte Value) { SetChannelOverride(Channel,Value); };
 	
 private:
 	unsigned long lastWrite;
