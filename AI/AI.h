@@ -29,12 +29,13 @@ class AIClass
 {
 public:
 	AIClass();
-	void SetPort(byte portnum);
-	void SetChannel(byte channel, byte intensity);
-	byte GetChannel(byte channel);
-	void SetStreamDelay(int delay);
 	int StreamDelay;
 	unsigned long AImillis;
+	void SetPort(byte portnum);
+	void inline SetChannel(byte Channel, byte Value) { if (Channel<AI_CHANNELS) AIChannels[Channel]=Value; };
+	void inline SetChannelOverride(byte Channel, byte Value) { if (Channel<AI_CHANNELS) AIChannelsOverride[Channel]=Value; };
+	byte GetChannel(byte Channel);
+	void inline SetStreamDelay(int delay) { StreamDelay=delay; };
 	void Send();
 	void ChannelWhiteSlope();	
 	void ChannelBlueSlope();	
@@ -52,10 +53,12 @@ public:
 	void ChannelRoyalBlueParabola(byte MinuteOffset);	
 	void ChannelAIParabola(byte Channel, byte Start, byte End);
 	void ChannelAIParabola(byte Channel, byte Start, byte End, byte MinuteOffset);	
+	void inline Override(byte Channel, byte Value) { SetChannelOverride(Channel,Value); };
 	
 private:
 	byte port;
 	byte AIChannels[AI_CHANNELS];
+	byte AIChannelsOverride[AI_CHANNELS];
 	void SWprint(byte data);
 };
 

@@ -25,11 +25,21 @@
 
 AIClass::AIClass()
 {
-	AIChannels[0]=0;
-	AIChannels[1]=0;
-	AIChannels[2]=0;
+	for ( byte a = 0; a < AI_CHANNELS; a++ )
+	{
+		AIChannels[a]=0;
+		AIChannelsOverride[a]=255;
+	}
 	StreamDelay=300;
 	AImillis=millis();
+}
+
+byte AIClass::GetChannel(byte Channel)
+{
+	if (AIChannelsOverride[Channel]<100)
+		return AIChannelsOverride[Channel];
+	else
+		return AIChannels[Channel];
 }
 
 void AIClass::SetPort(byte portnum)
@@ -37,21 +47,6 @@ void AIClass::SetPort(byte portnum)
 	port=portnum;
 	pinMode(port,OUTPUT);
 	digitalWrite(port,LOW);
-}
-
-void AIClass::SetChannel(byte channel, byte intensity)
-{
-	AIChannels[channel]=intensity;
-}
-
-byte AIClass::GetChannel(byte channel)
-{
-	return AIChannels[channel];
-}
-
-void AIClass::SetStreamDelay(int delay)
-{
-	StreamDelay=delay;
 }
 
 void AIClass::Send()
