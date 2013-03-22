@@ -1334,6 +1334,11 @@ void ReefAngelClass::SingleATOHighExtended(byte Relay)
 	SingleATOHigh(Relay);
 }
 
+void ReefAngelClass::WaterLevelATO(byte Relay)
+{
+	WaterLevelATO(Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.WaterLevelLow_read(), InternalMemory.WaterLevelHigh_read());
+}
+
 void ReefAngelClass::DosingPump1(byte Relay)
 {
     DosingPump(Relay, 1,
