@@ -286,7 +286,6 @@ public:
 	void inline NoWifi() {};
 	void inline NoSD() {};
 	void inline NoTilt() {};
-	void UpdateTouchDisplay();
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
@@ -369,6 +368,10 @@ public:
 #else
     void InitMenus();
 #endif  // CUSTOM_MENU
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+    void ShowTouchInterface();
+	void UpdateTouchDisplay();
+#endif // REEFTOUCH
     void ShowInterface();
     void DisplayMenu();
     void DisplayMenuHeading();
