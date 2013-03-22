@@ -497,6 +497,7 @@ void ReefAngelClass::Init()
 #ifdef ENABLE_EXCEED_FLAGS
 	InternalMemory.write(Overheat_Exceed_Flag, 0);
 	InternalMemory.write(ATO_Exceed_Flag, 0);
+	InternalMemory.write(ATO_Single_Exceed_Flag, 0);
 #endif  // ENABLE_EXCEED_FLAGS
 
 
@@ -954,7 +955,8 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	{
 		LED.On();
 #ifdef ENABLE_EXCEED_FLAGS
-		InternalMemory.write(ATO_Exceed_Flag, 1);
+		if (InternalMemory.read(ATO_Exceed_Flag)==0)
+			InternalMemory.write(ATO_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 		Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
@@ -1001,7 +1003,8 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	{
 		LED.On();
 #ifdef ENABLE_EXCEED_FLAGS
-		InternalMemory.write(ATO_Exceed_Flag, 1);
+		if (InternalMemory.read(ATO_Exceed_Flag)==0)
+			InternalMemory.write(ATO_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 		Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
@@ -1072,7 +1075,8 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
     {
         LED.On();
 #ifdef ENABLE_EXCEED_FLAGS
-        InternalMemory.write(ATO_Single_Exceed_Flag, 1);
+		if (InternalMemory.read(ATO_Single_Exceed_Flag)==0)
+			InternalMemory.write(ATO_Single_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
         Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
@@ -1904,7 +1908,8 @@ void ReefAngelClass::ShowInterface()
 				{
 					LED.On();
 #ifdef ENABLE_EXCEED_FLAGS
-					InternalMemory.write(Overheat_Exceed_Flag, 1);
+					if (InternalMemory.read(Overheat_Exceed_Flag)==0)
+						InternalMemory.write(Overheat_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 					// invert the ports that are activated
 					Relay.RelayMaskOff = ~OverheatShutoffPorts;
