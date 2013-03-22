@@ -227,9 +227,9 @@ Int variables need 2 blocks
 When adding more variables, use the previous value plus 1 or 2
   depending on the previous values storage requirement
 */
-#define ATO_Single_Exceed_Flag	  733	//747
-#define ATO_Exceed_Flag			  734	//748
-#define Overheat_Exceed_Flag	  735	//749
+#define ATO_Single_Exceed_Flag    800   //733   //747
+#define ATO_Exceed_Flag			  801	//734	//748
+#define Overheat_Exceed_Flag	  802	//735	//749
 
 #define MAX_ATO_LOG_EVENTS		  4
 #define ATOEventSize			  8
