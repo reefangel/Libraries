@@ -591,6 +591,7 @@ Duration	LITERAL2
 RadionChannels	LITERAL2
 Celsius	LITERAL2
 Fahrenheit	LITERAL2 
+TemperatureCompensation	LITERAL2
 
 MAIN_RELAY	LITERAL2
 EXP1_RELAY	LITERAL2

@@ -744,6 +744,17 @@ void ReefAngelClass::Refresh()
     	tempsal+=Salinity.Read();
     }
 	Params.Salinity=tempsal/20;
+	if (Salinity.TemperatureCompensation)
+	{
+		// Credits to dazza1304
+		// http://forum.reefangel.com/viewtopic.php?f=3&t=2670
+		double SalCompensation;
+		if (ReefAngel.TempSensor.unit)
+			SalCompensation=ReefAngel.Params.Salinity/(1+((Params.Temp[TempProbe]-InternalMemory.SalTempComp_read())*0.0026));
+		else
+			SalCompensation=ReefAngel.Params.Salinity/(1+((Params.Temp[TempProbe]-InternalMemory.SalTempComp_read())*0.0014));
+		Params.Salinity=round(SalCompensation);
+	}	
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // defined SALINITYEXPANSION
@@ -3690,6 +3701,7 @@ void ReefAngelClass::SetupCalibrateSalinity()
     {
         // save SalMax to memory
         InternalMemory.SalMax_write(iS);
+        InternalMemory.SalTempComp_write(Params.Temp[TempProbe]);
 		SalMax = iS;
     }
 }
