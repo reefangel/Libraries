@@ -199,6 +199,300 @@ int alphaBlend(int fgcolor, int bgcolor, byte a)
 	return RGB565(r,g,b);
 }
 
+byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
+{
+	byte tspeed=0;
+	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
+	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
+	tspeed=(millis()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
+	if (PulseSync)
+		return tspeed;
+	else
+		return (tspeed==PulseMinSpeed)?PulseMaxSpeed:PulseMinSpeed;
+}
+
+byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
+{
+	byte tspeed=0;
+	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
+	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
+	tspeed=(now()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
+	if (PulseSync)
+		return tspeed;
+	else
+		return (tspeed==PulseMinSpeed)?PulseMaxSpeed:PulseMinSpeed;
+}
+
+byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
+{
+	// Contribution of Discocarp
+	// http://forum.reefangel.com/viewtopic.php?f=2&t=2386&p=18240
+	double x,y;
+
+	x=double(now()%(PulseDuration));
+	x/=PulseDuration;
+	x*=2.0*PI;
+	if (!PulseSync) x+=PI; // shift the sine wave for the right pump 
+
+	y=sin(x);// y is now between -1 and 1
+	y+=1.0; // y is now between 0 and 2
+	y/=2.0; // y is now between 0 and 1  
+
+	// now compute the tunze speed
+	y*=double(PulseMaxSpeed-PulseMinSpeed);
+	y+=double(PulseMinSpeed); 
+
+	y+=0.5; // for proper rounding
+
+	// y is now between PulseMinSpeed and PulseMaxSpeed, constrain for safety  
+	return constrain(byte(y),30,100); 
+}
+
+byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync)
+{
+	static unsigned long lastwavemillis=millis();
+	static int newspeed=WaveSpeed;
+	if ((millis()-lastwavemillis) > 5000)
+	{
+		if (random(100)<50) newspeed--; else newspeed++;
+		newspeed=constrain(newspeed,WaveSpeed-WaveOffset,WaveSpeed+WaveOffset);
+		newspeed=constrain(newspeed,0,100);
+		lastwavemillis=millis();
+	}  
+	if (PulseSync)
+		return newspeed;
+	else
+		return WaveSpeed-(newspeed-WaveSpeed);
+}
+
+byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
+{
+	static unsigned long lastwavemillis=millis();
+	static byte WavePhase=0;
+	static time_t WaveStart=0;
+	static byte speed=PulseMinSpeed;
+	static byte anti_speed=PulseMinSpeed;
+
+	if (WavePhase==0)
+	{
+		WavePhase++;
+		WaveStart=now();
+	}
+	else if (WavePhase==1)
+	{
+		if (now()-WaveStart>2700)
+		{
+			WavePhase++;
+		}
+		if ((millis()-lastwavemillis) > PulseDuration)
+		{
+			if (speed==PulseMinSpeed)
+			{  
+				speed=PulseMaxSpeed;
+				anti_speed=PulseMinSpeed;
+			}
+			else
+			{
+				speed=PulseMinSpeed;
+				anti_speed=PulseMaxSpeed;
+			}
+			lastwavemillis=millis();
+		}
+	}
+	else if (WavePhase==2)
+	{
+		if (now()-WaveStart>4500) WavePhase++;
+		if (now()-WaveStart<=2760)
+			speed=PulseMinSpeed; 
+		else
+			speed=PulseMaxSpeed;
+		if (now()-WaveStart<=3300)
+			anti_speed=PulseMinSpeed;
+		else
+			anti_speed=PulseMaxSpeed*sin(radians(map(now()-WaveStart,3300,4500,0,180)));
+	}
+	else if (WavePhase==3)
+	{
+		if (now()-WaveStart>7200) WavePhase++;
+		if ((millis()-lastwavemillis) > PulseDuration)
+		{
+			if (speed==PulseMinSpeed)
+			{  
+				speed=PulseMaxSpeed;
+				anti_speed=PulseMinSpeed;
+			}
+			else
+			{
+				speed=PulseMinSpeed;
+				anti_speed=PulseMaxSpeed;
+			}
+			lastwavemillis=millis();
+		}
+	}
+	else if (WavePhase==4)
+	{
+		if (now()-WaveStart>9000) WavePhase=0;
+		if (now()-WaveStart<=7260) 
+			speed=PulseMinSpeed; 
+		else
+			speed=PulseMaxSpeed;
+		if (now()-WaveStart<=8400)
+			anti_speed=PulseMaxSpeed*sin(radians(map(now()-WaveStart,7200,8400,0,180)));
+		else
+			anti_speed=0;
+	}
+	if (PulseSync)
+		return speed;
+	else
+		return anti_speed;
+}
+
+byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync)
+{
+	static unsigned long lastwavemillis=millis();
+	static byte WavePhase=0;
+	static time_t WaveStart=0;
+	static byte speed=0;
+	static byte anti_speed=0;
+
+	if (WavePhase==0)
+	{
+		WavePhase++;
+		WaveStart=now();
+	}
+	else if (WavePhase==1)
+	{
+		if (now()-WaveStart>900) WavePhase++;
+		speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,0,900,0,90))))/10;
+		speed+=WaveMaxSpeed/2;
+
+		anti_speed=(WaveMaxSpeed*2*sin(radians(map(now()-WaveStart,0,900,0,90))))/5;
+		anti_speed+=WaveMaxSpeed/2;
+	}
+	else if (WavePhase==2)
+	{
+		if (now()-WaveStart>1800) WavePhase++;
+		speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,900,1800,90,180))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=WaveMaxSpeed/20;
+
+		anti_speed=(WaveMaxSpeed*3*sin(radians(map(now()-WaveStart,900,1800,90,180))))/20;
+		anti_speed+=WaveMaxSpeed/2;
+		anti_speed+=WaveMaxSpeed/4;
+
+	}
+	else if (WavePhase==3)
+	{
+		if (now()-WaveStart>2700) WavePhase++;
+		speed=(WaveMaxSpeed*3*sin(radians(map(now()-WaveStart,1800,2700,0,90))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=WaveMaxSpeed/20;
+
+		anti_speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,1800,2700,0,90))))/20;
+		anti_speed+=WaveMaxSpeed/2;
+		anti_speed+=WaveMaxSpeed/4;
+	}
+	else if (WavePhase==4)
+	{
+		if (now()-WaveStart>3600) WavePhase++;
+		speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,2700,3600,90,180))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=(WaveMaxSpeed*3)/20;
+
+		anti_speed=(WaveMaxSpeed*3*sin(radians(map(now()-WaveStart,2700,3600,90,180))))/20;
+		anti_speed+=WaveMaxSpeed/2;
+		anti_speed+=(WaveMaxSpeed*3)/20;
+	}
+	else if (WavePhase==5)
+	{
+		if (now()-WaveStart>4500) WavePhase++;
+		speed=(WaveMaxSpeed*3*sin(radians(map(now()-WaveStart,3600,4500,0,90))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=(WaveMaxSpeed*3)/20;
+
+		anti_speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,3600,4500,0,90))))/20;
+		anti_speed+=WaveMaxSpeed/2;
+		anti_speed+=(WaveMaxSpeed*3)/20;
+	}
+	else if (WavePhase==6)
+	{
+		if (now()-WaveStart>5400) WavePhase++;
+		speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,4500,5400,90,180))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=(WaveMaxSpeed*5)/20;
+
+		anti_speed=(WaveMaxSpeed*3*sin(radians(map(now()-WaveStart,4500,5400,90,180))))/20;
+		anti_speed+=WaveMaxSpeed/2;
+		anti_speed+=WaveMaxSpeed/20;
+	}
+	else if (WavePhase==7)
+	{
+		if (now()-WaveStart>6300) WavePhase++;
+		speed=(WaveMaxSpeed*3*sin(radians(map(now()-WaveStart,5400,6300,0,90))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=(WaveMaxSpeed*5)/20;
+
+		anti_speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,5400,6300,0,90))))/20;
+		anti_speed+=WaveMaxSpeed/2;
+		anti_speed+=WaveMaxSpeed/20;
+	}
+	else if (WavePhase==8)
+	{
+		if (now()-WaveStart>7200) WavePhase++;
+		speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,6300,7200,90,180))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=(WaveMaxSpeed*7)/20;
+
+		anti_speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,6300,7200,90,180))))/10;
+		anti_speed+=WaveMaxSpeed/2;
+	}
+	else if (WavePhase==9)
+	{
+		if (now()-WaveStart>8100) WavePhase++;
+		speed=(WaveMaxSpeed*3*sin(radians(map(now()-WaveStart,7200,8100,0,90))))/20;
+		speed+=WaveMaxSpeed/2;
+		speed+=(WaveMaxSpeed*7)/20;
+
+		anti_speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,7200,8100,0,90))))/2;
+		anti_speed+=WaveMaxSpeed/2;
+	}
+	else if (WavePhase==10)
+	{
+		if (now()-WaveStart>9000) WavePhase=0;
+		speed=(WaveMaxSpeed*sin(radians(map(now()-WaveStart,8100,9000,90,180))))/2;
+		speed+=WaveMaxSpeed/2;
+
+		anti_speed=speed;
+	}
+
+	if (PulseSync)
+		return speed;
+	else
+		return anti_speed;
+}
+
+byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset)
+{
+	// Contribution of lnevo
+	// http://forum.reefangel.com/viewtopic.php?f=11&t=2708
+	double moonOffset; // gap between high and low
+	double amplitude;  // tide curve
+	double wavelength=12*SECS_PER_HOUR;
+
+	// Calculate the gap between high and low tide based on MoonPhase()
+	moonOffset=cos(((2*PI)/100)*MoonPhase());
+	moonOffset=((moonOffset+1)/2)*100; // Convert to percentage
+
+	// Find out the current tidal height
+	amplitude=sin(((2*PI)/wavelength)*now()); 
+
+	moonOffset=map(moonOffset,0,100,minOffset,maxOffset);
+	amplitude=amplitude*moonOffset; 
+
+	// Adjust the calculate speed to be in our adjusted range
+	return constrain(WaveSpeed+amplitude,0,100);
+}
+
 
 // for pure virtual functions
 void __cxa_pure_virtual(void){};

@@ -911,6 +911,16 @@ char* MoonPhaseLabel();
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
 
+//Wave Patterns
+byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync);
+byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
+byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
+
+
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);
 // other fixes
