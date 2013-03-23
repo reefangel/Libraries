@@ -55,24 +55,30 @@ bool IsLeapYear(int year)
 
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue)
 {
-	int Now = NumMins(hour(), minute());
-	int Start = NumMins(startHour, startMinute);
-	int StartD = Start + Duration;
-	int End = NumMins(endHour, endMinute);
-	int StopD = End - Duration;
+	// Contribution of lnevo
+	// http://forum.reefangel.com/viewtopic.php?p=22384#p22384
+	unsigned long Start = previousMidnight(now())+((unsigned long)NumMins(startHour, startMinute)*60);
+	unsigned long End = nextMidnight(now())+((unsigned long)NumMins(endHour, endMinute)*60);
+	boolean isOvernight=NumMins(startHour,startMinute)>NumMins(endHour,endMinute);
+	if (hour()<startHour && isOvernight) Start-=86400;
+	if (hour()<startHour || !isOvernight) End-=86400;
+	unsigned long StartD = Start + (Duration*60);
+	unsigned long StopD = End - (Duration*60);
 
-	if ( Now >= Start && Now <= StartD )
-		return constrain(map(Now, Start, StartD, startPWM, endPWM),startPWM, endPWM);
-	else if ( Now >= StopD && Now <= End )
+	if ( now() >= Start && now() <= StartD )
+		return constrain(map(now(), Start, StartD, startPWM, endPWM),startPWM,
+				endPWM);
+	else if ( now() >= StopD && now() <= End )
 	{
-		byte v = constrain(map(Now, StopD, End, startPWM, endPWM),startPWM, endPWM);
+		byte v = constrain(map(now(), StopD, End, startPWM, endPWM),startPWM,
+				endPWM);
 		return endPWM-v+startPWM;
 	}
-	else if ( Now > StartD && Now < StopD )
+	else if ( now() > StartD && now() < StopD )
 		return endPWM;
 
-    // lastly return the existing value
-    return oldValue;
+	// lastly return the existing value
+	return oldValue;
 }
 
 byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue)
