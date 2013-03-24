@@ -1498,6 +1498,7 @@ void ReefAngelClass::Portal(char *username, char *key)
 {
 	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
 	portalusername=username;
+	portalkey=key;
 }
 
 void ReefAngelClass::SendPortal(char *username, char*key)

@@ -236,6 +236,7 @@ public:
 	byte EM;
 	byte REM;
 	char *portalusername;
+	char *portalkey;
 #endif  // wifi
 
 	void FeedingModeStart();

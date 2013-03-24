@@ -59,10 +59,29 @@ void pushbuffer(byte inStr)
 	m_pushback[m_pushbackindex+1]=0;
 	if (reqtype>0 && reqtype<128)
 	{
-		if (authStr[m_pushbackindex]==inStr) m_pushbackindex++; else m_pushbackindex=0;
-		if (authStr[m_pushbackindex]==0) auth=true;
+//		if (authStr[m_pushbackindex]==inStr) m_pushbackindex++; else m_pushbackindex=0;
+//		if (authStr[m_pushbackindex]==0) auth=true;
 		//if (m_pushbackindex>0) Serial.println(m_pushbackindex,DEC);
 		//if (m_pushbackindex>0) Serial.println(test,DEC);
+		m_pushbackindex=0;
+		if (reqtype!=REQ_HTTP)
+		{
+			if (strlen(ReefAngel.portalkey)>0)
+			{
+				//Serial.println("Checking Auth...");
+				//Serial.println(ReefAngel.portalkey);
+				//Serial.println(Serial.find(ReefAngel.portalkey));
+				if (Serial.find(ReefAngel.portalkey))
+				{
+					while(Serial.available())
+						Serial.println(Serial.read());
+				}
+				else
+				{
+					reqtype=REQ_INVALID_KEY;
+				}
+			}
+		}
 	}
 	else
 	{
@@ -70,7 +89,7 @@ void pushbuffer(byte inStr)
 		if (m_pushbackindex==32) m_pushbackindex=0;
 		if (reqtype>128)
 		{
-		    if (inStr==' ')
+		    if (inStr==' ' || inStr=='?')
 		    {
 		        reqtype=256-reqtype;
 		        if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) )
@@ -159,6 +178,7 @@ void pushbuffer(byte inStr)
 		else
 		{
             if (strncmp("GET / ", m_pushback, 6)==0) reqtype = REQ_ROOT;
+            else if (strncmp("GET /?", m_pushback, 6)==0) reqtype = REQ_ROOT;
             else if (strncmp("GET /wifi", m_pushback, 9)==0) reqtype = REQ_WIFI;
             else if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
             else if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
@@ -206,6 +226,11 @@ void processHTTP()
 		auth=false;
 		switch ( reqtype )
 		{
+			case REQ_INVALID_KEY:
+			{
+				WebResponse(SERVER_INVALID_KEY, sizeof(SERVER_INVALID_KEY) - 1);
+				break;
+			}  // REQ_INVALID_KEY
 			case REQ_ROOT:
 			{
 				WebResponse(SERVER_DEFAULT, sizeof(SERVER_DEFAULT) - 1);
@@ -792,7 +817,7 @@ void WifiAuthentication(char* userpass)
 	*(authPtr + authPtrSize) = 0;
 	strcpy(authStr,authPtr);
 	free(authPtr);
-	WIFI_SERIAL.println(authStr);
+//	WIFI_SERIAL.println(authStr);
 }
 
 void SendXMLData(bool fAtoLog /*= false*/)

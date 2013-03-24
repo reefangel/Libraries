@@ -120,6 +120,7 @@ const prog_char SERVER_HEADER1[] PROGMEM = "HTTP/1.1 200 OK\r\nServer: ReefAngel
 const prog_char SERVER_HEADER2[] PROGMEM = "\r\nContent-Length: ";
 const prog_char SERVER_DENY[] PROGMEM = "HTTP/1.1 401 Access Denied\r\nWWW-Authenticate: Basic realm=Reef Angel Controller\r\nContent-Length: 0\r\n";
 const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server</h1>";
+const prog_char SERVER_INVALID_KEY[] PROGMEM = "<h1>Invalid Key</h1>";
 
 // REQUEST TYPES
 #define REQ_ROOT		1		// Default page
@@ -141,6 +142,7 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_M_RAW		17  	// All memory raw values
 #define REQ_LIGHTSON	18		// Turn Lights On
 #define REQ_LIGHTSOFF	19		// Turn Lights Off
+#define REQ_INVALID_KEY	126		// Invalid Key
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
