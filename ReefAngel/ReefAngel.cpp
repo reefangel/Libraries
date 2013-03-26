@@ -1192,7 +1192,6 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
 		bitSet(Flags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
         InternalMemory.write(ATO_Single_Exceed_Flag, 1);
-        Serial.println("Test");
 #endif  // ENABLE_EXCEED_FLAGS
         Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
