@@ -145,8 +145,8 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
 #define P(name)   static const prog_char name[] PROGMEM
-//const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
-const prog_char SERVER_RA[] PROGMEM = "<!DOCTYPE html><script src='http://www.reefangel.com/wifi/ra2.js'></script>";
+const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
+//const prog_char SERVER_RA[] PROGMEM = "<!DOCTYPE html><script src='http://www.reefangel.com/wifi/ra2.js'></script>";
 const prog_char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 const prog_char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
 const prog_char BannerT2[] PROGMEM = "&t2=";
