@@ -371,8 +371,9 @@ public:
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
     void ShowTouchInterface();
 	void UpdateTouchDisplay();
-#endif // REEFTOUCH
+#else
     void ShowInterface();
+#endif // REEFTOUCH
     void DisplayMenu();
     void DisplayMenuHeading();
     void DisplayMenuEntry(char *text);

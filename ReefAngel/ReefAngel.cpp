@@ -2342,7 +2342,7 @@ void ReefAngelClass::ShowTouchInterface()
 								//ORP
 								if ((EM&(1<<4))!=0)
 								{
-									LargeFont.DrawCenterNumber(x,j,Params.ORP,10);
+									LargeFont.DrawCenterNumber(x,j,Params.ORP,1);
 									x+=twidth*5/16;
 								}
 								//pH Exp
@@ -3127,6 +3127,7 @@ void ReefAngelClass::ShowTouchInterface()
 				}
 #endif  // RelayExp
 				NeedsRedraw=true;
+#ifdef REEFTOUCHDISPLAY
 				SendMaster(MESSAGE_BUTTON,1,1); 	// Simulate button press
 #endif // REEFTOUCHDISPLAY
 				ExitMenu();
@@ -3289,9 +3290,7 @@ void ReefAngelClass::UpdateTouchDisplay()
 		wdt_reset();
 	}
 }
-#endif// REEFTOUCH
-
-
+#else // REEFTOUCH
 void ReefAngelClass::ShowInterface()
 {
     Refresh();
@@ -3561,6 +3560,7 @@ void ReefAngelClass::ShowInterface()
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
 }
+#endif // REEFTOUCH
 
 void ReefAngelClass::DisplayMenu()
 {
