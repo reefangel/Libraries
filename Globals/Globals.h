@@ -275,9 +275,9 @@ Int variables need 2 blocks
 When adding more variables, use the previous value plus 1 or 2
   depending on the previous values storage requirement
 */
-#define ATO_Single_Exceed_Flag	  733	//747
-#define ATO_Exceed_Flag			  734	//748
-#define Overheat_Exceed_Flag	  735	//749
+#define ATO_Single_Exceed_Flag    800   //733   //747
+#define ATO_Exceed_Flag			  801	//734	//748
+#define Overheat_Exceed_Flag	  802	//735	//749
 
 #define MAX_ATO_LOG_EVENTS		  4
 #define ATOEventSize			  8
@@ -405,9 +405,11 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_WaterLevelMin			  VarsStart+125
 #define Mem_I_WaterLevelMax			  VarsStart+127
 #define Mem_I_SalTempComp			  VarsStart+129
+#define Mem_B_WaterLevelLow        VarsStart+131
+#define Mem_B_WaterLevelHigh       VarsStart+132
 
-#define VarsEnd                 VarsStart+131
-// Next value starts VarsStart+129
+#define VarsEnd                 VarsStart+133
+// Next value starts VarsStart+133
 
 
 // EEProm Pointers
@@ -1137,6 +1139,16 @@ char* MoonPhaseLabel();
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
+
+//Wave Patterns
+byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync);
+byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
+byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
+
 
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);

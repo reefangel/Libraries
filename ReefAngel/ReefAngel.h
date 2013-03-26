@@ -324,6 +324,9 @@ public:
 	void StandardATOExtended(byte Relay);
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
+#ifdef WATERLEVELEXPANSION
+	void WaterLevelATO(byte Relay);
+#endif  // WATERLEVELEXPANSION
 	void DosingPump1(byte Relay);
 	void DosingPump2(byte Relay);
 	void DosingPumpRepeat1(byte Relay);
@@ -345,6 +348,7 @@ public:
 	void Portal(char *username);
 	void Portal(char *username, char*key);
 	void SendPortal(char *username, char*key);
+	char *portalusername;
 #endif  // wifi
 
 	void FeedingModeStart();

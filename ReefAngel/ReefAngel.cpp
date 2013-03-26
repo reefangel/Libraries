@@ -569,6 +569,7 @@ void ReefAngelClass::Init()
 #ifdef ENABLE_EXCEED_FLAGS
 	InternalMemory.write(Overheat_Exceed_Flag, 0);
 	InternalMemory.write(ATO_Exceed_Flag, 0);
+	InternalMemory.write(ATO_Single_Exceed_Flag, 0);
 #endif  // ENABLE_EXCEED_FLAGS
 
 
@@ -661,6 +662,7 @@ void ReefAngelClass::Init()
 
 #if defined wifi || defined I2CMASTER
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
+	portalusername="";
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
 	{
@@ -842,6 +844,17 @@ void ReefAngelClass::Refresh()
     	tempsal+=Salinity.Read();
     }
 	Params.Salinity=tempsal/20;
+	if (Salinity.TemperatureCompensation)
+	{
+		// Credits to dazza1304
+		// http://forum.reefangel.com/viewtopic.php?f=3&t=2670
+		double SalCompensation;
+		if (ReefAngel.TempSensor.unit)
+			SalCompensation=ReefAngel.Params.Salinity/(1+((Params.Temp[TempProbe]-InternalMemory.SalTempComp_read())*0.0026));
+		else
+			SalCompensation=ReefAngel.Params.Salinity/(1+((Params.Temp[TempProbe]-InternalMemory.SalTempComp_read())*0.0014));
+		Params.Salinity=round(SalCompensation);
+	}	
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	RefreshScreen();
 #endif  // defined SALINITYEXPANSION
@@ -1071,7 +1084,8 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 		LED.On();
 		bitSet(Flags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
-		InternalMemory.write(ATO_Exceed_Flag, 1);
+		if (InternalMemory.read(ATO_Exceed_Flag)==0)
+			InternalMemory.write(ATO_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 		Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
@@ -1119,7 +1133,8 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 		LED.On();
 		bitSet(Flags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
-		InternalMemory.write(ATO_Exceed_Flag, 1);
+		if (InternalMemory.read(ATO_Exceed_Flag)==0)
+			InternalMemory.write(ATO_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 		Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
@@ -1191,7 +1206,8 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
         LED.On();
 		bitSet(Flags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
-        InternalMemory.write(ATO_Single_Exceed_Flag, 1);
+		if (InternalMemory.read(ATO_Single_Exceed_Flag)==0)
+			InternalMemory.write(ATO_Single_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
         Relay.Off(ATORelay);
 #ifdef ENABLE_ATO_LOGGING
@@ -1449,6 +1465,13 @@ void ReefAngelClass::SingleATOHighExtended(byte Relay)
 	SingleATOHigh(Relay);
 }
 
+#ifdef WATERLEVELEXPANSION
+void ReefAngelClass::WaterLevelATO(byte Relay)
+{
+	WaterLevelATO(Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.WaterLevelLow_read(), InternalMemory.WaterLevelHigh_read());
+}
+#endif  // WATERLEVELEXPANSION
+
 void ReefAngelClass::DosingPump1(byte Relay)
 {
     DosingPump(Relay, 1,
@@ -1594,15 +1617,16 @@ void ReefAngelClass::Portal(char *username)
 	    	LastRelayDataE[EID]=TempRelay;
 	    }
 	}
-
 #endif  // RelayExp
 	 */
 	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
+	portalusername=username;
 }
 
 void ReefAngelClass::Portal(char *username, char *key)
 {
 	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
+	portalusername=username;
 }
 
 void ReefAngelClass::SendPortal(char *username, char*key)
@@ -3428,7 +3452,8 @@ void ReefAngelClass::ShowInterface()
 				{
 					LED.On();
 #ifdef ENABLE_EXCEED_FLAGS
-					InternalMemory.write(Overheat_Exceed_Flag, 1);
+					if (InternalMemory.read(Overheat_Exceed_Flag)==0)
+						InternalMemory.write(Overheat_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 					// invert the ports that are activated
 					Relay.RelayMaskOff = ~OverheatShutoffPorts;
@@ -5241,6 +5266,7 @@ void ReefAngelClass::SetupCalibrateSalinity()
     {
         // save SalMax to memory
         InternalMemory.SalMax_write(iS);
+        InternalMemory.SalTempComp_write(Params.Temp[TempProbe]);
 		SalMax = iS;
     }
 }

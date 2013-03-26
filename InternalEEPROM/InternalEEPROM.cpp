@@ -798,6 +798,26 @@ void InternalEEPROMClass::DelayedStart_write(const uint8_t value)
     write(Mem_B_DelayedStart, value);
 }
 
+uint8_t InternalEEPROMClass::WaterLevelLow_read()
+{
+    return read(Mem_B_WaterLevelLow);
+}
+
+void InternalEEPROMClass::WaterLevelLow_write(const uint8_t value)
+{
+    write(Mem_B_WaterLevelLow, value);
+}
+
+uint8_t InternalEEPROMClass::WaterLevelHigh_read()
+{
+    return read(Mem_B_WaterLevelHigh);
+}
+
+void InternalEEPROMClass::WaterLevelHigh_write(const uint8_t value)
+{
+    write(Mem_B_WaterLevelHigh, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {

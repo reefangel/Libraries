@@ -19,6 +19,13 @@ MoonPhase	KEYWORD2
 ConvertNumToString	KEYWORD2
 pingSerial	KEYWORD2
 MoonPhaseLabel	KEYWORD2
+ShortPulseMode	KEYWORD2
+LongPulseMode	KEYWORD2
+SineMode	KEYWORD2
+ReefCrestMode	KEYWORD2
+NutrientTransportMode	KEYWORD2
+TidalSwellMode	KEYWORD2
+TideMode	KEYWORD2
 
 # ReefAngel
 
@@ -591,6 +598,7 @@ Duration	LITERAL2
 RadionChannels	LITERAL2
 Celsius	LITERAL2
 Fahrenheit	LITERAL2 
+TemperatureCompensation	LITERAL2
 
 MAIN_RELAY	LITERAL2
 EXP1_RELAY	LITERAL2
