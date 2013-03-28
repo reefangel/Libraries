@@ -36,6 +36,8 @@ public:
 	void inline SetDaylightOverride(byte value) { DaylightPWMOverride = value; };
 	byte GetActinicValue();
 	byte GetDaylightValue();
+	byte inline GetActinicOverrideValue() { return ActinicPWMOverride; };
+	byte inline GetDaylightOverrideValue() { return DaylightPWMOverride; };
 	void ActinicPWMSlope(byte MinuteOffset);
 	void DaylightPWMSlope(byte MinuteOffset);
 	void ActinicPWMSlope();
