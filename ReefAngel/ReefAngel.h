@@ -218,6 +218,7 @@ public:
 #endif  // PHEXPANSION	
 #if defined WATERLEVELEXPANSION
 	WaterLevelClass WaterLevel;
+	RA_ATOWLClass WLATO;
 #endif  // WATERLEVELEXPANSION	
 #if defined RFEXPANSION
 	RFClass RF;

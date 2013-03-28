@@ -71,5 +71,13 @@ public:
 #endif // REEFTOUCHDISPLAY
 };
 
+#if defined WATERLEVELEXPANSION
+class RA_ATOWLClass : public RA_ATOClass
+{
+public:
+	inline bool IsActive() { return false; }
+};
+#endif // WATERLEVELEXPANSION
+
 #endif  // __RA_ATO_H__
 

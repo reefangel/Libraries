@@ -1108,17 +1108,17 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	Is the low level is reached (meaning we need to top off) and are we not currently topping off
 	Then we set the timer to be now and start the topping pump
 	*/
-    if ( WaterLevel.GetLevel()<LowLevel && ( !LowATO.IsTopping()) )
+    if ( WaterLevel.GetLevel()<LowLevel && ( !WLATO.IsTopping()) )
     {
-        LowATO.Timer = millis();
-        LowATO.StartTopping();
+    	WLATO.Timer = millis();
+    	WLATO.StartTopping();
         Relay.On(ATORelay);
     }
 
     // If the high level is reached, this is a safeguard to prevent over running of the top off pump
     if ( WaterLevel.GetLevel()>HighLevel )
     {
-		LowATO.StopTopping();  // stop the low ato timer
+    	WLATO.StopTopping();  // stop the low ato timer
 		Relay.Off(ATORelay);
     }
 
@@ -1128,7 +1128,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
     We turn on the status LED and shut off the ATO pump
     This prevents the ATO pump from contniously running.
     */
-	if ( (millis()-LowATO.Timer > TempTimeout) && LowATO.IsTopping() )
+	if ( (millis()-WLATO.Timer > TempTimeout) && WLATO.IsTopping() )
 	{
 		LED.On();
 		bitSet(Flags,ATOTimeOutFlag);
