@@ -1827,6 +1827,9 @@ void ReefAngelClass::ATOClear()
 #endif  // ENABLE_EXCEED_FLAGS
 	LowATO.StopTopping();
 	HighATO.StopTopping();
+#ifdef WATERLEVELEXPANSION
+	WLATO.StopTopping();
+#endif // WATERLEVELEXPANSION
 }
 
 void ReefAngelClass::OverheatClear()
