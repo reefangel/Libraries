@@ -1504,6 +1504,14 @@ void ReefAngelClass::DosingPumpRepeat2(byte Relay)
 					InternalMemory.DP2Timer_read());
 }
 
+void ReefAngelClass::DosingPumpRepeat3(byte Relay)
+{
+	// 5 minute offset
+	DosingPumpRepeat(Relay, 10,
+					InternalMemory.DP3RepeatInterval_read(),
+					InternalMemory.DP3Timer_read());
+}
+
 void ReefAngelClass::Wavemaker1(byte WMRelay)
 {
 	Wavemaker(WMRelay,InternalMemory.WM1Timer_read());

@@ -187,6 +187,8 @@ class InternalEEPROMClass {
         void WaterLevelLow_write(const uint8_t value);
         uint8_t WaterLevelHigh_read();
         void WaterLevelHigh_write(const uint8_t value);
+        uint8_t DP3Timer_read();
+        void DP3Timer_write(const uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();
@@ -243,6 +245,8 @@ class InternalEEPROMClass {
         void WaterLevelMin_write(const int value);
         int SalTempComp_read();
         void SalTempComp_write(const int value);
+        int DP3RepeatInterval_read();
+        void DP3RepeatInterval_write(const int value);
         
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);

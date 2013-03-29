@@ -60,6 +60,7 @@ DosingPump2	KEYWORD2
 DosingPumpRepeat	KEYWORD2
 DosingPumpRepeat1	KEYWORD2
 DosingPumpRepeat2	KEYWORD2
+DosingPumpRepeat3	KEYWORD2
 Wavemaker	KEYWORD2
 Wavemaker1	KEYWORD2
 Wavemaker2	KEYWORD2

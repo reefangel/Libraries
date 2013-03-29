@@ -818,6 +818,16 @@ void InternalEEPROMClass::WaterLevelHigh_write(const uint8_t value)
     write(Mem_B_WaterLevelHigh, value);
 }
 
+uint8_t InternalEEPROMClass::DP3Timer_read()
+{
+    return read(Mem_B_DP3Timer);
+}
+
+void InternalEEPROMClass::DP3Timer_write(const uint8_t value)
+{
+    write(Mem_B_DP3Timer, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {
@@ -1087,6 +1097,16 @@ void InternalEEPROMClass::SalTempComp_write(const int value)
 int InternalEEPROMClass::SalTempComp_read()
 {
     return read_int(Mem_I_SalTempComp);
+}
+
+int InternalEEPROMClass::DP3RepeatInterval_read()
+{
+	return read_int(Mem_I_DP3RepeatInterval);
+}
+
+void InternalEEPROMClass::DP3RepeatInterval_write(const int value)
+{
+	write_int(Mem_I_DP3RepeatInterval, value);
 }
 
 unsigned long InternalEEPROMClass::IMCheck_read()
