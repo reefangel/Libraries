@@ -155,6 +155,7 @@ ChannelRedParabola	KEYWORD2
 ChannelGreenParabola	KEYWORD2
 ChannelBlueParabola	KEYWORD2
 ChannelIntensityParabola	KEYWORD2
+LightsOverride		KEYWORD2
 #Relay
 
 On	KEYWORD2

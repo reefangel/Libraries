@@ -690,15 +690,15 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	boolean LightRelayOn=false;
 	for (int l=0;l<8;l++)
 	{
 		if (LightsOnPorts & 1<<l)
 			if (ReefAngel.Relay.RelayMaskOn & 1<<l) LightRelayOn=true;
 	}
-	if (PWM.LightsOverride) LightRelayOn=true;
-	if (LightRelayOn)
+
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+	if (LightRelayOn && PWM.LightsOverride)
 	{
 		PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
 		PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
@@ -744,9 +744,19 @@ void ReefAngelClass::Refresh()
 		Timer[FEEDING_TIMER].ForceTrigger();
 	}
 	if (DisplayedMenu!=FEEDING_MODE && RF.UseMemory) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
+	if (LightRelayOn)
+	{
+		for (byte a=0; a<RF_CHANNELS; a++)
+			RF.SetChannel(a,InternalMemory.read(Mem_B_RadionSlopeEndW+(3*a)));
+	}	
 	RF.RadionWrite();
 #endif  // RFEXPANSION
 #ifdef AI_LED
+	if (LightRelayOn)
+	{
+		for (byte a=0; a<AI_CHANNELS; a++)
+			AI.SetChannel(a,InternalMemory.read(Mem_B_AISlopeEndW+(3*a)));
+	}	
     if (millis()-AI.AImillis>AI.StreamDelay)
     {
       AI.Send();
@@ -1867,9 +1877,6 @@ void ReefAngelClass::LightsOn()
 		Relay.RelayMaskOnE[i] = LightsOnPortsE[i];
 	}
 #endif  // RelayExp
-#ifdef DisplayLEDPWM
-    PWM.LightsOverride=true;
-#endif  // DisplayLEDPWM
     Relay.Write();
 }
 
@@ -1888,7 +1895,6 @@ void ReefAngelClass::LightsOff()
     // sets PWM to 0%
     PWM.SetActinic(0);
     PWM.SetDaylight(0);
-    PWM.LightsOverride=false;
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
     Relay.Write();
 }
