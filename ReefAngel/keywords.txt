@@ -33,6 +33,7 @@ AddRFExpansion	KEYWORD2
 AddDateTimeMenu	KEYWORD2
 AddCustomColors	KEYWORD2
 Display24h	KEYWORD2
+ReverseATOLow KEYWORD2
 ReverseATOHigh KEYWORD2
 One	KEYWORD2
 Mini	KEYWORD2
