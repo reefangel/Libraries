@@ -22,7 +22,7 @@
 #ifndef	__REEFANGEL_H__
 #define __REEFANGEL_H__
 
-#define ReefAngel_Version "1.0.1"
+#define ReefAngel_Version "1.0.3"
 
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
@@ -149,11 +149,11 @@ public:
 	byte LightsOnPortsE[MAX_RELAY_EXPANSION_MODULES];
 #endif  // RelayExp
 #endif  // RemoveAllLights
-#ifdef WavemakerSetup
+//#ifdef WavemakerSetup
 	// TODO find a better way to save the wavemaker ports for restarting once timers are updated from setup screen
-	byte WM1Port;
-	byte WM2Port;
-#endif  // WavemakerSetup
+//	byte WM1Port;	deprecated by issue #47
+//	byte WM2Port;	deprecated by issue #47
+//#endif  // WavemakerSetup
 
 	byte OverheatProbe;
 	byte TempProbe;
@@ -166,6 +166,13 @@ public:
 	void inline AddWifi() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
+	void inline AddCustomColors() {};
+	void inline Display24h() {};
+	void inline UseFlexiblePhCalibration() {};
+	void inline ReverseATOLow() {};
+	void inline ReverseATOHigh() {};
+	void inline One() {};
+	void inline Mini() {};
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
@@ -173,6 +180,9 @@ public:
 	void CO2Control(byte CO2Relay, int LowPH, int HighPH);
 	void PHControl(byte PHControlRelay, int LowPH, int HighPH);
 	void StandardATO(byte ATORelay, int ATOTimeout);
+#ifdef WATERLEVELEXPANSION	
+	void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+#endif  // WATERLEVELEXPANSION	
 	void SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
 	void DosingPump(byte DPRelay, byte OnHour, byte OnMinute, int RunTime);
@@ -280,9 +290,14 @@ public:
 #if defined WATERLEVELEXPANSION
     void SetupCalibrateWaterLevel();
 #endif  // defined WATERLEVELEXPANSION
-#ifdef DateTimeSetup
+#if defined DateTimeSetup
+#ifdef DATETIME24
+    void SetupDateTime24();
+#else
     void SetupDateTime();
+#endif  // DATETIME24
 #endif  // DateTimeSetup
+
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 #ifdef DosingPumpSetup
     void SetupDosingPump();
