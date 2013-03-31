@@ -32,9 +32,7 @@ class RA_ATOClass
 {
 public:
 	RA_ATOClass();
-#ifdef ATO_HIGH_REVERSE
     virtual bool IsActive() = 0;
-#endif
 	inline bool IsTopping() { return topping; }
 #ifdef ENABLE_ATO_LOGGING
 	virtual void StartTopping(bool fHighAto = false);
