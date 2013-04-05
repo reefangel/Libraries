@@ -536,3 +536,16 @@ char* RA_TouchLCD::ConvertDigitsNumber(int number)
 	return text;
 }
 
+void RA_TouchLCD::DrawAlertFlag(boolean Flag, byte position, const prog_uchar *iPtr)
+{
+	if (Flag)
+	{
+		if (now()%2==0)
+			DrawBMP(w-(16*position),7,iPtr);
+		else
+			Clear(TOPBAR_BC,w-(16*position),7,w+16-(16*position),23);
+	}
+	
+}
+
+
