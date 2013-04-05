@@ -58,9 +58,11 @@ public:
 	void DrawSDRawImage(char *bmp, int x, int y, int w, int h);
 	void DrawDateTime(int x, int y, boolean militarytime, FontClass Font);
 	void DrawRelayStatus(int x, int y, boolean status);
+	
 private:
 	int w,h;
-	byte orientation;		
+	byte orientation;
+	char* ConvertDigitsNumber(int number);
 };
 
 const prog_uchar GREENBUTTON[] PROGMEM ={

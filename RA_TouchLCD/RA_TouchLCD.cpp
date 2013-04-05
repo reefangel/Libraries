@@ -479,40 +479,33 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 void RA_TouchLCD::DrawDateTime(int x, int y, boolean militarytime, FontClass Font)
 {
 	char text[9];
-	char temp[3];
-	byte m,s;
 	
 	Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
+	strcpy(text,ConvertDigitsNumber(month()));
+	Font.DrawText(x,y,text);
+	Font.DrawText("/");
+	strcpy(text,ConvertDigitsNumber(day()));
+	Font.DrawText(text);
+	Font.DrawText("/");
+	strcpy(text,ConvertDigitsNumber(year()-2000));
+	Font.DrawText(text);
+	Font.DrawText(" ");
 	if (!militarytime && hour()>12)
 	{
-		Font.DrawText(x,y,hour()-12);
+		Font.DrawText(hour()-12);
 	}
 	else
 	{
-		Font.DrawText(x,y,hour());
+		Font.DrawText(hour());
 	}
 	Font.DrawText(":");
-	m=minute();
-	if (m<10) Font.DrawText("0");
-	Font.DrawText(m);
+	strcpy(text,ConvertDigitsNumber(minute()));
+	Font.DrawText(text);
 	Font.DrawText(":");
-	s=second();
-	if (s<10) Font.DrawText("0");
-	Font.DrawText(s);
-	if (!militarytime) if(hour()>=12) Font.DrawText("PM"); else Font.DrawText("AM");
-	strcpy(text,"");
-	if (month()<10) strcat(text,"0");
-	itoa(month(),temp,10);
-	strcat(text,temp);
-	strcat(text,"/");
-	if (day()<10) strcat(text,"0");
-	itoa(day(),temp,10);
-	strcat(text,temp);
-	strcat(text,"/");
-	if (year()<2010) strcat(text,"0");
-	itoa(year()-2000,temp,10);
-	strcat(text,temp);
-	Font.DrawText(GetWidth()-Font.TextWidth(text)-35,y,text);
+	strcpy(text,ConvertDigitsNumber(second()));
+	Font.DrawText(text);
+	if (!militarytime) if(hour()>=12) Font.DrawText("PM "); else Font.DrawText("AM ");
+
 }
 
 void RA_TouchLCD::DrawRelayStatus(int x, int y, boolean status)
@@ -529,5 +522,17 @@ void RA_TouchLCD::DrawRelayStatus(int x, int y, boolean status)
 	for (int c=0;c<=3;c++) DrawLine(alphaBlend(COLOR_SILVER,(c*10)+50),x+25+c,y,x+25+c,y+17);
 //	Clear(color,x+10,y,x+15,y+17);
 	
+}
+
+char* RA_TouchLCD::ConvertDigitsNumber(int number)
+{
+	char text[9];
+	char temp[3];
+	
+	strcpy(text,"");
+	if (number<10) strcat(text,"0");
+	itoa(number,temp,10);
+	strcat(text,temp);
+	return text;
 }
 

@@ -2189,7 +2189,7 @@ void ReefAngelClass::ShowTouchInterface()
 							Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
 							Font.DrawCenterText(twidth/2,theight-15,"Menu");
 						}
-						TouchLCD.DrawDateTime(55,10,MilitaryTime,Font);
+						TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
 						if (bitRead(Flags,OverheatFlag))
 						{
 							if (now()%2==0)
