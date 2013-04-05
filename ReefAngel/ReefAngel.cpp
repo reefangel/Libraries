@@ -444,6 +444,8 @@ ReefAngelClass::ReefAngelClass()
 	PCMSK0 |= 32;
 #endif  // __AVR_ATmega2560__
 	PCICR |= 1;
+	DDRJ&=(0<<7); //PJ7 (Input) - Bus Lock
+	PORTJ|=(1<<7); //PJ7 pull up	
 }
 
 void ReefAngelClass::Init()
@@ -728,6 +730,11 @@ void ReefAngelClass::Refresh()
 		}
 		if(SDFound)	TouchLCD.FullClear(BKCOLOR);
 	}
+	if (PINJ&(1<<7)) // Check for bus lock
+		bitClear(Flags,BusLockFlag);
+	else
+		bitSet(Flags,BusLockFlag);
+		
 #endif //  REEFTOUCH
 	
 #if not defined REEFTOUCHDISPLAY
@@ -2190,20 +2197,9 @@ void ReefAngelClass::ShowTouchInterface()
 							Font.DrawCenterText(twidth/2,theight-15,"Menu");
 						}
 						TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
-						if (bitRead(Flags,OverheatFlag))
-						{
-							if (now()%2==0)
-								TouchLCD.DrawBMP(twidth-16,7,OVERHEATFLAG);
-							else
-								TouchLCD.Clear(TOPBAR_BC,twidth-16,7,twidth,23);
-						}
-						if (bitRead(Flags,ATOTimeOutFlag))
-						{
-							if (now()%2==0)
-								TouchLCD.DrawBMP(twidth-32,7,ATOTIMEOUTFLAG);
-							else
-								TouchLCD.Clear(TOPBAR_BC,twidth-32,7,twidth-16,23);
-						}
+						TouchLCD.DrawAlertFlag(bitRead(Flags,ATOTimeOutFlag),ATOTimeOutFlag+1, ATOTIMEOUTFLAG);
+						TouchLCD.DrawAlertFlag(bitRead(Flags,OverheatFlag),OverheatFlag+1, OVERHEATFLAG);
+						TouchLCD.DrawAlertFlag(bitRead(Flags,BusLockFlag),BusLockFlag+1, BUSLOCKFLAG);
 						if (DisplayedScreen==MAIN_SCREEN)
 						{
 							int x=0;
