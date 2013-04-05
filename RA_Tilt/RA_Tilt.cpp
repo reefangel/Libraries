@@ -28,80 +28,74 @@ RA_Tilt::RA_Tilt()
 
 void RA_Tilt::Init()
 {
-	Write(0x16,0x5);
-	ApplyCompensation();
-}
-
-void RA_Tilt::Write(byte reg, byte data)
-{
-	ACC0;
-	SPI.transfer(0x80 | (reg << 1));
-	SPI.transfer(data);
-	ACC1;
-}
-
-byte RA_Tilt::Read(byte data)
-{
-	SPI.transfer(data << 1);
-	return SPI.transfer(0);
+	byte c = readRegister(0x2A); // Read Control register
+	writeRegister(0x2A, c | 0x01); //Set the active bit to begin detection
 }
 
 void RA_Tilt::Refresh()
 {
-	ACC0;
-	x=Read(0x6);
-	y=Read(0x7);
-	ACC1;
-//	if (x<0) x=0;
-//	if (y<0) y=0;
-	//if (Tilt.GetX()>-TT_SENSITIVITY && Tilt.GetX()<TT_SENSITIVITY && Tilt.GetY()>-TT_SENSITIVITY && Tilt.GetY()<TT_SENSITIVITY) LCD.SetOrientation(1);
-#ifdef ILI9341	
-	if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) orientation=1;
-	if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=4;
-	if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=3;
-	if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=2;
-#endif //  ILI9341
-#ifdef HX8347D
-	if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) orientation=1;
-	if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=2;
-	if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=3;
-	if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=4;
-#endif //  HX8347D
-}
-
-void RA_Tilt::CompensateAccelerometer()
-{
-	int xoffd, yoffd;
-	compensation.XOff = 0;
-	compensation.YOff = 0;
-	do
+	byte c = readRegister(0x0D);  // Read WHO_AM_I register
+	if (c == 0x2A) // WHO_AM_I should always be 0x2A
 	{
-		Refresh();
-	    xoffd = -2.1*(x);
-	    yoffd = -2.1*(y);
-	    compensation.XOff += xoffd;
-	    compensation.YOff += yoffd;
-	    Write(0x10, 0xFF&compensation.XOff);
-	    Write(0x11, 0xFF&(compensation.XOff>>8));
-	    Write(0x12, 0xFF&compensation.YOff);
-	    Write(0x13, 0xFF&(compensation.YOff>>8));
-	    delay(10);
-	} 
-	while (abs(xoffd) > 2 || abs(yoffd) > 2);
-	eeprom_write_block((void*)&compensation, (void*)TT_COMPENSATION_ADDRESS, sizeof(COMPENSATION));
+		Wire.beginTransmission(I2CTilt);
+		Wire.write(0x01); // Set register to X axis
+		Wire.endTransmission(false); //endTransmission but keep the connection active
+		Wire.requestFrom(I2CTilt, 3); //Ask for bytes, once done, bus is released by default
+		delay(10);
+		if (Wire.available() == 3)
+		{
+			x=Wire.read(); // read X axis MSB
+			Wire.read(); // read X axis LSB
+			y=Wire.read(); // read Y axis MSB
+			Serial.println("OK");
+		}
+		else
+		{
+			Serial.println("Wrong data");
+			do 
+			{
+				Wire.read();
+			}
+			while(Wire.available());
+		}
+	#ifdef ILI9341	
+		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) orientation=4;
+		if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=3;
+		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=2;
+		if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=1;
+	#endif //  ILI9341
+	#ifdef HX8347D
+		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) orientation=1;
+		if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=2;
+		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=3;
+		if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=4;
+	#endif //  HX8347D
+	}
+	else
+	{
+		Serial.println("Error");
+	}
 }
-
-void RA_Tilt::ApplyCompensation()
-{
-	eeprom_read_block((void*)&compensation, (void*)TT_COMPENSATION_ADDRESS, sizeof(COMPENSATION));
-    Write(0x10, 0xFF&compensation.XOff);
-    Write(0x11, 0xFF&(compensation.XOff>>8));
-    Write(0x12, 0xFF&compensation.YOff);
-    Write(0x13, 0xFF&(compensation.YOff>>8));
-    delay(10);
-}	
 
 byte RA_Tilt::GetOrientation()
 {
 	return orientation;
+}
+
+byte RA_Tilt::readRegister(byte addressToRead)
+{
+	Wire.beginTransmission(I2CTilt);
+	Wire.write(addressToRead);
+	Wire.endTransmission(false); //endTransmission but keep the connection active
+	Wire.requestFrom(I2CTilt, 1); //Ask for 1 byte, once done, bus is released by default
+	while(!Wire.available()) ; //Wait for the data to come back
+	return Wire.read(); //Return this one byte
+}
+
+void RA_Tilt::writeRegister(byte addressToWrite, byte dataToWrite)
+{
+	Wire.beginTransmission(I2CTilt);
+	Wire.write(addressToWrite);
+	Wire.write(dataToWrite);
+	Wire.endTransmission(); //Stop transmitting
 }

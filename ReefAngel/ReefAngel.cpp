@@ -1912,12 +1912,9 @@ void ReefAngelClass::CalibrateTouchScreen()
 		LargeFont.SetColor(COLOR_GOLD,COLOR_WHITE,true);
 		LargeFont.DrawCenterTextP(120,45,CALI1);
 		LargeFont.DrawCenterTextP(120,75,CALI2);
-		LargeFont.DrawCenterTextP(120,105,CALI3);
-		LargeFont.DrawCenterTextP(120,135,CALI4);
 		Font.SetColor(COLOR_BLACK,COLOR_WHITE,true);
-		Font.DrawCenterTextP(120,190,CALI5);
-		Font.DrawCenterTextP(120,205,CALI6);
-		Font.DrawCenterTextP(120,220,CALI7);
+		Font.DrawCenterTextP(120,190,CALI3);
+		Font.DrawCenterTextP(120,205,CALI4);
 		for(byte a = 0; a<2; a++)
 		{
 			TouchLCD.DrawCircle(COLOR_RED,CalibrationPoints[a*2], CalibrationPoints[(a*2)+1], 5, false);
@@ -1957,7 +1954,6 @@ void ReefAngelClass::CalibrateTouchScreen()
 //		calibrated=true;
 	}
     TS.SaveCalibration();
-    Tilt.CompensateAccelerometer();
     TouchLCD.Clear(COLOR_WHITE,0,180,239,270);
 	OkButton.SetPosition(78,200);
 	OkButton.Show();

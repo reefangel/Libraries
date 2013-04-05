@@ -219,6 +219,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CRF				0X10
 #define I2CRA_Master		0x11
 #define I2CRA_TouchDisplay	0x12
+#define I2CTilt				0x1c
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
@@ -979,11 +980,8 @@ const prog_char NoIMLine5[] PROGMEM = "InitialInternalMemory";
 // Calibration
 const prog_char CALI1[] PROGMEM = "Touch Screen";
 const prog_char CALI2[] PROGMEM = "Calibration";
-const prog_char CALI3[] PROGMEM = "and Tilt";
-const prog_char CALI4[] PROGMEM = "Compensation";
-const prog_char CALI5[] PROGMEM = "Please place the screen on";
-const prog_char CALI6[] PROGMEM = "top of a flat surface and";
-const prog_char CALI7[] PROGMEM = "touch the red circle";
+const prog_char CALI3[] PROGMEM = "Please touch";
+const prog_char CALI4[] PROGMEM = "the red circle";
 
 // Labels
 const prog_char LABEL_TEMP[] PROGMEM = "Temp ";

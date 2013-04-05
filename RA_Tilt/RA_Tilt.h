@@ -24,10 +24,7 @@
 
 #include <Globals.h>
 #include <avr/eeprom.h>
-#include <SPI.h>
-
-#define ACC0 cbi(PORTL, 7)
-#define ACC1 sbi(PORTL, 7)
+#include <Wire.h>
 
 class RA_Tilt
 {
@@ -35,16 +32,14 @@ public:
 	RA_Tilt();
 	void Init();
 	void Refresh();
-	void CompensateAccelerometer();
-	void ApplyCompensation();
 	inline signed char  GetX() { return x; }
 	inline signed char  GetY() { return y; }
 	byte GetOrientation();
+	byte readRegister(byte addressToRead);
+	void writeRegister(byte addressToWrite, byte dataToWrite);
+
 private:
 	signed char x,y;
-	COMPENSATION compensation;
-	void Write(byte reg, byte data);
-	byte Read(byte data);
 	byte orientation;
 };
 #endif // __RA_TILT_H__
