@@ -692,15 +692,15 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	boolean LightRelayOn=false;
 	for (int l=0;l<8;l++)
 	{
 		if (LightsOnPorts & 1<<l)
 			if (ReefAngel.Relay.RelayMaskOn & 1<<l) LightRelayOn=true;
 	}
-	if (PWM.LightsOverride) LightRelayOn=true;
-	if (LightRelayOn)
+
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+	if (LightRelayOn && PWM.LightsOverride)
 	{
 		PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
 		PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
@@ -751,9 +751,19 @@ void ReefAngelClass::Refresh()
 		Timer[FEEDING_TIMER].ForceTrigger();
 	}
 	if (DisplayedMenu!=FEEDING_MODE && RF.UseMemory) RF.SetMode(InternalMemory.RFMode_read(),InternalMemory.RFSpeed_read(),InternalMemory.RFDuration_read());
+	if (LightRelayOn)
+	{
+		for (byte a=0; a<RF_CHANNELS; a++)
+			RF.SetChannel(a,InternalMemory.read(Mem_B_RadionSlopeEndW+(3*a)));
+	}	
 	RF.RadionWrite();
 #endif  // RFEXPANSION
 #ifdef AI_LED
+	if (LightRelayOn)
+	{
+		for (byte a=0; a<AI_CHANNELS; a++)
+			AI.SetChannel(a,InternalMemory.read(Mem_B_AISlopeEndW+(3*a)));
+	}	
     if (millis()-AI.AImillis>AI.StreamDelay)
     {
       AI.Send();
@@ -1115,17 +1125,17 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	Is the low level is reached (meaning we need to top off) and are we not currently topping off
 	Then we set the timer to be now and start the topping pump
 	*/
-    if ( WaterLevel.GetLevel()<LowLevel && ( !LowATO.IsTopping()) )
+    if ( WaterLevel.GetLevel()<LowLevel && ( !WLATO.IsTopping()) )
     {
-        LowATO.Timer = millis();
-        LowATO.StartTopping();
+    	WLATO.Timer = millis();
+    	WLATO.StartTopping();
         Relay.On(ATORelay);
     }
 
     // If the high level is reached, this is a safeguard to prevent over running of the top off pump
     if ( WaterLevel.GetLevel()>HighLevel )
     {
-		LowATO.StopTopping();  // stop the low ato timer
+    	WLATO.StopTopping();  // stop the low ato timer
 		Relay.Off(ATORelay);
     }
 
@@ -1135,7 +1145,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
     We turn on the status LED and shut off the ATO pump
     This prevents the ATO pump from contniously running.
     */
-	if ( (millis()-LowATO.Timer > TempTimeout) && LowATO.IsTopping() )
+	if ( (millis()-WLATO.Timer > TempTimeout) && WLATO.IsTopping() )
 	{
 		LED.On();
 		bitSet(Flags,ATOTimeOutFlag);
@@ -1511,6 +1521,14 @@ void ReefAngelClass::DosingPumpRepeat2(byte Relay)
 					InternalMemory.DP2Timer_read());
 }
 
+void ReefAngelClass::DosingPumpRepeat3(byte Relay)
+{
+	// 5 minute offset
+	DosingPumpRepeat(Relay, 10,
+					InternalMemory.DP3RepeatInterval_read(),
+					InternalMemory.DP3Timer_read());
+}
+
 void ReefAngelClass::Wavemaker1(byte WMRelay)
 {
 	Wavemaker(WMRelay,InternalMemory.WM1Timer_read());
@@ -1834,6 +1852,9 @@ void ReefAngelClass::ATOClear()
 #endif  // ENABLE_EXCEED_FLAGS
 	LowATO.StopTopping();
 	HighATO.StopTopping();
+#ifdef WATERLEVELEXPANSION
+	WLATO.StopTopping();
+#endif // WATERLEVELEXPANSION
 }
 
 void ReefAngelClass::OverheatClear()
@@ -1863,9 +1884,6 @@ void ReefAngelClass::LightsOn()
 		Relay.RelayMaskOnE[i] = LightsOnPortsE[i];
 	}
 #endif  // RelayExp
-#ifdef DisplayLEDPWM
-    PWM.LightsOverride=true;
-#endif  // DisplayLEDPWM
     Relay.Write();
 }
 
@@ -1884,7 +1902,6 @@ void ReefAngelClass::LightsOff()
     // sets PWM to 0%
     PWM.SetActinic(0);
     PWM.SetDaylight(0);
-    PWM.LightsOverride=false;
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
     Relay.Write();
 }

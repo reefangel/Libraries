@@ -218,6 +218,7 @@ public:
 #endif  // PHEXPANSION	
 #if defined WATERLEVELEXPANSION
 	WaterLevelClass WaterLevel;
+	RA_ATOWLClass WLATO;
 #endif  // WATERLEVELEXPANSION	
 #if defined RFEXPANSION
 	RFClass RF;
@@ -331,6 +332,7 @@ public:
 	void DosingPump2(byte Relay);
 	void DosingPumpRepeat1(byte Relay);
 	void DosingPumpRepeat2(byte Relay);
+	void DosingPumpRepeat3(byte Relay);
 	void Wavemaker1(byte WMRelay);
 	void Wavemaker2(byte WMRelay);
 #ifdef VersionMenu

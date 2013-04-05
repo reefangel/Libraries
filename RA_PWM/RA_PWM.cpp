@@ -30,7 +30,7 @@ RA_PWMClass::RA_PWMClass()
     DaylightPWMValue = 0;
     ActinicPWMOverride = 255; // Anything over 100 disables override
     DaylightPWMOverride = 255; // Anything over 100 disables override
-    LightsOverride = false; // Earlier version of override that uses internal memory
+    LightsOverride = true; // Enable PWM override when lights on
 #ifdef PWMEXPANSION
     Present=false;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
