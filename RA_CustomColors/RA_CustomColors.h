@@ -36,9 +36,23 @@ The values can range from 0x00 to 0xFF.  Most of the common colors are specified
 of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
 on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
 */
-#ifdef REEFTOUCH
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 
 // Reef Touch Colors
+#define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
+#define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
+#define COLOR_ROYALBLUE             RGB565(0x45, 0x71, 0xda)
+#define COLOR_LIGHTBLUE             RGB565(0xad, 0xd8, 0xe6)
+#define COLOR_RED                   RGB565(0xFF, 0x00, 0x00)
+#define COLOR_GREEN                 RGB565(0x00, 0xFF, 0x00)
+#define COLOR_BLUE                  RGB565(0x00, 0x00, 0xFF)
+#define COLOR_YELLOW                RGB565(0xFF, 0xFF, 0x00)
+#define COLOR_MAGENTA               RGB565(0xFF, 0x00, 0xFF)
+#define COLOR_CYAN                  RGB565(0x00, 0xFF, 0xFF)
+#define COLOR_GRAY                  RGB565(0x80, 0x80, 0x40)
+#define COLOR_SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define COLOR_GOLD                  RGB565(0xA0, 0xA0, 0x40)
+#define COLOR_ORANGE				RGB565(0xFF, 0x80, 0x00)
 #define TOPBAR_BC					COLOR_WHITE
 #define TOPBAR_FC					COLOR_BLACK
 #define BOTTOMBAR_BC				COLOR_WHITE
@@ -49,8 +63,16 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
 #define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
 #define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
+#define RFLABELBAR1					RGB565(0x46, 0xd1, 0xFF)
 #define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
+#define IOLABELBAR					RGB565(0x89, 0x21, 0xaa)
 #define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
+#define PWMWHITE					COLOR_ORANGE
+#define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
+#define PWMRED						COLOR_RED
+#define PWMGREEN					COLOR_GREEN
+#define PWMBLUE						COLOR_BLUE
+#define PWMINTENSITY				COLOR_MAGENTA
 #define DefaultBGColor				BKCOLOR
 
 #else //  REEFTOUCH
