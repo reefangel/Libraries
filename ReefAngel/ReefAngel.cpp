@@ -440,12 +440,12 @@ ReefAngelClass::ReefAngelClass()
 	SPCR=0x50;
 #if defined(__AVR_ATmega2560__)
 	PCMSK0 |= 128;
+	DDRJ&=(0<<7); //PJ7 (Input) - Bus Lock
+	PORTJ|=(1<<7); //PJ7 pull up	
 #else  // __AVR_ATmega2560__
 	PCMSK0 |= 32;
 #endif  // __AVR_ATmega2560__
 	PCICR |= 1;
-	DDRJ&=(0<<7); //PJ7 (Input) - Bus Lock
-	PORTJ|=(1<<7); //PJ7 pull up	
 }
 
 void ReefAngelClass::Init()
@@ -504,6 +504,14 @@ void ReefAngelClass::Init()
 	Slider.Refresh();
 	for(int a=0;a<6;a++)
 		PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");
+	MenuFunctionPtr=&ReefAngelClass::Touch;
+	menu_button_functions1[0] = &ReefAngelClass::FeedingModeStart;
+	menu_button_functions1[1] = &ReefAngelClass::WaterChangeModeStart;
+	menu_button_functions1[2] = &ReefAngelClass::ATOClear;
+	menu_button_functions1[3] = &ReefAngelClass::OverheatClear;
+	menu_button_functions1[4] = &ReefAngelClass::LightsOn;
+	menu_button_functions1[5] = &ReefAngelClass::FeedingModeStart;
+			
 #if not defined NOTILT
 	Tilt.Init();
 	Tilt.Refresh();
@@ -1830,8 +1838,6 @@ void ReefAngelClass::WaterChangeModeStart()
 	ClearScreen(DefaultBGColor);
 	// Display the water change mode
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY	
-	LargeFont.SetColor(WARNING_TEXT, BKCOLOR,false);
-	LargeFont.DrawCenterText(0, 30, "Water Change Mode");
 #else  // REEFTOUCH
 	LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
 #ifdef DisplayImages
@@ -2759,7 +2765,12 @@ void ReefAngelClass::ShowTouchInterface()
 								ChangeDisplayedScreen(-1);
 							if (TS.X>twidth-50 && TS.Y>theight-30)
 								ChangeDisplayedScreen(1);
-							
+							if (TS.X<twidth-80 && TS.X>80 && TS.Y>theight-30)
+							{
+								DisplayedMenu=TOUCH_MENU;
+								DisplayedScreen=MAIN_MENU_SCREEN;
+								NeedsRedraw=true;
+							}
 							if(DisplayedScreen==MAIN_SCREEN)
 							{
 								if (orientation%2==0)
@@ -3084,8 +3095,9 @@ void ReefAngelClass::ShowTouchInterface()
 			LastStart = now();  // Set the time normal mode is started
 			if ( TS.IsTouched() )
 			{
-				// joystick button pressed, so we stop the feeding mode
+				// screen was touched, so we stop the feeding mode
 				bDone = true;
+				TouchEnabled=false;
 			}
 			if ( bDone )
 			{
@@ -3120,6 +3132,7 @@ void ReefAngelClass::ShowTouchInterface()
 		case WATERCHANGE_MODE:
 		{
 			byte y;
+			bool bDone = false;
 			if (orientation%2==0) y=0; else y=40;
 			wdt_reset();
 			if (NeedsRedraw)
@@ -3141,6 +3154,12 @@ void ReefAngelClass::ShowTouchInterface()
 			}
 			LastStart = now();  // Set the time normal mode is started
 			if ( TS.IsTouched() )
+			{
+				// screen was touched, so we stop the feeding mode
+				bDone = true;
+				TouchEnabled=false;
+			}
+			if ( bDone )
 			{
 				// we're finished, so let's clear the screen and return
 #ifdef SaveRelayState
@@ -3165,6 +3184,90 @@ void ReefAngelClass::ShowTouchInterface()
 				ExitMenu();
 			}
 //				Relay.Write();
+			break;
+		}
+		case TOUCH_MENU:
+		{
+			int ch=44;
+			wdt_reset();
+			if (!TS.IsTouched())
+			{
+				TouchEnabled=true;
+				if (NeedsRedraw)
+				{
+					NeedsRedraw=false;
+					TouchLCD.Clear(COLOR_WHITE,0,0,twidth,theight); // Clear screen
+					//Arrows
+					TouchLCD.DrawBMP(10,theight-25,ARROWLEFT);
+					TouchLCD.DrawBMP(twidth-10-23,theight-25,ARROWRIGHT);
+					Font.SetColor(RGB565(0xBD, 0x13, 0x00),COLOR_WHITE,true);
+					switch ( DisplayedScreen )
+					{
+						case MAIN_MENU_SCREEN:
+						{
+							for (int a=0;a<6;a++)
+							{
+								TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,5+(47*a),(twidth/2)-6,5+ch+(47*a),4,true);
+								TouchLCD.DrawRoundRect(COLOR_SILVER,7,7+(47*a),(twidth/2)-8,3+ch+(47*a),4,false);
+								Font.DrawCenterTextP(twidth/4,14+(47*a),(char * )pgm_read_word(&(menu_button_items1[a*2])));
+								Font.DrawCenterTextP(twidth/4,30+(47*a),(char * )pgm_read_word(&(menu_button_items1[(a*2)+1])));
+			
+								TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,5+(47*a),twidth-6,5+ch+(47*a),4,true);
+								TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+7,7+(47*a),twidth-8,3+ch+(47*a),4,false);
+								Font.DrawCenterTextP(twidth/4*3,14+(47*a),(char * )pgm_read_word(&(menu_button_items2[a*2])));
+								Font.DrawCenterTextP(twidth/4*3,30+(47*a),(char * )pgm_read_word(&(menu_button_items2[(a*2)+1])));
+							}
+							break;
+						}
+						case SETUP_MENU_SCREEN:
+						{
+							for (int a=0;a<6;a++)
+							{
+								TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,5+(47*a),(twidth/2)-6,5+ch+(47*a),4,true);
+								TouchLCD.DrawRoundRect(COLOR_SILVER,7,7+(47*a),(twidth/2)-8,3+ch+(47*a),4,false);
+								Font.DrawCenterTextP(twidth/4,14+(47*a),(char * )pgm_read_word(&(menu_button_items3[a*2])));
+								Font.DrawCenterTextP(twidth/4,30+(47*a),(char * )pgm_read_word(&(menu_button_items3[(a*2)+1])));
+			
+								TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,5+(47*a),twidth-6,5+ch+(47*a),4,true);
+								TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+7,7+(47*a),twidth-8,3+ch+(47*a),4,false);
+								Font.DrawCenterTextP(twidth/4*3,14+(47*a),(char * )pgm_read_word(&(menu_button_items4[a*2])));
+								Font.DrawCenterTextP(twidth/4*3,30+(47*a),(char * )pgm_read_word(&(menu_button_items4[(a*2)+1])));
+							}
+							break;							
+						}
+					}
+				}
+				if (MenuFunctionPtr!=&ReefAngelClass::Touch)
+				{
+					(this->*MenuFunctionPtr)(); 
+					NeedsRedraw=true;
+					MenuFunctionPtr=&ReefAngelClass::Touch;
+				}
+			}
+			else
+			{
+				menutimeout=now();
+				if (TouchEnabled && DisplayedScreen<MAX_SCREENS)
+				{
+					TouchEnabled=false;
+					if (TS.X<50 && TS.Y>theight-30 && TS.X>0)
+						ChangeDisplayedScreen(-1);
+					if (TS.X>twidth-50 && TS.Y>theight-30)
+						ChangeDisplayedScreen(1);
+					for (int a=0;a<6;a++)
+					{
+//						ReefAngel.TouchLCD.Clear(COLOR_RED,0,5+(47*a),twidth/2,5+ch+(47*a));
+						if (TS.IsTouchedInside(0,5+(47*a),twidth/2,5+ch+(47*a)))
+							MenuFunctionPtr=menu_button_functions1[a];
+					}
+				}
+			}
+			if ( (now() - menutimeout) > MENU_TIMEOUT )
+			{
+				DisplayedMenu=DEFAULT_MENU;
+				DisplayedScreen=MAIN_SCREEN;
+				NeedsRedraw=true;
+			}
 			break;
 		}
 #ifdef CUSTOM_MENU

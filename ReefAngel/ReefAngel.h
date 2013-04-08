@@ -180,6 +180,9 @@ public:
 	ButtonClass CancelButton;
 	ProgressBarClass PB[6];
 	SliderClass Slider;
+	typedef void (ReefAngelClass::* FuncPtr) (); // declare function pointers
+	FuncPtr MenuFunctionPtr;
+	FuncPtr menu_button_functions1[6];
 	
 	boolean Splash;
 	byte LastOrientation;

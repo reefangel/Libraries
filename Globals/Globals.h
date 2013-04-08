@@ -512,6 +512,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define WATERCHANGE_MODE	252
 #define ALT_SCREEN_MODE		251
 #define RETURN_MAIN_MODE	250
+#define TOUCH_MENU			249
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
@@ -949,7 +950,12 @@ typedef struct {
 #define AI_SCREEN			13
 #define IO_SCREEN			14
 #define DIMMING_OVERRIDE	127
-#define MAX_SCREENS						15 // Highest ID for main screens
+#define MAX_SCREENS			15 // Highest ID for main screens
+
+//Menu Screens
+#define MAIN_MENU_SCREEN	0
+#define SETUP_MENU_SCREEN	1
+#define MAX_MENU_SCREENS	2 // Highest ID for menu screens
 
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
@@ -1053,6 +1059,49 @@ const prog_char TOUCH_END_LABEL[] PROGMEM = "Touch screen to quit";
 
 const prog_char PWM_OVERRIDE_LABEL1[] PROGMEM = "Adjust and press Ok to override";
 const prog_char PWM_OVERRIDE_LABEL2[] PROGMEM = "To disable override, press Cancel";
+
+const prog_char MENU_BUTTON_FEEDING[] PROGMEM = "Feeding";
+const prog_char MENU_BUTTON_WATERCHANGE[] PROGMEM = "Water Change";
+const prog_char MENU_BUTTON_MODE[] PROGMEM = "Mode";
+const prog_char MENU_BUTTON_CLEAR[] PROGMEM = "Clear";
+const prog_char MENU_BUTTON_ATOTIMEOUT[] PROGMEM = "ATO Timeout";
+const prog_char MENU_BUTTON_OVERHEAT[] PROGMEM = "Overheat";
+const prog_char MENU_BUTTON_TURN[] PROGMEM = "Turn";
+const prog_char MENU_BUTTON_CANCEL[] PROGMEM = "Cancel";
+const prog_char MENU_BUTTON_LIGHTS[] PROGMEM = "Lights On";
+const prog_char MENU_BUTTON_EXIT[] PROGMEM = "Exit";
+const prog_char MENU_BUTTON_MENU[] PROGMEM = "Menu";
+const prog_char MENU_BUTTON_ADJUST[] PROGMEM = "Adjust";
+const prog_char MENU_BUTTON_DATETIME[] PROGMEM = "Date/Time";
+const prog_char MENU_BUTTON_PH[] PROGMEM = "pH";
+const prog_char MENU_BUTTON_CALIBRATION[] PROGMEM = "Calibration";
+const prog_char MENU_BUTTON_SALINITY[] PROGMEM = "Salinity";
+const prog_char MENU_BUTTON_ORP[] PROGMEM = "ORP";
+const prog_char MENU_BUTTON_PHE[] PROGMEM = "pH Expansion";
+const prog_char MENU_BUTTON_WL[] PROGMEM = "Water Level";
+const prog_char MENU_BUTTON_LIGHT[] PROGMEM = "Light";
+const prog_char MENU_BUTTON_SCHEDULE[] PROGMEM = "Schedule";
+const prog_char MENU_BUTTON_HEATER[] PROGMEM = "Heater";
+const prog_char MENU_BUTTON_TEMPERATURE[] PROGMEM = "Temperature";
+const prog_char MENU_BUTTON_FAN[] PROGMEM = "Fan/Chiller";
+const prog_char MENU_BUTTON_CO2[] PROGMEM = "CO2";
+const prog_char MENU_BUTTON_CONTROL[] PROGMEM = "Control";
+const prog_char MENU_BUTTON_WM[] PROGMEM = "Wavemaker";
+const prog_char MENU_BUTTON_CYCLE[] PROGMEM = "Cycle";
+const prog_char MENU_BUTTON_ATO[] PROGMEM = "ATO";
+const prog_char MENU_BUTTON_TIMEOUT[] PROGMEM = "Timeout";
+const prog_char MENU_BUTTON_DOSING[] PROGMEM = "Dosing";
+const prog_char MENU_BUTTON_PUMP1[] PROGMEM = "Pump 1";
+const prog_char MENU_BUTTON_PUMP2[] PROGMEM = "Pump 2";
+const prog_char MENU_BUTTON_PUMP3[] PROGMEM = "Pump 3";
+const prog_char MENU_BUTTON_DELAYED[] PROGMEM = "Delayed";
+const prog_char MENU_BUTTON_START[] PROGMEM = "Start";
+
+
+static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_CLEAR, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION};
+static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
+static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
 
 #endif //  REEFTOUCH
 
