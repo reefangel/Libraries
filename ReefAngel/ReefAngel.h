@@ -369,6 +369,7 @@ public:
 	void CalibrateTouchScreen();
 	void SaveInitialSettings();
 	void ChangeDisplayedScreen(signed char index);
+	void MainScreen();
 #endif //  REEFTOUCH
 
     // Nested Menu Functions

@@ -510,7 +510,7 @@ void ReefAngelClass::Init()
 	menu_button_functions1[2] = &ReefAngelClass::ATOClear;
 	menu_button_functions1[3] = &ReefAngelClass::OverheatClear;
 	menu_button_functions1[4] = &ReefAngelClass::LightsOn;
-	menu_button_functions1[5] = &ReefAngelClass::FeedingModeStart;
+	menu_button_functions1[5] = &ReefAngelClass::MainScreen;
 			
 #if not defined NOTILT
 	Tilt.Init();
@@ -688,7 +688,7 @@ void ReefAngelClass::Init()
 		CustomVar[EID]=0;
 	}
 #endif //CUSTOM_VARIABLES
-#if defined REEFTOUCHDISPLAY
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	EM=0;
 	REM=0;
 #endif //  REEFTOUCHDISPLAY	
@@ -2098,6 +2098,13 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 	if (DisplayedScreen>=MAX_SCREENS) DisplayedScreen=0;
 }
 
+void ReefAngelClass::MainScreen()
+{
+	DisplayedMenu=DEFAULT_MENU;
+	DisplayedScreen=MAIN_SCREEN;
+	NeedsRedraw=true;	
+}
+
 #endif  // REEFTOUCH
 
 #ifdef CUSTOM_MENU
@@ -2371,18 +2378,23 @@ void ReefAngelClass::ShowTouchInterface()
 								j+=43+i;
 								LargeFont.DrawCenterNumber(x,j,Params.PH,100);
 								x+=twidth*5/16;
+#ifdef SALINITYEXPANSION
 								//Salinity
 								if ((EM&(1<<3))!=0)
 								{
 									LargeFont.DrawCenterNumber(x,j,Params.Salinity,10);
 									x+=twidth*5/16;
 								}
+#endif // SALINITYEXPANSION
+#ifdef ORPEXPANSION
 								//ORP
 								if ((EM&(1<<4))!=0)
 								{
 									LargeFont.DrawCenterNumber(x,j,Params.ORP,1);
 									x+=twidth*5/16;
 								}
+#endif // ORPEXPANSION
+#ifdef PHEXPANSION
 								//pH Exp
 								if ((EM&(1<<6))!=0)
 								{
@@ -2394,6 +2406,8 @@ void ReefAngelClass::ShowTouchInterface()
 									LargeFont.DrawCenterNumber(x,j,Params.PHExp,100);
 									x+=twidth*5/16;
 								}
+#endif // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
 								//Water Level
 								if ((EM&(1<<7))!=0)
 								{
@@ -2405,6 +2419,7 @@ void ReefAngelClass::ShowTouchInterface()
 									LargeFont.DrawCenterNumber(x,j,ReefAngel.WaterLevel.GetLevel(),0);
 									x+=twidth*5/16;
 								}
+#endif // WATERLEVELEXPANSION
 							}
 							else // Orientation is landscape
 							{
@@ -2423,29 +2438,37 @@ void ReefAngelClass::ShowTouchInterface()
 
 								x=twidth*3/21;
 								if (numexp>0) j+=43+i;								
+#ifdef SALINITYEXPANSION
 								//Salinity
 								if ((EM&(1<<3))!=0)
 								{
 									LargeFont.DrawCenterNumber(x,j,Params.Salinity,10);
 									x+=twidth*5/21;
 								}
+#endif // SALINITYEXPANSION
+#ifdef ORPEXPANSION
 								//ORP
 								if ((EM&(1<<4))!=0)
 								{
 									LargeFont.DrawCenterNumber(x,j,Params.ORP,10);
 									x+=twidth*5/21;
 								}
+#endif // ORPEXPANSION
+#ifdef PHEXPANSION
 								//pH Exp
 								if ((EM&(1<<6))!=0)
 								{
 									LargeFont.DrawCenterNumber(x,j,Params.PHExp,100);
 									x+=twidth*5/21;
 								}
+#endif // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
 								//Water Level
 								if ((EM&(1<<7))!=0)
 								{
 									LargeFont.DrawCenterNumber(x,j,ReefAngel.WaterLevel.GetLevel(),0);
 								}
+#endif // WATERLEVELEXPANSION
 							}
 							
 							// Progress Bars
@@ -2496,9 +2519,11 @@ void ReefAngelClass::ShowTouchInterface()
 							}
 							else
 							{
+#ifdef RelayExp
 								TempRelay=Relay.RelayDataE[DisplayedScreen-2];
 								TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-2];
 								TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-2];
+#endif // RelayExp
 							}
 							TempRelay&=TempRelayOff;
 							TempRelay|=TempRelayOn;
@@ -2550,6 +2575,7 @@ void ReefAngelClass::ShowTouchInterface()
 								TouchLCD.DrawRelayStatus(rx,j,bitRead(TempRelay,a-1));
 							}				
 						}
+#ifdef PWMEXPANSION
 						else if(DisplayedScreen==PWM_SCREEN)
 						{
 							if (NeedsRedraw)
@@ -2581,6 +2607,8 @@ void ReefAngelClass::ShowTouchInterface()
 								PB[a].Show();
 							}
 						}
+#endif // PWMEXPANSION
+#ifdef RFEXPANSION
 						else if(DisplayedScreen==RF_SCREEN)
 						{
 							if (NeedsRedraw)
@@ -2647,7 +2675,8 @@ void ReefAngelClass::ShowTouchInterface()
 								PB[a].Show();
 							}							
 
-						}						
+						}	
+#endif // RFEXPANSION
 #ifdef AI_LED
 						else if(DisplayedScreen==AI_SCREEN)
 						{
@@ -2681,6 +2710,7 @@ void ReefAngelClass::ShowTouchInterface()
 							}
 						}
 #endif //  AI_LED
+#ifdef IOEXPANSION
 						else if(DisplayedScreen==IO_SCREEN)
 						{
 							if (NeedsRedraw)
@@ -2714,6 +2744,7 @@ void ReefAngelClass::ShowTouchInterface()
 							}								
 
 						}
+#endif //  IOEXPANSION
 						else if(DisplayedScreen==DIMMING_OVERRIDE)
 						{
 							if (NeedsRedraw)
@@ -2733,7 +2764,7 @@ void ReefAngelClass::ShowTouchInterface()
 						}
 					}
 				}
-				else
+				else // if touched
 				{
 					// turn the backlight on
 					TouchLCD.SetBacklight(100);
@@ -2824,9 +2855,11 @@ void ReefAngelClass::ShowTouchInterface()
 								}
 								else
 								{
+#ifdef RelayExp
 									TempRelay=Relay.RelayDataE[DisplayedScreen-2];
 									TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-2];
 									TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-2];
+#endif // RelayExp
 								}
 								TempRelay&=TempRelayOff;
 								TempRelay|=TempRelayOn;
@@ -2896,6 +2929,7 @@ void ReefAngelClass::ShowTouchInterface()
 									}
 								}										
 							}
+#ifdef PWMEXPANSION
 							else if (DisplayedScreen==PWM_SCREEN)
 							{
 								int j,h,k;
@@ -2929,6 +2963,8 @@ void ReefAngelClass::ShowTouchInterface()
 									}
 								}
 							}
+#endif // PWMEXPANSION
+#ifdef AI_LED
 							else if (DisplayedScreen==AI_SCREEN)
 							{
 								int j,h,k;
@@ -2964,6 +3000,8 @@ void ReefAngelClass::ShowTouchInterface()
 									}
 								}
 							}
+#endif // AI_LED
+#ifdef RFEXPANSION
 							else if (DisplayedScreen==RF_SCREEN1)
 							{
 								int j,h,k;
@@ -2999,6 +3037,7 @@ void ReefAngelClass::ShowTouchInterface()
 									}
 								}
 							}
+#endif // RFEXPANSION
 						}
 						else
 						{
@@ -3015,28 +3054,36 @@ void ReefAngelClass::ShowTouchInterface()
 									if (OkButton.IsPressed()) 
 									{
 										bDone=true;
-	#ifdef REEFTOUCHDISPLAY
+#ifdef REEFTOUCHDISPLAY
 										SendMaster(MESSAGE_CHANNEL_OVERRIDE,oid,ovalue); 	// Send Override Request
-	#endif // REEFTOUCHDISPLAY
+#endif // REEFTOUCHDISPLAY
 										if (oid<=OVERRIDE_CHANNEL5)
 											ReefAngel.PWM.Override(oid,ovalue);
+#ifdef AI_LED
 										if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
 											ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,ovalue);
+#endif // AI_LED
+#ifdef RFEXPANSION
 										if (oid>=OVERRIDE_RF_WHITE && oid<=OVERRIDE_RF_INTENSITY)
 											ReefAngel.RF.Override(oid-OVERRIDE_RF_WHITE,ovalue);
+#endif // RFEXPANSION
 									}
 									if (CancelButton.IsPressed()) 
 									{
 										bDone=true;
-	#ifdef REEFTOUCHDISPLAY
+#ifdef REEFTOUCHDISPLAY
 										SendMaster(MESSAGE_CHANNEL_OVERRIDE,oid,255); 	// Send Cancel Override Request
-	#endif // REEFTOUCHDISPLAY
+#endif // REEFTOUCHDISPLAY
 										if (oid<=OVERRIDE_CHANNEL5)
 											ReefAngel.PWM.Override(oid,255);
+#ifdef AI_LED
 										if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
 											ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,255);
+#endif // AI_LED
+#ifdef RFEXPANSION
 										if (oid>=OVERRIDE_RF_WHITE && oid<=OVERRIDE_RF_INTENSITY)
 											ReefAngel.RF.Override(oid-OVERRIDE_RF_WHITE,255);
+#endif // RFEXPANSION
 									}
 									if (bDone)
 									{
@@ -6655,72 +6702,80 @@ void ReefAngelClass::SetupDosingPump()
 void receiveEvent(int howMany) {
 	byte d[9];
 	wdt_reset();
-	if (howMany==9)
+	if (ReefAngel.Sleeping)
 	{
-		for(int a=0;a<9;a++) d[a]=Wire.read();
-		switch (d[0])
-		{
-		case 0:
-			ReefAngel.Params.Temp[T1_PROBE]=d[1]+(d[2]<<8);
-			ReefAngel.Params.Temp[T2_PROBE]=d[3]+(d[4]<<8);
-			ReefAngel.Params.Temp[T3_PROBE]=d[5]+(d[6]<<8);
-			ReefAngel.Params.PH=d[7]+(d[8]<<8);
-			break;
-		case 1:
-			ReefAngel.Relay.RelayData=d[1];
-			ReefAngel.Relay.RelayMaskOn=d[2];
-			ReefAngel.Relay.RelayMaskOff=d[3];
-			ReefAngel.LowATO.SetActive(bitRead(d[4],0));
-			ReefAngel.HighATO.SetActive(bitRead(d[4],1));
-			ReefAngel.EM=d[5];
-			ReefAngel.REM=d[6];
-			if (ReefAngel.DisplayedMenu!=d[7]) ReefAngel.NeedsRedraw=true;
-			ReefAngel.DisplayedMenu=d[7];
-			ReefAngel.Flags=d[8];
-			break;
-		case 2:
-			ReefAngel.PWM.SetDaylight(d[1]);
-			ReefAngel.PWM.SetActinic(d[2]);
-			for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-				ReefAngel.PWM.SetChannel(a,d[a+3]);
-			break;
-		case 3:
-			ReefAngel.RF.Mode=d[1];
-			ReefAngel.RF.Speed=d[2];
-			ReefAngel.RF.Duration=d[3];
-			ReefAngel.AI.SetChannel(0,d[4]);
-			ReefAngel.AI.SetChannel(1,d[5]);
-			ReefAngel.AI.SetChannel(2,d[6]);
-			ReefAngel.IO.IOPorts=d[7];
-			break;
-		case 4:
-			ReefAngel.RF.RadionChannels[0]=d[1];
-			ReefAngel.RF.RadionChannels[1]=d[2];
-			ReefAngel.RF.RadionChannels[2]=d[3];
-			ReefAngel.RF.RadionChannels[3]=d[4];
-			ReefAngel.RF.RadionChannels[4]=d[5];
-			ReefAngel.RF.RadionChannels[5]=d[6];
-			break;
-		}
-	}
-	else if (howMany==3)
-	{
-		for(int a=0;a<3;a++) d[a]=Wire.read();
-		switch (d[0])
-		{
-		case 0:
-			if (abs(ReefAngel.Timer[FEEDING_TIMER].Trigger-(now()+d[1]+(d[2]<<8)))>2)
-					ReefAngel.Timer[FEEDING_TIMER].Trigger=now()+d[1]+(d[2]<<8);
-			break;
-		}
+		while(Wire.available())
+			Wire.read();
 	}
 	else
 	{
-		for (int a=0;a<howMany;a++)
+		if (howMany==9)
 		{
-			Wire.read();
+			for(int a=0;a<9;a++) d[a]=Wire.read();
+			switch (d[0])
+			{
+			case 0:
+				ReefAngel.Params.Temp[T1_PROBE]=d[1]+(d[2]<<8);
+				ReefAngel.Params.Temp[T2_PROBE]=d[3]+(d[4]<<8);
+				ReefAngel.Params.Temp[T3_PROBE]=d[5]+(d[6]<<8);
+				ReefAngel.Params.PH=d[7]+(d[8]<<8);
+				break;
+			case 1:
+				ReefAngel.Relay.RelayData=d[1];
+				ReefAngel.Relay.RelayMaskOn=d[2];
+				ReefAngel.Relay.RelayMaskOff=d[3];
+				ReefAngel.LowATO.SetActive(bitRead(d[4],0));
+				ReefAngel.HighATO.SetActive(bitRead(d[4],1));
+				ReefAngel.EM=d[5];
+				ReefAngel.REM=d[6];
+				if (ReefAngel.DisplayedMenu!=d[7]) ReefAngel.NeedsRedraw=true;
+				ReefAngel.DisplayedMenu=d[7];
+				ReefAngel.Flags=d[8];
+				break;
+			case 2:
+				ReefAngel.PWM.SetDaylight(d[1]);
+				ReefAngel.PWM.SetActinic(d[2]);
+				for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+					ReefAngel.PWM.SetChannel(a,d[a+3]);
+				break;
+			case 3:
+				ReefAngel.RF.Mode=d[1];
+				ReefAngel.RF.Speed=d[2];
+				ReefAngel.RF.Duration=d[3];
+				ReefAngel.AI.SetChannel(0,d[4]);
+				ReefAngel.AI.SetChannel(1,d[5]);
+				ReefAngel.AI.SetChannel(2,d[6]);
+				ReefAngel.IO.IOPorts=d[7];
+				break;
+			case 4:
+				ReefAngel.RF.RadionChannels[0]=d[1];
+				ReefAngel.RF.RadionChannels[1]=d[2];
+				ReefAngel.RF.RadionChannels[2]=d[3];
+				ReefAngel.RF.RadionChannels[3]=d[4];
+				ReefAngel.RF.RadionChannels[4]=d[5];
+				ReefAngel.RF.RadionChannels[5]=d[6];
+				break;
+			}
 		}
-	}  
+		else if (howMany==3)
+		{
+			for(int a=0;a<3;a++) d[a]=Wire.read();
+			switch (d[0])
+			{
+			case 0:
+				if (abs(ReefAngel.Timer[FEEDING_TIMER].Trigger-(now()+d[1]+(d[2]<<8)))>2)
+						ReefAngel.Timer[FEEDING_TIMER].Trigger=now()+d[1]+(d[2]<<8);
+				break;
+			}
+		}
+		else
+		{
+			for (int a=0;a<howMany;a++)
+			{
+				Wire.read();
+			}
+		}  
+	}
 }
 
 void SendMaster(byte ID, byte data1, byte data2)

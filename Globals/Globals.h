@@ -38,7 +38,7 @@
 #define DateTimeSetup
 #endif //__AVR_ATmega2560__
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined REEFTOUCHDISPLAY
 #define DisplayLEDPWM
 #define PWMEXPANSION
 #define DisplayLEDPWM
@@ -49,8 +49,11 @@
 #define RelayExp
 #define PHEXPANSION
 #define WATERLEVELEXPANSION
-#define PWMEXPANSION
 #define AI_LED
+#endif // REEFTOUCHDISPLAY
+
+#if defined REEFTOUCH
+#define DisplayLEDPWM
 #endif // REEFTOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
