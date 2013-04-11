@@ -156,6 +156,7 @@ Set	KEYWORD2
 Write	KEYWORD2
 Status	KEYWORD2
 IsRelayPresent	KEYWORD2
+AddPortOverrides KEYWORD2
 
 #ATO
 
