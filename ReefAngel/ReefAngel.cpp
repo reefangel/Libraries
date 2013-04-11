@@ -557,6 +557,11 @@ void ReefAngelClass::Init()
     // Default to have port 3 shutoff
     //                 Port 87654321
     OverheatShutoffPorts = B00000100;
+    
+#ifdef OVERRIDE_PORTS
+    // Override all relay masks for the following ports
+    OverridePorts = 0;
+#endif
 
     // DelayedOn ports, do not manually modify this variable, let the DelayedOn function modify it
     DelayedOnPorts = 0;
@@ -569,6 +574,10 @@ void ReefAngelClass::Init()
 		WaterChangePortsE[i] = 0;
 		OverheatShutoffPortsE[i] = 0;
 		DelayedOnPortsE[i] = 0;
+#ifdef OVERRIDE_PORTS
+    // Override all relay masks for the following ports
+    OverridePortsE[i] = 0;
+#endif
 #ifndef RemoveAllLights
 		LightsOnPortsE[i] = 0;
 #endif  // RemoveAllLights
@@ -659,6 +668,19 @@ void ReefAngelClass::Refresh()
 #ifdef IOEXPANSION
 	IO.GetChannel();
 #endif  // IOEXPANSION
+#ifdef OVERRIDE_PORTS
+  // Reset relay masks for ports we want always in their programmed states.
+  ReefAngel.Relay.RelayMaskOn &= ~OverridePorts;
+  ReefAngel.Relay.RelayMaskOff |= OverridePorts;
+#ifdef RelayExp
+	byte i;
+	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		Relay.RelayMaskOnE[i] &= ~OverridePortsE[i];
+		Relay.RelayMaskOffE[i] |= OverridePortsE[i];
+	}
+#endif  // RelayExp  
+#endif
 	Relay.Write();
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
