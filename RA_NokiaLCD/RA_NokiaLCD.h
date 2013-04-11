@@ -100,6 +100,7 @@ private:
 
 public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);
+	void DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, byte high, byte low, byte wcolor);
 	void DrawSingleGraph(byte color, byte x, byte y, int EEaddr);
 #endif //  REEFTOUCH
 
