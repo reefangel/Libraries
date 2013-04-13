@@ -1843,7 +1843,7 @@ void ReefAngelClass::OverheatCheck()
 	// if overheat probe exceeds the temp
 	if ( Params.Temp[OverheatProbe] < InternalMemory.OverheatTemp_read() )
 		Overheatmillis=millis();
-	if (millis()-Overheatmillis>3000)
+	if (millis()-Overheatmillis>3000) // Only flag overheat if we have overheat for 3 seconds
 	{
 		LED.On();
 		bitSet(Flags,OverheatFlag);
