@@ -792,18 +792,8 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 #if defined SALINITYEXPANSION
 	Params.Salinity=Salinity.Read();
+	ApplySalinityCompensation();
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
-	// Salinity Compensation was contributed by ahmedess
-	// http://forum.reefangel.com/viewtopic.php?p=7386#p7386
-	if (Salinity.TemperatureCompensation)
-	{
-		double SalCompensation;
-		if (TempSensor.unit && Params.Temp[T1_PROBE])
-		SalCompensation=Params.Salinity/(1+((Params.Temp[T1_PROBE]-250)*0.0024));
-		else
-		SalCompensation=Params.Salinity/(1+((Params.Temp[T1_PROBE]-770)*0.001333));
-		Params.Salinity=round(SalCompensation);
-	}
 	RefreshScreen();
 #endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
@@ -858,17 +848,7 @@ void ReefAngelClass::Refresh()
     	tempsal+=Salinity.Read();
     }
 	Params.Salinity=tempsal/20;
-	if (Salinity.TemperatureCompensation)
-	{
-		// Credits to dazza1304
-		// http://forum.reefangel.com/viewtopic.php?f=3&t=2670
-		double SalCompensation;
-		if (ReefAngel.TempSensor.unit)
-			SalCompensation=ReefAngel.Params.Salinity/(1+((Params.Temp[TempProbe]-InternalMemory.SalTempComp_read())*0.0026));
-		else
-			SalCompensation=ReefAngel.Params.Salinity/(1+((Params.Temp[TempProbe]-InternalMemory.SalTempComp_read())*0.0014));
-		Params.Salinity=round(SalCompensation);
-	}	
+	ApplySalinityCompensation();
 	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	RefreshScreen();
 #endif  // defined SALINITYEXPANSION
@@ -5278,6 +5258,29 @@ void ReefAngelClass::SetupCalibrateSalinity()
 		SalMax = iS;
     }
 }
+
+void ReefAngelClass::ApplySalinityCompensation()
+{
+	// Salinity Compensation was contributed by ahmedess
+	// http://forum.reefangel.com/viewtopic.php?p=7386#p7386
+	// Credits to dazza1304
+	// http://forum.reefangel.com/viewtopic.php?f=3&t=2670	
+	if (Salinity.TemperatureCompensation!=-1 && Params.Temp[TempProbe]>0)
+	{
+		double SalCompensation;
+		double SalConstant=Salinity.TemperatureCompensation;
+		if (Salinity.TemperatureCompensation==0)
+		{
+			if (TempSensor.unit)
+				SalConstant=0.0024;
+			else
+				SalConstant=0.001333;
+		}
+		SalCompensation=Params.Salinity/(1+((Params.Temp[TempProbe]-InternalMemory.SalTempComp_read())*SalConstant));
+		Params.Salinity=round(SalCompensation);
+	}	
+}
+
 #endif  // SALINITYEXPANSION
 
 #ifdef ORPEXPANSION

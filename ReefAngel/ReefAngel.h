@@ -417,6 +417,7 @@ public:
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
     void SetupCalibrateSalinity();
+    void ApplySalinityCompensation();
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
     void SetupCalibratePHExp();
