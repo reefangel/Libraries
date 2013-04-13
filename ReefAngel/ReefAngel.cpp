@@ -902,23 +902,7 @@ void ReefAngelClass::Refresh()
 #endif  // defined PHEXPANSION
 	TempSensor.RequestConversion();
 #endif  // DirectTempSensor
-	// if overheat probe exceeds the temp
-	if ( Params.Temp[OverheatProbe] >= InternalMemory.OverheatTemp_read() )
-	{
-		LED.On();
-		bitSet(Flags,OverheatFlag);
-#ifdef ENABLE_EXCEED_FLAGS
-		InternalMemory.write(Overheat_Exceed_Flag, 1);
-#endif  // ENABLE_EXCEED_FLAGS
-		// invert the ports that are activated
-		Relay.RelayMaskOff = ~OverheatShutoffPorts;
-#ifdef RelayExp
-		for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-		{
-			Relay.RelayMaskOffE[i] = ~OverheatShutoffPortsE[i];
-		}
-#endif  // RelayExp
-	}	
+	OverheatCheck();
 }
 
 void ReefAngelClass::SetTemperatureUnit(byte unit)
@@ -1852,6 +1836,29 @@ void ReefAngelClass::ATOClear()
 #ifdef WATERLEVELEXPANSION
 	WLATO.StopTopping();
 #endif // WATERLEVELEXPANSION
+}
+
+void ReefAngelClass::OverheatCheck()
+{
+	// if overheat probe exceeds the temp
+	if ( Params.Temp[OverheatProbe] < InternalMemory.OverheatTemp_read() )
+		Overheatmillis=millis();
+	if (millis()-Overheatmillis>3000)
+	{
+		LED.On();
+		bitSet(Flags,OverheatFlag);
+#ifdef ENABLE_EXCEED_FLAGS
+		InternalMemory.write(Overheat_Exceed_Flag, 1);
+#endif  // ENABLE_EXCEED_FLAGS
+		// invert the ports that are activated
+		Relay.RelayMaskOff = ~OverheatShutoffPorts;
+#ifdef RelayExp
+		for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+		{
+			Relay.RelayMaskOffE[i] = ~OverheatShutoffPortsE[i];
+		}
+#endif  // RelayExp
+	}
 }
 
 void ReefAngelClass::OverheatClear()
@@ -3467,26 +3474,6 @@ void ReefAngelClass::ShowInterface()
 					LCD.DrawGraph(5, 5);
 #endif  // CUSTOM_MAIN
 				}
-
-				// if overheat probe exceeds the temp
-				if ( Params.Temp[OverheatProbe] >= InternalMemory.OverheatTemp_read() )
-				{
-					LED.On();
-#ifdef ENABLE_EXCEED_FLAGS
-					if (InternalMemory.read(Overheat_Exceed_Flag)==0)
-						InternalMemory.write(Overheat_Exceed_Flag, 1);
-#endif  // ENABLE_EXCEED_FLAGS
-					// invert the ports that are activated
-					Relay.RelayMaskOff = ~OverheatShutoffPorts;
-#ifdef RelayExp
-					for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-					{
-						Relay.RelayMaskOffE[i] = ~OverheatShutoffPortsE[i];
-					}
-#endif  // RelayExp
-				}
-				// commit relay changes
-//				Relay.Write();
 				break;
 			}  // DEFAULT_MENU
 			case FEEDING_MODE:
