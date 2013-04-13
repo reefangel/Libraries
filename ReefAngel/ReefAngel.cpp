@@ -27,6 +27,10 @@
 
 byte ButtonPress = 0;
 
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
+	boolean LightsOverride=true;
+#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+	
 SIGNAL(PCINT0_vect) {
 	if (millis()-ButtonDebounce>600)
 	{
@@ -698,7 +702,7 @@ void ReefAngelClass::Refresh()
 	}
 
 #if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-	if (LightRelayOn && PWM.LightsOverride)
+	if (LightRelayOn && LightsOverride)
 	{
 		PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
 		PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
