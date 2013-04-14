@@ -273,6 +273,7 @@ public:
 	byte OverheatProbe;
 	byte TempProbe;
 
+	time_t Overheatmillis;
 	void Init();
 	void Refresh();
 	void SetTemperatureUnit(byte unit);
@@ -359,6 +360,7 @@ public:
 	void FeedingModeStart();
 	void WaterChangeModeStart();
 	void ATOClear();
+	void OverheatCheck();
 	void OverheatClear();
 	void LightsOn();
 	void LightsOff();
@@ -419,6 +421,7 @@ public:
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
     void SetupCalibrateSalinity();
+    void ApplySalinityCompensation();
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
     void SetupCalibratePHExp();

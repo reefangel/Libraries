@@ -1176,6 +1176,7 @@ extern byte DelayedOnPortsE[MAX_RELAY_EXPANSION_MODULES];
 #ifdef ENABLE_ATO_LOGGING
 extern byte AtoEventCount;  // Defined in RA_ATO.cpp
 #endif  // ENABLE_ATO_LOGGING
+extern boolean LightsOverride;
 
 // globally usable functions
 byte intlength(int intin);

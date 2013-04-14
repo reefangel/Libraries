@@ -79,6 +79,8 @@ InitMenu	KEYWORD2
 ShowInterface	KEYWORD2
 CO2Control	KEYWORD2
 PHControl	KEYWORD2
+LightsOn	KEYWORD2
+LightsOff	KEYWORD2
 
 #LCD
 
@@ -230,6 +232,8 @@ DP1Timer_read	KEYWORD2
 DP1Timer_write	KEYWORD2
 DP2Timer_read	KEYWORD2
 DP2Timer_write	KEYWORD2
+DP3Timer_read	KEYWORD2
+DP3Timer_write	KEYWORD2
 LEDPWMDaylight_read	KEYWORD2
 LEDPWMDaylight_write	KEYWORD2
 LEDPWMActinic_read	KEYWORD2
@@ -334,6 +338,8 @@ DP1RepeatInterval_read	KEYWORD2
 DP1RepeatInterval_write	KEYWORD2
 DP2RepeatInterval_read	KEYWORD2
 DP2RepeatInterval_write	KEYWORD2
+DP3RepeatInterval_read	KEYWORD2
+DP3RepeatInterval_write	KEYWORD2
 SalMax_read	KEYWORD2
 SalMax_write	KEYWORD2
 ActinicOffset_read	KEYWORD2
@@ -439,6 +445,7 @@ PWM	LITERAL1
 Relay	LITERAL1
 LowATO	LITERAL1
 HighATO	LITERAL1
+WLATO	LITERAL1
 ATO	LITERAL1
 RF	LITERAL1
 AI	LITERAL1
@@ -601,6 +608,7 @@ RadionChannels	LITERAL2
 Celsius	LITERAL2
 Fahrenheit	LITERAL2 
 TemperatureCompensation	LITERAL2
+SetCompensation	LITERAL2
 
 MAIN_RELAY	LITERAL2
 EXP1_RELAY	LITERAL2

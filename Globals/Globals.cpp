@@ -65,6 +65,7 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	unsigned long StartD = Start + (Duration*60);
 	unsigned long StopD = End - (Duration*60);
 
+	LightsOverride=true;
 	if ( now() >= Start && now() <= StartD )
 		return constrain(map(now(), Start, StartD, startPWM, endPWM),startPWM,
 				endPWM);
@@ -89,6 +90,7 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	byte PWMDelta = endPWM-startPWM;
 	byte ParabolaPhase=constrain(map(Now,Start,End,0,180),0,180);
 
+	LightsOverride=true;
 	if ( Now <= Start || Now >= End)
 		return oldValue;
 	else
@@ -239,6 +241,7 @@ uint32_t read32(File f)
 byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
 {
 	byte tspeed=0;
+	LightsOverride=false;
 	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
 	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
 	tspeed=(millis()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
@@ -251,6 +254,7 @@ byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, b
 byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
 {
 	byte tspeed=0;
+	LightsOverride=false;
 	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
 	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
 	tspeed=(now()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
@@ -266,6 +270,7 @@ byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean
 	// http://forum.reefangel.com/viewtopic.php?f=2&t=2386&p=18240
 	double x,y;
 
+	LightsOverride=false;
 	x=double(now()%(PulseDuration));
 	x/=PulseDuration;
 	x*=2.0*PI;
@@ -289,6 +294,7 @@ byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync)
 {
 	static unsigned long lastwavemillis=millis();
 	static int newspeed=WaveSpeed;
+	LightsOverride=false;
 	if ((millis()-lastwavemillis) > 5000)
 	{
 		if (random(100)<50) newspeed--; else newspeed++;
@@ -310,6 +316,7 @@ byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDura
 	static byte speed=PulseMinSpeed;
 	static byte anti_speed=PulseMinSpeed;
 
+	LightsOverride=false;
 	if (WavePhase==0)
 	{
 		WavePhase++;
@@ -392,6 +399,7 @@ byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync)
 	static byte speed=0;
 	static byte anti_speed=0;
 
+	LightsOverride=false;
 	if (WavePhase==0)
 	{
 		WavePhase++;
@@ -516,6 +524,7 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset)
 	double amplitude;  // tide curve
 	double wavelength=12*SECS_PER_HOUR;
 
+	LightsOverride=false;
 	// Calculate the gap between high and low tide based on MoonPhase()
 	moonOffset=cos(((2*PI)/100)*MoonPhase());
 	moonOffset=((moonOffset+1)/2)*100; // Convert to percentage

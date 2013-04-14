@@ -29,7 +29,6 @@ class RA_PWMClass
 {
 public:
 	RA_PWMClass();
-	boolean LightsOverride;
 	void inline SetActinic(byte value) { ActinicPWMValue = value; };
 	void inline SetDaylight(byte value) { DaylightPWMValue = value; };
 	void inline SetActinicOverride(byte value) { ActinicPWMOverride = value; };

@@ -26,7 +26,7 @@
 
 SalinityClass::SalinityClass()
 {
-	TemperatureCompensation=true;
+	TemperatureCompensation=-1;
 }
 
 int SalinityClass::Read()
