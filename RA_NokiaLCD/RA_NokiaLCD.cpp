@@ -1355,6 +1355,9 @@ void RA_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params)
 void RA_NokiaLCD::DrawSingleGraph(byte color, byte x, byte y, int EEaddr)
 {
 	int start;
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 	for (byte a=0;a<120;a++)
 	{
 		start=EEaddr+a;
