@@ -486,6 +486,7 @@ void ReefAngelClass::Init()
 	setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 	RAStart=now();
 	LastStart = RAStart;  // Set the time normal mode is started
+	BusLocked=false;  // Bus is not locked
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	orientation=1;
 	LastOrientation=0;
@@ -857,6 +858,22 @@ void ReefAngelClass::Refresh()
 	WaterLevel.Convert();
 #endif  // defined WATERLEVELEXPANSION
 	OverheatCheck();
+#ifdef BUSCHECK
+	  Wire.beginTransmission(0x68);
+	  Wire.write(0);
+	  int a=Wire.endTransmission();
+	  if (a==5)
+	  {
+		  LED.On();
+		  delay(20);
+		  LED.Off();
+		  BusLocked=true;  // Bus is locked
+	  }
+	  else
+	  {
+		  BusLocked=false;  // Bus is not locked
+	  }
+#endif
 }
 
 void ReefAngelClass::SetTemperatureUnit(byte unit)

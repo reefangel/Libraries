@@ -280,6 +280,7 @@ public:
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
 	void inline AddCustomColors() {};
+	void inline AddBusCheck() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
 	void inline Mini() {}; // deprecated
@@ -449,6 +450,7 @@ private:
 	bool showmenu;
 	time_t menutimeout;
 	byte taddr;
+	bool BusLocked;
 	bool SDFound;
 
 	// Nested Menu variables

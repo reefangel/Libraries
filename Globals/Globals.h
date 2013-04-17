@@ -36,6 +36,7 @@
 #if defined(__AVR_ATmega2560__)
 #define wifi
 #define DateTimeSetup
+#define BUSCHECK
 #endif //__AVR_ATmega2560__
 
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
