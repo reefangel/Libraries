@@ -3406,7 +3406,8 @@ void ReefAngelClass::ShowInterface()
 				// This can be the timers for wavemakers or any overheat temperatures
 
 				// process timers
-				if ( Timer[STORE_PARAMS_TIMER].IsTriggered() )
+				// If bus is locked, it will trigger wdt when drawing graph
+				if ( Timer[STORE_PARAMS_TIMER].IsTriggered() && !BusLocked) // Only access eeprom if bus is not locked
 				{
 					int CurTemp;
 
@@ -3766,6 +3767,8 @@ void ReefAngelClass::ExitMenu()
 #else
 	// Handles the cleanup to return to the main screen
 	ClearScreen(DefaultBGColor);
+	// If bus is locked, it will trigger wdt when drawing graph
+	if(!BusLocked) // Only draw if bus is not locked
 #ifdef CUSTOM_MAIN
 	DrawCustomGraph();
 #else
