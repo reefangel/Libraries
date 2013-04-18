@@ -39,6 +39,7 @@ StandardLights	KEYWORD2
 AddRFExpansion	KEYWORD2
 AddDateTimeMenu	KEYWORD2
 AddCustomColors	KEYWORD2
+AddBusCheck	KEYWORD2
 Display24h	KEYWORD2
 One	KEYWORD2
 Mini	KEYWORD2

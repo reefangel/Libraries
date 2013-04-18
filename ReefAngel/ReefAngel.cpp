@@ -488,6 +488,7 @@ void ReefAngelClass::Init()
 	setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 	RAStart=now();
 	LastStart = RAStart;  // Set the time normal mode is started
+	BusLocked=false;  // Bus is not locked
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	orientation=1;
 	LastOrientation=0;
@@ -801,36 +802,6 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 	Params.Temp[T3_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT3);
 	RefreshScreen();
-	Params.PH=analogRead(PHPin);
-	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
-	Params.PH=constrain(Params.PH,100,1400);
-	RefreshScreen();
-#if defined SALINITYEXPANSION
-	Params.Salinity=Salinity.Read();
-	ApplySalinityCompensation();
-	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
-	RefreshScreen();
-#endif  // defined SALINITYEXPANSION
-#if defined ORPEXPANSION
-	Params.ORP=ORP.Read();
-	if (Params.ORP!=0)
-	{
-		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
-		Params.ORP=constrain(Params.ORP,0,550);
-	}
-	RefreshScreen();
-#endif  // defined ORPEXPANSION
-#if defined PHEXPANSION
-	Params.PHExp=PH.Read();
-	if (Params.PHExp!=0)
-	{
-		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
-		Params.PHExp=constrain(Params.PHExp,100,1400);
-	}
-	LCD.Clear(DefaultBGColor,0,0,1,1);
-#endif  // defined PHEXPANSION
-	TempSensor.RequestConversion();
-	RefreshScreen();
 #else  // DirectTempSensor
     int x = TempSensor.ReadTemperature(TempSensor.addrT1);
     RefreshScreen();
@@ -846,6 +817,7 @@ void ReefAngelClass::Refresh()
     RefreshScreen();
     y = x - Params.Temp[T3_PROBE];
     if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T3_PROBE] == 0 || ~x) Params.Temp[T3_PROBE] = x;
+#endif  // DirectTempSensor
     Params.PH=0;
     for (int a=0;a<20;a++)
     {
@@ -855,7 +827,9 @@ void ReefAngelClass::Refresh()
     RefreshScreen();
 	Params.PH=map(Params.PH, PHMin, PHMax, 700, 1000); // apply the calibration to the sensor reading
 	Params.PH=constrain(Params.PH,100,1400);
-
+	RefreshScreen();
+	TempSensor.RequestConversion();
+	RefreshScreen();
 #if defined SALINITYEXPANSION
 	unsigned long tempsal=0;
     for (int a=0;a<20;a++)
@@ -895,9 +869,26 @@ void ReefAngelClass::Refresh()
 	}
 	RefreshScreen();
 #endif  // defined PHEXPANSION
-	TempSensor.RequestConversion();
-#endif  // DirectTempSensor
+#if defined WATERLEVELEXPANSION
+	WaterLevel.Convert();
+#endif  // defined WATERLEVELEXPANSION
 	OverheatCheck();
+#ifdef BUSCHECK
+	  Wire.beginTransmission(0x68);
+	  Wire.write(0);
+	  int a=Wire.endTransmission();
+	  if (a==5)
+	  {
+		  LED.On();
+		  delay(20);
+		  LED.Off();
+		  BusLocked=true;  // Bus is locked
+	  }
+	  else
+	  {
+		  BusLocked=false;  // Bus is not locked
+	  }
+#endif
 }
 
 void ReefAngelClass::SetTemperatureUnit(byte unit)
@@ -3557,7 +3548,8 @@ void ReefAngelClass::ShowInterface()
 				// This can be the timers for wavemakers or any overheat temperatures
 
 				// process timers
-				if ( Timer[STORE_PARAMS_TIMER].IsTriggered() )
+				// If bus is locked, it will trigger wdt when drawing graph
+				if ( Timer[STORE_PARAMS_TIMER].IsTriggered() && !BusLocked) // Only access eeprom if bus is not locked
 				{
 					int CurTemp;
 
@@ -3917,6 +3909,8 @@ void ReefAngelClass::ExitMenu()
 #else
 	// Handles the cleanup to return to the main screen
 	ClearScreen(DefaultBGColor);
+	// If bus is locked, it will trigger wdt when drawing graph
+	if(!BusLocked) // Only draw if bus is not locked
 #ifdef CUSTOM_MAIN
 	DrawCustomGraph();
 #else

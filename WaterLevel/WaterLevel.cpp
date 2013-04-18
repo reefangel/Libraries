@@ -27,6 +27,7 @@
 
 WaterLevelClass::WaterLevelClass()
 {
+	level=0;
 }
 
 int WaterLevelClass::Read()
@@ -42,7 +43,7 @@ int WaterLevelClass::Read()
 	return iWaterLevel;
 }
 
-byte WaterLevelClass::GetLevel()
+void WaterLevelClass::Convert()
 {
 	unsigned long t=0;
 	for (int a=0;a<20;a++) t+=Read();
@@ -52,5 +53,5 @@ byte WaterLevelClass::GetLevel()
 		t=map(t, InternalMemory.WaterLevelMin_read(), InternalMemory.WaterLevelMax_read(), 0, 100); // apply the calibration to the sensor reading
 		t=constrain(t,0,200);
 	}
-	return t;
+	level = t;
 }

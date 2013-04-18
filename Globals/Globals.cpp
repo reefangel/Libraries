@@ -55,49 +55,60 @@ bool IsLeapYear(int year)
 
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue)
 {
-	// Contribution of lnevo
-	// http://forum.reefangel.com/viewtopic.php?p=22384#p22384
-	unsigned long Start = previousMidnight(now())+((unsigned long)NumMins(startHour, startMinute)*60);
-	unsigned long End = nextMidnight(now())+((unsigned long)NumMins(endHour, endMinute)*60);
-	boolean isOvernight=NumMins(startHour,startMinute)>NumMins(endHour,endMinute);
-	if (hour()<startHour && isOvernight) Start-=86400;
-	if (hour()<startHour || !isOvernight) End-=86400;
-	unsigned long StartD = Start + (Duration*60);
-	unsigned long StopD = End - (Duration*60);
-
+	// Contribution of thekameleon
+	// http://forum.reefangel.com/viewtopic.php?p=23893#p23893
 	LightsOverride=true;
-	if ( now() >= Start && now() <= StartD )
-		return constrain(map(now(), Start, StartD, startPWM, endPWM),startPWM,
-				endPWM);
-	else if ( now() >= StopD && now() <= End )
+	int start = NumMins(startHour, startMinute);
+	int end = NumMins(endHour, endMinute);
+	if (start > end) //Start is greater than End so its over midnight
 	{
-		byte v = constrain(map(now(), StopD, End, startPWM, endPWM),startPWM,
-				endPWM);
-		return endPWM-v+startPWM;
+	  //Example: 2300hrs to 0200hrs
+	  if (hour() < endHour) start -= 1440; //past midnight
+	  if (hour() >= startHour) end += 1440; //before midnight
 	}
-	else if ( now() > StartD && now() < StopD )
-		return endPWM;
-
+	int current = NumMins(hour(), minute());
+	int startD = start + Duration;
+	int stopD = end - Duration;
+	
+	if ( current >= start && current <= startD )
+	  return constrain(map(current, start, startD, startPWM, endPWM),startPWM, endPWM);
+	else if ( current >= stopD && current <= end )
+	{
+	  byte v = constrain(map(current, stopD, end, startPWM, endPWM),startPWM, endPWM);
+	  return endPWM - v + startPWM;
+	}
+	else if ( current > startD && current < stopD )
+	  return endPWM;
+	
 	// lastly return the existing value
 	return oldValue;
 }
 
 byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue)
 {
-	int Now = NumMins(hour(), minute());
-	int Start = NumMins(startHour, startMinute);
-	int End = NumMins(endHour, endMinute);
-	byte PWMDelta = endPWM-startPWM;
-	byte ParabolaPhase=constrain(map(Now,Start,End,0,180),0,180);
-
+	// Contribution of thekameleon
+	// http://forum.reefangel.com/viewtopic.php?p=23813#p23813
 	LightsOverride=true;
-	if ( Now <= Start || Now >= End)
-		return oldValue;
+	int start = NumMins(startHour, startMinute);
+	int end = NumMins(endHour, endMinute);
+	if (start > end) //Start is greater than End so its over midnight
+	{
+	//Example: 2300hrs to 0200hrs
+	if (hour() < endHour) start -= 1440; //past midnight
+	if (hour() >= startHour) end += 1440; //before midnight
+	}
+	
+	int current = NumMins(hour(), minute());
+	
+	byte pwmDelta = endPWM - startPWM;
+	byte parabolaPhase = constrain(map(current, start, end, 0, 180), 0, 180);
+	
+	if ( current <= start || current >= end)
+	return oldValue;
 	else
 	{
-		return startPWM+(PWMDelta*sin(radians(ParabolaPhase)));
+	return startPWM + (pwmDelta * sin(radians(parabolaPhase)));
 	}
-
 }
 
 byte MoonPhase()

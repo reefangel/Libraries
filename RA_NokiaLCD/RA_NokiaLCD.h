@@ -23,6 +23,9 @@
 #define __RA_NOKIALCD_H__
 
 #include <Globals.h>
+#if defined WDT || defined WDT_FORCE
+#include <avr/wdt.h>
+#endif  // defined WDT || defined WDT_FORCE
 
 enum FontHeight {
 	Font8x8,
