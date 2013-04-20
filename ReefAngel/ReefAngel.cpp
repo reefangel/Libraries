@@ -441,7 +441,7 @@ enum TimeoutsMenuItem {
 
 ReefAngelClass::ReefAngelClass()
 {
-	SPCR=0x50;
+	SPCR=0x53;
 #if defined(__AVR_ATmega2560__)
 	PCMSK0 |= 128;
 	DDRJ&=(0<<7); //PJ7 (Input) - Bus Lock

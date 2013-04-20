@@ -34,6 +34,7 @@
 #include <RA_Tilt.h>
 #include <Font.h>
 #include <SPI.h>
+#include <SD.h>
 #else //  REEFTOUCH
 #include <RA_NokiaLCD.h>
 #endif //  REEFTOUCH
@@ -45,7 +46,6 @@
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
-#include <SD.h>
 
 #if defined ORPEXPANSION
 	#include <ORP.h>
@@ -194,6 +194,7 @@ public:
 	bool Sleeping;
 	byte orientation;
 	byte LongTouch;
+	bool SDFound;
 #else //  REEFTOUCH
 	RA_NokiaLCD LCD;
 	RA_JoystickClass Joystick;
@@ -455,7 +456,6 @@ private:
 	time_t menutimeout;
 	byte taddr;
 	bool BusLocked;
-	bool SDFound;
 
 	// Nested Menu variables
 	int menusptr[Total_Menus];

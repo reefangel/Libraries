@@ -29,9 +29,12 @@
 #include <Arduino.h>
 #include <Time.h>
 #include <OneWire.h>
-#include <SD.h>
-
 #include <avr/pgmspace.h>
+
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#include <SD.h>
+#endif //  REEFTOUCH
+
 
 #if defined(__AVR_ATmega2560__)
 #define wifi
