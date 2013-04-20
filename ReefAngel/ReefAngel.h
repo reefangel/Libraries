@@ -167,6 +167,8 @@ public:
 	int PHMin,PHMax;
 	ParamsStruct Params;
 	byte Flags;
+	bool BusLocked;
+	
 	ReefAngelClass();
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	RA_TouchLCD TouchLCD;
@@ -450,7 +452,6 @@ private:
 	bool showmenu;
 	time_t menutimeout;
 	byte taddr;
-	bool BusLocked;
 	bool SDFound;
 
 	// Nested Menu variables
