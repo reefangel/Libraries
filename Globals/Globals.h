@@ -819,18 +819,6 @@ typedef struct Compensation
 	int YOff;
 } COMPENSATION ;
 
-typedef struct {
-    byte sig[4];
-    long hdrSize;
-    long width;
-    long height;
-    byte format;
-    byte reserved0;
-    byte colors;
-    byte restartInterval;
-    long reserved1;
-} Img2;
-
 //Internal EEPROM
 #define TS_CALIBRATION_ADDRESS 		0x0
 #define TT_COMPENSATION_ADDRESS 	0x10
