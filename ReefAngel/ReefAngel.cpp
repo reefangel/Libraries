@@ -2748,10 +2748,6 @@ void ReefAngelClass::ShowTouchInterface()
 				}
 				else // if touched
 				{
-					// turn the backlight on
-					TouchLCD.SetBacklight(100);
-					Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
-					Timer[LCD_TIMER].Start();  // start timer
 					// Check for Soft Reset of screen
 					// If top left corner is long touched, we reinitialize the LCD. 
 					if (TS.X<50 && TS.Y<50) // top left corner
@@ -3084,6 +3080,13 @@ void ReefAngelClass::ShowTouchInterface()
 			
 			pingSerial();
 			wdt_reset();
+			if (TS.IsTouched())
+			{
+				// turn the backlight on
+				TouchLCD.SetBacklight(100);
+				Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
+				Timer[LCD_TIMER].Start();  // start timer
+			}			
 			break;
 		}  // DEFAULT_MENU
 		case FEEDING_MODE:
