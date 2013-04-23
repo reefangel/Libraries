@@ -352,6 +352,31 @@ void RA_TouchLCD::DrawBMP(int ix, int iy, const prog_uchar *iPtr)
 	}
 }
 
+void RA_TouchLCD::DrawBMP(int ix, int iy, const prog_uchar *iPtr, byte overridecolor_msb, byte overridecolor_lsb)
+{
+	// This is to workaround avrdude bug that doesn't allow us to write chunk blocks of 0xff into memory.
+	// So, we change override color to white.
+	byte i,j;
+	int w = pgm_read_byte_near(iPtr++)+1;
+	int h  =pgm_read_byte_near(iPtr++)+1;
+	iPtr+=3;
+	RA_TFT::SetBox(ix, iy, w+ix-1, h+iy-1);
+#ifdef ILI9341
+		RA_TFT::SendCom(0x00,0x2C);   /* Write RAM Memory */
+#endif
+	for (int a=0; a<w*h; a++)
+	{
+		i=pgm_read_byte_near(iPtr++);
+		j=pgm_read_byte_near(iPtr++);
+		if (i==overridecolor_msb && j==overridecolor_lsb)
+		{
+			i=255;
+			j=255;
+		}
+		RA_TFT::SendData(i,j);
+//		RA_TFT::SendData(pgm_read_byte_near(iPtr++),pgm_read_byte_near(iPtr++));
+	}
+}
 void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 {
 	int bmpWidth, bmpHeight;

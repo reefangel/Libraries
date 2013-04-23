@@ -54,6 +54,7 @@ public:
 	void DrawCircle(int color, int x, int y, int radius, boolean fill);
 	void DrawRoundRect(int color, int x1, int y1, int x2, int y2, int radius, boolean fill);
 	void DrawBMP(int ix, int iy, const prog_uchar *iPtr);
+	void DrawBMP(int ix, int iy, const prog_uchar *iPtr, byte overridecolor_msb, byte overridecolor_lsb);
 	void DrawSDImage(char *bmp, int x, int y);
 	void DrawSDRawImage(char *bmp, int x, int y, int w, int h);
 	void DrawDateTime(int x, int y, boolean militarytime, FontClass Font);
