@@ -753,6 +753,7 @@ void ReefAngelClass::Refresh()
 #if not defined REEFTOUCHDISPLAY
 #ifdef RFEXPANSION
 	byte RFRecv=0;
+    pingSerial();
 	RFRecv=RF.RFCheck();
 	if (RFRecv==1)
 	{
@@ -784,13 +785,16 @@ void ReefAngelClass::Refresh()
     }
 #endif  // AI_LED
 #if defined PWMEXPANSION && defined DisplayLEDPWM
+    pingSerial();
 	PWM.ExpansionWrite();
 #endif  // PWMEXPANSION
 #ifdef IOEXPANSION
+    pingSerial();
 	IO.GetChannel();
 #endif  // IOEXPANSION
 #endif  // REEFTOUCHDISPLAY	
 	
+    pingSerial();
 	Relay.Write();
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
@@ -871,23 +875,26 @@ void ReefAngelClass::Refresh()
 #endif  // defined PHEXPANSION
 #if defined WATERLEVELEXPANSION
 	WaterLevel.Convert();
+	RefreshScreen();
 #endif  // defined WATERLEVELEXPANSION
 	OverheatCheck();
 #ifdef BUSCHECK
-	  Wire.beginTransmission(0x68);
-	  Wire.write(0);
-	  int a=Wire.endTransmission();
-	  if (a==5)
-	  {
-		  LED.On();
-		  delay(20);
-		  LED.Off();
-		  BusLocked=true;  // Bus is locked
-	  }
-	  else
-	  {
-		  BusLocked=false;  // Bus is not locked
-	  }
+	pingSerial();
+	Wire.beginTransmission(0x68);
+	Wire.write(0);
+	int a=Wire.endTransmission();
+	pingSerial();
+	if (a==5)
+	{
+	  LED.On();
+	  delay(20);
+	  LED.Off();
+	  BusLocked=true;  // Bus is locked
+	}
+	else
+	{
+	  BusLocked=false;  // Bus is not locked
+	}
 #endif
 }
 
@@ -1896,6 +1903,7 @@ void ReefAngelClass::LightsOff()
 
 void ReefAngelClass::RefreshScreen()
 {
+    pingSerial();
 #if not defined REEFTOUCH && not defined REEFTOUCHDISPLAY
     LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // REEFTOUCH
