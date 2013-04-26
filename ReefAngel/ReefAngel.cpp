@@ -3469,7 +3469,6 @@ void ReefAngelClass::UpdateTouchDisplay()
 void ReefAngelClass::ShowInterface()
 {
     Refresh();
-
     // are we displaying the menu or not??
     if ( showmenu )
     {
@@ -3540,13 +3539,17 @@ void ReefAngelClass::ShowInterface()
 #ifdef DATETIME24
 				LCD.DrawDateTimeISO8601(6, 112);
 #else
+				pingSerial();
 				LCD.DrawDate(6, 112);
 #endif // DATETIME24
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
+				pingSerial();
 				LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
+				pingSerial();
 				LCD.DrawMonitor(15, 60, Params);
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+				pingSerial();
 				byte TempRelay = Relay.RelayData;
 				TempRelay &= Relay.RelayMaskOff;
 				TempRelay |= Relay.RelayMaskOn;
