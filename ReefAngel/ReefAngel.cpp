@@ -51,7 +51,7 @@ const prog_char Menu_3_label[] PROGMEM = "Temp:";
 const prog_char Menu_4_label[] PROGMEM = "Timeouts:";
 #endif  // defined SetupExtras || defined ATOSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
-PROGMEM const char *menulabel_items[] = {
+PROGMEM const char * const menulabel_items[] = {
 	Menu_0_label,
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 	Menu_1_label,
@@ -69,7 +69,7 @@ PROGMEM const char *menulabel_items[] = {
 const prog_char Return_0_label[] PROGMEM = "<- Prev Menu";
 const prog_char Return_1_label[] PROGMEM = "Exit";
 //const prog_char Return_2_label[] PROGMEM = "Press to exit...";
-PROGMEM const char *return_items[] = { Return_0_label, Return_1_label/*, Return_2_label*/ };
+PROGMEM const char * const return_items[] = { Return_0_label, Return_1_label/*, Return_2_label*/ };
 
 // NOTE for nested menus
 // NOTE Menu labels can be a max of 20 characters
@@ -147,7 +147,7 @@ const prog_char mainmenu_9_label[] PROGMEM = "Date / Time";
 #ifdef VersionMenu
 const prog_char mainmenu_10_label[] PROGMEM = "Version";
 #endif  // VersionMenu
-PROGMEM const char *mainmenu_items[] = {
+PROGMEM const char * const mainmenu_items[] = {
                     mainmenu_0_label,
                     mainmenu_1_label,
                     mainmenu_2_label,
@@ -215,7 +215,7 @@ const prog_char mainmenu_5_label[] PROGMEM = "Setup ->";
 #ifdef VersionMenu
 const prog_char mainmenu_6_label[] PROGMEM = "Version";
 #endif  // VersionMenu
-PROGMEM const char *mainmenu_items[] = {
+PROGMEM const char * const mainmenu_items[] = {
                     mainmenu_0_label,
                     mainmenu_1_label,
 #ifndef RemoveAllLights
@@ -273,7 +273,7 @@ const prog_char setupmenu_7_label[] PROGMEM = "Calibrate Water";
 #ifdef DateTimeSetup
 const prog_char setupmenu_8_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
-PROGMEM const char *setupmenu_items[] = {
+PROGMEM const char * const setupmenu_items[] = {
 #ifdef WavemakerSetup
                     setupmenu_0_label,
 #endif  // WavemakerSetup
@@ -342,7 +342,7 @@ const prog_char lightsmenu_4_label[] PROGMEM = "Standard Lights";
 #ifdef DisplayLEDPWM
 const prog_char lightsmenu_5_label[] PROGMEM = "LED PWM";
 #endif  // DisplayLEDPWM
-PROGMEM const char *lightsmenu_items[] = {
+PROGMEM const char * const lightsmenu_items[] = {
                             lightsmenu_0_label, lightsmenu_1_label,
 #ifdef MetalHalideSetup
                             lightsmenu_2_label,
@@ -378,7 +378,7 @@ const prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
 const prog_char tempsmenu_2_label[] PROGMEM = "Overheat Set";
 #endif  // OverheatSetup
 const prog_char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
-PROGMEM const char *tempsmenu_items[] = {
+PROGMEM const char * const tempsmenu_items[] = {
                         tempsmenu_0_label,
                         tempsmenu_1_label,
 #ifdef OverheatSetup
@@ -407,7 +407,7 @@ const prog_char timeoutsmenu_2_label[] PROGMEM = "ATO Clear";
 const prog_char timeoutsmenu_3_label[] PROGMEM = "Feeding";
 const prog_char timeoutsmenu_4_label[] PROGMEM = "LCD";
 #endif  // SetupExtras
-PROGMEM const char *timeoutsmenu_items[] = {
+PROGMEM const char * const timeoutsmenu_items[] = {
 #ifdef ATOSetup
                         timeoutsmenu_0_label,
 #ifdef SingleATOSetup
