@@ -237,6 +237,13 @@ void RA_PWMClass::Expansion(byte cmd, byte data)
 	Wire.write((int)(data*2.55));			// send the data
 	Present=Wire.endTransmission();		// stop transmitting
 	if (cmd<PWM_EXPANSION_CHANNELS) ExpansionChannel[cmd]=data;
+	// Also send data to new module PCA9685
+	int newdata=(int)(data*40.96);
+    Wire.beginTransmission(I2CPWM_PCA9685);
+    Wire.write(0x8+(4*cmd));
+    Wire.write(newdata&0xff);
+    Wire.write(newdata>>8);
+    Wire.endTransmission();
 }
 
 void RA_PWMClass::ExpansionSetPercent(byte p)
@@ -250,6 +257,12 @@ void RA_PWMClass::ExpansionSetPercent(byte p)
 
 void RA_PWMClass::ExpansionWrite()
 {
+	// setup PCA9685 for data receive
+	// we need this to make sure it will work if connected ofter controller is booted, so we need to send it all the time.
+	Wire.beginTransmission(I2CPWM_PCA9685);
+	Wire.write(0);
+	Wire.write(0xa1);
+	Wire.endTransmission();
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
 	{
 		Expansion(a,ExpansionChannel[a]);

@@ -228,6 +228,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CRA_Master		0x11
 #define I2CRA_TouchDisplay	0x12
 #define I2CTilt				0x1c
+#define I2CPWM_PCA9685		0x40
+
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
