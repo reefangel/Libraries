@@ -22,10 +22,14 @@
 #include <Globals.h>
 #include <Time.h>
 #include "RA_NokiaLCD.h"
+#include <RA_Wifi.h>
 #include <Wire.h>
 #include <InternalEEPROM.h>
 #include <Memory.h>
 #include <avr/pgmspace.h>
+#if defined WDT || defined WDT_FORCE
+#include <avr/wdt.h>
+#endif  // defined WDT || defined WDT_FORCE
 
 #ifndef REEFTOUCH
 
@@ -632,6 +636,10 @@ void RA_NokiaLCD::SendData(byte data)
     SDA1
     CLK1
     ShiftBits(data);
+    pingSerial();
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 }
 
 void RA_NokiaLCD::SendCMD(byte data)

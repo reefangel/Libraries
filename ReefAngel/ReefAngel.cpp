@@ -701,7 +701,6 @@ void ReefAngelClass::Init()
 
 void ReefAngelClass::Refresh()
 {
-    pingSerial();
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
@@ -753,7 +752,6 @@ void ReefAngelClass::Refresh()
 #if not defined REEFTOUCHDISPLAY
 #ifdef RFEXPANSION
 	byte RFRecv=0;
-    pingSerial();
 	RFRecv=RF.RFCheck();
 	if (RFRecv==1)
 	{
@@ -785,16 +783,13 @@ void ReefAngelClass::Refresh()
     }
 #endif  // AI_LED
 #if defined PWMEXPANSION && defined DisplayLEDPWM
-    pingSerial();
 	PWM.ExpansionWrite();
 #endif  // PWMEXPANSION
 #ifdef IOEXPANSION
-    pingSerial();
 	IO.GetChannel();
 #endif  // IOEXPANSION
 #endif  // REEFTOUCHDISPLAY	
 	
-    pingSerial();
 	Relay.Write();
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
@@ -879,11 +874,9 @@ void ReefAngelClass::Refresh()
 #endif  // defined WATERLEVELEXPANSION
 	OverheatCheck();
 #ifdef BUSCHECK
-	pingSerial();
 	Wire.beginTransmission(0x68);
 	Wire.write(0);
 	int a=Wire.endTransmission();
-	pingSerial();
 	if (a==5)
 	{
 	  LED.On();
@@ -1903,7 +1896,6 @@ void ReefAngelClass::LightsOff()
 
 void ReefAngelClass::RefreshScreen()
 {
-    pingSerial();
 #if not defined REEFTOUCH && not defined REEFTOUCHDISPLAY
     LCD.PutPixel(DefaultBGColor,1,1);
 #endif  // REEFTOUCH
@@ -3086,7 +3078,6 @@ void ReefAngelClass::ShowTouchInterface()
 			}	
 #endif //  CUSTOM_MAIN
 			
-			pingSerial();
 			wdt_reset();
 			if (TS.IsTouched())
 			{
@@ -3530,7 +3521,6 @@ void ReefAngelClass::ShowInterface()
 					Timer[LCD_TIMER].Start();
 				}
 
-				pingSerial();
 #ifdef CUSTOM_MAIN
 				DrawCustomMain();
 #else
@@ -3539,25 +3529,18 @@ void ReefAngelClass::ShowInterface()
 #ifdef DATETIME24
 				LCD.DrawDateTimeISO8601(6, 112);
 #else
-				pingSerial();
 				LCD.DrawDate(6, 112);
 #endif // DATETIME24
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
-				pingSerial();
 				LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
-				pingSerial();
 				LCD.DrawMonitor(15, 60, Params);
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
-				pingSerial();
 				byte TempRelay = Relay.RelayData;
 				TempRelay &= Relay.RelayMaskOff;
 				TempRelay |= Relay.RelayMaskOn;
 				LCD.DrawOutletBox(12, 93, TempRelay);
 #endif  // CUSTOM_MAIN
-
-				pingSerial();
-
 				// Process any checks/tests/events that can happen while displaying the home screen
 				// This can be the timers for wavemakers or any overheat temperatures
 
@@ -3575,25 +3558,21 @@ void ReefAngelClass::ShowInterface()
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
 					//LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr, CurTemp);
-					pingSerial();
 					LCD.PutPixel(DefaultBGColor,1,1);
 					CurTemp = map(Params.Temp[T2_PROBE], T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
 					LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr+120, CurTemp);
-					pingSerial();
 					LCD.PutPixel(DefaultBGColor,1,1);
 					CurTemp = map(Params.Temp[T3_PROBE], T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
 					//LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr+240, CurTemp);
-					pingSerial();
 //					LCD.PutPixel(DefaultBGColor,1,1);
 					CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
 					CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
 					//LCD.PutPixel(DefaultBGColor,1,1);
 					Memory.Write(taddr+360, CurTemp);
-					pingSerial();
 					LCD.PutPixel(DefaultBGColor,1,1);
 					if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
 #ifdef CUSTOM_MAIN
