@@ -636,7 +636,9 @@ void RA_NokiaLCD::SendData(byte data)
     SDA1
     CLK1
     ShiftBits(data);
+#ifdef wifi
     pingSerial();
+#endif  // wifi
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
