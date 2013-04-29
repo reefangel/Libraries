@@ -20,6 +20,7 @@
   */
 
 #include "Font.h"
+#include "RA_Wifi.h"
 
 FontClass::FontClass()
 {
@@ -120,6 +121,7 @@ void FontClass::DrawChar(char c)
 	int pix_x, pix_y;
     unsigned long index = 0;
   
+    pingSerial();
     byte charwidth = CharWidth(c);
     if (charwidth == 0) return;
     byte width = charwidth + CS;

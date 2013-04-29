@@ -2208,10 +2208,9 @@ void ReefAngelClass::ShowTouchInterface()
 							Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
 							Font.DrawCenterText(twidth/2,theight-15,"Menu");
 						}
-						TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
-						TouchLCD.DrawAlertFlag(bitRead(Flags,ATOTimeOutFlag),ATOTimeOutFlag+1, ATOTIMEOUTFLAG);
-						TouchLCD.DrawAlertFlag(bitRead(Flags,OverheatFlag),OverheatFlag+1, OVERHEATFLAG);
-						TouchLCD.DrawAlertFlag(bitRead(Flags,BusLockFlag),BusLockFlag+1, BUSLOCKFLAG);
+//						TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
+						Flags=5;
+						TouchLCD.DrawFlags(Flags);
 						if (DisplayedScreen==MAIN_SCREEN)
 						{
 							int x=0;

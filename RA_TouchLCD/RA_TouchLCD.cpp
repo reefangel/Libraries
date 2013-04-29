@@ -561,16 +561,30 @@ char* RA_TouchLCD::ConvertDigitsNumber(int number)
 	return text;
 }
 
-void RA_TouchLCD::DrawAlertFlag(boolean Flag, byte position, const prog_uchar *iPtr)
+void RA_TouchLCD::DrawAlertFlag(byte position, const prog_uchar *iPtr)
 {
-	if (Flag)
-	{
-		if (now()%2==0)
-			DrawBMP(w-(16*position),7,iPtr);
-		else
-			Clear(TOPBAR_BC,w-(16*position),7,w+16-(16*position),23);
-	}
-	
+	if (now()%2==0)
+		DrawBMP(w-(16*position),7,iPtr);
+	else
+		Clear(TOPBAR_BC,w-(16*position),7,w+16-(16*position),23);
 }
 
+void RA_TouchLCD::DrawFlags(byte Flags)
+{
+	byte numflags=1;
+	for(byte i=0;i<8;i++,Flags>>=1)
+		if ((Flags & 1) == 1)
+			switch (i)
+			{
+			case 0:
+				DrawAlertFlag(numflags++,ATOTIMEOUTFLAG);
+				break;
+			case 1:
+				DrawAlertFlag(numflags++,OVERHEATFLAG);
+				break;
+			case 2:
+				DrawAlertFlag(numflags++,BUSLOCKFLAG);
+				break;
+			}
+}
 
