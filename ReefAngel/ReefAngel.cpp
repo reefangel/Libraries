@@ -1754,7 +1754,7 @@ void ReefAngelClass::FeedingModeStart()
 	// TODO Test SaveRelayState
 	CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
-	Relay.RelayMaskOff = ~FeedingModePorts;
+	Relay.RelayMaskOff &= ~FeedingModePorts;
 #ifdef RelayExp
 	byte i;
 	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
@@ -1785,7 +1785,7 @@ void ReefAngelClass::WaterChangeModeStart()
 	// TODO Test SaveRelayState
 	CurrentRelayState = Relay.RelayData;
 #endif  // SaveRelayState
-	Relay.RelayMaskOff = ~WaterChangePorts;
+	Relay.RelayMaskOff &= ~WaterChangePorts;
 #ifdef RelayExp
 	byte i;
 	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
@@ -3612,13 +3612,13 @@ void ReefAngelClass::ShowInterface()
 #endif  // SaveRelayState
 
 					// turn on ports
-					Relay.RelayMaskOff = B11111111;
+					Relay.RelayMaskOff |= FeedingModePorts;
 					// Compare the delayed on ports with the previous port states
 					Relay.RelayData &= ~(FeedingModePorts & DelayedOnPorts);
 #ifdef RelayExp
 					for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 					{
-						Relay.RelayMaskOffE[i] = B11111111;
+						Relay.RelayMaskOffE[i] |= FeedingModePortsE[i];
 						Relay.RelayDataE[i] &= ~(FeedingModePortsE[i] & DelayedOnPortsE[i]);
 					}
 #endif  // RelayExp
@@ -3641,13 +3641,13 @@ void ReefAngelClass::ShowInterface()
 #endif  // SaveRelayState
 
 					// turn on ports
-					Relay.RelayMaskOff = B11111111;
+					Relay.RelayMaskOff |= WaterChangePorts;
 					// Compare the delayed on ports with the previous port states
 					Relay.RelayData &= ~(WaterChangePorts & DelayedOnPorts);
 #ifdef RelayExp
 					for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 					{
-						Relay.RelayMaskOffE[i] = B11111111;
+						Relay.RelayMaskOffE[i] |= WaterChangePortsE[i];
 						Relay.RelayDataE[i] &= ~(WaterChangePortsE[i] & DelayedOnPortsE[i]);
 					}
 #endif  // RelayExp
