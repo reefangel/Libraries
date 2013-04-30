@@ -419,7 +419,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_WaterLevelLow        VarsStart+131
 #define Mem_B_WaterLevelHigh       VarsStart+132
 #define Mem_B_DP3Timer            VarsStart+133
-#define Mem_I_DP3RepeatInterval	  VarsStart+34
+#define Mem_I_DP3RepeatInterval	  VarsStart+134
 
 #define VarsEnd                 VarsStart+136
 // Next value starts VarsStart+136
