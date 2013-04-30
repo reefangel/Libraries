@@ -503,34 +503,23 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 
 void RA_TouchLCD::DrawDateTime(int x, int y, boolean militarytime, FontClass Font)
 {
-	char text[9];
+	char text[15];
 	
 	Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
-	strcpy(text,ConvertDigitsNumber(month()));
+	sprintf(text,"%02d/%02d/%02d ",month(),day(),year()-2000);
 	Font.DrawText(x,y,text);
-	Font.DrawText("/");
-	strcpy(text,ConvertDigitsNumber(day()));
-	Font.DrawText(text);
-	Font.DrawText("/");
-	strcpy(text,ConvertDigitsNumber(year()-2000));
-	Font.DrawText(text);
-	Font.DrawText(" ");
-	if (!militarytime && hour()>12)
+	if (militarytime)
 	{
-		Font.DrawText(hour()-12);
+		sprintf(text,"%02d:%02d:%02d ",hour(),minute(),second());
 	}
 	else
 	{
-		Font.DrawText(hour());
+		if(hour()>=12)
+			sprintf(text,"%02d:%02d:%02d PM",hour()-12,minute(),second());
+		else
+			sprintf(text,"%02d:%02d:%02d AM",hour(),minute(),second());
 	}
-	Font.DrawText(":");
-	strcpy(text,ConvertDigitsNumber(minute()));
 	Font.DrawText(text);
-	Font.DrawText(":");
-	strcpy(text,ConvertDigitsNumber(second()));
-	Font.DrawText(text);
-	if (!militarytime) if(hour()>=12) Font.DrawText("PM "); else Font.DrawText("AM ");
-
 }
 
 void RA_TouchLCD::DrawRelayStatus(int x, int y, boolean status)
