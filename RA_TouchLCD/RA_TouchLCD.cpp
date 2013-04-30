@@ -574,17 +574,12 @@ void RA_TouchLCD::DrawFlags(byte Flags)
 	byte numflags=1;
 	for(byte i=0;i<8;i++,Flags>>=1)
 		if ((Flags & 1) == 1)
-			switch (i)
-			{
-			case 0:
-				DrawAlertFlag(numflags++,ATOTIMEOUTFLAG);
-				break;
-			case 1:
-				DrawAlertFlag(numflags++,OVERHEATFLAG);
-				break;
-			case 2:
-				DrawAlertFlag(numflags++,BUSLOCKFLAG);
-				break;
-			}
+		{
+			const prog_uchar **iptr=FLAGICONS;
+			const prog_uchar *arr1 = ( prog_uchar* ) pgm_read_word( iptr + i );
+//			Serial.println(pgm_read_byte(arr1));
+			DrawAlertFlag(numflags,arr1);
+			numflags++;
+		}
 }
 
