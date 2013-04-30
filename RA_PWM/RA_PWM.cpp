@@ -238,7 +238,7 @@ void RA_PWMClass::Expansion(byte cmd, byte data)
 	Present=Wire.endTransmission();		// stop transmitting
 	if (cmd<PWM_EXPANSION_CHANNELS) ExpansionChannel[cmd]=data;
 	// Also send data to new module PCA9685
-	int newdata=(int)(data*40.96);
+	int newdata=(int)(data*40.95);
     Wire.beginTransmission(I2CPWM_PCA9685);
     Wire.write(0x8+(4*cmd));
     Wire.write(newdata&0xff);
