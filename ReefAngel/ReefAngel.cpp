@@ -1759,7 +1759,7 @@ void ReefAngelClass::FeedingModeStart()
 	byte i;
 	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 	{
-		Relay.RelayMaskOffE[i] = ~FeedingModePortsE[i];
+		Relay.RelayMaskOffE[i] &= ~FeedingModePortsE[i];
 	}
 #endif  // RelayExp
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY	
@@ -1790,7 +1790,7 @@ void ReefAngelClass::WaterChangeModeStart()
 	byte i;
 	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 	{
-		Relay.RelayMaskOffE[i] = ~WaterChangePortsE[i];
+		Relay.RelayMaskOffE[i] &= ~WaterChangePortsE[i];
 	}
 #endif  // RelayExp
 //	Relay.Write();
