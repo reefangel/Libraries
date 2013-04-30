@@ -413,16 +413,17 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DelayedStart            VarsStart+120
 #define Mem_I_PHExpMin			  VarsStart+121
 #define Mem_I_PHExpMax			  VarsStart+123
-#define Mem_I_WaterLevelMin			  VarsStart+125
-#define Mem_I_WaterLevelMax			  VarsStart+127
-#define Mem_I_SalTempComp			  VarsStart+129
-#define Mem_B_WaterLevelLow        VarsStart+131
-#define Mem_B_WaterLevelHigh       VarsStart+132
+#define Mem_I_WaterLevelMin		  VarsStart+125
+#define Mem_I_WaterLevelMax		  VarsStart+127
+#define Mem_I_SalTempComp		  VarsStart+129
+#define Mem_B_WaterLevelLow       VarsStart+131
+#define Mem_B_WaterLevelHigh      VarsStart+132
 #define Mem_B_DP3Timer            VarsStart+133
 #define Mem_I_DP3RepeatInterval	  VarsStart+134
+#define Mem_B_LCDID		          VarsStart+136
 
-#define VarsEnd                 VarsStart+136
-// Next value starts VarsStart+136
+#define VarsEnd					  VarsStart+137
+// Next value starts VarsStart+137
 
 
 // EEProm Pointers

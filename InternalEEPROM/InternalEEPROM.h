@@ -189,6 +189,8 @@ class InternalEEPROMClass {
         void WaterLevelHigh_write(const uint8_t value);
         uint8_t DP3Timer_read();
         void DP3Timer_write(const uint8_t value);
+        uint8_t LCDID_read();
+        void LCDID_write(const uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();

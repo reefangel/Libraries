@@ -543,6 +543,7 @@ void ReefAngelClass::Init()
 	TouchLCD.SetBacklight(100);
 #else //  defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	Joystick.Init();
+	LCD.LCDID=InternalMemory.LCDID_read();
 	LCD.Init();
 	LCD.BacklightOn();
 #endif //  defined REEFTOUCH || defined REEFTOUCHDISPLAY

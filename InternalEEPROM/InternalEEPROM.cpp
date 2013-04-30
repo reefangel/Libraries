@@ -828,6 +828,16 @@ void InternalEEPROMClass::DP3Timer_write(const uint8_t value)
     write(Mem_B_DP3Timer, value);
 }
 
+uint8_t InternalEEPROMClass::LCDID_read()
+{
+    return read(Mem_B_LCDID);
+}
+
+void InternalEEPROMClass::LCDID_write(const uint8_t value)
+{
+    write(Mem_B_LCDID, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {

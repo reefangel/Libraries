@@ -41,7 +41,7 @@ class RA_NokiaLCD
 
 public:
     RA_NokiaLCD();
-    boolean lcd_screen;
+    byte LCDID;
 
 #ifndef REEFTOUCH
 	void Init();
