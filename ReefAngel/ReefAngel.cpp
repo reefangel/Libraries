@@ -3136,7 +3136,7 @@ void ReefAngelClass::ShowTouchInterface()
 #endif  // SaveRelayState
 
 				// turn on ports
-				Relay.RelayMaskOff = B11111111;
+				Relay.RelayMaskOff |= FeedingModePorts;
 				// Compare the delayed on ports with the previous port states
 				Relay.RelayData &= ~(FeedingModePorts & DelayedOnPorts);
 #ifdef RelayExp
@@ -3196,7 +3196,7 @@ void ReefAngelClass::ShowTouchInterface()
 #endif  // SaveRelayState
 
 				// turn on ports
-				Relay.RelayMaskOff = B11111111;
+				Relay.RelayMaskOff |= WaterChangePorts;
 				// Compare the delayed on ports with the previous port states
 				Relay.RelayData &= ~(WaterChangePorts & DelayedOnPorts);
 #ifdef RelayExp
