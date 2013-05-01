@@ -427,6 +427,8 @@ WaterLevelMin_read	KEYWORD2
 WaterLevelMin_write	KEYWORD2
 SalTempComp_read	KEYWORD2
 SalTempComp_write	KEYWORD2
+LCDID_read		KEYWORD2
+LCDID_write		KEYWORD2
 
 IMCheck_read	KEYWORD2
 IMCheck_write	KEYWORD2
