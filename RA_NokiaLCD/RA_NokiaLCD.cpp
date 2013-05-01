@@ -835,9 +835,9 @@ void RA_NokiaLCD::DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, ui
 	for(i=inc;i>=0;i--)
 	{
 		if (1<<i & c)
-			SendData(~fcolor);
+			if (LCDID==0) SendColor12Bit(fcolor); else SendData(~fcolor);
 		else
-			SendData(~bcolor);
+			if (LCDID==0) SendColor12Bit(bcolor); else SendData(~bcolor);
 	}
 }
 #endif  // FONT_8x8 || FONT_8x16 || FONT_12x16 || NUMBERS_8x8 || NUMBERS_8x16 || NUMBERS_12x16
@@ -964,9 +964,9 @@ void RA_NokiaLCD::DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, 
 	for(i=0;i<16;i++)
 	{
 		if (1<<i & c)
-			SendData(~fcolor);
+			if (LCDID==0) SendColor12Bit(fcolor); else SendData(~fcolor);
 		else
-			SendData(~bcolor);
+			if (LCDID==0) SendColor12Bit(bcolor); else SendData(~bcolor);
 	}
 }
 

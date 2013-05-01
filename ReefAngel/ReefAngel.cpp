@@ -4776,34 +4776,28 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
     char msg[20];
     byte offset_hr = 45;
     byte offset_min = offset_hr+20;
-    if ( bMetalHalide )
-    {
 #ifdef MetalHalideSetup
-        strcpy(msg, "Metal Halide Setup");
-        h1 = InternalMemory.MHOnHour_read();
-        m1 = InternalMemory.MHOnMinute_read();
-        h2 = InternalMemory.MHOffHour_read();
-        m2 = InternalMemory.MHOffMinute_read();
+	strcpy(msg, "Metal Halide Setup");
+	h1 = InternalMemory.MHOnHour_read();
+	m1 = InternalMemory.MHOnMinute_read();
+	h2 = InternalMemory.MHOffHour_read();
+	m2 = InternalMemory.MHOffMinute_read();
 #endif // MetalHalideSetup
-    }
-    else
-    {
 #ifdef StandardLightSetup
-        strcpy(msg, "Std Lights Setup");
-        h1 = InternalMemory.StdLightsOnHour_read();
-        m1 = InternalMemory.StdLightsOnMinute_read();
-        h2 = InternalMemory.StdLightsOffHour_read();
-        m2 = InternalMemory.StdLightsOffMinute_read();
+	strcpy(msg, "Std Lights Setup");
+	h1 = InternalMemory.StdLightsOnHour_read();
+	m1 = InternalMemory.StdLightsOnMinute_read();
+	h2 = InternalMemory.StdLightsOffHour_read();
+	m2 = InternalMemory.StdLightsOffMinute_read();
 #endif // StandardLightSetup
-    }
     ClearScreen(DefaultBGColor);
     // header / title
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, msg);
     // prefixes, draw in ':' between options
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, "On:");
     LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*4, ":");
-    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "Off:");
-    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*6, ":");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*7, "Off:");
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL+offset_hr+13, MENU_START_ROW*7, ":");
     do
     {
 #if defined WDT || defined WDT_FORCE
@@ -4811,94 +4805,63 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 #endif  // defined WDT || defined WDT_FORCE
         if ( bRedraw )
         {
+        	byte WhichOption=0;
+        	boolean OKStatus=false;
+        	boolean CancelStatus=false;
             switch ( sel )
             {
                 case OPT1:
                 {
-                    // draw the second line items before the first line items
-                    // so the UP & DOWN arrows show properly
-                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*6, "", "");
-                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*6, "", "");
-                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*4, "", "");
-                    LCD.DrawOption(h1, 1, MENU_START_COL+offset_hr, MENU_START_ROW*4, "", "");
-                    if ( bDrawButtons )
-                    {
-                        LCD.DrawOK(false);
-                        LCD.DrawCancel(false);
-                    }
+                	WhichOption=1;
+                	OKStatus=false;
+                	CancelStatus=false;
                     break;
                 }
                 case OPT2:
                 {
-                    // draw the second line items before the first line items
-                    // so the UP & DOWN arrows show properly
-                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*6, "", "");
-                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*6, "", "");
-                    LCD.DrawOption(m1, 1, MENU_START_COL+offset_min, MENU_START_ROW*4, "", "");
-                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*4, "", "");
-                    if ( bDrawButtons )
-                    {
-                        LCD.DrawOK(false);
-                        LCD.DrawCancel(false);
-                    }
+                	WhichOption=2;
+                	OKStatus=false;
+                	CancelStatus=false;
                     break;
                 }
                 case OPT3:
                 {
-                    // draw the first line items before the second line items
-                    // so the UP & DOWN arrows show properly
-                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*4, "", "");
-                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*4, "", "");
-                    LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*6, "", "");
-                    LCD.DrawOption(h2, 1, MENU_START_COL+offset_hr, MENU_START_ROW*6, "", "");
-                    if ( bDrawButtons )
-                    {
-                        LCD.DrawOK(false);
-                        LCD.DrawCancel(false);
-                    }
+                	WhichOption=3;
+                	OKStatus=false;
+                	CancelStatus=false;
                     break;
                 }
                 case OPT4:
                 {
-                    // draw the first line items before the second line items
-                    // so the UP & DOWN arrows show properly
-                    LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*4, "", "");
-                    LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*4, "", "");
-                    LCD.DrawOption(m2, 1, MENU_START_COL+offset_min, MENU_START_ROW*6, "", "");
-                    LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*6, "", "");
-                    if ( bDrawButtons )
-                    {
-                        LCD.DrawOK(false);
-                        LCD.DrawCancel(false);
-                    }
+                	WhichOption=4;
+                	OKStatus=false;
+                	CancelStatus=false;
                     break;
                 }
                 case OK:
                 {
-                    if ( bDrawButtons )
-                    {
-                        LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*4, "", "");
-                        LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*4, "", "");
-                        LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*6, "", "");
-                        LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*6, "", "");
-                        LCD.DrawOK(true);
-                        LCD.DrawCancel(false);
-                    }
+                	WhichOption=0;
+                	OKStatus=true;
+                	CancelStatus=false;
+
                     break;
                 }
                 case CANCEL:
                 {
-                    if ( bDrawButtons )
-                    {
-                        LCD.DrawOption(m1, 0, MENU_START_COL+offset_min, MENU_START_ROW*4, "", "");
-                        LCD.DrawOption(h1, 0, MENU_START_COL+offset_hr, MENU_START_ROW*4, "", "");
-                        LCD.DrawOption(m2, 0, MENU_START_COL+offset_min, MENU_START_ROW*6, "", "");
-                        LCD.DrawOption(h2, 0, MENU_START_COL+offset_hr, MENU_START_ROW*6, "", "");
-                        LCD.DrawOK(false);
-                        LCD.DrawCancel(true);
-                    }
+                	WhichOption=0;
+                	OKStatus=false;
+                	CancelStatus=true;
                     break;
                 }
+            }
+            LCD.DrawOption(h1, WhichOption==1, MENU_START_COL+offset_hr, MENU_START_ROW*4, "", "");
+            LCD.DrawOption(m1, WhichOption==2, MENU_START_COL+offset_min, MENU_START_ROW*4, "", "");
+            LCD.DrawOption(h2, WhichOption==3, MENU_START_COL+offset_hr, MENU_START_ROW*7, "", "");
+            LCD.DrawOption(m2, WhichOption==4, MENU_START_COL+offset_min, MENU_START_ROW*7, "", "");
+            if ( bDrawButtons )
+            {
+                LCD.DrawOK(OKStatus);
+                LCD.DrawCancel(CancelStatus);
             }
             bRedraw = false;
             bDrawButtons = false;
