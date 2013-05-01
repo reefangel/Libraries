@@ -3143,7 +3143,7 @@ void ReefAngelClass::ShowTouchInterface()
 #ifdef RelayExp
 				for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 				{
-					Relay.RelayMaskOffE[i] = B11111111;
+					Relay.RelayMaskOffE[i] |= FeedingModePortsE[i];
 					Relay.RelayDataE[i] &= ~(FeedingModePortsE[i] & DelayedOnPortsE[i]);
 				}
 #endif  // RelayExp
@@ -3203,7 +3203,7 @@ void ReefAngelClass::ShowTouchInterface()
 #ifdef RelayExp
 				for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 				{
-					Relay.RelayMaskOffE[i] = B11111111;
+					Relay.RelayMaskOffE[i] |= WaterChangePortsE[i];
 					Relay.RelayDataE[i] &= ~(WaterChangePortsE[i] & DelayedOnPortsE[i]);
 				}
 #endif  // RelayExp
