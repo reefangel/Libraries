@@ -91,10 +91,11 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define Port2Bit   1<<1
 #define Port1Bit   1<<0
 
-// Flag bits
+// Flags bits
 #define ATOTimeOutFlag	0
 #define OverheatFlag   	1
 #define BusLockFlag   	2
+#define LightsOnFlag   	3
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
@@ -270,6 +271,15 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define MESSAGE_BUTTON	0
 #define MESSAGE_RELAY_OVERRIDE	1
 #define MESSAGE_CHANNEL_OVERRIDE	2
+#define MESSAGE_MENU	3
+#define MESSAGE_COMMAND	4
+
+// I2C Command IDs
+// Don't use command 0. It is going to be used to clear the command check on function UpdateTouchDisplay()
+#define COMMAND_CLEAR_ATO	1
+#define COMMAND_CLEAR_OVERHEAT	2
+#define COMMAND_LIGHTS_ON	3
+#define COMMAND_LIGHTS_OFF	4
 
 /*
 EEPROM locations

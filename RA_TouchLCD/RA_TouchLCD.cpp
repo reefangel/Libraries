@@ -570,5 +570,7 @@ void RA_TouchLCD::DrawFlags(byte Flags)
 			DrawAlertFlag(numflags,arr1);
 			numflags++;
 		}
+		else
+			Clear(TOPBAR_BC,w-(16*numflags),7,w+16-(16*numflags),23);
 }
 

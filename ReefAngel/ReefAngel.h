@@ -247,6 +247,8 @@ public:
 	*/
 	TimerClass Timer[6];
 	byte SelectedMenuItem;
+	byte DisplayedMenu;
+	bool showmenu;
 
 	// Ports to toggle during different modes
 	byte FeedingModePorts;
@@ -272,6 +274,11 @@ public:
 //	byte WM1Port;	deprecated by issue #47
 //	byte WM2Port;	deprecated by issue #47
 //#endif  // WavemakerSetup
+#ifdef I2CMASTER
+	byte ChangeMode;
+	byte I2CCommand;
+	void UpdateTouchDisplay();
+#endif // I2CMASTER
 
 	byte OverheatProbe;
 	byte TempProbe;
@@ -386,14 +393,15 @@ public:
 #endif  // CUSTOM_MENU
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
     void ShowTouchInterface();
-	void UpdateTouchDisplay();
 #else
     void ShowInterface();
 #endif // REEFTOUCH
+    void PrepMenuScreen();
     void DisplayMenu();
     void DisplayMenuHeading();
     void DisplayMenuEntry(char *text);
     void ExitMenu();
+    void SetDisplayedMenu(byte value);
     void ProcessButtonPress();
 #ifdef CUSTOM_MENU
 	void ProcessButtonPressCustom();
@@ -454,16 +462,12 @@ public:
 	inline int GetBatteryVoltage() { return analogRead(VBAT)*.48828; };
 
 private:
-	bool showmenu;
 	time_t menutimeout;
 	byte taddr;
 
 	// Nested Menu variables
 	int menusptr[Total_Menus];
 	byte menuqtysptr[Total_Menus];
-public:
-	byte DisplayedMenu;
-private:
 	byte PreviousMenu;
 	bool redrawmenu;
 	
