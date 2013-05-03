@@ -254,6 +254,9 @@ public:
 	byte FeedingModePorts;
 	byte WaterChangePorts;
 	byte OverheatShutoffPorts;
+#ifdef OVERRIDE_PORTS
+	byte OverridePorts;
+#endif
 	byte EM;
 	byte REM;
 	
@@ -262,6 +265,9 @@ public:
 	byte FeedingModePortsE[MAX_RELAY_EXPANSION_MODULES];
 	byte WaterChangePortsE[MAX_RELAY_EXPANSION_MODULES];
 	byte OverheatShutoffPortsE[MAX_RELAY_EXPANSION_MODULES];
+#ifdef OVERRIDE_PORTS
+  byte OverridePortsE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // OVERRIDE_PORTS
 #endif  // RelayExp
 #ifndef RemoveAllLights
 	byte LightsOnPorts;
@@ -294,6 +300,7 @@ public:
 	void inline AddRFExpansion() {};
 	void inline AddCustomColors() {};
 	void inline AddBusCheck() {};
+        void inline AddPortOverrides() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
         void inline ReverseATOLow() {};

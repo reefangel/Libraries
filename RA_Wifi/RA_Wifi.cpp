@@ -269,6 +269,19 @@ void processHTTP()
 					}
 #endif  // RelayExp
 				}
+#ifdef OVERRIDE_PORTS
+				// Reset relay masks for ports we want always in their programmed states.
+				ReefAngel.Relay.RelayMaskOn &= ~ReefAngel.OverridePorts;
+				ReefAngel.Relay.RelayMaskOff |= ReefAngel.OverridePorts;
+#ifdef RelayExp
+			        byte i;
+			        for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+			        {
+			                ReefAngel.Relay.RelayMaskOnE[i] &= ~ReefAngel.OverridePortsE[i];
+			                ReefAngel.Relay.RelayMaskOffE[i] |= ReefAngel.OverridePortsE[i];
+			        }
+#endif  // RelayExp  
+#endif  // OVERRIDE_PORTS
 				ReefAngel.Relay.Write();
 				// Force update of the Portal after relay change
 //				ReefAngel.Timer[PORTAL_TIMER].ForceTrigger();
