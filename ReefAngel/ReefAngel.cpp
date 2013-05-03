@@ -1855,11 +1855,11 @@ void ReefAngelClass::OverheatCheck()
 		InternalMemory.write(Overheat_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
 		// invert the ports that are activated
-		Relay.RelayMaskOff = ~OverheatShutoffPorts;
+		Relay.RelayMaskOff &= ~OverheatShutoffPorts;
 #ifdef RelayExp
 		for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 		{
-			Relay.RelayMaskOffE[i] = ~OverheatShutoffPortsE[i];
+			Relay.RelayMaskOffE[i] &= ~OverheatShutoffPortsE[i];
 		}
 #endif  // RelayExp
 	}
@@ -1872,11 +1872,11 @@ void ReefAngelClass::OverheatClear()
 #ifdef ENABLE_EXCEED_FLAGS
 	InternalMemory.write(Overheat_Exceed_Flag, 0);
 #endif  // ENABLE_EXCEED_FLAGS
-	Relay.RelayMaskOff = B11111111;
+	Relay.RelayMaskOff |= OverheatShutoffPorts;
 #ifdef RelayExp
 	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 	{
-		Relay.RelayMaskOffE[i] = B11111111;
+		Relay.RelayMaskOffE[i] |= OverheatShutoffPortsE[i];
 	}
 #endif  // RelayExp
 	Relay.Write();
@@ -1892,11 +1892,11 @@ void ReefAngelClass::OverheatClear()
 void ReefAngelClass::LightsOn()
 {
     // turn on ports
-    Relay.RelayMaskOn = LightsOnPorts;
+    Relay.RelayMaskOn |= LightsOnPorts;
 #ifdef RelayExp
 	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 	{
-		Relay.RelayMaskOnE[i] = LightsOnPortsE[i];
+		Relay.RelayMaskOnE[i] |= LightsOnPortsE[i];
 	}
 #endif  // RelayExp
     Relay.Write();
@@ -1914,11 +1914,11 @@ void ReefAngelClass::LightsOn()
 void ReefAngelClass::LightsOff()
 {
     // reset ports
-    Relay.RelayMaskOn = B00000000;
+    Relay.RelayMaskOn &= ~LightsOnPorts;
 #ifdef RelayExp
 	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
 	{
-		Relay.RelayMaskOnE[i] = B00000000;
+		Relay.RelayMaskOnE[i] &= ~LightsOnPortsE[i];
 	}
 #endif  // RelayExp
 #if defined DisplayLEDPWM && !defined REEFANGEL_MINI
