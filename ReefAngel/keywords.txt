@@ -41,6 +41,7 @@ AddDateTimeMenu	KEYWORD2
 AddCustomColors	KEYWORD2
 AddBusCheck	KEYWORD2
 Display24h	KEYWORD2
+AddPortOverrides	KEYWORD2
 One	KEYWORD2
 Mini	KEYWORD2
 DayLights	KEYWORD2
