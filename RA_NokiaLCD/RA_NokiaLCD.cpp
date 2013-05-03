@@ -1377,7 +1377,7 @@ void RA_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte 
     Clear(DefaultBGColor,x,y,x+30,y+8);
     DrawText(fcolor,DefaultBGColor,x,y,text);
 }
-void RA_NokiaLCD::DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, int high, int low, byte warn_color);
+void RA_NokiaLCD::DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, int high, int low, byte warn_color)
 {
   int mod=second()%2;
   if (Temp > high || Temp < low) 
