@@ -470,7 +470,6 @@ void ReefAngelClass::Init()
 	Wire.onReceive(receiveEventMaster);
 	Wire.onRequest(NULL);
 	Wire.begin(I2CRA_Master);
-	ChangeMode=0;
 	I2CCommand=0;
 #else // REEFTOUCHDISPLAY
 	Wire.onReceive(NULL);
@@ -549,6 +548,7 @@ void ReefAngelClass::Init()
 	LCD.Init();
 	LCD.BacklightOn();
 #endif //  defined REEFTOUCH || defined REEFTOUCHDISPLAY
+	ChangeMode=0;
 	Flags = 0;
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
@@ -709,6 +709,11 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+	if (ChangeMode==FEEDING_MODE)
+		FeedingModeStart();
+	if (ChangeMode==WATERCHANGE_MODE)
+		WaterChangeModeStart();
+	ChangeMode=0;
 	boolean LightRelayOn=false;
 	for (int l=0;l<8;l++)
 	{
@@ -2288,11 +2293,6 @@ void ReefAngelClass::UpdateTouchDisplay()
 		delay(10);
 		wdt_reset();
 	}
-	if (ChangeMode==FEEDING_MODE)
-		FeedingModeStart();
-	if (ChangeMode==WATERCHANGE_MODE)
-		WaterChangeModeStart();
-	ChangeMode=0;
 	if (I2CCommand==COMMAND_CLEAR_ATO)
 		ATOClear();
 	if (I2CCommand==COMMAND_CLEAR_OVERHEAT)

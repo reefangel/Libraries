@@ -275,11 +275,11 @@ public:
 //	byte WM2Port;	deprecated by issue #47
 //#endif  // WavemakerSetup
 #ifdef I2CMASTER
-	byte ChangeMode;
 	byte I2CCommand;
 	void UpdateTouchDisplay();
 #endif // I2CMASTER
 
+	byte ChangeMode;
 	byte OverheatProbe;
 	byte TempProbe;
 

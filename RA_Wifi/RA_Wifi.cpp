@@ -646,8 +646,7 @@ void processHTTP()
 				// Start up the feeding mode only if we are on the home screen or from Water change
 				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU || ReefAngel.DisplayedMenu==WATERCHANGE_MODE )
 				{
-					ReefAngel.ClearScreen(DefaultBGColor);
-					ReefAngel.FeedingModeStart();
+					ReefAngel.ChangeMode=FEEDING_MODE;
 					ModeResponse(true);
 				}
 				else
@@ -661,8 +660,7 @@ void processHTTP()
 				// Start up the water change mode only if we are on the home screen
 				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU )
 				{
-					ReefAngel.ClearScreen(DefaultBGColor);
-					ReefAngel.WaterChangeModeStart();
+					ReefAngel.ChangeMode=WATERCHANGE_MODE;
 					ModeResponse(true);
 				}
 				else
