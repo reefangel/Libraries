@@ -1377,6 +1377,25 @@ void RA_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte 
     Clear(DefaultBGColor,x,y,x+30,y+8);
     DrawText(fcolor,DefaultBGColor,x,y,text);
 }
+void RA_NokiaLCD::DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, byte high, byte low, byte warn_color);
+{
+  int mod=second()%2;
+  if (Temp > high || Temp < low) 
+  {
+    if (mod==0) 
+    {
+      Clear(DefaultBGColor,x,y,x+40,y+10);
+    }
+    else 
+    {
+      DrawSingleMonitor(Temp, warn_color, x, y, decimal);
+    }
+  }
+  else 
+  {
+    DrawSingleMonitor(Temp, fcolor, x, y, decimal);
+  }
+}
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 void RA_NokiaLCD::DrawMonitor(byte x, byte y, ParamsStruct Params, byte DaylightPWMValue, byte ActinicPWMValue)
