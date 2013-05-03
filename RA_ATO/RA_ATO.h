@@ -54,21 +54,37 @@ private:
 class RA_ATOHighClass : public RA_ATOClass
 {
 public:
+#ifdef ATO_HIGH_REVERSE
+#ifdef REEFTOUCHDISPLAY
+    inline bool IsActive() { return !activestatus; }
+#else // REEFTOUCHDISPLAY
+    inline bool IsActive() { return digitalRead(highATOPin); }
+#endif // REEFTOUCHDISPLAY
+#else // ATO_HIGH_REVERSE
 #ifdef REEFTOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
 #else // REEFTOUCHDISPLAY
     inline bool IsActive() { return !digitalRead(highATOPin); }
 #endif // REEFTOUCHDISPLAY
+#endif // ATO_HIGH_REVERSE
 };
 
 class RA_ATOLowClass : public RA_ATOClass
 {
 public:
+#ifdef ATO_LOW_REVERSE
+#ifdef REEFTOUCHDISPLAY
+    inline bool IsActive() { return !activestatus; }
+#else // REEFTOUCHDISPLAY
+    inline bool IsActive() { return digitalRead(lowATOPin); }
+#endif // REEFTOUCHDISPLAY
+#else // ATO_LOW_REVERSE
 #ifdef REEFTOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
 #else // REEFTOUCHDISPLAY
     inline bool IsActive() { return !digitalRead(lowATOPin); }
 #endif // REEFTOUCHDISPLAY
+#endif // ATO_LOW_REVERSE
 };
 
 #if defined WATERLEVELEXPANSION
