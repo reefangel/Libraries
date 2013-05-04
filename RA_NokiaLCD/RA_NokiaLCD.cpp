@@ -651,9 +651,6 @@ void RA_NokiaLCD::SendData(byte data)
 #ifdef wifi
     pingSerial();
 #endif  // wifi
-#if defined WDT || defined WDT_FORCE
-	wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
 }
 
 void RA_NokiaLCD::SendCMD(byte data)
@@ -678,6 +675,9 @@ void RA_NokiaLCD::SendColor12Bit(byte color)
 
 void RA_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
 {
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 	if (LCDID==0)
 	{
 		SendCMD(0x42);
@@ -719,18 +719,23 @@ void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
 	if (LCDID!=0) SendCMD(RAMWR);
 
     // loop on total number of pixels / 2
-    for (i = 0; i < ((xmax - xmin + 1) * (ymax - ymin + 1)) ; i++)
+    for (i = 0; i<(xmax - xmin + 1); i++)
     {
         // use the color value to output three data bytes covering two pixels
         // For some reason, it has to send blue first then green and red
         //SendData((color << 4) | ((color & 0xF0) >> 4));
         //SendData(((color >> 4) & 0xF0) | (color & 0x0F));
         //SendData((color & 0xF0) | (color >> 8));
-        
-    	if (LCDID==0)
-    		SendColor12Bit(color);
-    	else
-    		SendData(~color);
+#if defined WDT || defined WDT_FORCE
+	wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+    	for (int j=0; j<(ymax - ymin + 1); j++)
+    	{
+			if (LCDID==0)
+				SendColor12Bit(color);
+			else
+				SendData(~color);
+    	}
     }
 }
 

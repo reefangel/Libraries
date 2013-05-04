@@ -454,6 +454,7 @@ ReefAngelClass::ReefAngelClass()
 
 void ReefAngelClass::Init()
 {
+	LCD.BacklightOff();
 #if defined WDT || defined WDT_FORCE
 	// enable watchdog timer for 1 second.  consider allowing this option to be configured.
 	if ( wdtenabled ) wdt_enable(WDTO_1S);
