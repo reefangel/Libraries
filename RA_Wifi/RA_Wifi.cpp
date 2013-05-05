@@ -131,6 +131,10 @@ void pushbuffer(byte inStr)
 		    	// reset weboption to 0
 		    	weboption = 0;
 		    }
+		    else if (inStr == '-')
+		    {
+		    	webnegoption=true;
+		    }
 		    else if(isdigit(inStr))
 		    {
 		    	// process digits here
@@ -200,6 +204,7 @@ void processHTTP()
 			timeout=millis();
 		}
     }
+    if (webnegoption) weboption*=-1;
 	if (authStr[0]==0) auth=true;
     if (auth)
     {
@@ -759,6 +764,7 @@ void processHTTP()
 	m_pushbackindex=0;
     reqtype=0;
     weboption=0;
+    webnegoption=false;
 }
 
 void PrintHeader(int s, byte type)

@@ -352,6 +352,7 @@ static int weboption3=-1;
 static byte bHasSecondValue = false;
 //static byte bHasComma = false;
 static byte bCommaCount = 0;
+static boolean webnegoption=false;
 
 
 void WebResponse (const prog_char *response, long strsize);
