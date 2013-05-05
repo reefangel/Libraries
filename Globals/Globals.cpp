@@ -23,12 +23,13 @@
 
 byte intlength(int intin)
 {
-  if (intin>9999) return 5;
-  if (intin>999) return 4;
-  if (intin>99) return 3;
-  if (intin>9) return 2;
-  if (intin>=0 && intin<=9) return 1;
-  if (intin<0) return 2;
+    byte digits = 0;
+    if (intin < 0) digits = 1; // "-" counts as 1 character
+    while (intin) {
+    	intin /= 10;
+        digits++;
+    }
+    return digits;
 }
 
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute)
