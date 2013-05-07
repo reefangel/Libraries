@@ -112,6 +112,8 @@ DrawCircleOutline	KEYWORD2
 FillCircle	KEYWORD2
 DrawCircleOutletBox	KEYWORD2
 DrawCircleOutletBoxHorizontal	KEYWORD2
+DrawSingleMonitor	KEYWORD2
+DrawSingleMonitorAlarm	KEYWORD2
 
 #PWM
 
@@ -430,6 +432,10 @@ WaterLevelMin_read	KEYWORD2
 WaterLevelMin_write	KEYWORD2
 SalTempComp_read	KEYWORD2
 SalTempComp_write	KEYWORD2
+WaterLevelLow_read	KEYWORD2
+WaterLevelLow_write	KEYWORD2
+WaterLevelHigh_read	KEYWORD2
+WaterLevelHigh_write	KEYWORD2
 LCDID_read		KEYWORD2
 LCDID_write		KEYWORD2
 
