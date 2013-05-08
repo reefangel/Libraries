@@ -533,6 +533,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define ALT_SCREEN_MODE		251
 #define RETURN_MAIN_MODE	250
 #define TOUCH_MENU			249
+#define DATE_TIME_MENU		248
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 

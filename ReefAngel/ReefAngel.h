@@ -185,6 +185,9 @@ public:
 	typedef void (ReefAngelClass::* FuncPtr) (); // declare function pointers
 	FuncPtr MenuFunctionPtr;
 	FuncPtr menu_button_functions1[6];
+	FuncPtr menu_button_functions2[6];
+	FuncPtr menu_button_functions3[6];
+	FuncPtr menu_button_functions4[6];
 	
 	boolean Splash;
 	byte LastOrientation;
@@ -197,6 +200,7 @@ public:
 	byte orientation;
 	byte LongTouch;
 	bool SDFound;
+	time_t newnow;
 #else //  REEFTOUCH
 	RA_NokiaLCD LCD;
 	RA_JoystickClass Joystick;
@@ -392,7 +396,12 @@ public:
 	void SaveInitialSettings();
 	void ChangeDisplayedScreen(signed char index);
 	void MainScreen();
-#endif //  REEFTOUCH
+    void SetupTouchDateTime();
+    void CheckMenuTimeout();
+    void ShowTouchInterface();
+#else
+    void ShowInterface();
+#endif // REEFTOUCH
 
     // Nested Menu Functions
 #ifdef CUSTOM_MENU
@@ -400,11 +409,6 @@ public:
 #else
     void InitMenus();
 #endif  // CUSTOM_MENU
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
-    void ShowTouchInterface();
-#else
-    void ShowInterface();
-#endif // REEFTOUCH
     void PrepMenuScreen();
     void DisplayMenu();
     void DisplayMenuHeading();
