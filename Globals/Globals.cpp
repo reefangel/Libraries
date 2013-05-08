@@ -59,28 +59,29 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	// Contribution of thekameleon
 	// http://forum.reefangel.com/viewtopic.php?p=23893#p23893
 	LightsOverride=true;
+	int current_hour = hour();
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
 	if (start > end) //Start is greater than End so its over midnight
 	{
-	  //Example: 2300hrs to 0200hrs
-	  if (hour() < endHour) start -= 1440; //past midnight
-	  if (hour() >= startHour) end += 1440; //before midnight
+		//Example: 2300hrs to 0200hrs
+		if (current_hour < endHour) start -= 1440; //past midnight
+		if (current_hour >= startHour) end += 1440; //before midnight
 	}
-	int current = NumMins(hour(), minute());
+	int current = NumMins(current_hour, minute());
 	int startD = start + Duration;
 	int stopD = end - Duration;
-	
+
 	if ( current >= start && current <= startD )
-	  return constrain(map(current, start, startD, startPWM, endPWM),startPWM, endPWM);
+		return constrain(map(current, start, startD, startPWM, endPWM),startPWM, endPWM);
 	else if ( current >= stopD && current <= end )
 	{
-	  byte v = constrain(map(current, stopD, end, startPWM, endPWM),startPWM, endPWM);
-	  return endPWM - v + startPWM;
+		byte v = constrain(map(current, stopD, end, startPWM, endPWM),startPWM, endPWM);
+		return endPWM - v + startPWM;
 	}
 	else if ( current > startD && current < stopD )
-	  return endPWM;
-	
+		return endPWM;
+
 	// lastly return the existing value
 	return oldValue;
 }
@@ -90,47 +91,47 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	// Contribution of thekameleon
 	// http://forum.reefangel.com/viewtopic.php?p=23813#p23813
 	LightsOverride=true;
+	int current_hour = hour();
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
 	if (start > end) //Start is greater than End so its over midnight
 	{
-	//Example: 2300hrs to 0200hrs
-	if (hour() < endHour) start -= 1440; //past midnight
-	if (hour() >= startHour) end += 1440; //before midnight
+		//Example: 2300hrs to 0200hrs
+		if (current_hour < endHour) start -= 1440; //past midnight
+		if (current_hour >= startHour) end += 1440; //before midnight
 	}
-	
-	int current = NumMins(hour(), minute());
-	
-	byte pwmDelta = endPWM - startPWM;
-	byte parabolaPhase = constrain(map(current, start, end, 0, 180), 0, 180);
-	
+
+	int current = NumMins(current_hour, minute());
+
 	if ( current <= start || current >= end)
-	return oldValue;
+		return oldValue;
 	else
 	{
-	return startPWM + (pwmDelta * sin(radians(parabolaPhase)));
+		byte pwmDelta = endPWM - startPWM;
+		byte parabolaPhase = constrain(map(current, start, end, 0, 180), 0, 180);
+		return startPWM + (pwmDelta * sin(radians(parabolaPhase)));
 	}
 }
 
 byte MoonPhase()
 {
-	 int m,d,y;
-	 int yy,mm;
-	 long K1,K2,K3,J,V;
-	 m = month();
-	 d = day();
-	 y = year();
-	 yy = y-((12-m)/10);
-	 mm = m+9;
-	 if (mm>=12) mm -= 12;
-	 K1 = 365.25*(yy+4712);
-	 K2 = 30.6*mm+.5;
-	 K3 = int(int((yy/100)+49)*.75)-38;
-	 J = K1+K2+d+59-K3;
-	 V = (J-2451550.1)/0.29530588853;
-	 V -= int(V/100)*100;
-	 V = abs(V-50);
-	 return (byte)(2*abs(50-V));
+	int m,d,y;
+	int yy,mm;
+	long K1,K2,K3,J,V;
+	m = month();
+	d = day();
+	y = year();
+	yy = y-((12-m)/10);
+	mm = m+9;
+	if (mm>=12) mm -= 12;
+	K1 = 365.25*(yy+4712);
+	K2 = 30.6*mm+.5;
+	K3 = int(int((yy/100)+49)*.75)-38;
+	J = K1+K2+d+59-K3;
+	V = (J-2451550.1)/0.29530588853;
+	V -= int(V/100)*100;
+	V = abs(V-50);
+	return (byte)(2*abs(50-V));
 }
 
 void ConvertNumToString(char* string, int num, byte decimal)
