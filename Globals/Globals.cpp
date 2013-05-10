@@ -24,7 +24,7 @@
 byte intlength(int intin)
 {
     byte digits = 0;
-    if (intin < 0) digits = 1; // "-" counts as 1 character
+    if (intin <= 0) digits = 1; // "-" and 0 counts as 1 character
     while (intin) {
     	intin /= 10;
         digits++;
