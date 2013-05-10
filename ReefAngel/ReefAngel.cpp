@@ -1021,15 +1021,16 @@ void ReefAngelClass::ConvertTempUnit()
 
 void ReefAngelClass::StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute)
 {
+	int NumMinsToday=NumMins(hour(),minute());
 	if (NumMins(OffHour,OffMinute) > NumMins(OnHour,OnMinute))
 	{
-		if (NumMins(hour(),minute()) >= NumMins(OnHour,OnMinute)) Relay.On(LightsRelay); else Relay.Off(LightsRelay);
-		if (NumMins(hour(),minute()) >= NumMins(OffHour,OffMinute)) Relay.Off(LightsRelay);
+		if (NumMinsToday >= NumMins(OnHour,OnMinute)) Relay.On(LightsRelay); else Relay.Off(LightsRelay);
+		if (NumMinsToday >= NumMins(OffHour,OffMinute)) Relay.Off(LightsRelay);
 	}
 	else
 	{
-		if (NumMins(hour(),minute()) >= NumMins(OffHour,OffMinute)) Relay.Off(LightsRelay); else Relay.On(LightsRelay);
-		if (NumMins(hour(),minute()) >= NumMins(OnHour,OnMinute)) Relay.On(LightsRelay);
+		if (NumMinsToday >= NumMins(OffHour,OffMinute)) Relay.Off(LightsRelay); else Relay.On(LightsRelay);
+		if (NumMinsToday >= NumMins(OnHour,OnMinute)) Relay.On(LightsRelay);
 	}
 }
 
