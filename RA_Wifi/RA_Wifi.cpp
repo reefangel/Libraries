@@ -168,7 +168,7 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
-            else if (strncmp("GET /mr", m_pushback, 7)==0) reqtype = -REQ_M_RAW;
+            else if (strncmp("GET /mr", m_pushback, 7)==0) { reqtype = -REQ_M_RAW; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
             else if (strncmp("GET /d", m_pushback, 6)==0) { reqtype = -REQ_DATE; weboption2 = -1; weboption3 = -1; bCommaCount = 0; }
             else if (strncmp("HTTP/1.", m_pushback, 7)==0) reqtype = -REQ_HTTP;
@@ -496,16 +496,37 @@ void processHTTP()
 			case REQ_M_RAW:
 			{
 				int s = 11;  // start with the base size of the mem tags
-				s += (VarsEnd-VarsStart)*2;
+
+				// default to Main memory locations
+				int memStart = VarsStart;
+				int memEnd = VarsEnd;;
+				if ( bHasSecondValue && (weboption2 >= 0) )
+					memStart = weboption;
+					memEnd = weboption2;
+
+					// Some sanity check here
+					if (memStart > memEnd) {
+						weboption = -1;	
+					}
+				}
+
+				s += (memEnd-memStart)*2;
 				PrintHeader(s,1);
 				PROGMEMprint(XML_MEM_OPEN);
-				byte m; 
-				for ( int x = VarsStart; x < VarsEnd; x++ )
+				if (weboption == -1) 
 				{
-					m=InternalMemory.read(x);
-					if (m<16) WIFI_SERIAL.print("0");
-					WIFI_SERIAL.print(m,HEX);
-				}  // for x
+					PROGMEMprint(XML_ERR);
+				} 
+				else 
+				{
+					byte m; 
+					for ( int x = memStart; x < memEnd; x++ )
+					{
+						m=InternalMemory.read(x);
+						if (m<16) WIFI_SERIAL.print("0");
+						WIFI_SERIAL.print(m,HEX);
+					}  // for x
+				}
 				PROGMEMprint(XML_MEM_CLOSE);
 				break;
 			}  // REQ_M_RAW
