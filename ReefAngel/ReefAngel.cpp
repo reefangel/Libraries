@@ -444,8 +444,8 @@ ReefAngelClass::ReefAngelClass()
 	SPCR=0x53;
 #if defined(__AVR_ATmega2560__)
 	PCMSK0 |= 128;
-	DDRJ&=(0<<7); //PJ7 (Input) - Bus Lock
-	PORTJ|=(1<<7); //PJ7 pull up	
+	DDRJ=B00000110;
+	PORTJ=B11010000;
 #else  // __AVR_ATmega2560__
 	PCMSK0 |= 32;
 #endif  // __AVR_ATmega2560__
@@ -471,6 +471,10 @@ void ReefAngelClass::Init()
 	Wire.onRequest(NULL);
 	Wire.begin(I2CRA_Master);
 	I2CCommand=0;
+#elif defined REEFTOUCH
+	Wire.onReceive(NULL);
+	Wire.onRequest(NULL);
+	Wire.begin();
 #else // REEFTOUCHDISPLAY
 	LCD.BacklightOff();
 	Wire.onReceive(NULL);
