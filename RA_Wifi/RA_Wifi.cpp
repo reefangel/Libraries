@@ -73,7 +73,7 @@ void pushbuffer(byte inStr)
 		    if (inStr==' ')
 		    {
 		        reqtype=256-reqtype;
-		        if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) )
+		       if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) || (reqtype == REQ_M_RAW) )
 		        {
 		        	// must have a comma to have second value
 		        	// verify that the last char was a digit
@@ -499,26 +499,31 @@ void processHTTP()
 
 				// default to Main memory locations
 				int memStart = VarsStart;
-				int memEnd = VarsEnd;;
+				int memEnd = VarsEnd;
 				if ( bHasSecondValue && (weboption2 >= 0) )
-					memStart = weboption;
-					memEnd = weboption2;
+				{
+					memStart = weboption2;
+					memEnd = weboption;
 
-					// Some sanity check here
-					if (memStart > memEnd) {
-						weboption = -1;	
-					}
+	  				// Some sanity check here
+  					if (memStart > memEnd) {
+  						weboption = -1;	
+  					} 
 				}
 
-				s += (memEnd-memStart)*2;
-				PrintHeader(s,1);
-				PROGMEMprint(XML_MEM_OPEN);
-				if (weboption == -1) 
+			        if (weboption == -1) 
 				{
+					s = 14;  // <MEM>ERR</MEM>
+					PrintHeader(s,1);
+					PROGMEMprint(XML_MEM_OPEN);
 					PROGMEMprint(XML_ERR);
 				} 
 				else 
 				{
+    					s += (memEnd-memStart)*2;
+					PrintHeader(s,1);
+					PROGMEMprint(XML_MEM_OPEN);
+
 					byte m; 
 					for ( int x = memStart; x < memEnd; x++ )
 					{
