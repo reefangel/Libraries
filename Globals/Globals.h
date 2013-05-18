@@ -551,6 +551,7 @@ When adding more variables, use the previous value plus 1 or 2
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
+#define COLOR_MIDNIGHTBLUE          RGB565(0x00, 0x33, 0x66)
 #define COLOR_ROYALBLUE             RGB565(0x45, 0x71, 0xda)
 #define COLOR_LIGHTBLUE             RGB565(0xad, 0xd8, 0xe6)
 #define COLOR_RED                   RGB565(0xFF, 0x00, 0x00)
@@ -561,6 +562,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define COLOR_CYAN                  RGB565(0x00, 0xFF, 0xFF)
 #define COLOR_GRAY                  RGB565(0x80, 0x80, 0x40)
 #define COLOR_SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define COLOR_GRAY88                RGB565(0xE0, 0xE0, 0xE0)
 #define COLOR_GOLD                  RGB565(0xA0, 0xA0, 0x40)
 #define COLOR_ORANGE				RGB565(0xFF, 0x80, 0x00)
 #define TOPBAR_BC					COLOR_WHITE

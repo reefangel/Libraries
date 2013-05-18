@@ -93,6 +93,7 @@ class ButtonClass
 	public:
 		ButtonClass();
 		void Create(int color, int textcolor, char *str);
+		void Create(int color, int textcolor, char *str, const prog_uchar *Ptr);
 		void inline SetPosition(int ix1, int iy1) { x1=ix1; y1=iy1; };
 		void inline SetLabel(char *value) { str=value; };
 		void Show();
@@ -101,6 +102,7 @@ class ButtonClass
 	private:
 		int color, x1, x2, y1, textcolor;
 		char *str;
+		const prog_uchar *Ptr;
 		boolean visible;
 };
 
@@ -396,8 +398,10 @@ public:
 	void SaveInitialSettings();
 	void ChangeDisplayedScreen(signed char index);
 	void MainScreen();
+	void ResetScreenSaver();
     void SetupTouchDateTime();
     void CheckMenuTimeout();
+    void ShowTouchMenu();
     void ShowTouchInterface();
 #else
     void ShowInterface();

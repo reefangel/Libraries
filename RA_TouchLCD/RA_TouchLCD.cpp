@@ -524,15 +524,15 @@ void RA_TouchLCD::DrawDateTime(int x, int y, boolean militarytime, FontClass Fon
 
 void RA_TouchLCD::DrawSetupDateTime(int x, int y, char *value, FontClass Font)
 {
-	DrawBMP(x-14,y-23,ARROWUP);
+	DrawBMP(x-12,y-20,ARROWUP);
 	Font.DrawCenterText(x,y,value);
-	DrawBMP(x-14,y+37,ARROWDOWN);
+	DrawBMP(x-12,y+34,ARROWDOWN);
 }
 
 void RA_TouchLCD::DrawSetupDateTime(int x, int y, byte value, FontClass Font)
 {
-	char sdate[3];
-	sprintf(sdate,"%02d",value);
+	char sdate[5];
+	sprintf(sdate," %02d ",value);
 	DrawSetupDateTime(x,y,sdate,Font);
 }
 

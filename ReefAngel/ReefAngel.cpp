@@ -508,8 +508,8 @@ void ReefAngelClass::Init()
 	Font.SetFont(f12x12);
 	LargeFont.SetFont(ArialBold20);
 	TS.Init();
-	OkButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Ok");
-	CancelButton.Create(RGB565(0xA0, 0xFF, 0xA0),COLOR_RED,"Cancel");
+	OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Ok",OKBUTTON);
+	CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Cancel",CANCELBUTTON);
 	Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
 	Slider.SetPosition(0,20);
 	Slider.Refresh();
@@ -2166,9 +2166,41 @@ void ReefAngelClass::MainScreen()
 	NeedsRedraw=true;	
 }
 
+void ReefAngelClass::ResetScreenSaver()
+{
+	// turn the backlight on
+	TouchLCD.SetBacklight(100);
+	Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
+	Timer[LCD_TIMER].Start();  // start timer
+
+}
+
 void ReefAngelClass::SetupTouchDateTime()
 {
+	int y,twidth,theight;
+
+	twidth=TouchLCD.GetWidth();
+	theight=TouchLCD.GetHeight();
 	DisplayedMenu=DATE_TIME_MENU;
+	TouchLCD.FullClear(COLOR_WHITE);
+	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+	LargeFont.DrawCenterTextP(TouchLCD.GetWidth()/2+1, 6, MENU_BUTTON_DATETIME);
+	LargeFont.SetColor(WARNING_TEXT, COLOR_WHITE,true);
+	LargeFont.DrawCenterTextP(TouchLCD.GetWidth()/2, 5, MENU_BUTTON_DATETIME);
+
+	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+	y=(theight/4);
+	LargeFont.DrawText(twidth*3/8-15,y,"/");
+	LargeFont.DrawText(twidth*5/8+5,y,"/");
+
+	y=(theight*3/5);
+	LargeFont.DrawText(twidth*3/8-15,y,":");
+
+	OkButton.SetPosition(twidth/4-40,theight*17/20);
+	OkButton.Show();
+	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
+	CancelButton.Show();
+
 	NeedsRedraw=true;
 	newnow=now();
 }
@@ -2180,10 +2212,18 @@ void ReefAngelClass::CheckMenuTimeout()
 		SetDisplayedMenu(DEFAULT_MENU);
 		DisplayedScreen=MAIN_SCREEN;
 		NeedsRedraw=true;
+		ResetScreenSaver();
 #ifdef REEFTOUCHDISPLAY
 		SendMaster(MESSAGE_MENU,DEFAULT_MENU,DEFAULT_MENU); 	// Change Menu
 #endif // REEFTOUCHDISPLAY
 	}
+}
+
+void ReefAngelClass::ShowTouchMenu()
+{
+	SetDisplayedMenu(TOUCH_MENU);
+	DisplayedScreen=MAIN_MENU_SCREEN;
+	NeedsRedraw=true;
 }
 
 void ReefAngelClass::ShowTouchInterface()
@@ -2826,11 +2866,7 @@ void ReefAngelClass::ShowTouchInterface()
 							if (TS.X>twidth-50 && TS.Y>theight-30)
 								ChangeDisplayedScreen(1);
 							if (TS.X<twidth-80 && TS.X>80 && TS.Y>theight-30)
-							{
-								SetDisplayedMenu(TOUCH_MENU);
-								DisplayedScreen=MAIN_MENU_SCREEN;
-								NeedsRedraw=true;
-							}
+								ShowTouchMenu();
 							if(DisplayedScreen==MAIN_SCREEN)
 							{
 								if (orientation%2==0)
@@ -3130,13 +3166,7 @@ void ReefAngelClass::ShowTouchInterface()
 #endif //  CUSTOM_MAIN
 			
 			wdt_reset();
-			if (TS.IsTouched())
-			{
-				// turn the backlight on
-				TouchLCD.SetBacklight(100);
-				Timer[LCD_TIMER].SetInterval(InternalMemory.LCDTimer_read());  // LCD Sleep Mode timer
-				Timer[LCD_TIMER].Start();  // start timer
-			}			
+			if (TS.IsTouched()) ResetScreenSaver();
 			break;
 		}  // DEFAULT_MENU
 		case FEEDING_MODE:
@@ -3379,45 +3409,84 @@ void ReefAngelClass::ShowTouchInterface()
 		}
 		case DATE_TIME_MENU:
 		{
-			byte mo,d,yr,h,mi,s;
-			char a[2];
+			int y;
+			byte mo,d,yr,h,mi;
 
 			mo=month(newnow);
 			d=day(newnow);
 			yr=year(newnow)-2000;
 			h=hour(newnow);
 			mi=minute(newnow);
-			s=second(newnow);
-			a[0]=hour(newnow)>=12?'A':'P';
 
 			if (NeedsRedraw)
 			{
-				int y;
-				a[1]='M';
-
-				TouchLCD.FullClear(BKCOLOR);
-		    	LargeFont.SetColor(WARNING_TEXT, BKCOLOR,false);
-		    	LargeFont.DrawCenterTextP(twidth/2, 5, MENU_BUTTON_DATETIME);
-		    	LargeFont.SetColor(COLOR_WHITE, BKCOLOR,false);
-
-		    	y=(theight/3)-10;
-		    	TouchLCD.DrawSetupDateTime(twidth/4,y,mo,LargeFont);
+		    	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+		    	y=(theight/4);
+		    	TouchLCD.DrawSetupDateTime(twidth/6,y,mo,LargeFont);
 		    	TouchLCD.DrawSetupDateTime(twidth/2,y,d,LargeFont);
-		    	TouchLCD.DrawSetupDateTime(twidth*3/4,y,yr,LargeFont);
-		    	LargeFont.DrawText(twidth*3/8,y,"/");
-		    	LargeFont.DrawText(twidth*5/8,y,"/");
+		    	TouchLCD.DrawSetupDateTime(twidth*5/6,y,yr,LargeFont);
 
-		    	y=(theight*2/3)+20;
-		    	LargeFont.DrawText(twidth*1/4,y,":");
-		    	LargeFont.DrawText(twidth/2,y,":");
-		    	TouchLCD.DrawSetupDateTime(twidth/5,y,h,LargeFont);
-		    	TouchLCD.DrawSetupDateTime(twidth*2/5,y,mi,LargeFont);
-		    	TouchLCD.DrawSetupDateTime(twidth*3/5,y,s,LargeFont);
-		    	TouchLCD.DrawSetupDateTime(twidth*4/5,y,a,LargeFont);
+		    	y=(theight*3/5);
+		    	TouchLCD.DrawSetupDateTime(twidth/2,y,mi,LargeFont);
+		    	if (h>12)
+		    	{
+			    	TouchLCD.DrawSetupDateTime(twidth/6,y,h-12,LargeFont);
+		    	}
+		    	else
+		    	{
+		    		if (hour(newnow)==0) h=12;
+			    	TouchLCD.DrawSetupDateTime(twidth/6,y,h,LargeFont);
+		    	}
+		    	if (h<12)
+		    		TouchLCD.DrawSetupDateTime(twidth*5/6,y,"AM",LargeFont);
+		    	else
+		    		TouchLCD.DrawSetupDateTime(twidth*5/6,y,"PM",LargeFont);
+
 		    	NeedsRedraw=false;
 		    	menutimeout=now();
 			}
+			if (TS.IsTouched())
+			{
+				TimeElements tme;
+				breakTime(newnow,tme);
+				y=(theight/4)-23;
+//				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25)) tme.Month++;
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25))	tme.Day++;
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25))	tme.Year++;
+				y=(theight/4)+32;
+//				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25))	tme.Month--;
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25))	tme.Day--;
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25))	tme.Year--;
+
+		    	y=(theight*3/5)-23;
+//				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25)) tme.Hour++;
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25)) tme.Minute++;
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25)) tme.Hour+=12;
+		    	y=(theight*3/5)+32;
+//				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
+//				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25)) tme.Hour--;
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25)) tme.Minute--;
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*7/6+27,y+25)) tme.Hour-=12;
+				newnow=makeTime(tme);
+		    	menutimeout=now();
+		    	NeedsRedraw=true;
+
+				if (CancelButton.IsPressed())
+					ShowTouchMenu();
+			}
 			CheckMenuTimeout();
+
 			break;
 		}
 #ifdef CUSTOM_MENU
@@ -7008,6 +7077,7 @@ ButtonClass::ButtonClass()
 {
 	x1=0;
 	y1=0;
+	Ptr=0;
 }
 
 void ButtonClass::Create(int icolor, int itextcolor, char *istr)
@@ -7017,19 +7087,27 @@ void ButtonClass::Create(int icolor, int itextcolor, char *istr)
 	str=istr;
 }
 
+void ButtonClass::Create(int icolor, int itextcolor, char *istr, const prog_uchar *iPtr)
+{
+	Ptr=iPtr;
+	Create(icolor,itextcolor,istr);
+}
+
 void ButtonClass::Show()
 {
 	visible=true;
-	ReefAngel.LargeFont.SetColor(COLOR_BLACK,COLOR_SILVER,true);
-	ReefAngel.LargeFont.DrawText(x1+25,y1+5,str);
-	x2=ReefAngel.LargeFont.GetX()+25;
-	ReefAngel.TouchLCD.DrawRoundRect(RGB565(0xD0, 0xD0, 0xD0),x1+1,y1+1,x2+1,y1+41,10,false);
-	ReefAngel.TouchLCD.DrawRoundRect(COLOR_BLACK,x1,y1,x2,y1+40,10,false);
-	ReefAngel.TouchLCD.DrawRoundRect(color,x1+1,y1+1,x2-1,y1+39,10,true);
-	ReefAngel.LargeFont.SetColor(COLOR_BLACK,COLOR_SILVER,true);
-	ReefAngel.LargeFont.DrawText(x1+26,y1+5,str);
-	ReefAngel.LargeFont.SetColor(textcolor,COLOR_SILVER,true);
-	ReefAngel.LargeFont.DrawText(x1+25,y1+4,str);
+	ReefAngel.Font.SetColor(COLOR_GRAY,COLOR_WHITE,true);
+	ReefAngel.Font.DrawText(x1+26,y1+9,str); // This drawing is just to calculate the width of str
+	x2=ReefAngel.Font.GetX()+25; // we add 25px in each side of str
+//	ReefAngel.TouchLCD.DrawRoundRect(RGB565(0xD0, 0xD0, 0xD0),x1+1,y1+1,x2+1,y1+41,10,false);
+	ReefAngel.TouchLCD.DrawRoundRect(COLOR_GRAY,x1,y1,x2,y1+26,8,false);
+	ReefAngel.TouchLCD.DrawRoundRect(color,x1+1,y1+1,x2-1,y1+25,8,true);
+	if (Ptr!=0)
+		ReefAngel.TouchLCD.DrawBMP(x1+5,y1+5,Ptr);
+	ReefAngel.Font.SetColor(COLOR_GRAY88,COLOR_WHITE,true);
+	ReefAngel.Font.DrawText(x1+26,y1+9,str);
+	ReefAngel.Font.SetColor(textcolor,COLOR_WHITE,true);
+	ReefAngel.Font.DrawText(x1+25,y1+8,str);
 }
 
 void ButtonClass::Hide()
