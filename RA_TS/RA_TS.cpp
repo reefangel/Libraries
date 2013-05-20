@@ -53,7 +53,7 @@ void RA_TS::GetTouch()
 	unsigned long averageX=0;
 	unsigned long averageY=0;
 		
-	SPCR=0x53;
+//	SPCR=0x53;
 	TP0;
 	for (int i=0;i<TouchSample;i++)
 	{
@@ -96,7 +96,7 @@ void RA_TS::GetTouch()
 //	if (pressure>TouchPressure) uX=0;
 
 	TP1;
-	SPCR=0x50;
+//	SPCR=0x50;
 	if (uX==0) uY=0;
 
 	switch (orientation)

@@ -502,6 +502,8 @@ void ReefAngelClass::Init()
 	NeedsRedraw=true;
 	SDFound=false;
 	Sleeping=false;
+	pinMode(53,OUTPUT);
+	digitalWrite(53,HIGH); // Pull up resistor on hardware SS SPI
 	SPI.begin();
 	TouchLCD.Init();
 	SmallFont.SetFont(f8x8);
