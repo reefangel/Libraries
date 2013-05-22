@@ -2198,6 +2198,16 @@ void ReefAngelClass::SetupTouchDateTime()
 	y=(theight*3/5);
 	LargeFont.DrawText(twidth*3/8-15,y,":");
 
+	Font.SetColor(COLOR_SILVER, COLOR_WHITE,false);
+	y=(theight/4)-35;
+	Font.DrawCenterText(twidth/6,y,"Month");
+	Font.DrawCenterText(twidth/2,y,"Day");
+	Font.DrawCenterText(twidth*5/6,y,"Year");
+	y=(theight*3/5)-35;
+	Font.DrawCenterText(twidth/6,y,"Hour");
+	Font.DrawCenterText(twidth/2,y,"Minute");
+	Font.DrawCenterText(twidth*5/6,y,"AM/PM");
+
 	OkButton.SetPosition(twidth/4-40,theight*17/20);
 	OkButton.Show();
 	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
@@ -3439,7 +3449,7 @@ void ReefAngelClass::ShowTouchInterface()
 		    		if (hour(newnow)==0) h=12;
 			    	TouchLCD.DrawSetupDateTime(twidth/6,y,h,LargeFont);
 		    	}
-		    	if (h<12)
+		    	if (h<12 || hour(newnow)==0)
 		    		TouchLCD.DrawSetupDateTime(twidth*5/6,y,"AM",LargeFont);
 		    	else
 		    		TouchLCD.DrawSetupDateTime(twidth*5/6,y,"PM",LargeFont);
@@ -3455,37 +3465,43 @@ void ReefAngelClass::ShowTouchInterface()
 //				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
-				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25)) tme.Month++;
-				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25))	tme.Day++;
-				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25))	tme.Year++;
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25)) { if (++tme.Month==13) tme.Month=1; if (tme.Day>monthDays[tme.Month-1]) tme.Day=monthDays[tme.Month-1];}
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25))	{ if (++tme.Day>monthDays[tme.Month-1]) tme.Day=1; }
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25)) { if (++tme.Year==130) tme.Year=30; }
 				y=(theight/4)+32;
 //				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
-				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25))	tme.Month--;
-				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25))	tme.Day--;
-				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25))	tme.Year--;
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25))	{ if (--tme.Month==0) tme.Month=12; if (tme.Day>monthDays[tme.Month-1]) tme.Day=monthDays[tme.Month-1];}
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25))	{ if (--tme.Day==0) tme.Day=monthDays[tme.Month-1]; }
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25)) { if (--tme.Year==29) tme.Year=129; }
 
 		    	y=(theight*3/5)-23;
 //				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
-				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25)) tme.Hour++;
-				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25)) tme.Minute++;
-				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25)) tme.Hour+=12;
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25))	{ if (++tme.Hour>23) tme.Hour=0; }
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25)) { if (++tme.Minute==60) tme.Minute=0; }
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25)) { tme.Hour+=isPM(newnow)?-12:12; }
 		    	y=(theight*3/5)+32;
 //				TouchLCD.Clear(COLOR_RED,twidth/6-27,y,twidth/6+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth/2-27,y,twidth/2+27,y+25);
 //				TouchLCD.Clear(COLOR_RED,twidth*5/6-27,y,twidth*5/6+27,y+25);
-				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25)) tme.Hour--;
-				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25)) tme.Minute--;
-				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*7/6+27,y+25)) tme.Hour-=12;
+				if (TS.IsTouchedInside(twidth/6-27,y,twidth/6+27,y+25))	{ if (--tme.Hour==255) tme.Hour=23; }
+				if (TS.IsTouchedInside(twidth/2-27,y,twidth/2+27,y+25)) { if (--tme.Minute==255) tme.Minute=59; }
+				if (TS.IsTouchedInside(twidth*5/6-27,y,twidth*5/6+27,y+25)) { tme.Hour+=isPM(newnow)?-12:12; }
 				newnow=makeTime(tme);
 		    	menutimeout=now();
 		    	NeedsRedraw=true;
 
 				if (CancelButton.IsPressed())
 					ShowTouchMenu();
+				if (OkButton.IsPressed())
+				{
+					setTime(newnow);
+					now();
+					RTC.set(now());
+				}
 			}
 			CheckMenuTimeout();
 

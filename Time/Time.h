@@ -73,6 +73,8 @@ typedef time_t(*getExternalTime)();
 #define daysToTime_t    ((H)) ( (D) * SECS_PER_DAY) 
 #define weeksToTime_t   ((W)) ( (W) * SECS_PER_WEEK)   
 
+static  const uint8_t monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31}; // API starts months from 1, this array starts from 0
+
 /*============================================================================*/
 /*  time and date functions   */
 time_t ScheduleTime(uint8_t ScheduleHour, uint8_t ScheduleMinute, uint8_t ScheduleSecond);
