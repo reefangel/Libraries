@@ -286,10 +286,6 @@ public:
 //	byte WM1Port;	deprecated by issue #47
 //	byte WM2Port;	deprecated by issue #47
 //#endif  // WavemakerSetup
-#ifdef I2CMASTER
-	byte I2CCommand;
-	void UpdateTouchDisplay();
-#endif // I2CMASTER
 
 	byte ChangeMode;
 	byte OverheatProbe;
@@ -300,6 +296,9 @@ public:
 	void Refresh();
 	void SetTemperatureUnit(byte unit);
 	void ConvertTempUnit();
+#if defined SALINITYEXPANSION
+    void ApplySalinityCompensation();
+#endif  // defined SALINITYEXPANSION
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
 	void inline AddDateTimeMenu() {};
@@ -317,6 +316,7 @@ public:
 	void inline NoWifi() {};
 	void inline NoSD() {};
 	void inline NoTilt() {};
+
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
@@ -400,29 +400,23 @@ public:
 	void MainScreen();
 	void ResetScreenSaver();
     void SetupTouchDateTime();
+    void SetupTouchCalibratePH();
     void CheckMenuTimeout();
     void ShowTouchMenu();
     void ShowTouchInterface();
-#else
+#else // REEFTOUCH
     void ShowInterface();
-#endif // REEFTOUCH
-
-    // Nested Menu Functions
-#ifdef CUSTOM_MENU
-	void InitMenu(int ptr, byte qty);
-#else
-    void InitMenus();
-#endif  // CUSTOM_MENU
     void PrepMenuScreen();
     void DisplayMenu();
     void DisplayMenuHeading();
     void DisplayMenuEntry(char *text);
-    void ExitMenu();
-    void SetDisplayedMenu(byte value);
-    void ProcessButtonPress();
+    // Nested Menu Functions
 #ifdef CUSTOM_MENU
+	void InitMenu(int ptr, byte qty);
 	void ProcessButtonPressCustom();
 #else
+    void InitMenus();
+    void ProcessButtonPress();
     void ProcessButtonPressMain();
 
 #ifndef SIMPLE_MENU
@@ -450,7 +444,6 @@ public:
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
     void SetupCalibrateSalinity();
-    void ApplySalinityCompensation();
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
     void SetupCalibratePHExp();
@@ -471,6 +464,10 @@ public:
     void SetupDosingPump();
 #endif  // DosingPumpSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
+#endif // REEFTOUCH
+
+    void ExitMenu();
+    void SetDisplayedMenu(byte value);
 
 #ifdef CUSTOM_VARIABLES
     byte CustomVar[8];
@@ -537,7 +534,10 @@ void MenuEntry9();
 void receiveEvent(int howMany);
 void SendMaster(byte ID, byte data1, byte data2);
 #endif REEFTOUCHDISPLAY 
+
 #ifdef I2CMASTER 
+byte I2CCommand;
+void UpdateTouchDisplay();
 void receiveEventMaster(int howMany);
 #endif // I2CMASTER 
 

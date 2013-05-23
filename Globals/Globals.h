@@ -534,6 +534,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define RETURN_MAIN_MODE	250
 #define TOUCH_MENU			249
 #define DATE_TIME_MENU		248
+#define PH_CALIBRATE_MENU	247
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
@@ -997,11 +998,15 @@ const prog_char NoIMLine4[] PROGMEM = "Example Codes";
 const prog_char NoIMLine5[] PROGMEM = "InitialInternalMemory";
 
 // Touch PROGMEM Strings
-// Calibration
+// TouchScreen Calibration
 const prog_char CALI1[] PROGMEM = "Touch Screen";
 const prog_char CALI2[] PROGMEM = "Calibration";
 const prog_char CALI3[] PROGMEM = "Please touch";
 const prog_char CALI4[] PROGMEM = "the red circle";
+
+// pH Calibration
+const prog_char PH_CALI1[] PROGMEM = "Please place the pH probe";
+
 
 // Labels
 const prog_char LABEL_TEMP[] PROGMEM = "Temp ";
