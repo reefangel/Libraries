@@ -982,6 +982,7 @@ typedef struct Compensation
 #define TS_CALIBRATION_YMIN				500
 #define TS_CALIBRATION_YMAX				3600
 #define TS_CALIBRATION_DELTA			500
+#define CALIBRATION_TIMER				3
 
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 
@@ -1005,7 +1006,21 @@ const prog_char CALI3[] PROGMEM = "Please touch";
 const prog_char CALI4[] PROGMEM = "the red circle";
 
 // pH Calibration
-const prog_char PH_CALI1[] PROGMEM = "Please place the pH probe";
+const prog_char PH_CALI1[] PROGMEM = "Please place the pH probe in";
+const prog_char PH_CALI2[] PROGMEM = "calibration solution";
+const prog_char PH_CALI3[] PROGMEM = "and touch Ok button";
+const prog_char PH_CALI4[] PROGMEM = "Calibrating";
+const prog_char PH_CALI5[] PROGMEM = "Please wait...";
+const prog_char PH_CALI6[] PROGMEM = "Calculating Calibration...";
+const prog_char PH_CALI7[] PROGMEM = "Your calibration value is";
+const prog_char PH_CALI8[] PROGMEM = "Please write it down";
+const prog_char PH_CALI9[] PROGMEM = "for your records";
+const prog_char PH_CALI10[] PROGMEM = "Please rinse the pH probe";
+const prog_char PH_CALI11[] PROGMEM = "with RO/DI water";
+const prog_char PH_CALI12[] PROGMEM = "Ready to save values";
+const prog_char PH_CALI13[] PROGMEM = "Proceed?";
+const prog_char PH_CALI14[] PROGMEM = "Calibration Completed";
+
 
 
 // Labels

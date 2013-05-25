@@ -97,7 +97,7 @@ class ButtonClass
 		void inline SetPosition(int ix1, int iy1) { x1=ix1; y1=iy1; };
 		void inline SetLabel(char *value) { str=value; };
 		void Show();
-		void Hide();
+		void Hide(int bkcolor=BKCOLOR);
 		boolean IsPressed();
 	private:
 		int color, x1, x2, y1, textcolor;
@@ -203,6 +203,9 @@ public:
 	byte LongTouch;
 	bool SDFound;
 	time_t newnow;
+	int CalVal1, CalVal2;
+	byte CalStep;
+
 #else //  REEFTOUCH
 	RA_NokiaLCD LCD;
 	RA_JoystickClass Joystick;
