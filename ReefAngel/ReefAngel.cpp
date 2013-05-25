@@ -41,7 +41,7 @@ SIGNAL(PCINT0_vect) {
 
 ReefAngelClass::ReefAngelClass()
 {
-	SPCR=0x53;
+	SPCR=0x50;
 #if defined(__AVR_ATmega2560__)
 	PCMSK0 |= 128;
 	DDRJ=B00000110;
