@@ -126,7 +126,7 @@ void ReefAngelClass::Init()
 	menu_button_functions1[5] = &ReefAngelClass::MainScreen;
 	menu_button_functions2[0] = &ReefAngelClass::SetupTouchDateTime;
 	menu_button_functions2[1] = &ReefAngelClass::SetupTouchCalibratePH;
-	menu_button_functions2[2] = &ReefAngelClass::Touch;
+	menu_button_functions2[2] = &ReefAngelClass::SetupTouchCalibrateSal;
 	menu_button_functions2[3] = &ReefAngelClass::Touch;
 	menu_button_functions2[4] = &ReefAngelClass::Touch;
 	menu_button_functions2[5] = &ReefAngelClass::Touch;

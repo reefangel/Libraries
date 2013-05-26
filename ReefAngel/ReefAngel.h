@@ -404,6 +404,7 @@ public:
 	void ResetScreenSaver();
     void SetupTouchDateTime();
     void SetupTouchCalibratePH();
+    void SetupTouchCalibrateSal();
     void CheckMenuTimeout();
     void ShowTouchMenu();
     void ShowTouchInterface();

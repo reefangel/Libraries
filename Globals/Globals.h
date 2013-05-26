@@ -535,6 +535,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define TOUCH_MENU			249
 #define DATE_TIME_MENU		248
 #define PH_CALIBRATE_MENU	247
+#define SAL_CALIBRATE_MENU	246
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
@@ -1021,7 +1022,11 @@ const prog_char PH_CALI12[] PROGMEM = "Ready to save values";
 const prog_char PH_CALI13[] PROGMEM = "Proceed?";
 const prog_char PH_CALI14[] PROGMEM = "Calibration Completed";
 
-
+// Salinity Calibration
+const prog_char SAL_CALI1[] PROGMEM = "Please place the Salinity probe in";
+const prog_char SAL_CALI2[] PROGMEM = "ppt";
+const prog_char NO_SAL1[] PROGMEM = "No Salinity";
+const prog_char NO_SAL2[] PROGMEM = "Expansion Module Found";
 
 // Labels
 const prog_char LABEL_TEMP[] PROGMEM = "Temp ";
