@@ -405,6 +405,7 @@ public:
     void SetupTouchDateTime();
     void SetupTouchCalibratePH();
     void SetupTouchCalibrateSal();
+    void SetupTouchCalibrateORP();
     void CheckMenuTimeout();
     void ShowTouchMenu();
     void ShowTouchInterface();

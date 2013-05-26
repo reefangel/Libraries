@@ -306,6 +306,46 @@ void ReefAngelClass::SetupTouchCalibrateSal()
 	TouchEnabled=true;
 }
 
+void ReefAngelClass::SetupTouchCalibrateORP()
+{
+	int twidth,theight;
+
+	twidth=TouchLCD.GetWidth();
+	theight=TouchLCD.GetHeight();
+	DisplayedMenu=ORP_CALIBRATE_MENU;
+	TouchLCD.FullClear(COLOR_WHITE);
+	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+	LargeFont.DrawCenterTextP(twidth/2+1, 6, MENU_BUTTON_ORP);
+	LargeFont.SetColor(WARNING_TEXT, COLOR_WHITE,true);
+	LargeFont.DrawCenterTextP(twidth/2, 5, MENU_BUTTON_ORP);
+	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+	LargeFont.DrawCenterTextP(twidth/2+1, 36, MENU_BUTTON_CALIBRATION);
+	LargeFont.SetColor(WARNING_TEXT, COLOR_WHITE,true);
+	LargeFont.DrawCenterTextP(twidth/2, 35, MENU_BUTTON_CALIBRATION);
+
+	Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+#ifdef ORPEXPANSION
+	Font.DrawCenterTextP(twidth/2,theight/3,ORP_CALI1);
+	Font.DrawCenterNumber(twidth/2- 15,theight*5/12,470,0);
+	Font.DrawCenterTextP(twidth/2+ 18,theight*5/12,ORP_CALI2);
+	Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
+	Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI3);
+
+	CalVal1=0;
+	CalVal2=0;
+	CalStep=0;
+
+	OkButton.SetPosition(twidth/4-40,theight*17/20);
+	OkButton.Show();
+#else
+	Font.DrawCenterTextP(twidth/2,theight/3,NO_ORP1);
+	Font.DrawCenterTextP(twidth/2,theight*5/12,NO_SAL2);
+#endif
+	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
+	CancelButton.Show();
+	TouchEnabled=true;
+}
+
 void ReefAngelClass::CheckMenuTimeout()
 {
 	if ( (now() - menutimeout) > MENU_TIMEOUT )
@@ -1863,6 +1903,109 @@ void ReefAngelClass::ShowTouchInterface()
 						Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
 				        InternalMemory.SalMax_write(CalVal1);
 						SalMax = CalVal1;
+						CalStep++;
+					}
+					TouchEnabled=false;
+				}
+				break;
+			case 5:
+				if (TouchEnabled && TS.IsTouched())
+				{
+					if (OkButton.IsPressed())
+						ShowTouchMenu();
+					TouchEnabled=false;
+				}
+				break;
+			}
+#endif
+			break;
+		}
+		case ORP_CALIBRATE_MENU:
+		{
+			if (!TS.IsTouched()) TouchEnabled=true;
+			if (TouchEnabled && TS.IsTouched())
+			{
+				if (CancelButton.IsPressed())
+					ShowTouchMenu();
+			}
+#ifdef ORPEXPANSION
+			unsigned long t=newnow-now();
+			unsigned long p=0;
+
+			switch(CalStep)
+			{
+			case 0:
+				if (TouchEnabled && TS.IsTouched())
+				{
+					if (OkButton.IsPressed())
+					{
+						OkButton.Hide(COLOR_WHITE);
+						TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+						Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+						Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+						Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+						newnow=now()+CALIBRATION_TIMER;
+						CalStep++;
+					}
+					TouchEnabled=false;
+				}
+				break;
+			case 1:
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterNumber(twidth/2,theight/2,t,0);
+				if (t==0)
+				{
+					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI6);
+					for (int a=0;a<60;a++)
+					{
+						p+=ORP.Read();
+						delay(50);
+						wdt_reset();
+					}
+					p/=60;
+					CalVal1=p;
+					CalStep++;
+				}
+				break;
+			case 2:
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI7);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI8);
+				Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI9);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawCenterNumber(twidth/2,theight*5/12,CalVal1,0);
+				OkButton.Show();
+				CalStep++;
+				break;
+			case 3:
+				if (TouchEnabled && TS.IsTouched())
+				{
+					if (OkButton.IsPressed())
+					{
+						TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+						Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+						Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
+						Font.DrawText(twidth/4- 27,theight/2,470);
+						Font.DrawTextP(twidth/4,theight/2,ORP_CALI2);
+						Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
+						Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+						Font.DrawText(twidth*3/4,theight/2,CalVal1);
+						CalStep++;
+					}
+					TouchEnabled=false;
+				}
+				break;
+			case 4:
+				if (TouchEnabled && TS.IsTouched())
+				{
+					if (OkButton.IsPressed())
+					{
+						TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+						Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+						Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
+				        InternalMemory.ORPMax_write(CalVal1);
+						ORPMax = CalVal1;
 						CalStep++;
 					}
 					TouchEnabled=false;
