@@ -128,7 +128,7 @@ void ReefAngelClass::Init()
 	menu_button_functions2[1] = &ReefAngelClass::SetupTouchCalibratePH;
 	menu_button_functions2[2] = &ReefAngelClass::SetupTouchCalibrateSal;
 	menu_button_functions2[3] = &ReefAngelClass::SetupTouchCalibrateORP;
-	menu_button_functions2[4] = &ReefAngelClass::Touch;
+	menu_button_functions2[4] = &ReefAngelClass::SetupTouchCalibratePHExp;
 	menu_button_functions2[5] = &ReefAngelClass::Touch;
 			
 #if not defined NOTILT
