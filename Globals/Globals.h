@@ -1031,8 +1031,13 @@ const prog_char NO_SAL1[] PROGMEM = "No Salinity Expansion";
 const prog_char NO_SAL2[] PROGMEM = "Module Found";
 
 // ORP Calibration
-const prog_char ORP_CALI1[] PROGMEM = "Please place the ORP probe in";
-const prog_char ORP_CALI2[] PROGMEM = "mV";
+const prog_char ORP_CALI1[] PROGMEM = "Please connect the terminator";
+const prog_char ORP_CALI2[] PROGMEM = "Please place the ORP probe in";
+const prog_char ORP_CALI3[] PROGMEM = "mV";
+const prog_char ORP_CALI4[] PROGMEM = "Please disconnect the";
+const prog_char ORP_CALI5[] PROGMEM = "terminator and connect";
+const prog_char ORP_CALI6[] PROGMEM = "ORP probe";
+
 const prog_char NO_ORP1[] PROGMEM = "No ORP Expansion";
 
 // pHExp Calibration
