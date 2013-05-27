@@ -129,7 +129,7 @@ void ReefAngelClass::Init()
 	menu_button_functions2[2] = &ReefAngelClass::SetupTouchCalibrateSal;
 	menu_button_functions2[3] = &ReefAngelClass::SetupTouchCalibrateORP;
 	menu_button_functions2[4] = &ReefAngelClass::SetupTouchCalibratePHExp;
-	menu_button_functions2[5] = &ReefAngelClass::Touch;
+	menu_button_functions2[5] = &ReefAngelClass::SetupTouchCalibrateWL;
 			
 #if not defined NOTILT
 	Tilt.Init();

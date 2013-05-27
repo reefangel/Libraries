@@ -538,6 +538,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define SAL_CALIBRATE_MENU	246
 #define ORP_CALIBRATE_MENU	245
 #define PHE_CALIBRATE_MENU	244
+#define WL_CALIBRATE_MENU	243
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
@@ -1042,6 +1043,15 @@ const prog_char NO_ORP1[] PROGMEM = "No ORP Expansion";
 
 // pHExp Calibration
 const prog_char NO_PHE1[] PROGMEM = "No pH Expansion";
+
+// WL Calibration
+const prog_char WL_CALI1[] PROGMEM = "Please hold the PVC";
+const prog_char WL_CALI2[] PROGMEM = "pipe out of the water";
+const prog_char WL_CALI3[] PROGMEM = "Please immerse the PVC";
+const prog_char WL_CALI4[] PROGMEM = "pipe in water until";
+const prog_char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
+const prog_char WL_CALI6[] PROGMEM = "%";
+const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
 
 // Labels
 const prog_char LABEL_TEMP[] PROGMEM = "Temp ";
