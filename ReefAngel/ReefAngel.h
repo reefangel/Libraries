@@ -480,7 +480,10 @@ public:
     byte CustomVar[8];
 #endif //CUSTOM_VARIABLES
 
-	inline int GetBatteryVoltage() { return analogRead(VBAT)*.48828; };
+#ifdef I2CMASTER
+    byte I2CCommand;
+    void UpdateTouchDisplay();
+#endif // I2CMASTER
 
 private:
 	time_t menutimeout;
@@ -543,8 +546,6 @@ void SendMaster(byte ID, byte data1, byte data2);
 #endif REEFTOUCHDISPLAY 
 
 #ifdef I2CMASTER 
-byte I2CCommand;
-void UpdateTouchDisplay();
 void receiveEventMaster(int howMany);
 #endif // I2CMASTER 
 
