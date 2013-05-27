@@ -113,7 +113,7 @@ void ReefAngelClass::Init()
 	OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Ok",OKBUTTON);
 	CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Cancel",CANCELBUTTON);
 	Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
-	Slider.SetPosition(0,20);
+	Slider.SetPosition(0,50);
 	Slider.Refresh();
 	for(int a=0;a<6;a++)
 		PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");

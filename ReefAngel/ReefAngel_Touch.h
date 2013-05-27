@@ -1042,12 +1042,13 @@ void ReefAngelClass::ShowTouchInterface()
 								NeedsRedraw=false;
 								TouchLCD.Clear(COLOR_WHITE,0,28,twidth,theight);	
 								Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
-								Font.DrawTextP(10,105,PWM_OVERRIDE_LABEL1);
-								Font.DrawTextP(10,117,PWM_OVERRIDE_LABEL2);
-								OkButton.SetPosition(twidth/2-40,theight*5/9);
+								Font.DrawCenterTextP(twidth/2,theight*7/12,PWM_OVERRIDE_LABEL1);
+								Font.DrawCenterTextP(twidth/2,theight*2/3,PWM_OVERRIDE_LABEL2);
+								OkButton.SetPosition(twidth/4-40,theight*17/20);
 								OkButton.Show();
-								CancelButton.SetPosition(twidth/2-65,theight*7/9);
+								CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
 								CancelButton.Show();
+								Slider.SetPosition(0,theight/5);
 								Slider.Show();
 //									Slider.Refresh();
 							}
@@ -1056,6 +1057,7 @@ void ReefAngelClass::ShowTouchInterface()
 				}
 				else // if touched
 				{
+					menutimeout=now();
 					// Check for Soft Reset of screen
 					// If top left corner is long touched, we reinitialize the LCD. 
 					if (TS.X<50 && TS.Y<50) // top left corner

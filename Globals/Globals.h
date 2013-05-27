@@ -526,6 +526,8 @@ When adding more variables, use the previous value plus 1 or 2
 #define MENU_END_COL        124
 #define MAX_Y               128
 #define MAX_X               128
+
+// DisplayedMenu IDs
 #define DEFAULT_MENU        255
 #define EXCEED_TIMEOUT_MENU 254
 #define FEEDING_MODE		253
