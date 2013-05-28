@@ -15,9 +15,9 @@ boolean WiFiAlert::IsAlert()
   return false;
 }
 
-void WiFiAlert::Send(char *message)
+void WiFiAlert::Send(char *message, boolean force)
 {
-  if (IsAlert())
+  if (IsAlert() || force)
   {
     LastAlert=now();
     WiFiSendAlert(message);

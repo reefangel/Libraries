@@ -9,7 +9,8 @@ class WiFiAlert
 {
 public:
   WiFiAlert();
-  void Send(char *message);
+  void Send(char *message, boolean force);
+  inline void Send(char *message) { Send(message,false); }
   inline void SetDelay(int delay) { AlertDelay=delay; }
 private:
   int AlertDelay;
