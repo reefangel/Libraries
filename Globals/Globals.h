@@ -978,7 +978,7 @@ typedef struct Compensation
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
 #define SplashDuration					5000
-#define TouchSample						50
+#define TouchSample						20
 #define TouchSlideDelta					20
 #define TouchPressure					900
 #define MAX_RELAY_EXPANSION_MODULES		8

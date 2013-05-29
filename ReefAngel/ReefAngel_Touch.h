@@ -132,48 +132,57 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 {
 	NeedsRedraw=true;
 	DisplayedScreen+=index;
-	if (DisplayedScreen<0) DisplayedScreen=MAX_SCREENS-1;
-	if (DisplayedScreen>RELAY_BOX)
-		if (index>0)
-		{
-			for (int a=DisplayedScreen;a<MAX_SCREENS;a++)
+	if (DisplayedMenu==TOUCH_MENU)
+	{
+		if (DisplayedScreen<0) DisplayedScreen=MAX_MENU_SCREENS-1;
+		if (DisplayedScreen>=MAX_MENU_SCREENS) DisplayedScreen=0;
+	}
+	else
+	{
+		if (DisplayedScreen<0) DisplayedScreen=MAX_SCREENS-1;
+		if (DisplayedScreen>RELAY_BOX)
+			if (index>0)
 			{
-				if (a<10)
+				for (int a=DisplayedScreen;a<MAX_SCREENS;a++)
 				{
-					if (bitRead(REM,a-2)) break;
+					if (a<10)
+					{
+						if (bitRead(REM,a-2)) break;
+					}
+					else
+					{
+						if (a==10 && bitRead(EM,0)) break;
+						if (a==11 && bitRead(EM,1)) break;
+						if (a==12 && bitRead(EM,1)) break;
+						if (a==13 && bitRead(EM,2)) break;
+						if (a==14 && bitRead(EM,5)) break;
+					}
+					DisplayedScreen++;
 				}
-				else
-				{
-					if (a==10 && bitRead(EM,0)) break;
-					if (a==11 && bitRead(EM,1)) break;
-					if (a==12 && bitRead(EM,1)) break;
-					if (a==13 && bitRead(EM,2)) break;
-					if (a==14 && bitRead(EM,5)) break;
-				}
-				DisplayedScreen++;
 			}
-		}
-		else
-		{
-			for (int a=DisplayedScreen;a>=2;a--)
+			else
 			{
-				if (a<10)
+				for (int a=DisplayedScreen;a>=2;a--)
 				{
-					if (bitRead(REM,a-2)) break;
+					if (a<10)
+					{
+						if (bitRead(REM,a-2)) break;
+					}
+					else
+					{
+						if (a==10 && bitRead(EM,0)) break;
+						if (a==11 && bitRead(EM,1)) break;
+						if (a==12 && bitRead(EM,1)) break;
+						if (a==13 && bitRead(EM,2)) break;
+						if (a==14 && bitRead(EM,5)) break;
+	//					if (bitRead(EM,a-10)) break;
+					}
+					DisplayedScreen--;
 				}
-				else
-				{
-					if (a==10 && bitRead(EM,0)) break;
-					if (a==11 && bitRead(EM,1)) break;
-					if (a==12 && bitRead(EM,1)) break;
-					if (a==13 && bitRead(EM,2)) break;
-					if (a==14 && bitRead(EM,5)) break;
-//					if (bitRead(EM,a-10)) break;
-				}
-				DisplayedScreen--;
 			}
-		}
-	if (DisplayedScreen>=MAX_SCREENS) DisplayedScreen=0;
+		if (DisplayedScreen>=MAX_SCREENS) DisplayedScreen=0;
+
+	}
 }
 
 void ReefAngelClass::MainScreen()
@@ -197,7 +206,7 @@ void ReefAngelClass::SetupTouchDateTime()
 
 	twidth=TouchLCD.GetWidth();
 	theight=TouchLCD.GetHeight();
-	DisplayedMenu=DATE_TIME_MENU;
+	SetDisplayedMenu(DATE_TIME_MENU);
 	TouchLCD.FullClear(COLOR_WHITE);
 	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
 	LargeFont.DrawCenterTextP(TouchLCD.GetWidth()/2+1, 6, MENU_BUTTON_DATETIME);
@@ -237,7 +246,7 @@ void ReefAngelClass::SetupTouchCalibratePH()
 
 	twidth=TouchLCD.GetWidth();
 	theight=TouchLCD.GetHeight();
-	DisplayedMenu=PH_CALIBRATE_MENU;
+	SetDisplayedMenu(PH_CALIBRATE_MENU);
 	TouchLCD.FullClear(COLOR_WHITE);
 	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
 	LargeFont.DrawCenterTextP(twidth/2+1, 6, MENU_BUTTON_PH);
@@ -272,7 +281,7 @@ void ReefAngelClass::SetupTouchCalibrateSal()
 
 	twidth=TouchLCD.GetWidth();
 	theight=TouchLCD.GetHeight();
-	DisplayedMenu=SAL_CALIBRATE_MENU;
+	SetDisplayedMenu(SAL_CALIBRATE_MENU);
 	TouchLCD.FullClear(COLOR_WHITE);
 	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
 	LargeFont.DrawCenterTextP(twidth/2+1, 6, MENU_BUTTON_SALINITY);
@@ -312,7 +321,7 @@ void ReefAngelClass::SetupTouchCalibrateORP()
 
 	twidth=TouchLCD.GetWidth();
 	theight=TouchLCD.GetHeight();
-	DisplayedMenu=ORP_CALIBRATE_MENU;
+	SetDisplayedMenu(ORP_CALIBRATE_MENU);
 	TouchLCD.FullClear(COLOR_WHITE);
 	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
 	LargeFont.DrawCenterTextP(twidth/2+1, 6, MENU_BUTTON_ORP);
@@ -349,7 +358,7 @@ void ReefAngelClass::SetupTouchCalibratePHExp()
 
 	twidth=TouchLCD.GetWidth();
 	theight=TouchLCD.GetHeight();
-	DisplayedMenu=PHE_CALIBRATE_MENU;
+	SetDisplayedMenu(PHE_CALIBRATE_MENU);
 	TouchLCD.FullClear(COLOR_WHITE);
 	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
 	LargeFont.DrawCenterTextP(twidth/2+1, 6, MENU_BUTTON_PHE);
@@ -389,7 +398,7 @@ void ReefAngelClass::SetupTouchCalibrateWL()
 
 	twidth=TouchLCD.GetWidth();
 	theight=TouchLCD.GetHeight();
-	DisplayedMenu=WL_CALIBRATE_MENU;
+	SetDisplayedMenu(WL_CALIBRATE_MENU);
 	TouchLCD.FullClear(COLOR_WHITE);
 	LargeFont.SetColor(COLOR_BLACK, COLOR_WHITE,false);
 	LargeFont.DrawCenterTextP(twidth/2+1, 6, MENU_BUTTON_WL);
@@ -438,6 +447,7 @@ void ReefAngelClass::CheckMenuTimeout()
 
 void ReefAngelClass::ShowTouchMenu()
 {
+	menutimeout=now();
 	SetDisplayedMenu(TOUCH_MENU);
 	DisplayedScreen=MAIN_MENU_SCREEN;
 	NeedsRedraw=true;
@@ -1701,6 +1711,7 @@ void ReefAngelClass::ShowTouchInterface()
 		    	menutimeout=now();
 		    	NeedsRedraw=true;
 
+				TouchEnabled=false;
 				if (CancelButton.IsPressed())
 					ShowTouchMenu();
 				if (OkButton.IsPressed())
@@ -1708,6 +1719,7 @@ void ReefAngelClass::ShowTouchInterface()
 					setTime(newnow);
 					now();
 					RTC.set(now());
+					ShowTouchMenu();
 				}
 			}
 			CheckMenuTimeout();

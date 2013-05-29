@@ -418,6 +418,12 @@ void ReefAngelClass::ShowInterface()
         switch ( DisplayedMenu )
         {
         	case TOUCH_MENU:
+        	case DATE_TIME_MENU:
+			case PH_CALIBRATE_MENU:
+			case SAL_CALIBRATE_MENU:
+			case ORP_CALIBRATE_MENU:
+			case PHE_CALIBRATE_MENU:
+			case WL_CALIBRATE_MENU:
 			case DEFAULT_MENU:  // This is the home screen
 			{
 				// process screensaver timeout
