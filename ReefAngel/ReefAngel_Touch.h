@@ -27,7 +27,11 @@ void ReefAngelClass::CalibrateTouchScreen()
 		{
 			TouchLCD.DrawCircle(COLOR_RED,CalibrationPoints[a*2], CalibrationPoints[(a*2)+1], 5, false);
 			do wdt_reset(); while (!TS.IsTouched());
+			delay(100);
 			TS.GetTouch();
+			delay(100);
+			TS.GetTouch();
+
 //			Serial.println(TS.uX,DEC);
 //			Serial.println(TS.uY,DEC);
 			if (a==0)

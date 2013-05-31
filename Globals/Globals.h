@@ -980,13 +980,13 @@ typedef struct Compensation
 #define SplashDuration					5000
 #define TouchSample						20
 #define TouchSlideDelta					20
-#define TouchPressure					900
+#define TouchPressure					1500
 #define MAX_RELAY_EXPANSION_MODULES		8
 #define FONT_HEADER 					7
-#define TS_CALIBRATION_XMIN				500
-#define TS_CALIBRATION_XMAX				3600
-#define TS_CALIBRATION_YMIN				500
-#define TS_CALIBRATION_YMAX				3600
+#define TS_CALIBRATION_XMIN				700
+#define TS_CALIBRATION_XMAX				3200
+#define TS_CALIBRATION_YMIN				700
+#define TS_CALIBRATION_YMAX				3200
 #define TS_CALIBRATION_DELTA			500
 #define CALIBRATION_TIMER				3
 

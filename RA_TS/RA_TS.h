@@ -33,7 +33,7 @@ class RA_TS
 {
 	public:
 
-		int X,Y,uX,uY;
+		int X,Y,uX,uY,uZ1,uZ2;
 		CALIBRATION calibration;
 		RA_TS();
 		void Init();

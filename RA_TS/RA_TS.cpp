@@ -52,51 +52,80 @@ void RA_TS::GetTouch()
 	int a,b;
 	unsigned long averageX=0;
 	unsigned long averageY=0;
-		
-	SPCR=0x53;
+	double pressure;
+
+//	SPCR=0x53;
 	TP0;
+
 	for (int i=0;i<TouchSample;i++)
 	{
-		SPI.transfer(0xd0);
+		SPI.transfer(0xb0);
 		a= SPI.transfer(0);
 		b= SPI.transfer(0);
-		uX=(a<<5|b>>3);
-		averageX+=uX;
+		uZ1=(a<<5|b>>3);
+
+		SPI.transfer(0xc0);
+		a= SPI.transfer(0);
+		b= SPI.transfer(0);
+		uZ2=(a<<5|b>>3);
+
+		pressure=uZ2;
+		pressure/=uZ1;
+		pressure*=100;
+		Serial.println(pressure);
+
+		if (pressure<TouchPressure)
+		{
+			SPI.transfer(0xd0);
+			a= SPI.transfer(0);
+			b= SPI.transfer(0);
+			averageX+=(a<<5|b>>3);
+		}
+		else
+		{
+			averageX=0;
+			break;
+		}
 	}
 	averageX/=TouchSample;
 	uX=averageX;
+//	Serial.println(uX);
 
-	
 	for (int i=0;i<TouchSample;i++)
 	{
-		SPI.transfer(0x90);
+		SPI.transfer(0xb0);
 		a= SPI.transfer(0);
 		b= SPI.transfer(0);
-		averageY+=(a<<5|b>>3);
+		uZ1=(a<<5|b>>3);
+
+		SPI.transfer(0xc0);
+		a= SPI.transfer(0);
+		b= SPI.transfer(0);
+		uZ2=(a<<5|b>>3);
+
+		pressure=uZ2;
+		pressure/=uZ1;
+		pressure*=100;
+		Serial.println(pressure);
+
+		if (pressure<TouchPressure)
+		{
+			SPI.transfer(0x90);
+			a= SPI.transfer(0);
+			b= SPI.transfer(0);
+			averageY+=(a<<5|b>>3);
+		}
+		else
+		{
+			averageY=0;
+			break;
+		}
 	}
 	averageY/=TouchSample;
 	uY=averageY;
 
-//	SPI.transfer(0xb0);
-//	a= SPI.transfer(0);
-//	b= SPI.transfer(0);
-//	uZ1=(a<<5|b>>3);
-//
-//	SPI.transfer(0xc0);
-//	a= SPI.transfer(0);
-//	b= SPI.transfer(0);
-//	uZ2=(a<<5|b>>3);
-//
-//	double pressure;
-//	pressure=uZ2;
-//	pressure/=uZ1;
-//	pressure*=100;
-
-//	Serial.println(pressure);
-//	if (pressure>TouchPressure) uX=0;
-
 	TP1;
-	SPCR=0x50;
+//	SPCR=0x50;
 	if (uX==0) uY=0;
 
 	switch (orientation)
