@@ -788,7 +788,9 @@ void ReefAngelClass::Refresh()
 		for (byte a=0; a<RF_CHANNELS; a++)
 			RF.SetChannel(a,InternalMemory.read(Mem_B_RadionSlopeEndW+(3*a)));
 	}	
+#ifdef RADION_COMM
 	RF.RadionWrite();
+#endif // RADION_COMM
 #endif  // RFEXPANSION
 #ifdef AI_LED
 	if (LightRelayOn)
