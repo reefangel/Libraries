@@ -191,6 +191,30 @@ boolean RelayClass::Status(byte ID)
    return false;
 }
 
+boolean RelayClass::isMaskOn(byte ID) {
+  if ( ID < 9 ) return bitRead(RelayMaskOn, ID-1);
+#ifdef RelayExp
+  if ( (ID > 10) && (ID < 89) )
+  {
+    byte EID = byte(ID/10);
+    return bitRead(RelayMaskOnE[EID-1], (ID%10)-1);
+  }
+#endif  // RelayExp
+  return false;
+}
+
+boolean RelayClass::isMaskOff(byte ID) {
+  if ( ID < 9 ) return !bitRead(RelayMaskOff, ID-1);
+#ifdef RelayExp
+  if ( (ID > 10) && (ID < 89) )
+  {
+    byte EID = byte(ID/10);
+    return !bitRead(RelayMaskOffE[EID-1], (ID%10)-1);
+  }
+#endif  // RelayExp
+  return false;
+}
+
 void RelayClass::Override(byte ID, byte type)
 {
 	if (type==0)  // Turn port off
