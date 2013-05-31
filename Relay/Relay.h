@@ -44,6 +44,8 @@ public:
 	void Set(byte ID, boolean Status);
 	void Write();
 	boolean Status(byte ID);
+	boolean isMaskOn(byte ID);
+	boolean isMaskOff(byte ID);
 	void Override(byte ID, byte type);
 #ifdef SaveRelaysPresent
 	boolean IsRelayPresent (byte module);
