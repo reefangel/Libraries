@@ -51,6 +51,7 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define COLOR_CYAN                  RGB565(0x00, 0xFF, 0xFF)
 #define COLOR_GRAY                  RGB565(0x80, 0x80, 0x40)
 #define COLOR_SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define COLOR_GRAY88                RGB565(0xE0, 0xE0, 0xE0)
 #define COLOR_GOLD                  RGB565(0xA0, 0xA0, 0x40)
 #define COLOR_ORANGE				RGB565(0xFF, 0x80, 0x00)
 #define TOPBAR_BC					COLOR_WHITE
