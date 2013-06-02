@@ -106,7 +106,7 @@ void RA_TS::GetTouch()
 		pressure=uZ2;
 		pressure/=uZ1;
 		pressure*=100;
-		Serial.println(pressure);
+//		Serial.println(pressure);
 
 		if (pressure<TouchPressure)
 		{
