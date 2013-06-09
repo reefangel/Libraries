@@ -47,7 +47,7 @@ void RA_TS::SaveCalibration()
 	eeprom_write_block((void*)&calibration, (void*)TS_CALIBRATION_ADDRESS, sizeof(CALIBRATION));
 }
 
-void RA_TS::GetTouch()
+boolean RA_TS::GetTouch()
 {
 	int a,b;
 	unsigned long averageX=0;
@@ -137,7 +137,7 @@ void RA_TS::GetTouch()
 		Y=constrain(Y,0,319);
 		break;
 	case 2:
-#ifdef HX8347D	
+#if defined HX8347D || defined HX8347G
 		X=map(uY,calibration.YMax,calibration.YMin,0,319);
 		Y=map(uX,calibration.XMin,calibration.XMax,0,239);
 		X=constrain(X,0,319);
@@ -157,7 +157,7 @@ void RA_TS::GetTouch()
 		Y=constrain(Y,0,319);
 		break;
 	case 4:
-#ifdef HX8347D	
+#if defined HX8347D || defined HX8347G
 		X=map(uY,calibration.YMin,calibration.YMax,0,319);
 		Y=map(uX,calibration.XMax,calibration.XMin,0,239);
 		X=constrain(X,0,319);
@@ -173,7 +173,7 @@ void RA_TS::GetTouch()
 	}
 	if (X <= 0) X = 0;
 	if (Y <= 0) Y = 0;
-	
+	if (uX==0 && uY==0) return false; else return true;
 }
 
 boolean RA_TS::IsTouched()
@@ -181,7 +181,7 @@ boolean RA_TS::IsTouched()
 	boolean t=!(PIND&(1<<5));
 	if (t) 
 	{
-		GetTouch();
+		t=GetTouch();
 //		if (FirstX==0 && FirstY==0)
 //		{
 //			FirstX=X;

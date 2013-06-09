@@ -987,7 +987,7 @@ typedef struct Compensation
 #define TS_CALIBRATION_XMAX				3200
 #define TS_CALIBRATION_YMIN				700
 #define TS_CALIBRATION_YMAX				3200
-#define TS_CALIBRATION_DELTA			500
+#define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
@@ -995,8 +995,9 @@ typedef struct Compensation
 uint16_t read16(File f);
 uint32_t read32(File f);
 
-#define ILI9341
+//#define ILI9341
 //#define HX8347D
+#define HX8347G
 
 const prog_char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
 const prog_char NoIMLine2[] PROGMEM = "File";

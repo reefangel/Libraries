@@ -31,7 +31,7 @@ void RA_TFT::Init()
 	RST1;
 	delay(15);
 
-#ifdef HX8347D
+#if defined HX8347D || defined HX8347G
 	//CMO2.8+HX8347D
 	//Driving ability Setting
 	SendComData(0x00EA,0x0000); //PTBA[15:8]
@@ -299,7 +299,7 @@ void RA_TFT::Clear(int color, int x1, int y1, int x2, int y2)
 
 void RA_TFT::SetBox(int x1, int y1, int x2, int y2)
 {
-#ifdef HX8347D	
+#if defined HX8347D || defined HX8347G
 	SendComData(0x0002,x1>>8);     // Column address start2
 	SendComData(0x0003,x1);    // Column address start1
 	SendComData(0x0004,x2>>8);     // Column address end2

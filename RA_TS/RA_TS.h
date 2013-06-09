@@ -38,7 +38,7 @@ class RA_TS
 		RA_TS();
 		void Init();
 		void SaveCalibration();
-		void GetTouch();
+		boolean GetTouch();
 		boolean IsTouched();
 		boolean IsTouchedInside(int x1, int y1, int x2, int y2);
 		boolean IsCalibrationNeeded();

@@ -57,6 +57,9 @@ void RA_TouchLCD::SetOrientation(byte O)
 		switch (O)
 		{
 		case 1:
+#ifdef HX8347G
+			RA_TFT::SendComData(0x0016,0x0048); // Normal Rotation
+#endif
 #ifdef HX8347D	
 			RA_TFT::SendComData(0x0016,0x000f); // Normal Rotation
 #endif
@@ -67,31 +70,40 @@ void RA_TouchLCD::SetOrientation(byte O)
 			h=319;
 			break;
 		case 2:
+#ifdef HX8347G
+			RA_TFT::SendComData(0x0016,0x00e8); // 90 Rotation
+#endif
 #ifdef HX8347D	
 			RA_TFT::SendComData(0x0016,0x00af); // 90 Rotation
 #endif
 #ifdef ILI9341
-			RA_TFT::SendComData(0x0036,0x0028); // Normal Rotation
+			RA_TFT::SendComData(0x0036,0x0028); // 90 Rotation
 #endif
 			w=319;
 			h=239;
 			break;
 		case 3:
+#ifdef HX8347G
+			RA_TFT::SendComData(0x0016,0x0088); // 180 Rotation
+#endif
 #ifdef HX8347D	
 			RA_TFT::SendComData(0x0016,0x00cf); // 180 Rotation
 #endif
 #ifdef ILI9341
-			RA_TFT::SendComData(0x0036,0x0088); // Normal Rotation
+			RA_TFT::SendComData(0x0036,0x0088); // 180 Rotation
 #endif
 			w=239;
 			h=319;
 			break;
 		case 4:
+#ifdef HX8347G
+			RA_TFT::SendComData(0x0016,0x0028); // 270 Rotation
+#endif
 #ifdef HX8347D	
 			RA_TFT::SendComData(0x0016,0x006f); // 270 Rotation
 #endif
 #ifdef ILI9341
-			RA_TFT::SendComData(0x0036,0x00e8); // Normal Rotation
+			RA_TFT::SendComData(0x0036,0x00e8); // 270 Rotation
 #endif
 			w=319;
 			h=239;
