@@ -908,6 +908,9 @@ void ReefAngelClass::Refresh()
 	WaterLevel.Convert();
 	RefreshScreen();
 #endif  // defined WATERLEVELEXPANSION
+#if defined HUMIDITYEXPANSION
+	Humidity.Read();
+#endif  // defined HUMIDITYEXPANSION
 	OverheatCheck();
 #ifdef BUSCHECK
 	Wire.beginTransmission(0x68);

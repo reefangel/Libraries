@@ -68,6 +68,9 @@
 #if defined IOEXPANSION
 	#include <IO.h>
 #endif  // defined IOEXPANSION
+#if defined HUMIDITYEXPANSION
+	#include <Humidity.h>
+#endif  // defined HUMIDITYEXPANSION
 
 #include <avr/pgmspace.h>
 
@@ -235,7 +238,9 @@ public:
 #if defined IOEXPANSION
 	IOClass IO;
 #endif  // defined IOEXPANSION
-
+#if defined HUMIDITYEXPANSION
+	HumidityClass Humidity;
+#endif  // defined HUMIDITYEXPANSION
 	/*
 	Timers:
 	0 - Feeding Mode timer

@@ -223,6 +223,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
 #define I2CWaterLevel		0X4f
+#define I2CHumidity			0x5c
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
@@ -1198,6 +1199,9 @@ char* MoonPhaseLabel();
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
+
+// 16bit CRC Calculation
+unsigned int crc16(int *ptr, byte len);
 
 //Wave Patterns
 byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);

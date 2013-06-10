@@ -467,6 +467,7 @@ IO	LITERAL1
 InternalMemory	KEYWORD1
 Timer	LITERAL1
 WaterLevel	LITERAL1
+Humidity	LITERAL1
 
 #######################################
 # Constants (LITERAL1)
