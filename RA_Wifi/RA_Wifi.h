@@ -41,7 +41,8 @@ const prog_char XML_RE_OFF[] PROGMEM = "OFF";
 const prog_char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
 const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
-const prog_char XML_REM[] PROGMEM = "</EM><REM>";
+const prog_char XML_EM1[] PROGMEM = "</EM><EM1>";
+const prog_char XML_REM[] PROGMEM = "</EM1><REM>";
 const prog_char XML_REM_END[] PROGMEM = "</REM>";
 
 #ifdef DisplayLEDPWM
@@ -65,6 +66,10 @@ const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 const prog_char XML_WL[] PROGMEM = "<WL>";
 const prog_char XML_WL_END[] PROGMEM = "</WL>";
 #endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+const prog_char XML_HUM[] PROGMEM = "<HUM>";
+const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
+#endif  // HUMIDITYEXPANSION
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
@@ -159,6 +164,7 @@ const prog_char BannerRelayMaskOn[] PROGMEM = "&ron";
 const prog_char BannerRelayMaskOff[] PROGMEM = "&roff";
 const prog_char BannerID[] PROGMEM = "&id=";
 const prog_char BannerEM[] PROGMEM = "&em=";
+const prog_char BannerEM1[] PROGMEM = "&em1=";
 const prog_char BannerREM[] PROGMEM = "&rem=";
 const prog_char BannerCustom[] PROGMEM = "&c";
 const prog_char BannerKey[] PROGMEM = "&key=";
@@ -210,6 +216,10 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 	const prog_char BannerWL[] PROGMEM = "&wl=";
 #endif  // WATERLEVELEXPANSION
 	
+#ifdef HUMIDITYEXPANSION
+	const prog_char BannerHumidity[] PROGMEM = "&hum=";
+#endif  // HUMIDITYEXPANSION
+
 #ifdef CUSTOM_VARIABLES
 	const prog_char BannerCustomVar[] PROGMEM = "&c";
 #endif //CUSTOM_VARIABLES

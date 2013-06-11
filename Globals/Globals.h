@@ -1114,6 +1114,7 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 
 #endif //  REEFTOUCH
 
+// EM Bits
 #ifdef PWMEXPANSION
 	#define PWMEbit		1
 #else
@@ -1161,6 +1162,13 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #else
 	#define WLbit		0
 #endif  // WATERLEVELEXPANSION
+
+// EM1 Bits
+#ifdef HUMIDITYEXPANSION
+	#define HUMbit		1
+#else
+	#define HUMbit		0
+#endif  // HUMIDITYEXPANSION
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

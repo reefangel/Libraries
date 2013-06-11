@@ -690,6 +690,7 @@ void ReefAngelClass::Init()
 
 #if defined wifi || defined I2CMASTER
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
+	EM1 = HUMbit;
 #ifdef wifi
 	portalusername="";
 #endif // wifi
@@ -710,6 +711,7 @@ void ReefAngelClass::Init()
 #endif //CUSTOM_VARIABLES
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
 	EM=0;
+	EM1=0;
 	REM=0;
 #endif //  REEFTOUCHDISPLAY	
 }
@@ -1676,6 +1678,8 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	WIFI_SERIAL.print(username);
 	PROGMEMprint(BannerEM);
 	WIFI_SERIAL.print(EM, DEC);
+	PROGMEMprint(BannerEM1);
+	WIFI_SERIAL.print(EM1, DEC);
 	PROGMEMprint(BannerREM);
 	WIFI_SERIAL.print(REM, DEC);
 	PROGMEMprint(BannerKey);
@@ -1770,6 +1774,10 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	PROGMEMprint(BannerWL);
 	WIFI_SERIAL.print(WaterLevel.GetLevel(), DEC);
 #endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+	PROGMEMprint(BannerHumidity);
+	WIFI_SERIAL.print(Humidity.GetLevel(), DEC);
+#endif  // HUMIDITYEXPANSION
 #ifdef IOEXPANSION
 	PROGMEMprint(BannerIO);
 	WIFI_SERIAL.print(IO.GetChannel(), DEC);

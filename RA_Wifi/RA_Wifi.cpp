@@ -295,14 +295,15 @@ void processHTTP()
 			case REQ_R_STATUS:
 			{
 				char temp[6];
-				int s=141;
-				//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><REM></REM></RA>
+				int s=152;
+				//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM></RA>
 				s += strlen(ReefAngel.portalusername);
 				s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 				s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
 				s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
 				s += intlength(ReefAngel.Params.PH);
 				s += intlength(ReefAngel.EM);
+				s += intlength(ReefAngel.EM1);
 				s += intlength(ReefAngel.REM);
 				s += 2;  // one digit for each ATO
 				s += intlength(ReefAngel.Relay.RelayData);
@@ -362,6 +363,11 @@ void processHTTP()
 				//<WL></WL>
 				s += intlength(ReefAngel.WaterLevel.GetLevel());
 #endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+				s += 11;
+				//<HUM></HUM>
+				s += intlength(ReefAngel.Humidity.GetLevel());
+#endif  // HUMIDITYEXPANSION
 #ifdef IOEXPANSION
 				s += 9;
 				//<IO></IO>
@@ -900,6 +906,8 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.HighATO.IsActive());
 	PROGMEMprint(XML_EM);
 	WIFI_SERIAL.print(ReefAngel.EM, DEC);
+	PROGMEMprint(XML_EM1);
+	WIFI_SERIAL.print(ReefAngel.EM1, DEC);
 	PROGMEMprint(XML_REM);
 	WIFI_SERIAL.print(ReefAngel.REM, DEC);
 	PROGMEMprint(XML_REM_END);
@@ -930,6 +938,11 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.WaterLevel.GetLevel(), DEC);
 	PROGMEMprint(XML_WL_END);
 #endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+	PROGMEMprint(XML_HUM);
+	WIFI_SERIAL.print(ReefAngel.Humidity.GetLevel(), DEC);
+	PROGMEMprint(XML_HUM_END);
+#endif  // HUMIDITYEXPANSION
 #ifdef IOEXPANSION
 	PROGMEMprint(XML_IO);
 	WIFI_SERIAL.print(ReefAngel.IO.GetChannel(), DEC);

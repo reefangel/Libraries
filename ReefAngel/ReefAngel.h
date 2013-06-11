@@ -262,9 +262,24 @@ public:
 #ifdef OVERRIDE_PORTS
 	byte OverridePorts;
 #endif
-	byte EM;
+	byte EM,EM1;
 	byte REM;
 	
+/*
+	EM Bits
+	Bit 0 - PWMEbit
+	Bit 1 - RFEbit
+	Bit 2 - AIbit
+	Bit 3 - Salbit
+	Bit 4 - ORPbit
+	Bit 5 - IObit
+	Bit 6 - PHbit
+	Bit 7 - WLbit
+
+	EM1 Bits
+	Bit 0 - HUMbit
+*/
+
 #ifdef RelayExp
 	// Expansion Module ports
 	byte FeedingModePortsE[MAX_RELAY_EXPANSION_MODULES];
