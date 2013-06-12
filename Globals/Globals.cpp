@@ -280,8 +280,8 @@ byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, b
 {
 	byte tspeed=0;
 	LightsOverride=false;
-	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
-	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
+//	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
+//	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
 	tspeed=(millis()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
 	if (PulseSync)
 		return tspeed;
@@ -293,8 +293,8 @@ byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, bo
 {
 	byte tspeed=0;
 	LightsOverride=false;
-	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
-	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
+//	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
+//	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
 	tspeed=(now()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
 	if (PulseSync)
 		return tspeed;
