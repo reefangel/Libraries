@@ -70,6 +70,12 @@ const prog_char XML_WL_END[] PROGMEM = "</WL>";
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
 const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
 #endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+const prog_char XML_DCM[] PROGMEM = "<DCM>";
+const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
+const prog_char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
+const prog_char XML_DCD_END[] PROGMEM = "</DCD>";
+#endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
@@ -219,6 +225,13 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 #ifdef HUMIDITYEXPANSION
 	const prog_char BannerHumidity[] PROGMEM = "&hum=";
 #endif  // HUMIDITYEXPANSION
+
+#ifdef DCPUMPCONTROL
+	const prog_char BannerDCM[] PROGMEM = "&dcm=";
+	const prog_char BannerDCS[] PROGMEM = "&dcs=";
+	const prog_char BannerDCD[] PROGMEM = "&dcd=";
+#endif  // DCPUMPCONTROL
+
 
 #ifdef CUSTOM_VARIABLES
 	const prog_char BannerCustomVar[] PROGMEM = "&c";

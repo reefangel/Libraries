@@ -368,6 +368,13 @@ void processHTTP()
 				//<HUM></HUM>
 				s += intlength(ReefAngel.Humidity.GetLevel());
 #endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+				s += 33;
+				//<DCM></DCM><DCS></DCS><DCD></DCD>
+				s += intlength(ReefAngel.DCPump.Mode);
+				s += intlength(ReefAngel.DCPump.Speed);
+				s += intlength(ReefAngel.DCPump.Duration);
+#endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 				s += 9;
 				//<IO></IO>
@@ -943,6 +950,15 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.Humidity.GetLevel(), DEC);
 	PROGMEMprint(XML_HUM_END);
 #endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+	PROGMEMprint(XML_DCM);
+	WIFI_SERIAL.print(ReefAngel.DCPump.Mode, DEC);
+	PROGMEMprint(XML_DCM_END);
+	WIFI_SERIAL.print(ReefAngel.DCPump.Speed, DEC);
+	PROGMEMprint(XML_DCS_END);
+	WIFI_SERIAL.print(ReefAngel.DCPump.Duration, DEC);
+	PROGMEMprint(XML_DCD_END);
+#endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 	PROGMEMprint(XML_IO);
 	WIFI_SERIAL.print(ReefAngel.IO.GetChannel(), DEC);

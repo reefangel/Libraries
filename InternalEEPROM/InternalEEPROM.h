@@ -191,6 +191,12 @@ class InternalEEPROMClass {
         void DP3Timer_write(const uint8_t value);
         uint8_t LCDID_read();
         void LCDID_write(const uint8_t value);
+        uint8_t DCPumpMode_read();
+        void DCPumpMode_write(const uint8_t value);
+        uint8_t DCPumpSpeed_read();
+        void DCPumpSpeed_write(const uint8_t value);
+        uint8_t DCPumpDuration_read();
+        void DCPumpDuration_write(const uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();

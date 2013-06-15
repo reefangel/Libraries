@@ -56,7 +56,7 @@
 #define AI_LED
 #endif // REEFTOUCHDISPLAY
 
-#if defined REEFTOUCH
+#if defined REEFTOUCH || defined DCPUMPCONTROL
 #define DisplayLEDPWM
 #endif // REEFTOUCH
 
@@ -432,9 +432,12 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DP3Timer            VarsStart+133
 #define Mem_I_DP3RepeatInterval	  VarsStart+134
 #define Mem_B_LCDID		          VarsStart+136
+#define Mem_B_DCPumpMode          VarsStart+137
+#define Mem_B_DCPumpSpeed         VarsStart+138
+#define Mem_B_DCPumpDuration      VarsStart+139
 
-#define VarsEnd					  VarsStart+137
-// Next value starts VarsStart+137
+#define VarsEnd					  VarsStart+140
+// Next value starts VarsStart+140
 
 
 // EEProm Pointers
@@ -833,6 +836,11 @@ typedef struct Compensation
 	int YOff;
 } COMPENSATION ;
 
+// Used by the DCPump class
+#define None		0
+#define Sync		1
+#define AntiSync	2
+
 //Internal EEPROM
 #define TS_CALIBRATION_ADDRESS 		0x0
 #define TT_COMPENSATION_ADDRESS 	0x10
@@ -1169,6 +1177,12 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #else
 	#define HUMbit		0
 #endif  // HUMIDITYEXPANSION
+
+#ifdef DCPUMPCONTROL
+	#define DCPumpbit		2
+#else
+	#define DCPumpbit		0
+#endif  // DCPUMPCONTROL
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

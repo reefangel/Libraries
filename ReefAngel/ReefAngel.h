@@ -46,6 +46,8 @@
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
+#include <DCPump.h>
+
 
 #if defined ORPEXPANSION
 	#include <ORP.h>
@@ -213,6 +215,9 @@ public:
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+#ifdef DCPUMPCONTROL
+	DCPumpClass DCPump;
+#endif  // DCPUMPCONTROL
 #if defined ORPEXPANSION
 	int ORPMin, ORPMax;
 	ORPClass ORP;

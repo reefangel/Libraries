@@ -838,6 +838,36 @@ void InternalEEPROMClass::LCDID_write(const uint8_t value)
     write(Mem_B_LCDID, value);
 }
 
+uint8_t InternalEEPROMClass::DCPumpMode_read()
+{
+    return read(Mem_B_DCPumpMode);
+}
+
+void InternalEEPROMClass::DCPumpMode_write(const uint8_t value)
+{
+    write(Mem_B_DCPumpMode, value);
+}
+
+uint8_t InternalEEPROMClass::DCPumpSpeed_read()
+{
+    return read(Mem_B_DCPumpSpeed);
+}
+
+void InternalEEPROMClass::DCPumpSpeed_write(const uint8_t value)
+{
+    write(Mem_B_DCPumpSpeed, value);
+}
+
+uint8_t InternalEEPROMClass::DCPumpDuration_read()
+{
+    return read(Mem_B_DCPumpDuration);
+}
+
+void InternalEEPROMClass::DCPumpDuration_write(const uint8_t value)
+{
+    write(Mem_B_DCPumpDuration, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {

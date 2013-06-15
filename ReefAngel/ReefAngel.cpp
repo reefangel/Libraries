@@ -690,7 +690,7 @@ void ReefAngelClass::Init()
 
 #if defined wifi || defined I2CMASTER
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
-	EM1 = HUMbit;
+	EM1 = HUMbit + DCPumpbit;
 #ifdef wifi
 	portalusername="";
 #endif // wifi
@@ -732,6 +732,133 @@ void ReefAngelClass::Refresh()
 		if (LightsOnPorts & 1<<l)
 			if (ReefAngel.Relay.RelayMaskOn & 1<<l) LightRelayOn=true;
 	}
+
+#ifdef DCPUMPCONTROL
+	if (DCPump.UseMemory)
+	{
+		DCPump.Mode=InternalMemory.DCPumpMode_read();
+		DCPump.Speed=InternalMemory.DCPumpSpeed_read();
+		DCPump.Duration=InternalMemory.DCPumpDuration_read();
+	}
+	switch (DCPump.Mode)
+	{
+		case Constant:
+		{
+			if (DCPump.DaylightChannel!=None)
+				PWM.SetDaylight(DCPump.Speed);
+			if (DCPump.ActinicChannel!=None)
+				PWM.SetActinic(DCPump.Speed);
+#ifdef PWMEXPANSION
+			for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+				if (DCPump.ExpansionChannel[a]!=None)
+					PWM.SetChannel(a,DCPump.Speed);
+#endif // PWMEXPANSION
+			break;
+		}
+		case Lagoon:
+		{
+			if (DCPump.DaylightChannel!=None)
+				PWM.SetDaylight(ReefCrestMode(DCPump.Speed,10,DCPump.DaylightChannel-1));
+			if (DCPump.ActinicChannel!=None)
+				PWM.SetActinic(ReefCrestMode(DCPump.Speed,10,DCPump.ActinicChannel-1));
+#ifdef PWMEXPANSION
+			for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+				if (DCPump.ExpansionChannel[a]!=None)
+					PWM.SetChannel(a,ReefCrestMode(DCPump.Speed,10,DCPump.ExpansionChannel[a]-1));
+#endif // PWMEXPANSION
+			break;
+		}
+		case ReefCrest:
+		{
+			if (DCPump.DaylightChannel!=None)
+				PWM.SetDaylight(ReefCrestMode(DCPump.Speed,20,DCPump.DaylightChannel-1));
+			if (DCPump.ActinicChannel!=None)
+				PWM.SetActinic(ReefCrestMode(DCPump.Speed,20,DCPump.ActinicChannel-1));
+#ifdef PWMEXPANSION
+			for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+				if (DCPump.ExpansionChannel[a]!=None)
+					PWM.SetChannel(a,ReefCrestMode(DCPump.Speed,20,DCPump.ExpansionChannel[a]-1));
+#endif // PWMEXPANSION
+			break;
+		}
+		case ShortPulse:
+		{
+			if (DCPump.DaylightChannel!=None)
+				PWM.SetDaylight(ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.DaylightChannel-1));
+			if (DCPump.ActinicChannel!=None)
+				PWM.SetActinic(ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ActinicChannel-1));
+#ifdef PWMEXPANSION
+			for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+				if (DCPump.ExpansionChannel[a]!=None)
+					PWM.SetChannel(a,ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ExpansionChannel[a]-1));
+#endif // PWMEXPANSION
+			break;
+		}
+		case LongPulse:
+		{
+			if (DCPump.DaylightChannel!=None)
+				PWM.SetDaylight(LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.DaylightChannel-1));
+			if (DCPump.ActinicChannel!=None)
+				PWM.SetActinic(LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.ActinicChannel-1));
+#ifdef PWMEXPANSION
+			for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+				if (DCPump.ExpansionChannel[a]!=None)
+					PWM.SetChannel(a,LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.ExpansionChannel[a]-1));
+#endif // PWMEXPANSION
+			break;
+		}
+		case NutrientTransport:
+		{
+			if (DCPump.DaylightChannel!=None)
+				PWM.SetDaylight(NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.DaylightChannel-1));
+			if (DCPump.ActinicChannel!=None)
+				PWM.SetActinic(NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ActinicChannel-1));
+#ifdef PWMEXPANSION
+			for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+				if (DCPump.ExpansionChannel[a]!=None)
+					PWM.SetChannel(a,NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ExpansionChannel[a]-1));
+#endif // PWMEXPANSION
+			break;
+		}
+		case TidalSwell:
+		{
+			if (DCPump.DaylightChannel!=None)
+				PWM.SetDaylight(TidalSwellMode(DCPump.Speed,DCPump.DaylightChannel-1));
+			if (DCPump.ActinicChannel!=None)
+				PWM.SetActinic(TidalSwellMode(DCPump.Speed,DCPump.ActinicChannel-1));
+#ifdef PWMEXPANSION
+			for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+				if (DCPump.ExpansionChannel[a]!=None)
+					PWM.SetChannel(a,TidalSwellMode(DCPump.Speed,DCPump.ExpansionChannel[a]-1));
+#endif // PWMEXPANSION
+			break;
+		}
+	}
+	if (DisplayedMenu==FEEDING_MODE)
+	{
+		if (DCPump.DaylightChannel!=None)
+			PWM.SetDaylight(DCPump.FeedingSpeed);
+		if (DCPump.ActinicChannel!=None)
+			PWM.SetActinic(DCPump.FeedingSpeed);
+#ifdef PWMEXPANSION
+		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+			if (DCPump.ExpansionChannel[a]!=None)
+				PWM.SetChannel(a,DCPump.FeedingSpeed);
+#endif // PWMEXPANSION
+	}
+	if (DisplayedMenu==WATERCHANGE_MODE)
+	{
+		if (DCPump.DaylightChannel!=None)
+			PWM.SetDaylight(DCPump.WaterChangeSpeed);
+		if (DCPump.ActinicChannel!=None)
+			PWM.SetActinic(DCPump.WaterChangeSpeed);
+#ifdef PWMEXPANSION
+		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+			if (DCPump.ExpansionChannel[a]!=None)
+				PWM.SetChannel(a,DCPump.WaterChangeSpeed);
+#endif // PWMEXPANSION
+	}
+#endif  // DCPUMPCONTROL
 
 #if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	if (LightRelayOn && LightsOverride)
@@ -1778,6 +1905,14 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	PROGMEMprint(BannerHumidity);
 	WIFI_SERIAL.print(Humidity.GetLevel(), DEC);
 #endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+	PROGMEMprint(BannerDCM);
+	WIFI_SERIAL.print(DCPump.Mode, DEC);
+	PROGMEMprint(BannerDCS);
+	WIFI_SERIAL.print(DCPump.Speed, DEC);
+	PROGMEMprint(BannerDCD);
+	WIFI_SERIAL.print(DCPump.Duration, DEC);
+#endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 	PROGMEMprint(BannerIO);
 	WIFI_SERIAL.print(IO.GetChannel(), DEC);

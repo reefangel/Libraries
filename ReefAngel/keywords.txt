@@ -468,6 +468,7 @@ InternalMemory	KEYWORD1
 Timer	LITERAL1
 WaterLevel	LITERAL1
 Humidity	LITERAL1
+DCPump	LITERAL1
 
 #######################################
 # Constants (LITERAL1)
@@ -632,3 +633,11 @@ EXP5_RELAY	LITERAL2
 EXP6_RELAY	LITERAL2
 EXP7_RELAY	LITERAL2
 EXP8_RELAY	LITERAL2
+
+None	LITERAL2
+Sync	LITERAL2
+AntiSync	LITERAL2
+DaylightChannel	LITERAL2
+ActinicChannel	LITERAL2
+FeedingSpeed	LITERAL2
+WaterChangeSpeed	LITERAL2
