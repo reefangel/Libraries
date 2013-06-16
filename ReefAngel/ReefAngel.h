@@ -264,6 +264,9 @@ public:
 	byte FeedingModePorts;
 	byte WaterChangePorts;
 	byte OverheatShutoffPorts;
+#ifdef LEAKDETECTOREXPANSION
+	byte LeakShutoffPorts;
+#endif  // LEAKDETECTOREXPANSION
 #ifdef OVERRIDE_PORTS
 	byte OverridePorts;
 #endif
@@ -290,6 +293,9 @@ public:
 	byte FeedingModePortsE[MAX_RELAY_EXPANSION_MODULES];
 	byte WaterChangePortsE[MAX_RELAY_EXPANSION_MODULES];
 	byte OverheatShutoffPortsE[MAX_RELAY_EXPANSION_MODULES];
+#ifdef LEAKDETECTOREXPANSION
+	byte LeakShutoffPortsE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // LEAKDETECTOREXPANSION
 #ifdef OVERRIDE_PORTS
   byte OverridePortsE[MAX_RELAY_EXPANSION_MODULES];
 #endif  // OVERRIDE_PORTS
@@ -315,6 +321,10 @@ public:
 	byte TempProbe;
 
 	time_t Overheatmillis;
+#ifdef LEAKDETECTOREXPANSION
+	time_t Leakmillis;
+#endif  // LEAKDETECTOREXPANSION
+
 	void Init();
 	void Refresh();
 	void SetTemperatureUnit(byte unit);
@@ -336,6 +346,12 @@ public:
 	void inline NoWifi() {};
 	void inline NoSD() {};
 	void inline NoTilt() {};
+#ifdef LEAKDETECTOREXPANSION
+	boolean IsLeakDetected();
+	void LeakCheck();
+	void LeakClear();
+#endif  // LEAKDETECTOREXPANSION
+
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);

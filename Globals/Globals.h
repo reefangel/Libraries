@@ -96,6 +96,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OverheatFlag   	1
 #define BusLockFlag   	2
 #define LightsOnFlag   	3
+#define LeakFlag		4
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
@@ -219,6 +220,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CExpander1        0x20
 #define I2CExpander2        0x21
 #define I2CExpModule        0x38 // 0x38-3f
+#define I2CLeak				0X48
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e

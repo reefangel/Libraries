@@ -180,6 +180,7 @@ void pushbuffer(byte inStr)
 //            else if (strncmp("GET /cr", m_pushback, 7)==0) reqtype = -REQ_CAL_RELOAD;
             else if (strncmp("GET /mt", m_pushback, 7)==0) reqtype = -REQ_ALARM_ATO;
             else if (strncmp("GET /mo", m_pushback, 7)==0) reqtype = -REQ_ALARM_OVERHEAT;
+            else if (strncmp("GET /ml", m_pushback, 7)==0) reqtype = -REQ_ALARM_LEAK;
             else if (strncmp("GET /l0", m_pushback, 7)==0) reqtype = -REQ_LIGHTSOFF;
             else if (strncmp("GET /l1", m_pushback, 7)==0) reqtype = -REQ_LIGHTSON;
             //else reqtype = -REQ_UNKNOWN;
@@ -765,6 +766,12 @@ void processHTTP()
 			case REQ_ALARM_OVERHEAT:
 			{
 				ReefAngel.OverheatClear();
+				ModeResponse(true);
+				break;
+			}
+			case REQ_ALARM_LEAK:
+			{
+				ReefAngel.LeakClear();
 				ModeResponse(true);
 				break;
 			}

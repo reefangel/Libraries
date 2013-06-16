@@ -1041,6 +1041,9 @@ void ReefAngelClass::Refresh()
 	Humidity.Read();
 #endif  // defined HUMIDITYEXPANSION
 	OverheatCheck();
+#ifdef LEAKDETECTOREXPANSION
+	LeakCheck();
+#endif  // LEAKDETECTOREXPANSION
 #ifdef BUSCHECK
 	Wire.beginTransmission(0x68);
 	Wire.write(0);
@@ -1051,10 +1054,12 @@ void ReefAngelClass::Refresh()
 	  delay(20);
 	  LED.Off();
 	  BusLocked=true;  // Bus is locked
+	  bitSet(Flags,BusLockFlag);
 	}
 	else
 	{
 	  BusLocked=false;  // Bus is not locked
+	  bitClear(Flags,BusLockFlag);
 	}
 #endif
 }
@@ -1152,6 +1157,63 @@ void ReefAngelClass::ConvertTempUnit()
     	}
     }
 }
+
+#ifdef LEAKDETECTOREXPANSION
+boolean ReefAngelClass::IsLeakDetected()
+{
+	  int iLeak=0;
+	  Wire.requestFrom(I2CLeak, 2);
+	  if (Wire.available())
+	  {
+		  iLeak = Wire.read();
+		  iLeak = iLeak<<8;
+		  iLeak += Wire.read();
+	  }
+	  return iLeak>2000?true:false;
+}
+
+void ReefAngelClass::LeakCheck()
+{
+	// if leak is detected
+	if ( !IsLeakDetected() )
+		Leakmillis=millis();
+	if (millis()-Leakmillis>3000) // Only flag leak if we have a leak for 3 seconds
+	{
+		LED.On();
+		bitSet(Flags,LeakFlag);
+		// invert the ports that are activated
+		Relay.RelayMaskOff &= ~LeakShutoffPorts;
+#ifdef RelayExp
+		for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+		{
+			Relay.RelayMaskOffE[i] &= ~LeakShutoffPortsE[i];
+		}
+#endif  // RelayExp
+	}
+}
+
+void ReefAngelClass::LeakClear()
+{
+	LED.Off();
+	bitClear(Flags,LeakFlag);
+	Relay.RelayMaskOff |= LeakShutoffPorts;
+#ifdef RelayExp
+	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+	{
+		Relay.RelayMaskOffE[i] |= LeakShutoffPortsE[i];
+	}
+#endif  // RelayExp
+	Relay.Write();
+#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+	if (DisplayedMenu==TOUCH_MENU)
+		SetDisplayedMenu(DEFAULT_MENU);
+#endif  // REEFTOUCH
+#ifdef REEFTOUCHDISPLAY
+	SendMaster(MESSAGE_COMMAND,COMMAND_CLEAR_LEAK,0);
+#endif // REEFTOUCHDISPLAY
+}
+
+#endif  // LEAKDETECTOREXPANSION
 
 void ReefAngelClass::StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute)
 {
