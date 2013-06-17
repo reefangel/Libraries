@@ -296,8 +296,8 @@ void processHTTP()
 			case REQ_R_STATUS:
 			{
 				char temp[6];
-				int s=152;
-				//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM></RA>
+				int s=165;
+				//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM><FLAG></FLAG></RA>
 				s += strlen(ReefAngel.portalusername);
 				s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 				s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
@@ -306,6 +306,7 @@ void processHTTP()
 				s += intlength(ReefAngel.EM);
 				s += intlength(ReefAngel.EM1);
 				s += intlength(ReefAngel.REM);
+				s += intlength(ReefAngel.Flags);
 				s += 2;  // one digit for each ATO
 				s += intlength(ReefAngel.Relay.RelayData);
 				s += intlength(ReefAngel.Relay.RelayMaskOn);
@@ -771,7 +772,9 @@ void processHTTP()
 			}
 			case REQ_ALARM_LEAK:
 			{
+#ifdef LEAKDETECTOREXPANSION
 				ReefAngel.LeakClear();
+#endif // LEAKDETECTOREXPANSION
 				ModeResponse(true);
 				break;
 			}
@@ -924,7 +927,9 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.EM1, DEC);
 	PROGMEMprint(XML_REM);
 	WIFI_SERIAL.print(ReefAngel.REM, DEC);
-	PROGMEMprint(XML_REM_END);
+	PROGMEMprint(XML_FLAG);
+	WIFI_SERIAL.print(ReefAngel.Flags, DEC);
+	PROGMEMprint(XML_FLAG_END);
 #ifdef DisplayLEDPWM
 	PROGMEMprint(XML_PWMA);
 	WIFI_SERIAL.print(ReefAngel.PWM.GetActinicValue(), DEC);

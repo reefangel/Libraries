@@ -1873,6 +1873,8 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	WIFI_SERIAL.print(REM, DEC);
 	PROGMEMprint(BannerKey);
 	WIFI_SERIAL.print(key);
+	PROGMEMprint(BannerFlag);
+	WIFI_SERIAL.print(Flags);
 	PROGMEMprint(BannerATOHIGH);
 	WIFI_SERIAL.print(HighATO.IsActive(), DEC);
 	PROGMEMprint(BannerATOLOW);
