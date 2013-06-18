@@ -475,6 +475,42 @@ void processHTTP()
 					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
 				}
+				else if ( !bHasSecondValue && (weboption2 >= 0) && (bCommaCount==0) )
+				{
+					// get the length first
+					s = 7;  // <M></M>
+					// length of the memory location, twice since it's in the open & close tag
+					s += (intlength(weboption2)*2);
+					// length of the value from memory
+					if ( reqtype == REQ_M_BYTE )
+						s += intlength(InternalMemory.read(newweboption2));
+					else
+						s += intlength(InternalMemory.read_int(newweboption2));
+
+					PrintHeader(s,1);
+
+					// no second value and no comma, so we read the value from memory
+					PROGMEMprint(XML_M_OPEN);
+					WIFI_SERIAL.print(weboption2, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
+					if ( reqtype == REQ_M_BYTE )
+						WIFI_SERIAL.print(InternalMemory.read(newweboption2),DEC);
+					else
+						WIFI_SERIAL.print(InternalMemory.read_int(newweboption2),DEC);
+					PROGMEMprint(XML_M_CLOSE);
+					WIFI_SERIAL.print(weboption2, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
+				}
+				else
+				{
+					s = 10;  // <M>ERR</M>
+					PrintHeader(s,1);
+					PROGMEMprint(XML_M_OPEN);
+					PROGMEMprint(XML_CLOSE_TAG);
+					PROGMEMprint(XML_ERR);
+					PROGMEMprint(XML_M_CLOSE);
+					PROGMEMprint(XML_CLOSE_TAG);
+				}
 				break;
 			}  // REQ_M_BYTE || REQ_M_INT
 			case REQ_OVERRIDE:
