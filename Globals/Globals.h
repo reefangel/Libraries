@@ -269,6 +269,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_GREEN		14
 #define OVERRIDE_RF_BLUE		15
 #define OVERRIDE_RF_INTENSITY	16
+#define OVERRIDE_CHANNELS		17
 
 // Message IDs
 #define MESSAGE_BUTTON	0
