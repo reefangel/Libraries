@@ -225,16 +225,18 @@ void ReefAngelClass::SetupTouchDateTime()
 	y=(theight*3/5);
 	LargeFont.DrawText(twidth*3/8-15,y,":");
 
-	Font.SetColor(COLOR_SILVER, COLOR_WHITE,false);
-	y=(theight/4)-35;
-	Font.DrawCenterText(twidth/6,y,"Month");
-	Font.DrawCenterText(twidth/2,y,"Day");
-	Font.DrawCenterText(twidth*5/6,y,"Year");
-	y=(theight*3/5)-35;
-	Font.DrawCenterText(twidth/6,y,"Hour");
-	Font.DrawCenterText(twidth/2,y,"Minute");
-	Font.DrawCenterText(twidth*5/6,y,"AM/PM");
-
+	if (orientation%2==1)
+	{
+		Font.SetColor(COLOR_SILVER, COLOR_WHITE,false);
+		y=(theight/4)-35;
+		Font.DrawCenterText(twidth/6,y,"Month");
+		Font.DrawCenterText(twidth/2,y,"Day");
+		Font.DrawCenterText(twidth*5/6,y,"Year");
+		y=(theight*3/5)-35;
+		Font.DrawCenterText(twidth/6,y,"Hour");
+		Font.DrawCenterText(twidth/2,y,"Minute");
+		Font.DrawCenterText(twidth*5/6,y,"AM/PM");
+	}
 	OkButton.SetPosition(twidth/4-40,theight*17/20);
 	OkButton.Show();
 	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
