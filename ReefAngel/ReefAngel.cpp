@@ -693,6 +693,7 @@ void ReefAngelClass::Init()
 	EM1 = HUMbit + DCPumpbit;
 #ifdef wifi
 	portalusername="";
+	portalkey="";
 #endif // wifi
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
@@ -1850,6 +1851,7 @@ void ReefAngelClass::Portal(char *username, char *key)
 {
 	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
 	portalusername=username;
+	portalkey=key;
 }
 
 void ReefAngelClass::SendPortal(char *username, char*key)

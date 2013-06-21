@@ -415,7 +415,7 @@ public:
 	void Portal(char *username);
 	void Portal(char *username, char*key);
 	void SendPortal(char *username, char*key);
-	char *portalusername;
+	char *portalusername, *portalkey;
 #endif  // wifi
 
 	void FeedingModeStart();
