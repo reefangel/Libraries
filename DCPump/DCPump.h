@@ -34,6 +34,7 @@ public:
 	 byte ActinicChannel;
 	 byte FeedingSpeed;
 	 byte WaterChangeSpeed;
+         byte LowATOChannel;
 #ifdef PWMEXPANSION
 	 byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
 #endif // PWMEXPANSION
