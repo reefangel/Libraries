@@ -42,6 +42,7 @@ public:
 	void inline SetChannel(byte Channel, byte Value) { if (Channel<RF_CHANNELS) RadionChannels[Channel]=Value; };
 	void inline SetChannelOverride(byte Channel, byte Value) { if (Channel<RF_CHANNELS) RadionChannelsOverride[Channel]=Value; };
 	byte GetChannel(byte Channel);
+	byte inline GetOverrideChannel(byte Channel) { return RadionChannelsOverride[Channel]; };
 	void RadionWrite();
 	void ChannelWhiteSlope();	
 	void ChannelRoyalBlueSlope();		

@@ -56,7 +56,7 @@
 #define AI_LED
 #endif // REEFTOUCHDISPLAY
 
-#if defined REEFTOUCH
+#if defined REEFTOUCH || defined DCPUMPCONTROL
 #define DisplayLEDPWM
 #endif // REEFTOUCH
 
@@ -96,6 +96,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OverheatFlag   	1
 #define BusLockFlag   	2
 #define LightsOnFlag   	3
+#define LeakFlag		4
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
@@ -219,10 +220,12 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CExpander1        0x20
 #define I2CExpander2        0x21
 #define I2CExpModule        0x38 // 0x38-3f
+#define I2CLeak				0X48
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
 #define I2CWaterLevel		0X4f
+#define I2CHumidity			0x5c
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
@@ -266,6 +269,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_GREEN		14
 #define OVERRIDE_RF_BLUE		15
 #define OVERRIDE_RF_INTENSITY	16
+#define OVERRIDE_CHANNELS		17
 
 // Message IDs
 #define MESSAGE_BUTTON	0
@@ -431,9 +435,12 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DP3Timer            VarsStart+133
 #define Mem_I_DP3RepeatInterval	  VarsStart+134
 #define Mem_B_LCDID		          VarsStart+136
+#define Mem_B_DCPumpMode          VarsStart+137
+#define Mem_B_DCPumpSpeed         VarsStart+138
+#define Mem_B_DCPumpDuration      VarsStart+139
 
-#define VarsEnd					  VarsStart+137
-// Next value starts VarsStart+137
+#define VarsEnd					  VarsStart+140
+// Next value starts VarsStart+140
 
 
 // EEProm Pointers
@@ -842,6 +849,11 @@ typedef struct Compensation
 	int YOff;
 } COMPENSATION ;
 
+// Used by the DCPump class
+#define None		0
+#define Sync		1
+#define AntiSync	2
+
 //Internal EEPROM
 #define TS_CALIBRATION_ADDRESS 		0x0
 #define TT_COMPENSATION_ADDRESS 	0x10
@@ -1169,6 +1181,7 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 
 #endif //  REEFTOUCH
 
+// EM Bits
 #ifdef PWMEXPANSION
 	#define PWMEbit		1
 #else
@@ -1217,6 +1230,19 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 	#define WLbit		0
 #endif  // WATERLEVELEXPANSION
 
+// EM1 Bits
+#ifdef HUMIDITYEXPANSION
+	#define HUMbit		1
+#else
+	#define HUMbit		0
+#endif  // HUMIDITYEXPANSION
+
+#ifdef DCPUMPCONTROL
+	#define DCPumpbit		2
+#else
+	#define DCPumpbit		0
+#endif  // DCPUMPCONTROL
+
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))
 // color definition
@@ -1254,6 +1280,9 @@ char* MoonPhaseLabel();
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
+
+// 16bit CRC Calculation
+unsigned int crc16(int *ptr, byte len);
 
 //Wave Patterns
 byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);

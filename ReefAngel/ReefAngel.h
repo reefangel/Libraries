@@ -22,7 +22,7 @@
 #ifndef	__REEFANGEL_H__
 #define __REEFANGEL_H__
 
-#define ReefAngel_Version "1.0.7"
+#define ReefAngel_Version "1.0.9"
 
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
@@ -46,6 +46,8 @@
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
+#include <DCPump.h>
+
 
 #if defined ORPEXPANSION
 	#include <ORP.h>
@@ -68,6 +70,9 @@
 #if defined IOEXPANSION
 	#include <IO.h>
 #endif  // defined IOEXPANSION
+#if defined HUMIDITYEXPANSION
+	#include <Humidity.h>
+#endif  // defined HUMIDITYEXPANSION
 
 #include <avr/pgmspace.h>
 
@@ -219,6 +224,9 @@ public:
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+#ifdef DCPUMPCONTROL
+	DCPumpClass DCPump;
+#endif  // DCPUMPCONTROL
 #if defined ORPEXPANSION
 	int ORPMin, ORPMax;
 	ORPClass ORP;
@@ -244,7 +252,9 @@ public:
 #if defined IOEXPANSION
 	IOClass IO;
 #endif  // defined IOEXPANSION
-
+#if defined HUMIDITYEXPANSION
+	HumidityClass Humidity;
+#endif  // defined HUMIDITYEXPANSION
 	/*
 	Timers:
 	0 - Feeding Mode timer
@@ -263,17 +273,38 @@ public:
 	byte FeedingModePorts;
 	byte WaterChangePorts;
 	byte OverheatShutoffPorts;
+#ifdef LEAKDETECTOREXPANSION
+	byte LeakShutoffPorts;
+#endif  // LEAKDETECTOREXPANSION
 #ifdef OVERRIDE_PORTS
 	byte OverridePorts;
 #endif
-	byte EM;
+	byte EM,EM1;
 	byte REM;
 	
+/*
+	EM Bits
+	Bit 0 - PWMEbit
+	Bit 1 - RFEbit
+	Bit 2 - AIbit
+	Bit 3 - Salbit
+	Bit 4 - ORPbit
+	Bit 5 - IObit
+	Bit 6 - PHbit
+	Bit 7 - WLbit
+
+	EM1 Bits
+	Bit 0 - HUMbit
+*/
+
 #ifdef RelayExp
 	// Expansion Module ports
 	byte FeedingModePortsE[MAX_RELAY_EXPANSION_MODULES];
 	byte WaterChangePortsE[MAX_RELAY_EXPANSION_MODULES];
 	byte OverheatShutoffPortsE[MAX_RELAY_EXPANSION_MODULES];
+#ifdef LEAKDETECTOREXPANSION
+	byte LeakShutoffPortsE[MAX_RELAY_EXPANSION_MODULES];
+#endif  // LEAKDETECTOREXPANSION
 #ifdef OVERRIDE_PORTS
   byte OverridePortsE[MAX_RELAY_EXPANSION_MODULES];
 #endif  // OVERRIDE_PORTS
@@ -295,6 +326,10 @@ public:
 	byte TempProbe;
 
 	time_t Overheatmillis;
+#ifdef LEAKDETECTOREXPANSION
+	time_t Leakmillis;
+#endif  // LEAKDETECTOREXPANSION
+
 	void Init();
 	void Refresh();
 	void SetTemperatureUnit(byte unit);
@@ -319,6 +354,11 @@ public:
 	void inline NoWifi() {};
 	void inline NoSD() {};
 	void inline NoTilt() {};
+#ifdef LEAKDETECTOREXPANSION
+	boolean IsLeakDetected();
+	void LeakCheck();
+	void LeakClear();
+#endif  // LEAKDETECTOREXPANSION
 
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);

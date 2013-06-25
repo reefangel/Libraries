@@ -41,13 +41,17 @@ const prog_char XML_RE_OFF[] PROGMEM = "OFF";
 const prog_char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
 const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
-const prog_char XML_REM[] PROGMEM = "</EM><REM>";
-const prog_char XML_REM_END[] PROGMEM = "</REM>";
+const prog_char XML_EM1[] PROGMEM = "</EM><EM1>";
+const prog_char XML_REM[] PROGMEM = "</EM1><REM>";
+const prog_char XML_FLAG[] PROGMEM = "</REM><FLAG>";
+const prog_char XML_FLAG_END[] PROGMEM = "</FLAG>";
 
 #ifdef DisplayLEDPWM
 const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
 const prog_char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
-const prog_char XML_PWMD_END[] PROGMEM = "</PWMD>";
+const prog_char XML_PWMAO[] PROGMEM = "</PWMD><PWMAO>";
+const prog_char XML_PWMDO[] PROGMEM = "</PWMAO><PWMDO>";
+const prog_char XML_PWMDO_END[] PROGMEM = "</PWMDO>";
 #endif  // DisplayLEDPWM
 #ifdef ORPEXPANSION
 const prog_char XML_ORP[] PROGMEM = "<ORP>";
@@ -65,6 +69,16 @@ const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 const prog_char XML_WL[] PROGMEM = "<WL>";
 const prog_char XML_WL_END[] PROGMEM = "</WL>";
 #endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+const prog_char XML_HUM[] PROGMEM = "<HUM>";
+const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+const prog_char XML_DCM[] PROGMEM = "<DCM>";
+const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
+const prog_char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
+const prog_char XML_DCD_END[] PROGMEM = "</DCD>";
+#endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
@@ -73,7 +87,10 @@ const prog_char XML_PWME_END[] PROGMEM = "</PWME";
 const prog_char XML_AIW[] PROGMEM = "<AIW>";
 const prog_char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
 const prog_char XML_AIB_END[] PROGMEM = "</AIB><AIRB>";
-const prog_char XML_AIRB_END[] PROGMEM = "</AIRB>";
+const prog_char XML_AIRB_END[] PROGMEM = "</AIRB><AIWO>";
+const prog_char XML_AIWO_END[] PROGMEM = "</AIWO><AIBO>";
+const prog_char XML_AIBO_END[] PROGMEM = "</AIBO><AIRBO>";
+const prog_char XML_AIRBO_END[] PROGMEM = "</AIRBO>";
 #endif  // AI_LED
 #ifdef RFEXPANSION
 const prog_char XML_RFM[] PROGMEM = "<RFM>";
@@ -85,7 +102,13 @@ const prog_char XML_RFRB_END[] PROGMEM = "</RFRB><RFR>";
 const prog_char XML_RFR_END[] PROGMEM = "</RFR><RFG>";
 const prog_char XML_RFG_END[] PROGMEM = "</RFG><RFB>";
 const prog_char XML_RFB_END[] PROGMEM = "</RFB><RFI>";
-const prog_char XML_RFI_END[] PROGMEM = "</RFI>";
+const prog_char XML_RFI_END[] PROGMEM = "</RFI><RFWO>";
+const prog_char XML_RFWO_END[] PROGMEM = "</RFWO><RFRBO>";
+const prog_char XML_RFRBO_END[] PROGMEM = "</RFRBO><RFRO>";
+const prog_char XML_RFRO_END[] PROGMEM = "</RFRO><RFGO>";
+const prog_char XML_RFGO_END[] PROGMEM = "</RFGO><RFBO>";
+const prog_char XML_RFBO_END[] PROGMEM = "</RFBO><RFIO>";
+const prog_char XML_RFIO_END[] PROGMEM = "</RFIO>";
 #endif  // RFEXPANSION
 #ifdef IOEXPANSION
 const prog_char XML_IO[] PROGMEM = "<IO>";
@@ -105,6 +128,8 @@ const prog_char XML_END[] PROGMEM = "</RA>";
 const prog_char XML_CLOSE_TAG[] PROGMEM = ">";
 
 
+const prog_char XML_P_OPEN[] PROGMEM = "<P";
+const prog_char XML_P_CLOSE[] PROGMEM = "</P";
 const prog_char XML_M_OPEN[] PROGMEM = "<M";
 const prog_char XML_M_CLOSE[] PROGMEM = "</M";
 const prog_char XML_MEM_OPEN[] PROGMEM = "<MEM>";
@@ -141,6 +166,8 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_M_RAW		17  	// All memory raw values
 #define REQ_LIGHTSON	18		// Turn Lights On
 #define REQ_LIGHTSOFF	19		// Turn Lights Off
+#define REQ_ALARM_LEAK	20		// Clears the Leak alarm
+#define REQ_OVERRIDE	21		// Channel Override
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
@@ -159,9 +186,11 @@ const prog_char BannerRelayMaskOn[] PROGMEM = "&ron";
 const prog_char BannerRelayMaskOff[] PROGMEM = "&roff";
 const prog_char BannerID[] PROGMEM = "&id=";
 const prog_char BannerEM[] PROGMEM = "&em=";
+const prog_char BannerEM1[] PROGMEM = "&em1=";
 const prog_char BannerREM[] PROGMEM = "&rem=";
 const prog_char BannerCustom[] PROGMEM = "&c";
 const prog_char BannerKey[] PROGMEM = "&key=";
+const prog_char BannerFlag[] PROGMEM = "&flag=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
@@ -210,6 +239,17 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 	const prog_char BannerWL[] PROGMEM = "&wl=";
 #endif  // WATERLEVELEXPANSION
 	
+#ifdef HUMIDITYEXPANSION
+	const prog_char BannerHumidity[] PROGMEM = "&hum=";
+#endif  // HUMIDITYEXPANSION
+
+#ifdef DCPUMPCONTROL
+	const prog_char BannerDCM[] PROGMEM = "&dcm=";
+	const prog_char BannerDCS[] PROGMEM = "&dcs=";
+	const prog_char BannerDCD[] PROGMEM = "&dcd=";
+#endif  // DCPUMPCONTROL
+
+
 #ifdef CUSTOM_VARIABLES
 	const prog_char BannerCustomVar[] PROGMEM = "&c";
 #endif //CUSTOM_VARIABLES

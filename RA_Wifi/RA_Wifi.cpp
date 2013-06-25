@@ -73,7 +73,7 @@ void pushbuffer(byte inStr)
 		    if (inStr==' ')
 		    {
 		        reqtype=256-reqtype;
-		        if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) )
+		       if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) || (reqtype == REQ_M_RAW || reqtype == REQ_OVERRIDE) )
 		        {
 		        	// must have a comma to have second value
 		        	// verify that the last char was a digit
@@ -168,7 +168,7 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
-            else if (strncmp("GET /mr", m_pushback, 7)==0) reqtype = -REQ_M_RAW;
+            else if (strncmp("GET /mr", m_pushback, 7)==0) { reqtype = -REQ_M_RAW; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
             else if (strncmp("GET /d", m_pushback, 6)==0) { reqtype = -REQ_DATE; weboption2 = -1; weboption3 = -1; bCommaCount = 0; }
             else if (strncmp("HTTP/1.", m_pushback, 7)==0) reqtype = -REQ_HTTP;
@@ -180,8 +180,10 @@ void pushbuffer(byte inStr)
 //            else if (strncmp("GET /cr", m_pushback, 7)==0) reqtype = -REQ_CAL_RELOAD;
             else if (strncmp("GET /mt", m_pushback, 7)==0) reqtype = -REQ_ALARM_ATO;
             else if (strncmp("GET /mo", m_pushback, 7)==0) reqtype = -REQ_ALARM_OVERHEAT;
+            else if (strncmp("GET /ml", m_pushback, 7)==0) reqtype = -REQ_ALARM_LEAK;
             else if (strncmp("GET /l0", m_pushback, 7)==0) reqtype = -REQ_LIGHTSOFF;
             else if (strncmp("GET /l1", m_pushback, 7)==0) reqtype = -REQ_LIGHTSON;
+            else if (strncmp("GET /po", m_pushback, 7)==0) { reqtype = -REQ_OVERRIDE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -295,24 +297,28 @@ void processHTTP()
 			case REQ_R_STATUS:
 			{
 				char temp[6];
-				int s=141;
-				//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><REM></REM></RA>
+				int s=165;
+				//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM><FLAG></FLAG></RA>
 				s += strlen(ReefAngel.portalusername);
 				s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 				s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
 				s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
 				s += intlength(ReefAngel.Params.PH);
 				s += intlength(ReefAngel.EM);
+				s += intlength(ReefAngel.EM1);
 				s += intlength(ReefAngel.REM);
+				s += intlength(ReefAngel.Flags);
 				s += 2;  // one digit for each ATO
 				s += intlength(ReefAngel.Relay.RelayData);
 				s += intlength(ReefAngel.Relay.RelayMaskOn);
 				s += intlength(ReefAngel.Relay.RelayMaskOff);
 #ifdef DisplayLEDPWM
-				s += 26;
-				//<PWMA></PWMA><PWMD></PWMD>
+				s += 56;
+				//<PWMA></PWMA><PWMD></PWMD><PWMAO></PWMAO><PWMDO></PWMDO>
 				s += intlength(ReefAngel.PWM.GetDaylightValue());
 				s += intlength(ReefAngel.PWM.GetActinicValue());
+				s += intlength(ReefAngel.PWM.GetDaylightOverrideValue());
+				s += intlength(ReefAngel.PWM.GetActinicOverrideValue());
 #endif  // DisplayLEDPWM
 #ifdef RelayExp
 				s += 296;
@@ -330,17 +336,19 @@ void processHTTP()
 				for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannel[EID]);
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
-				s += 101;
-				//<RFM></RFM><RFS></RFS><RFD></RFD><RFW></RFW><RFRB></RFRB><RFR></RFR><RFG></RFG><RFB></RFB><RFI></RFI>
+				s += 181;
+				//<RFM></RFM><RFS></RFS><RFD></RFD><RFW></RFW><RFRB></RFRB><RFR></RFR><RFG></RFG><RFB></RFB><RFI></RFI><RFWO></RFWO><RFRBO></RFRBO><RFRO></RFRO><RFGO></RFGO><RFBO></RFBO><RFIO></RFIO>
 				for ( byte EID = 0; EID < RF_CHANNELS; EID++ ) s += intlength(ReefAngel.RF.GetChannel(EID));
+				for ( byte EID = 0; EID < RF_CHANNELS; EID++ ) s += intlength(ReefAngel.RF.GetOverrideChannel(EID));
 				s += intlength(ReefAngel.RF.Mode);
 				s += intlength(ReefAngel.RF.Speed);
 				s += intlength(ReefAngel.RF.Duration);
 #endif  // RFEXPANSION
 #ifdef AI_LED
-				s += 35;
-				//<AIW></AIW><AIB></AIB><AIRB></AIRB>
+				s += 76;
+				//<AIW></AIW><AIB></AIB><AIRB></AIRB><AIWO></AIWO><AIBO></AIBO><AIRBO></AIRBO>
 				for ( byte EID = 0; EID < AI_CHANNELS; EID++ ) s += intlength(ReefAngel.AI.GetChannel(EID));
+				for ( byte EID = 0; EID < AI_CHANNELS; EID++ ) s += intlength(ReefAngel.AI.GetOverrideChannel(EID));
 #endif  // AI_LED
 #ifdef SALINITYEXPANSION
 				s += 11;
@@ -362,6 +370,18 @@ void processHTTP()
 				//<WL></WL>
 				s += intlength(ReefAngel.WaterLevel.GetLevel());
 #endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+				s += 11;
+				//<HUM></HUM>
+				s += intlength(ReefAngel.Humidity.GetLevel());
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+				s += 33;
+				//<DCM></DCM><DCS></DCS><DCD></DCD>
+				s += intlength(ReefAngel.DCPump.Mode);
+				s += intlength(ReefAngel.DCPump.Speed);
+				s += intlength(ReefAngel.DCPump.Duration);
+#endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 				s += 9;
 				//<IO></IO>
@@ -493,19 +513,92 @@ void processHTTP()
 				}
 				break;
 			}  // REQ_M_BYTE || REQ_M_INT
+			case REQ_OVERRIDE:
+			{
+				int s;
+
+				// weboption2 is channel
+				// weboption is override value
+				if ( bHasSecondValue && (weboption2 < OVERRIDE_CHANNELS) )
+				{
+					// Override channel
+					// if channel is from an expansion module that is not enabled, the command will be accepted, but it will do nothing.
+#ifdef DisplayLEDPWM					
+					if (weboption2==0) ReefAngel.PWM.SetDaylightOverride(weboption);
+					else if (weboption2==1) ReefAngel.PWM.SetActinicOverride(weboption);
+#endif // DisplayLEDPWM					
+#ifdef PWMEXPANSION
+					if (weboption2>=2 && weboption2<=7) ReefAngel.PWM.SetChannelOverride(weboption2-2,weboption);
+#endif // PWMEXPANSION
+#ifdef AI_LED
+					if (weboption2>=8 && weboption2<=10) ReefAngel.AI.SetChannelOverride(weboption2-8,weboption);
+#endif // AI_LED
+#ifdef RFEXPANSION
+					if (weboption2>=11 && weboption2<=16) ReefAngel.RF.SetChannelOverride(weboption2-11,weboption);
+#endif // RFEXPANSION
+					s = 9;  // <P>OK</P>
+					// add in the channel, twice
+					s += (intlength(weboption2)*2);
+					PrintHeader(s,1);
+					PROGMEMprint(XML_P_OPEN);
+					WIFI_SERIAL.print(weboption2, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
+					PROGMEMprint(XML_OK);
+					PROGMEMprint(XML_P_CLOSE);
+					WIFI_SERIAL.print(weboption2, DEC);
+					PROGMEMprint(XML_CLOSE_TAG);
+				}				
+				else
+				{
+					s = 10;  // <P>ERR</P>
+					PrintHeader(s,1);
+					PROGMEMprint(XML_P_OPEN);
+					PROGMEMprint(XML_CLOSE_TAG);
+					PROGMEMprint(XML_ERR);
+					PROGMEMprint(XML_P_CLOSE);
+					PROGMEMprint(XML_CLOSE_TAG);
+				}
+				break;
+			}  // REQ_OVERRIDE
 			case REQ_M_RAW:
 			{
 				int s = 11;  // start with the base size of the mem tags
-				s += (VarsEnd-VarsStart)*2;
-				PrintHeader(s,1);
-				PROGMEMprint(XML_MEM_OPEN);
-				byte m; 
-				for ( int x = VarsStart; x < VarsEnd; x++ )
+
+				// default to Main memory locations
+				int memStart = VarsStart;
+				int memEnd = VarsEnd;
+				if ( bHasSecondValue && (weboption2 >= 0) )
 				{
-					m=InternalMemory.read(x);
-					if (m<16) WIFI_SERIAL.print("0");
-					WIFI_SERIAL.print(m,HEX);
-				}  // for x
+					memStart = weboption2;
+					memEnd = weboption;
+
+	  				// Some sanity check here
+  					if (memStart > memEnd) {
+  						weboption = -1;	
+  					} 
+				}
+
+			        if (weboption == -1) 
+				{
+					s = 14;  // <MEM>ERR</MEM>
+					PrintHeader(s,1);
+					PROGMEMprint(XML_MEM_OPEN);
+					PROGMEMprint(XML_ERR);
+				} 
+				else 
+				{
+    					s += (memEnd-memStart)*2;
+					PrintHeader(s,1);
+					PROGMEMprint(XML_MEM_OPEN);
+
+					byte m; 
+					for ( int x = memStart; x < memEnd; x++ )
+					{
+						m=InternalMemory.read(x);
+						if (m<16) WIFI_SERIAL.print("0");
+						WIFI_SERIAL.print(m,HEX);
+					}  // for x
+				}
 				PROGMEMprint(XML_MEM_CLOSE);
 				break;
 			}  // REQ_M_RAW
@@ -729,6 +822,14 @@ void processHTTP()
 				ModeResponse(true);
 				break;
 			}
+			case REQ_ALARM_LEAK:
+			{
+#ifdef LEAKDETECTOREXPANSION
+				ReefAngel.LeakClear();
+#endif // LEAKDETECTOREXPANSION
+				ModeResponse(true);
+				break;
+			}
 			case REQ_LIGHTSON:
 			{
 				// Turn Lights On
@@ -874,15 +975,23 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.HighATO.IsActive());
 	PROGMEMprint(XML_EM);
 	WIFI_SERIAL.print(ReefAngel.EM, DEC);
+	PROGMEMprint(XML_EM1);
+	WIFI_SERIAL.print(ReefAngel.EM1, DEC);
 	PROGMEMprint(XML_REM);
 	WIFI_SERIAL.print(ReefAngel.REM, DEC);
-	PROGMEMprint(XML_REM_END);
+	PROGMEMprint(XML_FLAG);
+	WIFI_SERIAL.print(ReefAngel.Flags, DEC);
+	PROGMEMprint(XML_FLAG_END);
 #ifdef DisplayLEDPWM
 	PROGMEMprint(XML_PWMA);
 	WIFI_SERIAL.print(ReefAngel.PWM.GetActinicValue(), DEC);
 	PROGMEMprint(XML_PWMD);
 	WIFI_SERIAL.print(ReefAngel.PWM.GetDaylightValue(), DEC);
-	PROGMEMprint(XML_PWMD_END);
+	PROGMEMprint(XML_PWMAO);
+	WIFI_SERIAL.print(ReefAngel.PWM.GetActinicOverrideValue(), DEC);
+	PROGMEMprint(XML_PWMDO);
+	WIFI_SERIAL.print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
+	PROGMEMprint(XML_PWMDO_END);
 #endif  // DisplayLEDPWM
 #ifdef SALINITYEXPANSION
 	PROGMEMprint(XML_SAL);
@@ -904,6 +1013,20 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	WIFI_SERIAL.print(ReefAngel.WaterLevel.GetLevel(), DEC);
 	PROGMEMprint(XML_WL_END);
 #endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+	PROGMEMprint(XML_HUM);
+	WIFI_SERIAL.print(ReefAngel.Humidity.GetLevel(), DEC);
+	PROGMEMprint(XML_HUM_END);
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+	PROGMEMprint(XML_DCM);
+	WIFI_SERIAL.print(ReefAngel.DCPump.Mode, DEC);
+	PROGMEMprint(XML_DCM_END);
+	WIFI_SERIAL.print(ReefAngel.DCPump.Speed, DEC);
+	PROGMEMprint(XML_DCS_END);
+	WIFI_SERIAL.print(ReefAngel.DCPump.Duration, DEC);
+	PROGMEMprint(XML_DCD_END);
+#endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 	PROGMEMprint(XML_IO);
 	WIFI_SERIAL.print(ReefAngel.IO.GetChannel(), DEC);
@@ -941,6 +1064,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_AIB_END);
 	WIFI_SERIAL.print(ReefAngel.AI.GetChannel(2), DEC);
 	PROGMEMprint(XML_AIRB_END);
+	WIFI_SERIAL.print(ReefAngel.AI.GetOverrideChannel(0), DEC);
+	PROGMEMprint(XML_AIWO_END);
+	WIFI_SERIAL.print(ReefAngel.AI.GetOverrideChannel(1), DEC);
+	PROGMEMprint(XML_AIBO_END);
+	WIFI_SERIAL.print(ReefAngel.AI.GetOverrideChannel(2), DEC);
+	PROGMEMprint(XML_AIRBO_END);
 #endif  // AI_LED
 #ifdef RFEXPANSION
 	PROGMEMprint(XML_RFM);
@@ -962,6 +1091,18 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_RFB_END);
 	WIFI_SERIAL.print(ReefAngel.RF.GetChannel(5), DEC);
 	PROGMEMprint(XML_RFI_END);
+	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(0), DEC);
+	PROGMEMprint(XML_RFWO_END);
+	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(1), DEC);
+	PROGMEMprint(XML_RFRBO_END);
+	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(2), DEC);
+	PROGMEMprint(XML_RFRO_END);
+	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(3), DEC);
+	PROGMEMprint(XML_RFGO_END);
+	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(4), DEC);
+	PROGMEMprint(XML_RFBO_END);
+	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(5), DEC);
+	PROGMEMprint(XML_RFIO_END);
 #endif  // RFEXPANSION
 #ifdef ENABLE_ATO_LOGGING
 	if ( fAtoLog )

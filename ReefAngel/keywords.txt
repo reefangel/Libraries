@@ -438,6 +438,12 @@ WaterLevelHigh_read	KEYWORD2
 WaterLevelHigh_write	KEYWORD2
 LCDID_read		KEYWORD2
 LCDID_write		KEYWORD2
+DCPumpMode_read		KEYWORD2
+DCPumpMode_write	KEYWORD2
+DCPumpSpeed_read	KEYWORD2
+DCPumpSpeed_write	KEYWORD2
+DCPumpDuration_read	KEYWORD2
+DCPumpDuration_write	KEYWORD2
 
 IMCheck_read	KEYWORD2
 IMCheck_write	KEYWORD2
@@ -467,6 +473,8 @@ IO	LITERAL1
 InternalMemory	KEYWORD1
 Timer	LITERAL1
 WaterLevel	LITERAL1
+Humidity	LITERAL1
+DCPump	LITERAL1
 
 #######################################
 # Constants (LITERAL1)
@@ -491,6 +499,8 @@ LightsOnPorts	LITERAL2
 LightsOnPortsE	LITERAL2
 DelayedOnPorts	LITERAL2
 DelayedOnPortsE	LITERAL2
+LeakShutoffPorts	LITERAL2
+LeakShutoffPortsE	LITERAL2
 ExpansionChannel	LITERAL2
 CustomVar	LITERAL2
 
@@ -631,3 +641,13 @@ EXP5_RELAY	LITERAL2
 EXP6_RELAY	LITERAL2
 EXP7_RELAY	LITERAL2
 EXP8_RELAY	LITERAL2
+
+None	LITERAL2
+Sync	LITERAL2
+AntiSync	LITERAL2
+DaylightChannel	LITERAL2
+ActinicChannel	LITERAL2
+FeedingSpeed	LITERAL2
+WaterChangeSpeed	LITERAL2
+
+IsLeakDetected	KEYWORD2	

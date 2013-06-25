@@ -251,12 +251,37 @@ uint32_t read32(File f)
 }
 #endif //  REEFTOUCH
 
+unsigned int crc16(int *ptr, byte len)
+{
+  unsigned int crc=0xFFFF;
+  byte i;
+  byte temp=0;
+  int test;
+  while(len--)
+  {
+    crc^=*ptr++;
+    for(i=0;i<8;i++)
+    {
+      if(crc & 0x01)
+      {
+        crc>>=1;
+        crc^=0xA001;
+      }
+      else
+      {
+        crc>>=1;
+      }
+    }
+  }
+  return crc;
+}
+
 byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
 {
 	byte tspeed=0;
 	LightsOverride=false;
-	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
-	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
+//	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
+//	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
 	tspeed=(millis()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
 	if (PulseSync)
 		return tspeed;
@@ -268,8 +293,8 @@ byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, bo
 {
 	byte tspeed=0;
 	LightsOverride=false;
-	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
-	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
+//	PulseMinSpeed=constrain(PulseMinSpeed,30,100);
+//	PulseMaxSpeed=constrain(PulseMaxSpeed,30,100);
 	tspeed=(now()%(PulseDuration*2)<PulseDuration?PulseMinSpeed:PulseMaxSpeed);
 	if (PulseSync)
 		return tspeed;
