@@ -47,33 +47,39 @@ void RA_Tilt::Refresh()
 			x=Wire.read(); // read X axis MSB
 			Wire.read(); // read X axis LSB
 			y=Wire.read(); // read Y axis MSB
-			Serial.println("OK");
+//			Serial.println("OK");
 		}
 		else
 		{
-			Serial.println("Wrong data");
+//			Serial.println("Wrong data");
 			do 
 			{
 				Wire.read();
 			}
 			while(Wire.available());
 		}
-	#ifdef ILI9341	
+#ifdef ILI9341
 		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) orientation=4;
 		if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=3;
 		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=2;
 		if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=1;
-	#endif //  ILI9341
-	#ifdef HX8347D
+#endif //  ILI9341
+#ifdef HX8347D
 		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) orientation=1;
 		if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=2;
 		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=3;
 		if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=4;
-	#endif //  HX8347D
+#endif //  HX8347D
+#ifdef HX8347G
+		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y>TT_SENSITIVITY) orientation=2;
+		if (x>TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=3;
+		if (x>-TT_SENSITIVITY && x<TT_SENSITIVITY && y<-TT_SENSITIVITY) orientation=4;
+		if (x<-TT_SENSITIVITY && y>-TT_SENSITIVITY && y<TT_SENSITIVITY) orientation=1;
+#endif //  HX8347G
 	}
 	else
 	{
-		Serial.println("Error");
+//		Serial.println("Error");
 	}
 }
 
