@@ -440,6 +440,7 @@ public:
     void SetupCalibrateChoicePH();
 #if defined ORPEXPANSION
     void SetupCalibrateORP();
+    void SetupCalibrateChoiceORP();
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
     void SetupCalibrateSalinity();

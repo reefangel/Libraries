@@ -5597,6 +5597,12 @@ void ReefAngelClass::SetupCalibrateORP()
 }
 #endif  // ORPEXPANSION
 
+#ifdef SETUP_CALIBRATEORP_CHOICE
+void ReefAngelClass::SetupCalibrateChoiceORP()
+{
+}
+#endif
+
 #ifdef PHEXPANSION
 void ReefAngelClass::SetupCalibratePHExp()
 {
