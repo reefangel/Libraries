@@ -303,6 +303,7 @@ public:
         void inline AddPortOverrides() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
+	void inline UseFlexibleORPCalibration() {};
         void inline ReverseATOLow() {};
         void inline ReverseATOHigh() {};
 	void inline Mini() {}; // deprecated

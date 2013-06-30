@@ -4242,7 +4242,11 @@ void ReefAngelClass::ProcessButtonPressMain()
 #ifdef ORPEXPANSION
         case MainMenu_ORPCalibration:
         {
+#if defined SETUP_CALIBRATEORP_CHOICE
+	    SetupCalibrateChoiceORP();
+#else
             SetupCalibrateORP();
+#endif
             break;
         }
 #endif  // ORPEXPANSION
