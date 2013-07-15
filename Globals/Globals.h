@@ -31,18 +31,35 @@
 #include <OneWire.h>
 #include <avr/pgmspace.h>
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
-#include <SD.h>
-#endif //  REEFTOUCH
+static unsigned long RAStart;
 
+#ifdef RA_TOUCHDISPLAY
+void receiveEvent(int howMany);
+void SendMaster(byte ID, byte data1, byte data2);
+#endif RA_TOUCHDISPLAY
+
+#ifdef I2CMASTER
+void receiveEventMaster(int howMany);
+#endif // I2CMASTER
+
+
+#define RA_STANDARD // We start assuming it is a Standard Reef Angel
 
 #if defined(__AVR_ATmega2560__)
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
+#undef RA_STANDARD
+#define RA_PLUS
 #endif //__AVR_ATmega2560__
 
-#if defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#undef RA_STANDARD
+#undef RA_PLUS
+#include <SD.h>
+#endif //  RA_TOUCH
+
+#if defined RA_TOUCHDISPLAY
 #define DisplayLEDPWM
 #define PWMEXPANSION
 #define DisplayLEDPWM
@@ -54,15 +71,14 @@
 #define PHEXPANSION
 #define WATERLEVELEXPANSION
 #define AI_LED
-#endif // REEFTOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 
-#if defined REEFTOUCH || defined DCPUMPCONTROL
+#if defined RA_TOUCH || defined DCPUMPCONTROL
 #define DisplayLEDPWM
-#endif // REEFTOUCH
+#endif // RA_TOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
-
 
 #ifdef __PLUS_SPECIAL_WIFI__
 #define WIFI_SERIAL Serial1
@@ -561,7 +577,7 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -600,7 +616,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define PWMBLUE						COLOR_BLUE
 #define PWMINTENSITY				COLOR_MAGENTA
 #define DefaultBGColor				BKCOLOR
-#else //  REEFTOUCH
+#else //  RA_TOUCH
 
 //  Global Colors
 #define COLOR_BLACK                 0x00
@@ -737,7 +753,7 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define DefaultFGColor      COLOR_BLACK  // Default text color
 #define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
 
-#endif //  REEFTOUCH
+#endif //  RA_TOUCH
 
 #endif  // COLORS_PDE
 
@@ -833,7 +849,7 @@ typedef struct  {
 #define Celsius		1
 #define Fahrenheit	0
 
-//ReefTouch Block
+//Reef Angel Touch Block
 
 typedef struct Calibration
 {
@@ -1002,7 +1018,7 @@ typedef struct Compensation
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 
 uint16_t read16(File f);
 uint32_t read32(File f);
@@ -1179,7 +1195,7 @@ static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_ADJUST, MENU_BUTT
 static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
 static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
 
-#endif //  REEFTOUCH
+#endif //  RA_TOUCH
 
 // EM Bits
 #ifdef PWMEXPANSION

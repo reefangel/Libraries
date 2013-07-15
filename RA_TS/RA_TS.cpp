@@ -180,46 +180,22 @@ boolean RA_TS::IsTouched()
 {
 	boolean t=!(PIND&(1<<5));
 	if (t) 
-	{
 		t=GetTouch();
-//		if (FirstX==0 && FirstY==0)
-//		{
-//			FirstX=X;
-//			FirstY=Y;
-//		}
-//		if (X-FirstX>TouchSlideDelta) SlideIndex++;
-//		if (FirstX-X>TouchSlideDelta) SlideIndex--;
-	}
-//	else
-//	{
-//		FirstX=FirstY=0;
-//		if (SlideIndex>0) ReefTouch.ChangeDisplayedScreen(1);
-//		if (SlideIndex<0) ReefTouch.ChangeDisplayedScreen(-1);
-//		SlideIndex=0;
-//	}
 	return t;
 }
 
 boolean RA_TS::IsTouchedInside(int x1, int y1, int x2, int y2)
 {
-//	if (IsTouched()) // check touch
-//	{
-		if (X>x1 && X<x2 && Y>y1 && Y<y2 && touchinsideenabled) // Let's see if it touch was inside the box
-		{
-			touchinsideenabled=false;
-			return true;
-		}
-		else
-		{
-			touchinsideenabled=true;
-			return false;
-		}
-//	}
-//	else
-//	{
-//		touchinsideenabled=true;
-//		return false;
-//	}
+	if (X>x1 && X<x2 && Y>y1 && Y<y2 && touchinsideenabled) // Let's see if it touch was inside the box
+	{
+		touchinsideenabled=false;
+		return true;
+	}
+	else
+	{
+		touchinsideenabled=true;
+		return false;
+	}
 }
 
 boolean RA_TS::IsCalibrationNeeded()

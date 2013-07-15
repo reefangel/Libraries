@@ -42,10 +42,10 @@ public:
 	inline void StopTopping() { topping = false; }
 #endif  // ENABLE_ATO_LOGGING
 	unsigned long Timer;
-#ifdef REEFTOUCHDISPLAY
+#ifdef RA_TOUCHDISPLAY
     bool activestatus;
     void inline SetActive(bool status) { activestatus=status; }
-#endif // REEFTOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 
 private:
     bool topping;
@@ -55,17 +55,17 @@ class RA_ATOHighClass : public RA_ATOClass
 {
 public:
 #ifdef ATO_HIGH_REVERSE
-#ifdef REEFTOUCHDISPLAY
+#ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return !activestatus; }
-#else // REEFTOUCHDISPLAY
+#else // RA_TOUCHDISPLAY
     inline bool IsActive() { return digitalRead(highATOPin); }
-#endif // REEFTOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 #else // ATO_HIGH_REVERSE
-#ifdef REEFTOUCHDISPLAY
+#ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
-#else // REEFTOUCHDISPLAY
+#else // RA_TOUCHDISPLAY
     inline bool IsActive() { return !digitalRead(highATOPin); }
-#endif // REEFTOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 #endif // ATO_HIGH_REVERSE
 };
 
@@ -73,17 +73,17 @@ class RA_ATOLowClass : public RA_ATOClass
 {
 public:
 #ifdef ATO_LOW_REVERSE
-#ifdef REEFTOUCHDISPLAY
+#ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return !activestatus; }
-#else // REEFTOUCHDISPLAY
+#else // RA_TOUCHDISPLAY
     inline bool IsActive() { return digitalRead(lowATOPin); }
-#endif // REEFTOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 #else // ATO_LOW_REVERSE
-#ifdef REEFTOUCHDISPLAY
+#ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
-#else // REEFTOUCHDISPLAY
+#else // RA_TOUCHDISPLAY
     inline bool IsActive() { return !digitalRead(lowATOPin); }
-#endif // REEFTOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 #endif // ATO_LOW_REVERSE
 };
 

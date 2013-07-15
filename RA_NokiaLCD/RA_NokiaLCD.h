@@ -43,7 +43,6 @@ public:
     RA_NokiaLCD();
     byte LCDID;
 
-#ifndef REEFTOUCH
 	void Init();
 	void Sleep();
 	void Wake();
@@ -107,7 +106,6 @@ public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);
 	void DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, int high, int low, byte warn_color);
 	void DrawSingleGraph(byte color, byte x, byte y, int EEaddr);
-#endif //  REEFTOUCH
 
 };
 

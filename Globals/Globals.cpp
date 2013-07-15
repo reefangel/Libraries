@@ -220,7 +220,7 @@ int alphaBlend(int fgcolor, int bgcolor, byte a)
 	return RGB565(r,g,b);
 }
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 /*********************************************/
 // These read data from the SD card file and convert them to big endian 
 // (the data is stored in little endian format!)
@@ -249,7 +249,7 @@ uint32_t read32(File f)
   d |= b;
   return d;
 }
-#endif //  REEFTOUCH
+#endif //  RA_TOUCH
 
 unsigned int crc16(int *ptr, byte len)
 {

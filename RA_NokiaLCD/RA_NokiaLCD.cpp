@@ -31,8 +31,6 @@
 #include <avr/wdt.h>
 #endif  // defined WDT || defined WDT_FORCE
 
-#ifndef REEFTOUCH
-
 // Define Software SPI Pin Signal
 #define BL 2          // Digital 2 --> BL
 #define CS 3          // Digital 3 --> #CS
@@ -1618,5 +1616,3 @@ void RA_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
   strcat(text , "   ");
   DrawText(CalibrateColor, DefaultBGColor, x, y, text);
 }
-
-#endif //  REEFTOUCH
