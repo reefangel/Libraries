@@ -60,8 +60,6 @@ void ReefAngelClass::Init()
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
 	TempSensor.Init();
-	setSyncProvider(RTC.get);   // the function to get the time from the RTC
-	setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 	RAStart=now();
 	LastStart = RAStart;  // Set the time normal mode is started
 	BusLocked=false;  // Bus is not locked
