@@ -30,11 +30,16 @@ IOClass::IOClass()
 
 byte IOClass::GetChannel()
 {
+	byte bFound=false;
 	IOPorts=63;
-	Wire.requestFrom(I2CIO, 1);
+	bFound=Wire.requestFrom(I2CIO, 1);
 	if (Wire.available())
-	{
 		IOPorts = Wire.read();
+	if (!bFound)
+	{
+		bFound=Wire.requestFrom(I2CIO_PCF8574, 1);
+		if (Wire.available())
+			IOPorts = Wire.read();
 	}
 	return IOPorts;
 }
