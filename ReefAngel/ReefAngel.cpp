@@ -166,9 +166,7 @@ void ReefAngelClass::Init()
 
 void ReefAngelClass::Refresh()
 {
-#if defined WDT || defined WDT_FORCE
-	wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
+	WDTReset();
 	if (ChangeMode==FEEDING_MODE)
 		FeedingModeStart();
 	if (ChangeMode==WATERCHANGE_MODE)
@@ -1214,42 +1212,6 @@ void ReefAngelClass::Wavemaker2(byte WMRelay)
 	//#endif
 }
 
-#ifdef VersionMenu
-void ReefAngelClass::DisplayVersion()
-{
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	LargeFont.DrawText(WARNING_TEXT,BKCOLOR,20,20,"Reef Angel");
-	LargeFont.DrawText(WARNING_TEXT,BKCOLOR,20,20,"v"ReefAngel_Version);
-#else  // RA_TOUCH
-	// Display the Software Version
-	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,10,"Reef Angel");
-	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,20,"v"ReefAngel_Version);
-#ifdef wifi
-	// Display wifi related information
-	// Place holder information currently, need wifi module
-	// to be able to write functions to retrieve actual information
-	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Wifi");
-#endif  // wifi
-#if defined WDT || defined WDT_FORCE
-	LCD.DrawText(ModeScreenColor,DefaultBGColor,40,30,"WDT");
-#endif
-#ifdef RelayExp
-	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,40,InstalledRelayExpansionModules);
-#endif  // RelayExp
-#endif  // RA_TOUCH
-}
-#endif  // VersionMenu
-
-void ReefAngelClass::ClearScreen(byte Color)
-{
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	TouchLCD.FullClear(BKCOLOR);
-#else  // RA_TOUCH
-	// clears the entire screen
-	LCD.Clear(Color, 0, 0, 131, 131);
-#endif  // RA_TOUCH
-}
-
 #ifdef wifi
 void ReefAngelClass::LoadWebBanner(int pointer, byte qty)
 {
@@ -1440,10 +1402,6 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 void ReefAngelClass::FeedingModeStart()
 {
 	// turn off ports
-#ifdef SaveRelayState
-	// TODO Test SaveRelayState
-	CurrentRelayState = Relay.RelayData;
-#endif  // SaveRelayState
 	Relay.RelayMaskOff &= ~FeedingModePorts;
 #ifdef RelayExp
 	byte i;
@@ -1452,15 +1410,7 @@ void ReefAngelClass::FeedingModeStart()
 		Relay.RelayMaskOffE[i] &= ~FeedingModePortsE[i];
 	}
 #endif  // RelayExp
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	NeedsRedraw=true;
-#else  // RA_TOUCH
-	ClearScreen(DefaultBGColor);
-	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
-#ifdef DisplayImages
-	LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
-#endif  // DisplayImages
-#endif  // RA_TOUCH
+	CheckFeedingDrawing();
 #ifdef RFEXPANSION
 	RF.SetMode(Feeding_Start,0,0);
 #endif  // RFEXPANSION
@@ -1472,10 +1422,6 @@ void ReefAngelClass::FeedingModeStart()
 void ReefAngelClass::WaterChangeModeStart()
 {
 	// turn off ports
-#ifdef SaveRelayState
-	// TODO Test SaveRelayState
-	CurrentRelayState = Relay.RelayData;
-#endif  // SaveRelayState
 	Relay.RelayMaskOff &= ~WaterChangePorts;
 #ifdef RelayExp
 	byte i;
@@ -1484,17 +1430,7 @@ void ReefAngelClass::WaterChangeModeStart()
 		Relay.RelayMaskOffE[i] &= ~WaterChangePortsE[i];
 	}
 #endif  // RelayExp
-	//	Relay.Write();
-	ClearScreen(DefaultBGColor);
-	// Display the water change mode
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	NeedsRedraw=true;
-#else  // RA_TOUCH
-	LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
-#ifdef DisplayImages
-	LCD.DrawEEPromImage(51,55, 40, 30, I2CEEPROM2, I2CEEPROM2_Water_Change);
-#endif  // DisplayImages
-#endif  // RA_TOUCH
+	CheckWaterChangeDrawing();
 	// Tell controller what mode we are in
 	SetDisplayedMenu(WATERCHANGE_MODE);
 }
@@ -1619,35 +1555,14 @@ void ReefAngelClass::LightsOff()
 #endif // RA_TOUCHDISPLAY
 }
 
-void ReefAngelClass::RefreshScreen()
-{
-#if not defined RA_TOUCH && not defined RA_TOUCHDISPLAY
-	LCD.PutPixel(DefaultBGColor,1,1);
-#endif  // RA_TOUCH
-}
-
 void ReefAngelClass::ExitMenu()
 {
 	// Handles the cleanup to return to the main screen
-#if defined WDT || defined WDT_FORCE
-	wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
+	WDTReset();
 	ClearScreen(DefaultBGColor);
 	Timer[LCD_TIMER].Start();
 	SetDisplayedMenu(DEFAULT_MENU);
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	NeedsRedraw=true;
-#else
-	// Handles the cleanup to return to the main screen
-	ClearScreen(DefaultBGColor);
-	// If bus is locked, it will trigger wdt when drawing graph
-	if(!BusLocked) // Only draw if bus is not locked
-#ifdef CUSTOM_MAIN
-		DrawCustomGraph();
-#else
-	LCD.DrawGraph(5, 5);
-#endif  // CUSTOM_MAIN
-#endif //  RA_TOUCH
+	CheckDrawGraph();
 }
 
 void ReefAngelClass::SetDisplayedMenu(byte value)
@@ -1693,7 +1608,7 @@ void receiveEvent(int howMany) {
 					if (ReefAngel.DisplayedMenu!=TOUCH_MENU)
 					{
 						// deduct 100 from the value to indicate we are coming from an interrupt.
-						ReefAngel.DisplayedMenu=d[7]-100;
+					ReefAngel.DisplayedMenu=d[7]-100;
 					}
 				}
 				ReefAngel.Flags=d[8];

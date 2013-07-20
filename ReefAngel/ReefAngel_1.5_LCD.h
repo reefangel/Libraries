@@ -894,6 +894,72 @@ void ReefAngelClass::InitMenus()
 }
 #endif  // CUSTOM_MENU
 
+#ifdef VersionMenu
+void ReefAngelClass::DisplayVersion()
+{
+	// Display the Software Version
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,10,"Reef Angel");
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,20,"v"ReefAngel_Version);
+#ifdef wifi
+	// Display wifi related information
+	// Place holder information currently, need wifi module
+	// to be able to write functions to retrieve actual information
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Wifi");
+#endif  // wifi
+#if defined WDT || defined WDT_FORCE
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,40,30,"WDT");
+#endif
+#ifdef RelayExp
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,40,InstalledRelayExpansionModules);
+#endif  // RelayExp
+}
+#endif  // VersionMenu
+
+void ReefAngelClass::ClearScreen(byte Color)
+{
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+	TouchLCD.FullClear(BKCOLOR);
+#else  // RA_TOUCH
+	// clears the entire screen
+	LCD.Clear(Color, 0, 0, 131, 131);
+#endif  // RA_TOUCH
+}
+
+void ReefAngelClass::RefreshScreen()
+{
+	LCD.PutPixel(DefaultBGColor,1,1);
+}
+
+void ReefAngelClass::CheckDrawGraph()
+{
+	ClearScreen(DefaultBGColor);
+	// If bus is locked, it will trigger wdt when drawing graph
+	if(!BusLocked) // Only draw if bus is not locked
+#ifdef CUSTOM_MAIN
+		DrawCustomGraph();
+#else
+	LCD.DrawGraph(5, 5);
+#endif  // CUSTOM_MAIN
+}
+
+void ReefAngelClass::CheckFeedingDrawing()
+{
+	ClearScreen(DefaultBGColor);
+	LCD.DrawText(ModeScreenColor, DefaultBGColor, 30, 10, "Feeding Mode");
+#ifdef DisplayImages
+	LCD.DrawEEPromImage(40,50, 40, 30, I2CEEPROM2, I2CEEPROM2_Feeding);
+#endif  // DisplayImages
+}
+
+void ReefAngelClass::CheckWaterChangeDrawing()
+{
+	ClearScreen(DefaultBGColor);
+	LCD.DrawText(ModeScreenColor, DefaultBGColor, 20, 10, "Water Change Mode");
+#ifdef DisplayImages
+	LCD.DrawEEPromImage(51,55, 40, 30, I2CEEPROM2, I2CEEPROM2_Water_Change);
+#endif  // DisplayImages
+}
+
 void ReefAngelClass::ProcessButtonPress()
 {
 	bool bResetMenuTimeout = true;
