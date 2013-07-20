@@ -1,3 +1,4 @@
+#ifndef __SAM3X8E__
 /*
  * Copyright 2010 Reef Angel / Roberto Imai
  *
@@ -111,3 +112,5 @@ public:
 
 
 #endif  // __RA_NOKIALCD_H__
+
+#endif // __SAM3X8E__
