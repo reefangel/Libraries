@@ -43,7 +43,7 @@ RA_PWMClass::RA_PWMClass()
 
 byte RA_PWMClass::GetActinicValue()
 {
-	if (ActinicPWMOverride<100)
+	if (ActinicPWMOverride<=100)
 		return ActinicPWMOverride;
 	else
 		return ActinicPWMValue;
@@ -51,7 +51,7 @@ byte RA_PWMClass::GetActinicValue()
 
 byte RA_PWMClass::GetDaylightValue()
 {
-	if (DaylightPWMOverride<100)
+	if (DaylightPWMOverride<=100)
 		return DaylightPWMOverride;
 	else
 		return DaylightPWMValue;
@@ -271,7 +271,7 @@ void RA_PWMClass::ExpansionWrite()
 
 byte RA_PWMClass::GetChannelValue(byte Channel)
 {
-	if (ExpansionChannelOverride[Channel]<100)
+	if (ExpansionChannelOverride[Channel]<=100)
 		return ExpansionChannelOverride[Channel];
 	else
 		return ExpansionChannel[Channel];
