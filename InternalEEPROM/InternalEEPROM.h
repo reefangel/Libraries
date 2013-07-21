@@ -255,6 +255,22 @@ class InternalEEPROMClass {
         void SalTempComp_write(const int value);
         int DP3RepeatInterval_read();
         void DP3RepeatInterval_write(const int value);
+        int WaterLevel1Max_read();
+        void WaterLevel1Max_write(const int value);
+        int WaterLevel1Min_read();
+        void WaterLevel1Min_write(const int value);
+        int WaterLevel2Max_read();
+        void WaterLevel2Max_write(const int value);
+        int WaterLevel2Min_read();
+        void WaterLevel2Min_write(const int value);
+        int WaterLevel3Max_read();
+        void WaterLevel3Max_write(const int value);
+        int WaterLevel3Min_read();
+        void WaterLevel3Min_write(const int value);
+        int WaterLevel4Max_read();
+        void WaterLevel4Max_write(const int value);
+        int WaterLevel4Min_read();
+        void WaterLevel4Min_write(const int value);
         
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);

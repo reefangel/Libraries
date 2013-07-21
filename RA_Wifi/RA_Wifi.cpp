@@ -366,9 +366,10 @@ void processHTTP()
 				s += intlength(ReefAngel.Params.PHExp);
 #endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
-				s += 9;
-				//<WL></WL>
+				s += 53;
+				//<WL></WL><WL1></WL1><WL2></WL2><WL3></WL3><WL4></WL4>
 				s += intlength(ReefAngel.WaterLevel.GetLevel());
+				for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ ) s += intlength(ReefAngel.WaterLevel.GetLevel(EID));
 #endif  // WATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 				s += 11;
@@ -1010,8 +1011,20 @@ void SendXMLData(bool fAtoLog /*= false*/)
 #endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
 	PROGMEMprint(XML_WL);
+	PROGMEMprint(XML_CLOSE_TAG);
 	WIFI_SERIAL.print(ReefAngel.WaterLevel.GetLevel(), DEC);
 	PROGMEMprint(XML_WL_END);
+	PROGMEMprint(XML_CLOSE_TAG);
+	for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
+	{
+		PROGMEMprint(XML_WL);
+		WIFI_SERIAL.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		WIFI_SERIAL.print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
+		PROGMEMprint(XML_WL_END);
+		WIFI_SERIAL.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+	}
 #endif  // WATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 	PROGMEMprint(XML_HUM);

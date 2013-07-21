@@ -119,6 +119,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define PWM_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
+#define WATERLEVEL_CHANNELS				5
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -242,6 +243,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
 #define I2CLeak				0X48
+#define I2CMultiWaterLevel	0X49
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
@@ -455,9 +457,17 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DCPumpMode          VarsStart+137
 #define Mem_B_DCPumpSpeed         VarsStart+138
 #define Mem_B_DCPumpDuration      VarsStart+139
+#define Mem_I_WaterLevel1Min	  VarsStart+140
+#define Mem_I_WaterLevel1Max	  VarsStart+142
+#define Mem_I_WaterLevel2Min	  VarsStart+144
+#define Mem_I_WaterLevel2Max	  VarsStart+146
+#define Mem_I_WaterLevel3Min	  VarsStart+148
+#define Mem_I_WaterLevel3Max	  VarsStart+150
+#define Mem_I_WaterLevel4Min	  VarsStart+152
+#define Mem_I_WaterLevel4Max	  VarsStart+154
 
-#define VarsEnd					  VarsStart+140
-// Next value starts VarsStart+140
+#define VarsEnd					  VarsStart+156
+// Next value starts VarsStart+156
 
 
 // EEProm Pointers

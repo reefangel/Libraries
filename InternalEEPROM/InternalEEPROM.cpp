@@ -1159,6 +1159,85 @@ void InternalEEPROMClass::IMCheck_write(const unsigned long value)
 	write_dword(IMPointer, value);
 }
 
+void InternalEEPROMClass::WaterLevel1Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel1Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel1Max_read()
+{
+    return read_int(Mem_I_WaterLevel1Max);
+}
+
+void InternalEEPROMClass::WaterLevel1Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel1Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel1Min_read()
+{
+    return read_int(Mem_I_WaterLevel1Min);
+}
+
+void InternalEEPROMClass::WaterLevel2Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel2Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel2Max_read()
+{
+    return read_int(Mem_I_WaterLevel2Max);
+}
+
+void InternalEEPROMClass::WaterLevel2Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel2Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel2Min_read()
+{
+    return read_int(Mem_I_WaterLevel2Min);
+}
+
+void InternalEEPROMClass::WaterLevel3Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel3Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel3Max_read()
+{
+    return read_int(Mem_I_WaterLevel3Max);
+}
+
+void InternalEEPROMClass::WaterLevel3Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel3Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel3Min_read()
+{
+    return read_int(Mem_I_WaterLevel3Min);
+}
+
+void InternalEEPROMClass::WaterLevel4Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel4Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel4Max_read()
+{
+    return read_int(Mem_I_WaterLevel4Max);
+}
+
+void InternalEEPROMClass::WaterLevel4Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel4Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel4Min_read()
+{
+    return read_int(Mem_I_WaterLevel4Min);
+}
 
 // Private functions
 uint8_t InternalEEPROMClass::read(int address)

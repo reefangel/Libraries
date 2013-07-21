@@ -444,6 +444,22 @@ DCPumpSpeed_read	KEYWORD2
 DCPumpSpeed_write	KEYWORD2
 DCPumpDuration_read	KEYWORD2
 DCPumpDuration_write	KEYWORD2
+WaterLevel1Max_read	KEYWORD2
+WaterLevel1Max_write	KEYWORD2
+WaterLevel1Min_read	KEYWORD2
+WaterLevel1Min_write	KEYWORD2
+WaterLevel2Max_read	KEYWORD2
+WaterLevel2Max_write	KEYWORD2
+WaterLevel2Min_read	KEYWORD2
+WaterLevel2Min_write	KEYWORD2
+WaterLevel3Max_read	KEYWORD2
+WaterLevel3Max_write	KEYWORD2
+WaterLevel3Min_read	KEYWORD2
+WaterLevel3Min_write	KEYWORD2
+WaterLevel4Max_read	KEYWORD2
+WaterLevel4Max_write	KEYWORD2
+WaterLevel4Min_read	KEYWORD2
+WaterLevel4Min_write	KEYWORD2
 
 IMCheck_read	KEYWORD2
 IMCheck_write	KEYWORD2

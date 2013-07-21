@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
- /*
-  * Updated by:  Curt Binder
-  * Updates Released under Apache License, Version 2.0
-  */
+/*
+ * Updated by:  Curt Binder
+ * Updates Released under Apache License, Version 2.0
+ */
 
 #include "WaterLevel.h"
 #include <Globals.h>
@@ -27,7 +27,8 @@
 
 WaterLevelClass::WaterLevelClass()
 {
-	level=0;
+	for (int a=0;a<WATERLEVEL_CHANNELS;a++)
+		level[a]=0;
 }
 
 int WaterLevelClass::Read()
@@ -43,6 +44,30 @@ int WaterLevelClass::Read()
 	return iWaterLevel;
 }
 
+int WaterLevelClass::Read(byte channel)
+{
+	int iWaterLevel=0;
+	Wire.beginTransmission(I2CMultiWaterLevel);
+	Wire.write(1); // Config Pointer
+	byte addr=(0xb+channel)<<4; // Select which channel to read
+	addr+=0x03; // Programmable Gain
+	Wire.write(addr);
+	Wire.write(0x83);
+	Wire.endTransmission();
+	delay(1); // It takes 1ms for convertion to be completed
+	Wire.beginTransmission(I2CMultiWaterLevel);
+	Wire.write(0); // Convert Pointer
+	Wire.endTransmission();
+	Wire.requestFrom(I2CMultiWaterLevel,2); // Request converted value
+	if (Wire.available())
+	{
+		iWaterLevel = Wire.read();
+		iWaterLevel = iWaterLevel<<8;
+		iWaterLevel += Wire.read();
+	}
+	return iWaterLevel>>4;
+}
+
 void WaterLevelClass::Convert()
 {
 	unsigned long t=0;
@@ -53,5 +78,37 @@ void WaterLevelClass::Convert()
 		t=map(t, InternalMemory.WaterLevelMin_read(), InternalMemory.WaterLevelMax_read(), 0, 100); // apply the calibration to the sensor reading
 		t=constrain(t,0,200);
 	}
-	level = t;
+	level[0] = t;
+
+	t=Read(1);
+	if (t!=0)
+	{
+		t=map(t, InternalMemory.WaterLevel1Min_read(), InternalMemory.WaterLevel1Max_read(), 0, 100); // apply the calibration to the sensor reading
+		t=constrain(t,0,200);
+	}
+	level[1] = t;
+
+	t=Read(2);
+	if (t!=0)
+	{
+		t=map(t, InternalMemory.WaterLevel2Min_read(), InternalMemory.WaterLevel2Max_read(), 0, 100); // apply the calibration to the sensor reading
+		t=constrain(t,0,200);
+	}
+	level[2] = t;
+
+	t=Read(3);
+	if (t!=0)
+	{
+		t=map(t, InternalMemory.WaterLevel3Min_read(), InternalMemory.WaterLevel3Max_read(), 0, 100); // apply the calibration to the sensor reading
+		t=constrain(t,0,200);
+	}
+	level[3] = t;
+
+	t=Read(4);
+	if (t!=0)
+	{
+		t=map(t, InternalMemory.WaterLevel4Min_read(), InternalMemory.WaterLevel4Max_read(), 0, 100); // apply the calibration to the sensor reading
+		t=constrain(t,0,200);
+	}
+	level[4] = t;
 }

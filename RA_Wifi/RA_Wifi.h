@@ -66,8 +66,8 @@ const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
 const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 #endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
-const prog_char XML_WL[] PROGMEM = "<WL>";
-const prog_char XML_WL_END[] PROGMEM = "</WL>";
+const prog_char XML_WL[] PROGMEM = "<WL";
+const prog_char XML_WL_END[] PROGMEM = "</WL";
 #endif  // WATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
@@ -236,7 +236,7 @@ const prog_char BannerFlag[] PROGMEM = "&flag=";
 #endif  // PHEXPANSION
 
 #ifdef WATERLEVELEXPANSION
-	const prog_char BannerWL[] PROGMEM = "&wl=";
+	const prog_char BannerWL[] PROGMEM = "&wl";
 #endif  // WATERLEVELEXPANSION
 	
 #ifdef HUMIDITYEXPANSION

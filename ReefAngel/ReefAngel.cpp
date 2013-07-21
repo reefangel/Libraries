@@ -1408,7 +1408,15 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 #endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
 	PROGMEMprint(BannerWL);
+	WIFI_SERIAL.print("=");
 	WIFI_SERIAL.print(WaterLevel.GetLevel(), DEC);
+	for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
+	{
+		PROGMEMprint(BannerWL);
+		WIFI_SERIAL.print(EID, DEC);
+		WIFI_SERIAL.print("=");
+		WIFI_SERIAL.print(WaterLevel.GetLevel(EID), DEC);
+	}
 #endif  // WATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 	PROGMEMprint(BannerHumidity);
