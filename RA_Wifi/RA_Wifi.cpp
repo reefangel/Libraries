@@ -168,7 +168,7 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /r", m_pushback, 6)==0) reqtype = -REQ_RELAY;
             else if (strncmp("GET /mb", m_pushback, 7)==0) { reqtype = -REQ_M_BYTE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /mi", m_pushback, 7)==0) { reqtype = -REQ_M_INT; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
-            else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
+//            else if (strncmp("GET /ma", m_pushback, 7)==0) reqtype = -REQ_M_ALL;
             else if (strncmp("GET /mr", m_pushback, 7)==0) { reqtype = -REQ_M_RAW; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /v", m_pushback, 6)==0) reqtype = -REQ_VERSION;
             else if (strncmp("GET /d", m_pushback, 6)==0) { reqtype = -REQ_DATE; weboption2 = -1; weboption3 = -1; bCommaCount = 0; }
@@ -604,67 +604,6 @@ void processHTTP()
 				PROGMEMprint(XML_MEM_CLOSE);
 				break;
 			}  // REQ_M_RAW
-			case REQ_M_ALL:
-			{
-				// TODO update all memory function
-				//int s = 123;  // start with the base size of the headers plus the mem tags
-				int s = 11;  // start with the base size of the mem tags
-				/*
-				Send all the data to the client requesting it.  The values will be sent as follows:
-					- wrapped in <MEM></MEM> XML tags
-					- individual memory values wrapped in their location XML tags
-						Memory 800, value 20 - <M800>20</M800>
-
-				An example would be:
-					<MEM>
-						<M800>20</M800>
-						<M801>0</M801>
-						<M802>16</M802>
-						...
-					</MEM>
-				*/
-				uint8_t offsets[] = {1,1,1,1,1,1,1,1,2,2,1,1,2,2,2,1,1,2,2,2,2,1,2,2,1,1,1,1,1,1,1,1,2,2};
-				uint8_t num = sizeof(offsets)/sizeof(uint8_t);
-				// add in the memory location sizes, 13 bytes if the memory location is 3 digits <MXXX></MXXX>
-				s += num*13;
-				uint16_t count = VarsStart;
-				uint8_t x;
-				for ( x = 0; x < num; x++ )
-				{
-					if ( offsets[x] == 1 )
-						s += intlength(InternalMemory.read(count));
-					else
-						s += intlength(InternalMemory.read_int(count));
-					count += offsets[x];
-				}  // for x
-
-				PrintHeader(s,1);
-				PROGMEMprint(XML_MEM_OPEN);
-				/*
-				Loop through all the memory locations starting at VarsStart
-				Check the offset for each location to tell us how many bytes to read and how much to increment
-				the memory locations.  Currently there are only 1 and 2 byte locations, so when we check
-				we just check for 1 and read a byte, otherwise we read 2 bytes (an int)
-				Then we increment the memory position by the offset.
-				We could be thrown off if somebody accidentally put a value larger than 2 in the offset array
-				*/
-				for ( x = 0, count = VarsStart; x < num; x++ )
-				{
-					PROGMEMprint(XML_M_OPEN);
-					WIFI_SERIAL.print(count+600,DEC); // 600 was added as temp fix - issue #26
-					PROGMEMprint(XML_CLOSE_TAG);
-					if ( offsets[x] == 1 )
-						WIFI_SERIAL.print(InternalMemory.read(count),DEC);
-					else
-						WIFI_SERIAL.print(InternalMemory.read_int(count),DEC);
-					PROGMEMprint(XML_M_CLOSE);
-					WIFI_SERIAL.print(count+600,DEC); // 600 was added as temp fix - issue #26
-					PROGMEMprint(XML_CLOSE_TAG);
-					count += offsets[x];
-				}  // for x
-				PROGMEMprint(XML_MEM_CLOSE);
-				break;
-			}  // REQ_M_ALL
 			case REQ_VERSION:
 			{
 				int s = 7;
