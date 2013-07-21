@@ -2592,6 +2592,45 @@ void ReefAngelClass::ShowTouchInterface()
 	}  // switch DisplayedMenu
 }
 
+#ifdef VersionMenu
+void ReefAngelClass::DisplayVersion()
+{
+	LargeFont.DrawText(WARNING_TEXT,BKCOLOR,20,20,"Reef Angel");
+	LargeFont.DrawText(WARNING_TEXT,BKCOLOR,20,20,"v"ReefAngel_Version);
+}
+#endif  // VersionMenu
+
+void ReefAngelClass::ClearScreen(byte Color)
+{
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+	TouchLCD.FullClear(BKCOLOR);
+#else  // RA_TOUCH
+	// clears the entire screen
+	LCD.Clear(Color, 0, 0, 131, 131);
+#endif  // RA_TOUCH
+}
+
+void ReefAngelClass::RefreshScreen()
+{
+}
+
+void ReefAngelClass::CheckDrawGraph()
+{
+	NeedsRedraw=true;
+}
+
+void ReefAngelClass::CheckFeedingDrawing()
+{
+	ClearScreen(DefaultBGColor);
+	NeedsRedraw=true;
+}
+
+void ReefAngelClass::CheckWaterChangeDrawing()
+{
+	ClearScreen(DefaultBGColor);
+	NeedsRedraw=true;
+}
+
 ButtonClass::ButtonClass()
 {
 	x1=0;

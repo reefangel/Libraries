@@ -26,6 +26,7 @@
 #ifdef wifi
 
 #include <DS1307RTC.h>
+#include <rtc_clock.h>
 #include <ReefAngel.h>
 
 void WebResponse (const prog_char *response, long strsize)
@@ -739,8 +740,14 @@ void processHTTP()
 				{
 					PROGMEMprint(XML_OK);
 					setTime(hr, min, 0, mday, mon, weboption);
+#ifdef RA_EVOLUTION
+					now();
+					ReefAngel.RTC_INTERNAL.set_time(hr, min, 0);
+					ReefAngel.RTC_INTERNAL.set_date(mday, mon, weboption+2000);
+#else // RA_EVOLUTION
 					now();
 					RTC.set(now());
+#endif // RA_EVOLUTION
 				}
 				PROGMEMprint(XML_DATE_CLOSE);
 				break;

@@ -8,4 +8,10 @@ ReefAngelClass::ReefAngelClass()
 	PCICR |= 1;
 }
 
+void ReefAngelClass::WDTReset()
+{
+	wdt_reset();
+}
+
+
 #include <ReefAngel_1.5_LCD.h>

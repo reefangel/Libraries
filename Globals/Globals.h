@@ -59,6 +59,16 @@ void receiveEventMaster(int howMany);
 #include <SD.h>
 #endif //  RA_TOUCH
 
+#if defined(__SAM3X8E__)
+#define wifi
+#define BUSCHECK
+#undef RA_STANDARD
+#undef RA_PLUS
+#define RA_EVOLUTION
+#include "itoa.h"
+#endif
+
+
 #if defined RA_TOUCHDISPLAY
 #define DisplayLEDPWM
 #define PWMEXPANSION

@@ -213,6 +213,11 @@ public:
 	void ClearScreen(byte Color);
 	void ExitMenu();
 	void SetDisplayedMenu(byte value);
+	void WDTReset();
+	void CheckDrawGraph();
+	void CheckFeedingDrawing();
+	void CheckWaterChangeDrawing();
+
 #ifdef CUSTOM_VARIABLES
 	byte CustomVar[8];
 #endif //CUSTOM_VARIABLES

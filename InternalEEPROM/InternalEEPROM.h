@@ -18,8 +18,11 @@
 #define __INTERNAL_EEPROM_H__
 
 #include <inttypes.h>
+#if not defined __SAM3X8E__
 #include <avr/eeprom.h>
-
+#else
+#include "Memory.h"
+#endif // __SAM3X8E__
 /*
 This class reads/writes to the internal EEPROM memory
 */
