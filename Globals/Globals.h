@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
- /*
-  * Updated by:  Curt Binder
-  * Updates Released under Apache License, Version 2.0
-  */
+/*
+ * Updated by:  Curt Binder
+ * Updates Released under Apache License, Version 2.0
+ */
 
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
@@ -35,13 +35,11 @@
 #include <SD.h>
 #endif //  REEFTOUCH
 
-
 #if defined(__AVR_ATmega2560__)
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
 #endif //__AVR_ATmega2560__
-
 #if defined REEFTOUCHDISPLAY
 #define DisplayLEDPWM
 #define PWMEXPANSION
@@ -55,21 +53,17 @@
 #define WATERLEVELEXPANSION
 #define AI_LED
 #endif // REEFTOUCHDISPLAY
-
 #if defined REEFTOUCH || defined DCPUMPCONTROL
 #define DisplayLEDPWM
 #endif // REEFTOUCH
-
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
-
 
 #ifdef __PLUS_SPECIAL_WIFI__
 #define WIFI_SERIAL Serial1
 #else
 #define WIFI_SERIAL Serial
 #endif // __PLUS_SPECIAL_WIFI__
-
 
 // Outlets on Relay box
 #define Port8   8
@@ -113,7 +107,6 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define InstalledRelayExpansionModules	1
 #endif  // InstalledRelayExpansionModules
 #endif  // RelayExp
-
 // Expansion Box Module Port Defines
 // Box0 is the main / original box
 // Boxes 1 - 8 are the expansion boxes
@@ -234,12 +227,10 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CTilt				0x1c
 #define I2CPWM_PCA9685		0x40
 
-
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
 #define I2CEEPROM2_Feeding           9919  //3000-4999
 #define I2CEEPROM2_Water_Change      11919  //15300-18104
-
 // Timer Indices
 #define FEEDING_TIMER			0
 #define LCD_TIMER				3
@@ -286,24 +277,23 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define COMMAND_LIGHTS_OFF	4
 
 /*
-EEPROM locations
+ EEPROM locations
 
-To Read/Write to these locations, use the InternalMemory variable.
-Most (if not all) of these memory locations have a read/write function already created.
+ To Read/Write to these locations, use the InternalMemory variable.
+ Most (if not all) of these memory locations have a read/write function already created.
 
-If a memory location does not have a specific function to read/write to it, you may use the
-read/write or read_int/write_int functions to read/write to the memory location.
+ If a memory location does not have a specific function to read/write to it, you may use the
+ read/write or read_int/write_int functions to read/write to the memory location.
 
-Byte variables need 1 block
-Int variables need 2 blocks
+ Byte variables need 1 block
+ Int variables need 2 blocks
 
-When adding more variables, use the previous value plus 1 or 2
-  depending on the previous values storage requirement
-*/
+ When adding more variables, use the previous value plus 1 or 2
+ depending on the previous values storage requirement
+ */
 #define ATO_Single_Exceed_Flag    800   //733   //747
 #define ATO_Exceed_Flag			  801	//734	//748
 #define Overheat_Exceed_Flag	  802	//735	//749
-
 #define MAX_ATO_LOG_EVENTS		  4
 #define ATOEventSize			  8
 #define ATOEventOffStart		  4
@@ -360,16 +350,16 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_ATOHighTimeout      VarsStart+42
 #define Mem_I_DP1RepeatInterval	  VarsStart+43
 #define Mem_I_DP2RepeatInterval	  VarsStart+45
-#define Mem_I_SalMax			  VarsStart+47
+#define Mem_I_SalMax			        VarsStart+47
 #define Mem_B_PWMSlopeStartD      VarsStart+49
 #define Mem_B_PWMSlopeEndD	      VarsStart+50
 #define Mem_B_PWMSlopeDurationD   VarsStart+51
 #define Mem_B_PWMSlopeStartA      VarsStart+52
 #define Mem_B_PWMSlopeEndA	      VarsStart+53
 #define Mem_B_PWMSlopeDurationA   VarsStart+54
-#define Mem_B_RFMode			  VarsStart+55
-#define Mem_B_RFSpeed			  VarsStart+56
-#define Mem_B_RFDuration		  VarsStart+57
+#define Mem_B_RFMode			        VarsStart+55
+#define Mem_B_RFSpeed			        VarsStart+56
+#define Mem_B_RFDuration		      VarsStart+57
 #define Mem_B_PWMSlopeStart0      VarsStart+58
 #define Mem_B_PWMSlopeEnd0	      VarsStart+59
 #define Mem_B_PWMSlopeDuration0   VarsStart+60
@@ -390,58 +380,61 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_PWMSlopeDuration5   VarsStart+75
 #define Mem_I_ATOExtendedTimeout  VarsStart+76
 #define Mem_I_ATOHighExtendedTimeout  VarsStart+78
-#define Mem_I_ORPMin			  VarsStart+80
-#define Mem_I_ORPMax			  VarsStart+82
-#define Mem_B_ActinicOffset		  VarsStart+84
+#define Mem_I_ORPMin			        VarsStart+80
+#define Mem_I_ORPMax			        VarsStart+82
+#define Mem_B_ActinicOffset		    VarsStart+84
 #define Mem_I_CO2ControlOn        VarsStart+85
 #define Mem_I_CO2ControlOff       VarsStart+87
 #define Mem_I_PHControlOn         VarsStart+89
 #define Mem_I_PHControlOff        VarsStart+91
 #define Mem_B_AISlopeStartW       VarsStart+93
-#define Mem_B_AISlopeEndW	      VarsStart+94
+#define Mem_B_AISlopeEndW	        VarsStart+94
 #define Mem_B_AISlopeDurationW    VarsStart+95
 #define Mem_B_AISlopeStartB       VarsStart+96
-#define Mem_B_AISlopeEndB	      VarsStart+97
+#define Mem_B_AISlopeEndB	        VarsStart+97
 #define Mem_B_AISlopeDurationB    VarsStart+98
 #define Mem_B_AISlopeStartRB      VarsStart+99
 #define Mem_B_AISlopeEndRB	      VarsStart+100
 #define Mem_B_AISlopeDurationRB   VarsStart+101
 #define Mem_B_RadionSlopeStartW       VarsStart+102
-#define Mem_B_RadionSlopeEndW	      VarsStart+103
+#define Mem_B_RadionSlopeEndW	        VarsStart+103
 #define Mem_B_RadionSlopeDurationW    VarsStart+104
 #define Mem_B_RadionSlopeStartRB      VarsStart+105
 #define Mem_B_RadionSlopeEndRB	      VarsStart+106
 #define Mem_B_RadionSlopeDurationRB   VarsStart+107
 #define Mem_B_RadionSlopeStartR       VarsStart+108
-#define Mem_B_RadionSlopeEndR	      VarsStart+109
+#define Mem_B_RadionSlopeEndR	        VarsStart+109
 #define Mem_B_RadionSlopeDurationR    VarsStart+110
 #define Mem_B_RadionSlopeStartG       VarsStart+111
-#define Mem_B_RadionSlopeEndG	      VarsStart+112
+#define Mem_B_RadionSlopeEndG	        VarsStart+112
 #define Mem_B_RadionSlopeDurationG    VarsStart+113
 #define Mem_B_RadionSlopeStartB       VarsStart+114
-#define Mem_B_RadionSlopeEndB	      VarsStart+115
+#define Mem_B_RadionSlopeEndB	        VarsStart+115
 #define Mem_B_RadionSlopeDurationB    VarsStart+116
 #define Mem_B_RadionSlopeStartI       VarsStart+117
-#define Mem_B_RadionSlopeEndI	      VarsStart+118
+#define Mem_B_RadionSlopeEndI	        VarsStart+118
 #define Mem_B_RadionSlopeDurationI    VarsStart+119
 #define Mem_B_DelayedStart            VarsStart+120
-#define Mem_I_PHExpMin			  VarsStart+121
-#define Mem_I_PHExpMax			  VarsStart+123
-#define Mem_I_WaterLevelMin		  VarsStart+125
-#define Mem_I_WaterLevelMax		  VarsStart+127
-#define Mem_I_SalTempComp		  VarsStart+129
+#define Mem_I_PHExpMin			      VarsStart+121
+#define Mem_I_PHExpMax			      VarsStart+123
+#define Mem_I_WaterLevelMin		    VarsStart+125
+#define Mem_I_WaterLevelMax		    VarsStart+127
+#define Mem_I_SalTempComp		      VarsStart+129
 #define Mem_B_WaterLevelLow       VarsStart+131
 #define Mem_B_WaterLevelHigh      VarsStart+132
 #define Mem_B_DP3Timer            VarsStart+133
 #define Mem_I_DP3RepeatInterval	  VarsStart+134
-#define Mem_B_LCDID		          VarsStart+136
+#define Mem_B_LCDID		            VarsStart+136
 #define Mem_B_DCPumpMode          VarsStart+137
 #define Mem_B_DCPumpSpeed         VarsStart+138
 #define Mem_B_DCPumpDuration      VarsStart+139
+#define Mem_B_SunriseHour         VarsStart+140
+#define Mem_B_SunriseMinute       VarsStart+141
+#define Mem_B_SunsetHour          VarsStart+142
+#define Mem_B_SunsetMinute        VarsStart+143
 
-#define VarsEnd					  VarsStart+140
-// Next value starts VarsStart+140
-
+#define VarsEnd					          VarsStart+144
+// Next value starts VarsStart+144
 
 // EEProm Pointers
 #define PH_Min		        949
@@ -468,7 +461,6 @@ When adding more variables, use the previous value plus 1 or 2
 
 #define BUFFPIXEL 20 // Number of pixels to read from SD card for BMP drawing
 
-
 #define MAX_TEMP_SWING      50  // Maximum value of temp change that can occur in 1 second, 100 = 10.0 F Degrees, 50 = 5.0 F Degrees
 // WEB_BANNER_QTY - Quantity of Parameters when sending the web banner, default is 12 but changes as we have more relays installed
 #ifdef RelayExp
@@ -492,7 +484,6 @@ When adding more variables, use the previous value plus 1 or 2
 #else
 #define WEB_BANNER_QTY		12  // Quantity of parameters when sending the web banner: userid, 3 probe labels, 8 relay labels
 #endif  // RelayExp
-
 // Menu Defines
 #if defined SIMPLE_MENU || defined CUSTOM_MENU
 // This overrides everything else with the menus
@@ -506,24 +497,22 @@ When adding more variables, use the previous value plus 1 or 2
 #define CUSTOM_MENU_ENTRIES	1
 #endif  // CUSTOM_MENU_ENTRIES
 #endif  // CUSTOM_MENU
-
 #else  // SIMPLE_MENU
 // Standard Menu Checks
 #if defined SetupExtras || defined ATOSetup
-	#ifndef RemoveAllLights
-		#define Total_Menus         5    // total number of menus
-	#else  // RemoveAllLights
-		#define Total_Menus         4
-	#endif  // RemoveAllLights
+#ifndef RemoveAllLights
+#define Total_Menus         5    // total number of menus
+#else  // RemoveAllLights
+#define Total_Menus         4
+#endif  // RemoveAllLights
 #else  // if defined SetupExtras || defined ATOSetup
-	#ifndef RemoveAllLights
-		#define Total_Menus         4    // total number of menus
-	#else // RemoveAllLights
-		#define Total_Menus         3
-	#endif  // RemoveAllLights
+#ifndef RemoveAllLights
+#define Total_Menus         4    // total number of menus
+#else // RemoveAllLights
+#define Total_Menus         3
+#endif  // RemoveAllLights
 #endif  // if defined SetupExtras || defined ATOSetup
 #endif  // SIMPLE_MENU || CUSTOM_MENU
-
 
 #define MENU_TIMEOUT        10   // timeout for menu to return to main screen
 #define MENU_HEADING_SIZE   25   // pixels used for Menu Heading
@@ -550,7 +539,6 @@ When adding more variables, use the previous value plus 1 or 2
 #define PWM_DATA_CLOUDS_FAST	15  // Fast clouds, must be used with CLOUDS cmd
 #define PWM_CMD_TSTORM1			7	// Thunderstorm 1 command, use data default
 #define PWM_CMD_TSTORM2			8	// Thunderstorm 2 command, use data default
-
 #ifndef COLORS_PDE
 
 #if defined REEFTOUCH || defined REEFTOUCHDISPLAY
@@ -591,7 +579,6 @@ When adding more variables, use the previous value plus 1 or 2
 #define PWMINTENSITY				COLOR_MAGENTA
 #define DefaultBGColor				BKCOLOR
 #else //  REEFTOUCH
-
 //  Global Colors
 #define COLOR_BLACK                 0x00
 #define COLOR_NAVY                  0x02
@@ -687,22 +674,22 @@ When adding more variables, use the previous value plus 1 or 2
 #define COLOR_WHITE                 0xFF
 
 /*
-Ability to completely customize all colors of the screen
-To change an aspect of the screen, you simply need to change the color defined for the variable.
-The variables are labeled intuitively.  Please note that when changing the entire screen color
-to another color, you must make sure that all the corresponding BG colors (background colors) match
-otherwise you will have a non-consistent background screen.  This is primarily the case when displaying
-the main screen / homepage.
+ Ability to completely customize all colors of the screen
+ To change an aspect of the screen, you simply need to change the color defined for the variable.
+ The variables are labeled intuitively.  Please note that when changing the entire screen color
+ to another color, you must make sure that all the corresponding BG colors (background colors) match
+ otherwise you will have a non-consistent background screen.  This is primarily the case when displaying
+ the main screen / homepage.
 
-Also note that if you intend to change the colors, you will want to experiment to find a good color
-combination.  If the background color is changed, you will most likely need to alter all of the other
-colors in order for the screen to be easily readable.
+ Also note that if you intend to change the colors, you will want to experiment to find a good color
+ combination.  If the background color is changed, you will most likely need to alter all of the other
+ colors in order for the screen to be easily readable.
 
-You can use any of the colors specified above OR you can specify your own colors in hex code.
-The values can range from 0x00 to 0xFF.  Most of the common colors are specified above, so the use
-of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
-on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
-*/
+ You can use any of the colors specified above OR you can specify your own colors in hex code.
+ The values can range from 0x00 to 0xFF.  Most of the common colors are specified above, so the use
+ of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
+ on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
+ */
 
 #define T1TempColor         COLOR_RED  // Text color for the T1 temp probe (homescreen)
 #define T2TempColor         COLOR_CHOCOLATE  // Text color for the T2 temp probe (homescreen)
@@ -726,31 +713,28 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define DefaultBGColor      COLOR_WHITE  // Default background color
 #define DefaultFGColor      COLOR_BLACK  // Default text color
 #define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
-
 #endif //  REEFTOUCH
-
 #endif  // COLORS_PDE
-
 /*
-Graph Range values
+ Graph Range values
 
-Below are listed the ranges for each one of the graph lines.  The range is the specified value for being
-"low" and "high".  So the "low" value is the bottom of the graph and the "high" value is the top of the graph.
-If the actual value observed is above or below the "high" and "low" value respectively, it will be capped
-at the appropriate value.  Meaning, if the T1 high value is set to 90.0 F and the controller actually reads
-95.0 F, the highest value reported in the graph will be 90.0 F.
+ Below are listed the ranges for each one of the graph lines.  The range is the specified value for being
+ "low" and "high".  So the "low" value is the bottom of the graph and the "high" value is the top of the graph.
+ If the actual value observed is above or below the "high" and "low" value respectively, it will be capped
+ at the appropriate value.  Meaning, if the T1 high value is set to 90.0 F and the controller actually reads
+ 95.0 F, the highest value reported in the graph will be 90.0 F.
 
-The defaults should work just fine more everybody, but some people may want to alter the values.  This would be
-necessary if you didn't want T2 to be used for the lights temperature.
+ The defaults should work just fine more everybody, but some people may want to alter the values.  This would be
+ necessary if you didn't want T2 to be used for the lights temperature.
 
-The defaults are as follows:
-formate is:  Probe: LOW - HIGH
+ The defaults are as follows:
+ formate is:  Probe: LOW - HIGH
 
-T1: 70.0F - 90.0F
-T2: 65.0F - 150.0F
-T3: 65.0F - 92.0F
-PH: 7 - 10
-*/
+ T1: 70.0F - 90.0F
+ T2: 65.0F - 150.0F
+ T3: 65.0F - 92.0F
+ PH: 7 - 10
+ */
 #define T1LOW   700
 #define T1HIGH  900
 #define T2LOW   650
@@ -761,9 +745,9 @@ PH: 7 - 10
 #define PHHIGH  840
 
 /*
-Vortech Modes
+ Vortech Modes
 
-Used by the RF Expansion Module
+ Used by the RF Expansion Module
  */
 #define Constant      0
 #define Lagoon		  1
@@ -801,17 +785,18 @@ Used by the RF Expansion Module
 #define Radion_Ready      9
 
 /*
-AI Channels
+ AI Channels
 
-Used by the AI Functions
+ Used by the AI Functions
  */
 #define White			0
 #define Blue			1
 #define RoyalBlue		2
-const byte RawChannel[]={67,65,66};
+const byte RawChannel[] = { 67, 65, 66 };
 
 // Parameters structure, moved from RA_NokiaLCD.h to a more central location
-typedef struct  {
+typedef struct
+{
   int Temp[4];
   int PH;
   int Salinity;
@@ -827,17 +812,17 @@ typedef struct  {
 
 typedef struct Calibration
 {
-	int XMin;
-	int XMax;
-	int YMin;
-	int YMax;
-} CALIBRATION ;
+  int XMin;
+  int XMax;
+  int YMin;
+  int YMax;
+} CALIBRATION;
 
 typedef struct Compensation
 {
-	int XOff;
-	int YOff;
-} COMPENSATION ;
+  int XOff;
+  int YOff;
+} COMPENSATION;
 
 // Used by the DCPump class
 #define None		0
@@ -971,12 +956,10 @@ typedef struct Compensation
 #define IO_SCREEN			14
 #define DIMMING_OVERRIDE	127
 #define MAX_SCREENS			15 // Highest ID for main screens
-
 //Menu Screens
 #define MAIN_MENU_SCREEN	0
 #define SETUP_MENU_SCREEN	1
 #define MAX_MENU_SCREENS	2 // Highest ID for menu screens
-
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
 #define SplashDuration					5000
@@ -1026,14 +1009,14 @@ const prog_char LABEL_DAYLIGHT[] PROGMEM = "Daylight";
 const prog_char LABEL_AI_WHITE[] PROGMEM = "White";
 const prog_char LABEL_AI_BLUE[] PROGMEM = "Blue";
 const prog_char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
-static PROGMEM const char *LABEL_AI[] = {LABEL_AI_WHITE, LABEL_AI_BLUE, LABEL_AI_ROYAL_BLUE};
+static PROGMEM const char *LABEL_AI[] = { LABEL_AI_WHITE, LABEL_AI_BLUE, LABEL_AI_ROYAL_BLUE};
 const prog_char LABEL_RF_WHITE[] PROGMEM = "White";
 const prog_char LABEL_RF_ROYAL_BLUE[] PROGMEM = "R. Blue";
 const prog_char LABEL_RF_RED[] PROGMEM = "Red";
 const prog_char LABEL_RF_BLUE[] PROGMEM = "Green";
 const prog_char LABEL_RF_GREEN[] PROGMEM = "Blue";
 const prog_char LABEL_RF_INTENSITY[] PROGMEM = "Intensity";
-static PROGMEM const char *LABEL_RF[] = {LABEL_RF_WHITE, LABEL_RF_ROYAL_BLUE, LABEL_RF_RED, LABEL_RF_BLUE, LABEL_RF_GREEN, LABEL_RF_INTENSITY};
+static PROGMEM const char *LABEL_RF[] = { LABEL_RF_WHITE, LABEL_RF_ROYAL_BLUE, LABEL_RF_RED, LABEL_RF_BLUE, LABEL_RF_GREEN, LABEL_RF_INTENSITY};
 const prog_char LABEL_ATOHIGHPORT[] PROGMEM = "ATO Low";
 const prog_char LABEL_ATOLOWPORT[] PROGMEM = "ATO High";
 const prog_char LABEL_IOPORT[] PROGMEM = "Input Port ";
@@ -1057,7 +1040,7 @@ const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
 const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
 const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
 const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL};
+static PROGMEM const char *relay_items[] = { RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -1071,7 +1054,7 @@ const prog_char RF_FEEDING[] PROGMEM = "Feeding";
 const prog_char RF_NIGHT[] PROGMEM = "Night";
 const prog_char RF_SLAVE[] PROGMEM = "Slave Check";
 const prog_char RF_None[] PROGMEM = "None";
-static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
+static PROGMEM const char *rf_items[] = { RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
 
 const prog_char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
 const prog_char WATER_CHANGE_LABEL[] PROGMEM = "Water Change";
@@ -1117,76 +1100,64 @@ const prog_char MENU_BUTTON_PUMP3[] PROGMEM = "Pump 3";
 const prog_char MENU_BUTTON_DELAYED[] PROGMEM = "Delayed";
 const prog_char MENU_BUTTON_START[] PROGMEM = "Start";
 
-
-static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_CLEAR, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
-static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION};
-static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
-static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
+static PROGMEM const char *menu_button_items1[] = { MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_CLEAR, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items2[] = { MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION};
+static PROGMEM const char *menu_button_items3[] = { MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
+static PROGMEM const char *menu_button_items4[] = { MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
 
 #endif //  REEFTOUCH
-
 // EM Bits
 #ifdef PWMEXPANSION
-	#define PWMEbit		1
+#define PWMEbit		1
 #else
-	#define PWMEbit		0
+#define PWMEbit		0
 #endif  // PWMEXPANSION
-
 #ifdef RFEXPANSION
-	#define RFEbit		2
+#define RFEbit		2
 #else
-	#define RFEbit		0
+#define RFEbit		0
 #endif  // RFEXPANSION
-
 #ifdef AI_LED
-	#define AIbit		4
+#define AIbit		4
 #else
-	#define AIbit		0
+#define AIbit		0
 #endif  // AI_LED
-
 #ifdef SALINITYEXPANSION
-	#define Salbit		8
+#define Salbit		8
 #else
-	#define Salbit		0
+#define Salbit		0
 #endif  // SALINITYEXPANSION
-
 #ifdef ORPEXPANSION
-	#define ORPbit		16
+#define ORPbit		16
 #else
-	#define ORPbit		0
+#define ORPbit		0
 #endif  // ORPEXPANSION
-
 #ifdef IOEXPANSION
-	#define IObit		32
+#define IObit		32
 #else
-	#define IObit		0
+#define IObit		0
 #endif  // IOEXPANSION
-
 #ifdef PHEXPANSION
-	#define PHbit		64
+#define PHbit		64
 #else
-	#define PHbit		0
+#define PHbit		0
 #endif  // PHEXPANSION
-
 #ifdef WATERLEVELEXPANSION
-	#define WLbit		128
+#define WLbit		128
 #else
-	#define WLbit		0
+#define WLbit		0
 #endif  // WATERLEVELEXPANSION
-
 // EM1 Bits
 #ifdef HUMIDITYEXPANSION
-	#define HUMbit		1
+#define HUMbit		1
 #else
-	#define HUMbit		0
+#define HUMbit		0
 #endif  // HUMIDITYEXPANSION
-
 #ifdef DCPUMPCONTROL
-	#define DCPumpbit		2
+#define DCPumpbit		2
 #else
-	#define DCPumpbit		0
+#define DCPumpbit		0
 #endif  // DCPUMPCONTROL
-
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))
 // color definition
@@ -1220,7 +1191,6 @@ void ConvertNumToString(char* string, int num, byte decimal);
 #ifdef MOONPHASELABEL
 char* MoonPhaseLabel();
 #endif // MOONPHASELABEL
-
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
@@ -1237,13 +1207,12 @@ byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDura
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 
-
 // for virtual functions
 extern "C" void __cxa_pure_virtual(void);
 // other fixes
 __extension__ typedef int __guard __attribute__((mode (__DI__)));
 extern "C" int __cxa_guard_acquire(__guard *);
-extern "C" void __cxa_guard_release (__guard *);
-extern "C" void __cxa_guard_abort (__guard *);
+extern "C" void __cxa_guard_release(__guard *);
+extern "C" void __cxa_guard_abort(__guard *);
 
 #endif  // __GLOBALS_H__
