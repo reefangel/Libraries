@@ -485,6 +485,12 @@ void ReefAngelClass::Init()
 //	pinMode(Piezo, OUTPUT);
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
+
+  // Great Barrier Reef, Australia GMT +10
+  SunLocation.Init(-18.285833, 147.699722);
+  // Set the offset from GMT
+  SunLocation.SetOffset(10,0,10,0);
+
 	TempSensor.Init();
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
 	setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
@@ -6349,7 +6355,7 @@ void ReefAngelClass::SetupDateTime24()
     bool bDrawButtons = true;
     byte Year, Month, Day, Hour, Minute;
     byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-	uint8_t iTimeformat;
+    uint8_t iTimeformat;
     byte DateRow = 35, TimeRow = 60, FormatRow = 85;
 
     Year = year() - 2000;
@@ -6982,7 +6988,8 @@ void ReefAngelClass::SetupDosingPump()
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
 
 #ifdef REEFTOUCHDISPLAY
-void receiveEvent(int howMany) {
+void receiveEvent(int howMany)
+{
 	byte d[9];
 	wdt_reset();
 	if (ReefAngel.Sleeping)
@@ -7075,7 +7082,6 @@ void SendMaster(byte ID, byte data1, byte data2)
 	Wire.write(data2);
 	Wire.endTransmission();	// Simulate button press
 	delay(10);
-	
 }
 
 #endif //  REEFTOUCHDISPLAY
