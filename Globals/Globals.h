@@ -454,9 +454,13 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DCPumpMode          VarsStart+137
 #define Mem_B_DCPumpSpeed         VarsStart+138
 #define Mem_B_DCPumpDuration      VarsStart+139
+#define Mem_B_SunriseHour         VarsStart+140
+#define Mem_B_SunriseMinute       VarsStart+141
+#define Mem_B_SunsetHour          VarsStart+142
+#define Mem_B_SunsetMinute        VarsStart+143
 
-#define VarsEnd					  VarsStart+140
-// Next value starts VarsStart+140
+#define VarsEnd					  VarsStart+144
+// Next value starts VarsStart+144
 
 
 // EEProm Pointers

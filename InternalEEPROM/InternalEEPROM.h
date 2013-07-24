@@ -197,6 +197,14 @@ class InternalEEPROMClass {
         void DCPumpSpeed_write(const uint8_t value);
         uint8_t DCPumpDuration_read();
         void DCPumpDuration_write(const uint8_t value);
+        uint8_t SunriseHour_read();
+        void SunriseHour_write(const uint8_t value);
+        uint8_t SunriseMinute_read();
+        void SunriseMinute_write(const uint8_t value);
+        void SunsetHour_write(const uint8_t value);
+        uint8_t SunsetHour_read();
+        void SunsetMinute_write(const uint8_t value);
+        uint8_t SunsetMinute_read();
         
         // Functions that read/write an int
         int WM1Timer_read();

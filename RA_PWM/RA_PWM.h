@@ -24,6 +24,9 @@
 
 #include <Globals.h>
 #include <InternalEEPROM.h>
+#ifdef SUNLOCATION
+#include <RA_SunLocation.h>
+#endif  // SUNLOCATION
 
 class RA_PWMClass
 {
@@ -45,6 +48,20 @@ public:
 	void DaylightPWMParabola(byte MinuteOffset);
 	void ActinicPWMParabola();
 	void DaylightPWMParabola();
+#ifdef SUNLOCATION
+  void SunLocationActinicPWMSlope();
+  void SunLocationActinicPWMSlope(byte MinuteOffset);
+  void SunLocationActinicPWMSlope(byte Start, byte End, byte Duration, byte MinuteOffset);
+  void SunLocationDaylightPWMSlope();
+  void SunLocationDaylightPWMSlope(byte MinuteOffset);
+  void SunLocationDaylightPWMSlope(byte Start, byte End, byte Duration, byte MinuteOffset);
+  void SunLocationActinicPWMParabola();
+  void SunLocationActinicPWMParabola(byte MinuteOffset);
+  void SunLocationActinicPWMParabola(byte Start, byte End, byte MinuteOffset);
+  void SunLocationDaylightPWMParabola();
+  void SunLocationDaylightPWMParabola(byte MinuteOffset);
+  void SunLocationDaylightPWMParabola(byte Start, byte End, byte MinuteOffset);
+#endif  // SUNLOCATION
 	void StandardActinic();
 	void StandardDaylight();
 	void StandardActinic(byte MinuteOffset);
@@ -90,6 +107,36 @@ public:
 	void ChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);	
 	boolean inline IsPresent() { return Present; }
 	boolean Present;
+#ifdef SUNLOCATION
+  void SunlocationChannel0PWMSlope();
+  void SunlocationChannel1PWMSlope();
+  void SunlocationChannel2PWMSlope();
+  void SunlocationChannel3PWMSlope();
+  void SunlocationChannel4PWMSlope();
+  void SunlocationChannel5PWMSlope();
+  void SunlocationChannel0PWMSlope(byte MinuteOffset);
+  void SunlocationChannel1PWMSlope(byte MinuteOffset);
+  void SunlocationChannel2PWMSlope(byte MinuteOffset);
+  void SunlocationChannel3PWMSlope(byte MinuteOffset);
+  void SunlocationChannel4PWMSlope(byte MinuteOffset);
+  void SunlocationChannel5PWMSlope(byte MinuteOffset);
+  void SunlocationChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration);
+  void SunlocationChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, byte MinuteOffset);
+  void SunlocationChannel0PWMParabola();
+  void SunlocationChannel1PWMParabola();
+  void SunlocationChannel2PWMParabola();
+  void SunlocationChannel3PWMParabola();
+  void SunlocationChannel4PWMParabola();
+  void SunlocationChannel5PWMParabola();
+  void SunlocationChannel0PWMParabola(byte MinuteOffset);
+  void SunlocationChannel1PWMParabola(byte MinuteOffset);
+  void SunlocationChannel2PWMParabola(byte MinuteOffset);
+  void SunlocationChannel3PWMParabola(byte MinuteOffset);
+  void SunlocationChannel4PWMParabola(byte MinuteOffset);
+  void SunlocationChannel5PWMParabola(byte MinuteOffset);
+  void SunlocationChannelPWMParabola(byte Channel, byte Start, byte End);
+  void SunlocationChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);
+#endif  // SUNLOCATION
 #endif  // PWMEXPANSION
 
 private:

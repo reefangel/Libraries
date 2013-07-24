@@ -569,4 +569,12 @@ Approximately 382 bytes to enable this feature
 */
 //#define AI_LED
 
+/*
+Sun Location
+
+This feature enables the computation of the Sunrise and Sunset for specific GPS coordinates.  The
+default location is set to the Great Barrier Reef, Australia
+*/
+//#define SUNLOCATION
+
 #endif  // __REEFANGEL_FEATURES_H__

@@ -24,7 +24,6 @@
 #include <DS1307RTC.h>
 #include "ReefAngel.h"
 #include <RA_Wifi.h>
-
 byte ButtonPress = 0;
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -59,6 +58,12 @@ void ReefAngelClass::Init()
 #endif // __PLUS_SPECIAL_WIFI__
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
+#ifdef SUNLOCATION
+  // Great Barrier Reef, Australia GMT +10
+  SunLocation.Init(-18.285833, 147.699722);
+  // Set the offset from GMT
+  SunLocation.SetOffset(10,0,10,0);
+#endif  // SUNLOCATION
 	TempSensor.Init();
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
 	setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.

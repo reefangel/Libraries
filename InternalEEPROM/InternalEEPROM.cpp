@@ -868,6 +868,46 @@ void InternalEEPROMClass::DCPumpDuration_write(const uint8_t value)
     write(Mem_B_DCPumpDuration, value);
 }
 
+uint8_t InternalEEPROMClass::SunriseHour_read()
+{
+  return read(Mem_B_SunriseHour) - 1;
+}
+
+void InternalEEPROMClass::SunriseHour_write(const uint8_t value)
+{
+  write(Mem_B_SunriseHour, value);
+}
+
+uint8_t InternalEEPROMClass::SunriseMinute_read()
+{
+  return read(Mem_B_SunriseMinute);
+}
+
+void InternalEEPROMClass::SunriseMinute_write(const uint8_t value)
+{
+  write(Mem_B_SunriseMinute, value);
+}
+
+uint8_t InternalEEPROMClass::SunsetHour_read()
+{
+  return read(Mem_B_SunsetHour) + 1;
+}
+
+void InternalEEPROMClass::SunsetHour_write(const uint8_t value)
+{
+  write(Mem_B_SunsetHour, value);
+}
+
+uint8_t InternalEEPROMClass::SunsetMinute_read()
+{
+  return read(Mem_B_SunsetMinute);
+}
+
+void InternalEEPROMClass::SunsetMinute_write(const uint8_t value)
+{
+  write(Mem_B_SunsetMinute, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {

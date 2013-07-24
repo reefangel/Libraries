@@ -59,6 +59,9 @@
 #if defined HUMIDITYEXPANSION
 #include <Humidity.h>
 #endif  // defined HUMIDITYEXPANSION
+#ifdef SUNLOCATION
+#include <RA_SunLocation.h>
+#endif  // SUNLOCATION
 
 #ifdef RA_STANDARD
 #include <Standard/includes.h>
@@ -140,6 +143,9 @@ public:
 	5 - Store params to eeprom
 	 */
 	TimerClass Timer[6];
+#ifdef SUNLOCATION
+	RA_SunLocation SunLocation;
+#endif  // SUNLOCATION
 	byte SelectedMenuItem;
 	byte DisplayedMenu;
 	bool showmenu;

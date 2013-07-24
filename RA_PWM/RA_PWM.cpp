@@ -156,6 +156,127 @@ void RA_PWMClass::DaylightPWMParabola()
 			));
 }
 
+#ifdef SUNLOCATION
+void RA_PWMClass::SunLocationActinicPWMSlope()
+{
+  SunLocationActinicPWMSlope(InternalMemory.ActinicOffset_read());
+}
+
+void RA_PWMClass::SunLocationActinicPWMSlope(byte MinuteOffset)
+{
+  SunLocationActinicPWMSlope(InternalMemory.PWMSlopeStartA_read(), InternalMemory.PWMSlopeEndA_read(), InternalMemory.PWMSlopeDurationA_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationActinicPWMSlope(byte Start, byte End, byte Duration, byte MinuteOffset)
+{
+  int onTime = NumMins(InternalMemory.SunriseHour_read(), InternalMemory.SunriseMinute_read()) - MinuteOffset;
+  int offTime = NumMins(InternalMemory.SunsetHour_read(), InternalMemory.SunsetMinute_read()) + MinuteOffset;
+  SetActinic(PWMSlope(
+    onTime / 60,
+    onTime % 60,
+    offTime / 60,
+    offTime % 60,
+    Start,
+    End,
+    Duration,
+    ActinicPWMValue
+  ));
+}
+
+void RA_PWMClass::SunLocationDaylightPWMSlope()
+{
+  SetDaylight(PWMSlope(
+    InternalMemory.SunriseHour_read(),
+    InternalMemory.SunriseMinute_read(),
+    InternalMemory.SunsetHour_read(),
+    InternalMemory.SunsetMinute_read(),
+    InternalMemory.PWMSlopeStartD_read(),
+    InternalMemory.PWMSlopeEndD_read(),
+    InternalMemory.PWMSlopeDurationD_read(),
+    DaylightPWMValue
+  ));
+}
+
+void RA_PWMClass::SunLocationDaylightPWMSlope(byte MinuteOffset)
+{
+  SunLocationDaylightPWMSlope(InternalMemory.PWMSlopeStartD_read(), InternalMemory.PWMSlopeDurationD_read(), InternalMemory.PWMSlopeDurationD_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationDaylightPWMSlope(byte Start, byte End, byte Duration, byte MinuteOffset)
+{
+  int onTime = NumMins(InternalMemory.SunriseHour_read(), InternalMemory.SunriseMinute_read()) - MinuteOffset;
+  int offTime = NumMins(InternalMemory.SunsetHour_read(), InternalMemory.SunsetMinute_read()) + MinuteOffset;
+  SetDaylight(PWMSlope(
+    onTime / 60,
+    onTime % 60,
+    offTime / 60,
+    offTime % 60,
+    Start,
+    End,
+    Duration,
+    DaylightPWMValue
+  ));
+}
+
+void RA_PWMClass::SunLocationActinicPWMParabola()
+{
+  SunLocationActinicPWMParabola(InternalMemory.ActinicOffset_read());
+}
+
+void RA_PWMClass::SunLocationActinicPWMParabola(byte MinuteOffset)
+{
+  SunLocationActinicPWMParabola(InternalMemory.PWMSlopeStartA_read(), InternalMemory.PWMSlopeEndA_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationActinicPWMParabola(byte Start, byte End, byte MinuteOffset)
+{
+  int onTime = NumMins(InternalMemory.SunriseHour_read(), InternalMemory.SunriseMinute_read()) - MinuteOffset;
+  int offTime = NumMins(InternalMemory.SunsetHour_read(), InternalMemory.SunsetMinute_read()) + MinuteOffset;
+  SetActinic(PWMParabola(
+    onTime / 60,
+    onTime % 60,
+    offTime / 60,
+    offTime % 60,
+    Start,
+    End,
+    ActinicPWMValue
+  ));
+}
+
+void RA_PWMClass::SunLocationDaylightPWMParabola()
+{
+  SetDaylight(PWMParabola(
+    InternalMemory.SunriseHour_read(),
+    InternalMemory.SunriseMinute_read(),
+    InternalMemory.SunsetHour_read(),
+    InternalMemory.SunsetMinute_read(),
+    InternalMemory.PWMSlopeStartD_read(),
+    InternalMemory.PWMSlopeEndD_read(),
+    DaylightPWMValue
+  ));
+}
+
+void RA_PWMClass::SunLocationDaylightPWMParabola(byte MinuteOffset)
+{
+  SunLocationDaylightPWMParabola(InternalMemory.PWMSlopeStartD_read(), InternalMemory.PWMSlopeEndD_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationDaylightPWMParabola(byte Start, byte End, byte MinuteOffset)
+{
+  int onTime = NumMins(InternalMemory.SunriseHour_read(), InternalMemory.SunriseMinute_read()) - MinuteOffset;
+  int offTime = NumMins(InternalMemory.SunsetHour_read(), InternalMemory.SunsetMinute_read()) + MinuteOffset;
+  SetDaylight(PWMParabola(
+    onTime / 60,
+    onTime % 60,
+    offTime / 60,
+    offTime % 60,
+    Start,
+    End,
+    DaylightPWMValue
+  ));
+}
+#endif  // SUNLOCATION
+
 void RA_PWMClass::StandardActinic()
 {
 	SetDaylight(PWMParabola(
@@ -276,8 +397,6 @@ byte RA_PWMClass::GetChannelValue(byte Channel)
 	else
 		return ExpansionChannel[Channel];
 }
-
-
 
 void RA_PWMClass::Channel0PWMSlope()
 {
@@ -457,4 +576,183 @@ void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, byte Mi
 	));	
 }
 
+#ifdef SUNLOCATION
+void RA_PWMClass::SunLocationChannel0PWMSlope()
+{
+  SunLocationChannelPWMSlope(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(),InternalMemory.PWMSlopeDuration0_read());
+}
+
+void RA_PWMClass::SunLocationChannel1PWMSlope()
+{
+  SunLocationChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(),InternalMemory.PWMSlopeDuration1_read());
+}
+
+void RA_PWMClass::SunLocationChannel2PWMSlope()
+{
+  SunLocationChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(),InternalMemory.PWMSlopeDuration2_read());
+}
+
+void RA_PWMClass::SunLocationChannel3PWMSlope()
+{
+  SunLocationChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(),InternalMemory.PWMSlopeDuration3_read());
+}
+
+void RA_PWMClass::SunLocationChannel4PWMSlope()
+{
+  SunLocationChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(),InternalMemory.PWMSlopeDuration4_read());
+}
+
+void RA_PWMClass::SunLocationChannel5PWMSlope()
+{
+  SunLocationChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(),InternalMemory.PWMSlopeDuration5_read());
+}
+
+void RA_PWMClass::SunLocationChannel0PWMSlope(byte MinuteOffset)
+{
+  SunLocationChannelPWMSlope(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(),InternalMemory.PWMSlopeDuration0_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel1PWMSlope(byte MinuteOffset)
+{
+  SunLocationChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(),InternalMemory.PWMSlopeDuration1_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel2PWMSlope(byte MinuteOffset)
+{
+  SunLocationChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(),InternalMemory.PWMSlopeDuration2_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel3PWMSlope(byte MinuteOffset)
+{
+  SunLocationChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(),InternalMemory.PWMSlopeDuration3_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel4PWMSlope(byte MinuteOffset)
+{
+  SunLocationChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(),InternalMemory.PWMSlopeDuration4_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel5PWMSlope(byte MinuteOffset)
+{
+  SunLocationChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(),InternalMemory.PWMSlopeDuration5_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration)
+{
+  SetChannel(Channel,PWMSlope(
+    InternalMemory.SunriseHour_read(),
+    InternalMemory.SunriseMinute_read(),
+    InternalMemory.SunsetHour_read(),
+    InternalMemory.SunsetMinute_read(),
+    Start,
+    End,
+    Duration,
+    ExpansionChannel[Channel]
+  ));
+}
+
+void RA_PWMClass::SunLocationChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, byte MinuteOffset)
+{
+  int onTime=NumMins(InternalMemory.SunriseHour_read(), InternalMemory.SunriseMinute_read())-MinuteOffset;
+  int offTime=NumMins(InternalMemory.SunsetHour_read(), InternalMemory.SunsetMinute_read())+MinuteOffset;
+  SetChannel(Channel,PWMSlope(
+    onTime/60,
+    onTime%60,
+    offTime/60,
+    offTime%60,
+    Start,
+    End,
+    Duration,
+    ExpansionChannel[Channel]
+  ));
+}
+
+void RA_PWMClass::SunLocationChannel0PWMParabola()
+{
+  SunLocationChannelPWMParabola(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read());
+}
+
+void RA_PWMClass::SunLocationChannel1PWMParabola()
+{
+  SunLocationChannelPWMParabola(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read());
+}
+
+void RA_PWMClass::SunLocationChannel2PWMParabola()
+{
+  SunLocationChannelPWMParabola(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read());
+}
+
+void RA_PWMClass::SunLocationChannel3PWMParabola()
+{
+  SunLocationChannelPWMParabola(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read());
+}
+
+void RA_PWMClass::SunLocationChannel4PWMParabola()
+{
+  SunLocationChannelPWMParabola(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read());
+}
+
+void RA_PWMClass::SunLocationChannel5PWMParabola()
+{
+  SunLocationChannelPWMParabola(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
+}
+
+void RA_PWMClass::SunLocationChannel0PWMParabola(byte MinuteOffset)
+{
+  SunLocationChannelPWMParabola(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel1PWMParabola(byte MinuteOffset)
+{
+  SunLocationChannelPWMParabola(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel2PWMParabola(byte MinuteOffset)
+{
+  SunLocationChannelPWMParabola(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel3PWMParabola(byte MinuteOffset)
+{
+  SunLocationChannelPWMParabola(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel4PWMParabola(byte MinuteOffset)
+{
+  SunLocationChannelPWMParabola(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannel5PWMParabola(byte MinuteOffset)
+{
+  SunLocationChannelPWMParabola(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(), MinuteOffset);
+}
+
+void RA_PWMClass::SunLocationChannelPWMParabola(byte Channel, byte Start, byte End)
+{
+  SetChannel(Channel,PWMParabola(
+    InternalMemory.SunriseHour_read(),
+    InternalMemory.SunriseMinute_read(),
+    InternalMemory.SunsetHour_read(),
+    InternalMemory.SunsetMinute_read(),
+    Start,
+    End,
+    ExpansionChannel[Channel]
+  ));
+}
+
+void RA_PWMClass::SunLocationChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset)
+{
+  int onTime=NumMins(InternalMemory.SunriseHour_read(), InternalMemory.SunriseMinute_read())-MinuteOffset;
+  int offTime=NumMins(InternalMemory.SunsetHour_read(), InternalMemory.SunsetMinute_read())+MinuteOffset;
+  SetChannel(Channel,PWMParabola(
+    onTime/60,
+    onTime%60,
+    offTime/60,
+    offTime%60,
+    Start,
+    End,
+    ExpansionChannel[Channel]
+  ));
+}
+#endif  // SUNLOCATION
 #endif  // PWMEXPANSION
