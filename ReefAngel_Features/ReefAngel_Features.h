@@ -31,7 +31,7 @@ during water changes and feeding modes.
 
 Approximately 346 bytes to have this feature
 */
-#define DisplayImages  // do we display the graphics for feeding or water change mode
+//#define DisplayImages  // do we display the graphics for feeding or water change mode
 
 /*
 The next line is for displaying the setup screens to configure the values for the Feeding Mode timer and
@@ -568,5 +568,16 @@ You will have to add in this line above the ReefAngel.h include:
 Approximately 382 bytes to enable this feature
 */
 //#define AI_LED
+
+/*
+BayTech RPC14 Serial Control
+
+This will replace the standard Relay control with a BayTech RPC14
+power distribution swith controlled via RS-232.  This cannot be
+used at the same time as WiFi and you will get a reboot loop if
+wifi is defined
+
+*/
+//#define BAYTECH
 
 #endif  // __REEFANGEL_FEATURES_H__
