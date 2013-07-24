@@ -30,7 +30,12 @@
 #include <RA_ATO.h>
 #include <LED.h>
 #include <RA_TempSensor.h>
+#ifndef BAYTECH
 #include <Relay.h>
+#else
+#include <BayTechSerial.h>
+#include <RA_BayTech.h>
+#endif // BAYTECH
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
@@ -95,7 +100,11 @@ public:
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
+#ifndef BAYTECH
 	RelayClass Relay;
+#else
+	RA_BayTech Relay;
+#endif // BAYTECH
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
