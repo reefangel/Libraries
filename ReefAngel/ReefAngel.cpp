@@ -59,6 +59,8 @@ void ReefAngelClass::Init()
 #endif // __PLUS_SPECIAL_WIFI__
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
+	digitalWrite(0,HIGH); //pull up resistor on RX
+	digitalWrite(1,HIGH); //pull up resistor on TX
 	TempSensor.Init();
 	RAStart=now();
 	LastStart = RAStart;  // Set the time normal mode is started
