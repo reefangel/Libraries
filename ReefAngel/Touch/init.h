@@ -1,6 +1,6 @@
 // Touch
 
-wdt_enable(WDTO_1S);
+wdt_enable(WDTO_2S);
 #ifdef RA_TOUCHDISPLAY
 Wire.onReceive(receiveEvent);
 Wire.onRequest(NULL);
