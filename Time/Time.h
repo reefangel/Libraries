@@ -61,6 +61,7 @@ typedef struct  {
 typedef time_t(*getExternalTime)();
 //typedef void  (*setExternalTime)(const time_t); // not used in this version
 
+static  const uint8_t monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31}; // API starts months from 1, this array starts from 0
 
 /*==============================================================================*/
 /* Useful Constants */
