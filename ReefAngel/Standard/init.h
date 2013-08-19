@@ -1,8 +1,8 @@
 // Standard
 
 #if defined WDT || defined WDT_FORCE
-// enable watchdog timer for 2 second.  consider allowing this option to be configured.
-if ( wdtenabled ) wdt_enable(WDTO_2S);
+// enable watchdog timer for 1 second.  consider allowing this option to be configured.
+if ( wdtenabled ) wdt_enable(WDTO_1S);
 #endif  // defined WDT || defined WDT_FORCE
 LCD.BacklightOff();
 #ifdef I2CMASTER 

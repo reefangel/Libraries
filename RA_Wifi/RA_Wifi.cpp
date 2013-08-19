@@ -205,6 +205,9 @@ void processHTTP()
 		{
 			pushbuffer(WIFI_SERIAL.read());
 			timeout=millis();
+#if defined WDT || defined WDT_FORCE
+			wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
 		}
     }
     if (webnegoption) weboption*=-1;

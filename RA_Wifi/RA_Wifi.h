@@ -24,6 +24,7 @@
 
 #include <Globals.h>
 #include <avr/pgmspace.h>
+#include <avr/wdt.h>
 
 #ifdef wifi
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";

@@ -1,6 +1,6 @@
 // Plus
 
-wdt_enable(WDTO_2S);
+wdt_enable(WDTO_1S);
 LCD.BacklightOff();
 #ifdef I2CMASTER 
 Wire.onReceive(receiveEventMaster);
