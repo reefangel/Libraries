@@ -335,9 +335,10 @@ void processHTTP()
 				}
 #endif  // RelayExp
 #ifdef PWMEXPANSION
-				s += 90;
-				//<PWME0></PWME0><PWME1></PWME1><PWME2></PWME2><PWME3></PWME3><PWME4></PWME4><PWME5></PWME5>
+				s += 192;
+				//<PWME0></PWME0><PWME1></PWME1><PWME2></PWME2><PWME3></PWME3><PWME4></PWME4><PWME5></PWME5><PWME0O></PWME0O><PWME1O></PWME1O><PWME2O></PWME2O><PWME3O></PWME3O><PWME4O></PWME4O><PWME5O></PWME5O>
 				for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannel[EID]);
+				for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannelOverride[EID]);
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
 				s += 181;
@@ -1015,6 +1016,15 @@ void SendXMLData(bool fAtoLog /*= false*/)
 		WIFI_SERIAL.print(ReefAngel.PWM.GetChannelValue(EID), DEC);
 		PROGMEMprint(XML_PWME_END);
 		WIFI_SERIAL.print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		PROGMEMprint(XML_PWME);
+		WIFI_SERIAL.print(EID, DEC);
+		WIFI_SERIAL.print("O");
+		PROGMEMprint(XML_CLOSE_TAG);
+		WIFI_SERIAL.print(ReefAngel.PWM.GetChannelOverrideValue(EID), DEC);
+		PROGMEMprint(XML_PWME_END);
+		WIFI_SERIAL.print(EID, DEC);
+		WIFI_SERIAL.print("O");
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // PWMEXPANSION

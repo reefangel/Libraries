@@ -60,6 +60,7 @@ public:
 	void ExpansionSetPercent(byte p);
 	void ExpansionWrite();
 	byte GetChannelValue(byte Channel);
+	byte inline GetChannelOverrideValue(byte Channel) { return ExpansionChannelOverride[Channel]; };
 	void Channel0PWMSlope();
 	void Channel1PWMSlope();
 	void Channel2PWMSlope();

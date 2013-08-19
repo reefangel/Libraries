@@ -1330,6 +1330,11 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 		WIFI_SERIAL.print(EID, DEC);
 		WIFI_SERIAL.print("=");
 		WIFI_SERIAL.print(PWM.GetChannelValue(EID), DEC);
+		PROGMEMprint(BannerPWME);
+		WIFI_SERIAL.print(EID, DEC);
+		WIFI_SERIAL.print("O");
+		WIFI_SERIAL.print("=");
+		WIFI_SERIAL.print(PWM.GetChannelOverrideValue(EID), DEC);
 	}
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
