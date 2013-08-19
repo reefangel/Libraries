@@ -184,6 +184,7 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /ml", m_pushback, 7)==0) reqtype = -REQ_ALARM_LEAK;
             else if (strncmp("GET /l0", m_pushback, 7)==0) reqtype = -REQ_LIGHTSOFF;
             else if (strncmp("GET /l1", m_pushback, 7)==0) reqtype = -REQ_LIGHTSON;
+            else if (strncmp("GET /boot", m_pushback, 9)==0) reqtype = REQ_REBOOT;
             else if (strncmp("GET /po", m_pushback, 7)==0) { reqtype = -REQ_OVERRIDE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             //else reqtype = -REQ_UNKNOWN;
 		}
@@ -795,6 +796,13 @@ void processHTTP()
 				ModeResponse(true);
 				break;
 			}			
+			case REQ_REBOOT:
+			{
+				// Reboot
+				ModeResponse(true);
+				while(1);
+				break;
+			}
 			default:
 			case REQ_UNKNOWN:
 			{

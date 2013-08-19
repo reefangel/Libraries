@@ -169,6 +169,7 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_LIGHTSOFF	19		// Turn Lights Off
 #define REQ_ALARM_LEAK	20		// Clears the Leak alarm
 #define REQ_OVERRIDE	21		// Channel Override
+#define REQ_REBOOT		22		// Reboot
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
