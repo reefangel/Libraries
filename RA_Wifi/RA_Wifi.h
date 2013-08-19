@@ -196,6 +196,8 @@ const prog_char BannerFlag[] PROGMEM = "&flag=";
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
 	const prog_char BannerPWMD[] PROGMEM = "&pwmd=";
+	const prog_char BannerPWMAO[] PROGMEM = "&pwmao=";
+	const prog_char BannerPWMDO[] PROGMEM = "&pwmdo=";
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
 #ifdef PWMEXPANSION

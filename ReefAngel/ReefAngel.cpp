@@ -1318,6 +1318,10 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	WIFI_SERIAL.print(PWM.GetActinicValue(), DEC);
 	PROGMEMprint(BannerPWMD);
 	WIFI_SERIAL.print(PWM.GetDaylightValue(), DEC);
+	PROGMEMprint(BannerPWMAO);
+	WIFI_SERIAL.print(PWM.GetActinicOverrideValue(), DEC);
+	PROGMEMprint(BannerPWMDO);
+	WIFI_SERIAL.print(PWM.GetDaylightOverrideValue(), DEC);
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 #ifdef PWMEXPANSION
 	for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
