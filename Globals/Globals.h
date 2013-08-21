@@ -121,12 +121,15 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define Port2Bit   1<<1
 #define Port1Bit   1<<0
 
-// Flags bits
+// Alert Flags bits
 #define ATOTimeOutFlag	0
 #define OverheatFlag   	1
 #define BusLockFlag   	2
-#define LightsOnFlag   	3
-#define LeakFlag		4
+#define LeakFlag		3
+
+// Status Flag Bits
+#define LightsOnFlag   	0
+
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8

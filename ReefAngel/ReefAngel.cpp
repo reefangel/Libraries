@@ -76,6 +76,8 @@ void ReefAngelClass::Init()
 	BusLocked=false;  // Bus is not locked
 	ChangeMode=0;
 	Flags = 0;
+	AlertFlags = 0;
+	StatusFlags = 0;
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;
@@ -358,9 +360,9 @@ void ReefAngelClass::Refresh()
 		if(SDFound)	TouchLCD.FullClear(BKCOLOR);
 	}
 	if (PINJ&(1<<7)) // Check for bus lock
-		bitClear(Flags,BusLockFlag);
+		bitClear(AlertFlags,BusLockFlag);
 	else
-		bitSet(Flags,BusLockFlag);
+		bitSet(AlertFlags,BusLockFlag);
 
 #endif //  RA_TOUCH
 
@@ -520,12 +522,12 @@ void ReefAngelClass::Refresh()
 		delay(20);
 		LED.Off();
 		BusLocked=true;  // Bus is locked
-		bitSet(Flags,BusLockFlag);
+		bitSet(AlertFlags,BusLockFlag);
 	}
 	else
 	{
 		BusLocked=false;  // Bus is not locked
-		bitClear(Flags,BusLockFlag);
+		bitClear(AlertFlags,BusLockFlag);
 	}
 #endif
 }
@@ -669,7 +671,7 @@ void ReefAngelClass::LeakCheck()
 	if (millis()-Leakmillis>3000) // Only flag leak if we have a leak for 3 seconds
 	{
 		LED.On();
-		bitSet(Flags,LeakFlag);
+		bitSet(AlertFlags,LeakFlag);
 		// invert the ports that are activated
 		Relay.RelayMaskOff &= ~LeakShutoffPorts;
 #ifdef RelayExp
@@ -684,7 +686,7 @@ void ReefAngelClass::LeakCheck()
 void ReefAngelClass::LeakClear()
 {
 	LED.Off();
-	bitClear(Flags,LeakFlag);
+	bitClear(AlertFlags,LeakFlag);
 	Relay.RelayMaskOff |= LeakShutoffPorts;
 #ifdef RelayExp
 	for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
@@ -786,7 +788,7 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	if ( (millis()-LowATO.Timer > TempTimeout) && LowATO.IsTopping() )
 	{
 		LED.On();
-		bitSet(Flags,ATOTimeOutFlag);
+		bitSet(AlertFlags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
 		if (InternalMemory.read(ATO_Exceed_Flag)==0)
 			InternalMemory.write(ATO_Exceed_Flag, 1);
@@ -835,7 +837,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	if ( (millis()-WLATO.Timer > TempTimeout) && WLATO.IsTopping() )
 	{
 		LED.On();
-		bitSet(Flags,ATOTimeOutFlag);
+		bitSet(AlertFlags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
 		if (InternalMemory.read(ATO_Exceed_Flag)==0)
 			InternalMemory.write(ATO_Exceed_Flag, 1);
@@ -908,7 +910,7 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
 	if ( ((millis() - ato->Timer) > t) && ato->IsTopping() )
 	{
 		LED.On();
-		bitSet(Flags,ATOTimeOutFlag);
+		bitSet(AlertFlags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
 		if (InternalMemory.read(ATO_Single_Exceed_Flag)==0)
 			InternalMemory.write(ATO_Single_Exceed_Flag, 1);
@@ -1298,8 +1300,10 @@ void ReefAngelClass::SendPortal(char *username, char*key)
 	WIFI_SERIAL.print(REM, DEC);
 	PROGMEMprint(BannerKey);
 	WIFI_SERIAL.print(key);
-	PROGMEMprint(BannerFlag);
-	WIFI_SERIAL.print(Flags);
+	PROGMEMprint(BannerAlertFlag);
+	WIFI_SERIAL.print(AlertFlags);
+	PROGMEMprint(BannerStatusFlag);
+	WIFI_SERIAL.print(StatusFlags);
 	PROGMEMprint(BannerATOHIGH);
 	WIFI_SERIAL.print(HighATO.IsActive(), DEC);
 	PROGMEMprint(BannerATOLOW);
@@ -1475,7 +1479,7 @@ void ReefAngelClass::WaterChangeModeStart()
 void ReefAngelClass::ATOClear()
 {
 	LED.Off();
-	bitClear(Flags,ATOTimeOutFlag);
+	bitClear(AlertFlags,ATOTimeOutFlag);
 #ifdef ENABLE_EXCEED_FLAGS
 	InternalMemory.write(ATO_Single_Exceed_Flag, 0);
 	InternalMemory.write(ATO_Exceed_Flag, 0);
@@ -1503,7 +1507,7 @@ void ReefAngelClass::OverheatCheck()
 	if (millis()-Overheatmillis>3000) // Only flag overheat if we have overheat for 3 seconds
 	{
 		LED.On();
-		bitSet(Flags,OverheatFlag);
+		bitSet(AlertFlags,OverheatFlag);
 #ifdef ENABLE_EXCEED_FLAGS
 		InternalMemory.write(Overheat_Exceed_Flag, 1);
 #endif  // ENABLE_EXCEED_FLAGS
@@ -1521,7 +1525,7 @@ void ReefAngelClass::OverheatCheck()
 void ReefAngelClass::OverheatClear()
 {
 	LED.Off();
-	bitClear(Flags,OverheatFlag);
+	bitClear(AlertFlags,OverheatFlag);
 #ifdef ENABLE_EXCEED_FLAGS
 	InternalMemory.write(Overheat_Exceed_Flag, 0);
 #endif  // ENABLE_EXCEED_FLAGS
@@ -1553,7 +1557,7 @@ void ReefAngelClass::LightsOn()
 	}
 #endif  // RelayExp
 	Relay.Write();
-	bitSet(Flags,LightsOnFlag);
+	bitSet(StatusFlags,LightsOnFlag);
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	menu_button_functions1[4] = &ReefAngelClass::LightsOff;
 	if (DisplayedMenu==TOUCH_MENU)
@@ -1581,7 +1585,7 @@ void ReefAngelClass::LightsOff()
 	PWM.SetDaylight(0);
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	Relay.Write();
-	bitClear(Flags,LightsOnFlag);
+	bitClear(StatusFlags,LightsOnFlag);
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	menu_button_functions1[4] = &ReefAngelClass::LightsOn;
 	if (DisplayedMenu==TOUCH_MENU)
@@ -1648,7 +1652,7 @@ void receiveEvent(int howMany) {
 					ReefAngel.DisplayedMenu=d[7]-100;
 					}
 				}
-				ReefAngel.Flags=d[8];
+				ReefAngel.AlertFlags=d[8];
 				break;
 			case 2:
 				ReefAngel.PWM.SetDaylight(d[1]);
@@ -1727,7 +1731,7 @@ void ReefAngelClass::UpdateTouchDisplay()
 	delay(10);
 	wdt_reset();
 
-	// ID 1 - R, RON, ROFF, ATO, EM, REM, DisplayedMenu and Flags
+	// ID 1 - R, RON, ROFF, ATO, EM, REM, DisplayedMenu and AlertFlags
 	byte atostatus=0;
 	Wire.beginTransmission(I2CRA_TouchDisplay);
 	Wire.write(1);
@@ -1746,7 +1750,7 @@ void ReefAngelClass::UpdateTouchDisplay()
 	Wire.write(EM);
 	Wire.write(REM);
 	Wire.write(DisplayedMenu);
-	Wire.write(Flags);
+	Wire.write(AlertFlags);
 	Wire.endTransmission();
 	delay(10);
 	wdt_reset();

@@ -78,7 +78,7 @@ class ReefAngelClass
 public:
 	int PHMin,PHMax;
 	ParamsStruct Params;
-	byte Flags;
+	byte Flags,AlertFlags,StatusFlags;
 	bool BusLocked;
 
 	ReefAngelClass();
