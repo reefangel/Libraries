@@ -64,6 +64,8 @@
 #include <Standard/includes.h>
 #elif defined RA_PLUS
 #include <Plus/includes.h>
+#elif defined RA_STAR
+#include <Star/includes.h>
 #elif defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #include <Touch/includes.h>
 #elif defined RA_EVOLUTION
@@ -85,6 +87,8 @@ public:
 #include <Standard/public.h>
 #elif defined RA_PLUS
 #include <Plus/public.h>
+#elif defined RA_STAR
+#include <Star/public.h>
 #elif defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #include <Touch/public.h>
 #elif defined RA_EVOLUTION
@@ -244,6 +248,7 @@ public:
 	void inline NoWifi() {};
 	void inline NoSD() {};
 	void inline NoTilt() {};
+	void inline Star() {};
 
 #ifdef LEAKDETECTOREXPANSION
 	boolean IsLeakDetected();

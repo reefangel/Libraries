@@ -59,6 +59,10 @@ void receiveEventMaster(int howMany);
 #include <SD.h>
 #endif //  RA_TOUCH
 
+#if defined RA_STAR
+#undef RA_PLUS
+#endif //  RA_STAR
+
 #if defined(__SAM3X8E__)
 #define wifi
 #define BUSCHECK
@@ -237,6 +241,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define daylight2PWMPin     45
+#define actinic2PWMPin      46
 #define SDPin				49
 #define HW_SPI_Pin			53
 
@@ -299,6 +305,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_BLUE		15
 #define OVERRIDE_RF_INTENSITY	16
 #define OVERRIDE_CHANNELS		17
+#define OVERRIDE_DAYLIGHT2		18
+#define OVERRIDE_ACTINIC2		19
+
 
 // Message IDs
 #define MESSAGE_BUTTON	0
@@ -475,9 +484,17 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_WaterLevel3Max	  VarsStart+150
 #define Mem_I_WaterLevel4Min	  VarsStart+152
 #define Mem_I_WaterLevel4Max	  VarsStart+154
+#define Mem_B_LEDPWMDaylight2     VarsStart+156
+#define Mem_B_LEDPWMActinic2      VarsStart+157
+#define Mem_B_PWMSlopeStartD2     VarsStart+158
+#define Mem_B_PWMSlopeEndD2	      VarsStart+159
+#define Mem_B_PWMSlopeDurationD2  VarsStart+160
+#define Mem_B_PWMSlopeStartA2     VarsStart+161
+#define Mem_B_PWMSlopeEndA2	      VarsStart+162
+#define Mem_B_PWMSlopeDurationA2  VarsStart+163
 
-#define VarsEnd					  VarsStart+156
-// Next value starts VarsStart+156
+#define VarsEnd					  VarsStart+164
+// Next value starts VarsStart+164
 
 
 // EEProm Pointers

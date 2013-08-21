@@ -35,6 +35,8 @@ boolean LightsOverride=true;
 #include <Standard/instance.h>
 #elif defined RA_PLUS
 #include <Plus/instance.h>
+#elif defined RA_STAR
+#include <Star/instance.h>
 #elif defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #include <Touch/instance.h>
 #elif defined RA_EVOLUTION
@@ -47,18 +49,25 @@ void ReefAngelClass::Init()
 #include <Standard/init.h>
 #elif defined RA_PLUS
 #include <Plus/init.h>
+#elif defined RA_STAR
+#include <Star/init.h>
 #elif defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #include <Touch/init.h>
 #elif defined RA_EVOLUTION
 #include <Evolution/init.h>
 #endif //  RA_STANDARD
 
-	Serial.begin(57600);
-#ifdef __PLUS_SPECIAL_WIFI__
-	Serial1.begin(57600);
-#endif // __PLUS_SPECIAL_WIFI__
+	WIFI_SERIAL.begin(57600);
+	pinMode(lowATOPin,INPUT);
+	pinMode(highATOPin,INPUT);
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
+#if defined DisplayLEDPWM
+	pinMode(actinicPWMPin,OUTPUT);
+	pinMode(daylightPWMPin,OUTPUT);
+	digitalWrite(actinicPWMPin,LOW); //pull down resistor on actinicPWMPin
+	digitalWrite(daylightPWMPin,LOW); //pull down resistor on daylightPWMPin
+#endif // DisplayLEDPWM
 	digitalWrite(0,HIGH); //pull up resistor on RX
 	digitalWrite(1,HIGH); //pull up resistor on TX
 	TempSensor.Init();
@@ -313,12 +322,21 @@ void ReefAngelClass::Refresh()
 	{
 		PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
 		PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
+#if defined RA_STAR
+		PWM.SetActinic2(InternalMemory.LEDPWMActinic2_read());
+		PWM.SetDaylight2(InternalMemory.LEDPWMDaylight2_read());
+#endif // RA_STAR
 	}
 	// issue #3: Redundant code
 	// issue #12: Revert back
 	analogWrite(actinicPWMPin, PWM.GetActinicValue()*2.55);
 	analogWrite(daylightPWMPin, PWM.GetDaylightValue()*2.55);
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
+
+#if defined RA_STAR
+	analogWrite(actinic2PWMPin, PWM.GetActinic2Value()*2.55);
+	analogWrite(daylight2PWMPin, PWM.GetDaylight2Value()*2.55);
+#endif // RA_STAR
 
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	if (!Splash)

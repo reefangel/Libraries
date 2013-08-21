@@ -868,6 +868,86 @@ void InternalEEPROMClass::DCPumpDuration_write(const uint8_t value)
     write(Mem_B_DCPumpDuration, value);
 }
 
+uint8_t InternalEEPROMClass::LEDPWMDaylight2_read()
+{
+    return read(Mem_B_LEDPWMDaylight2);
+}
+
+void InternalEEPROMClass::LEDPWMDaylight2_write(const uint8_t value)
+{
+    write(Mem_B_LEDPWMDaylight2, value);
+}
+
+uint8_t InternalEEPROMClass::LEDPWMActinic2_read()
+{
+    return read(Mem_B_LEDPWMActinic2);
+}
+
+void InternalEEPROMClass::LEDPWMActinic2_write(const uint8_t value)
+{
+    write(Mem_B_LEDPWMActinic2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeStartD2_read()
+{
+    return read(Mem_B_PWMSlopeStartD2);
+}
+
+void InternalEEPROMClass::PWMSlopeStartD2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeStartD2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeEndD2_read()
+{
+    return read(Mem_B_PWMSlopeEndD2);
+}
+
+void InternalEEPROMClass::PWMSlopeEndD2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeEndD2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeDurationD2_read()
+{
+    return read(Mem_B_PWMSlopeDurationD2);
+}
+
+void InternalEEPROMClass::PWMSlopeDurationD2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeDurationD2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeStartA2_read()
+{
+    return read(Mem_B_PWMSlopeStartA2);
+}
+
+void InternalEEPROMClass::PWMSlopeStartA2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeStartA2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeEndA2_read()
+{
+    return read(Mem_B_PWMSlopeEndA2);
+}
+
+void InternalEEPROMClass::PWMSlopeEndA2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeEndA2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeDurationA2_read()
+{
+    return read(Mem_B_PWMSlopeDurationA2);
+}
+
+void InternalEEPROMClass::PWMSlopeDurationA2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeDurationA2, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {

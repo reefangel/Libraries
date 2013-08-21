@@ -200,6 +200,22 @@ class InternalEEPROMClass {
         void DCPumpSpeed_write(const uint8_t value);
         uint8_t DCPumpDuration_read();
         void DCPumpDuration_write(const uint8_t value);
+        uint8_t LEDPWMDaylight2_read();
+        void LEDPWMDaylight2_write(const uint8_t value);
+        uint8_t LEDPWMActinic2_read();
+        void LEDPWMActinic2_write(const uint8_t value);
+        uint8_t PWMSlopeStartD2_read();
+        void PWMSlopeStartD2_write(const uint8_t value);
+        uint8_t PWMSlopeEndD2_read();
+        void PWMSlopeEndD2_write(const uint8_t value);
+        uint8_t PWMSlopeDurationD2_read();
+        void PWMSlopeDurationD2_write(const uint8_t value);
+        uint8_t PWMSlopeStartA2_read();
+        void PWMSlopeStartA2_write(const uint8_t value);
+        uint8_t PWMSlopeEndA2_read();
+        void PWMSlopeEndA2_write(const uint8_t value);
+        uint8_t PWMSlopeDurationA2_read();
+        void PWMSlopeDurationA2_write(const uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();

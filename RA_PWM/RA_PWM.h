@@ -50,6 +50,28 @@ public:
 	void StandardActinic(byte MinuteOffset);
 	void StandardDaylight(byte MinuteOffset);
 	void Override(byte Channel, byte Value);
+#ifdef RA_STAR
+	void inline SetActinic2(byte value) { Actinic2PWMValue = value; };
+	void inline SetDaylight2(byte value) { Daylight2PWMValue = value; };
+	void inline SetActinic2Override(byte value) { if (value>100) value=255; Actinic2PWMOverride = value; };
+	void inline SetDaylight2Override(byte value) { if (value>100) value=255; Daylight2PWMOverride = value; };
+	byte GetActinic2Value();
+	byte GetDaylight2Value();
+	byte inline GetActinic2OverrideValue() { return Actinic2PWMOverride; };
+	byte inline GetDaylight2OverrideValue() { return Daylight2PWMOverride; };
+	void Actinic2PWMSlope(byte MinuteOffset);
+	void Daylight2PWMSlope(byte MinuteOffset);
+	void Actinic2PWMSlope();
+	void Daylight2PWMSlope();
+	void Actinic2PWMParabola(byte MinuteOffset);
+	void Daylight2PWMParabola(byte MinuteOffset);
+	void Actinic2PWMParabola();
+	void Daylight2PWMParabola();
+	void StandardActinic2();
+	void StandardDaylight2();
+	void StandardActinic2(byte MinuteOffset);
+	void StandardDaylight2(byte MinuteOffset);
+#endif
 	
 #ifdef PWMEXPANSION
 	byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
@@ -98,7 +120,12 @@ private:
 	byte DaylightPWMValue;
 	byte ActinicPWMOverride;
 	byte DaylightPWMOverride;
-	
+#ifdef RA_STAR
+	byte Actinic2PWMValue;
+	byte Daylight2PWMValue;
+	byte Actinic2PWMOverride;
+	byte Daylight2PWMOverride;
+#endif
 };
 
 #endif  // __RA_PWM_H__
