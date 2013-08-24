@@ -236,6 +236,7 @@ void RA_PWMClass::Override(byte Channel, byte Value)
 #endif
 }
 
+#ifdef RA_STAR
 byte RA_PWMClass::GetActinic2Value()
 {
 	if (Actinic2PWMOverride<=100)
@@ -406,6 +407,7 @@ void RA_PWMClass::StandardDaylight2(byte MinuteOffset)
 			0
 			));
 }
+#endif
 
 #ifdef PWMEXPANSION
 
