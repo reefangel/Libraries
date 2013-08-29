@@ -12,6 +12,8 @@ Wire.onReceive(NULL);
 Wire.onRequest(NULL);
 Wire.begin();
 #endif
+setSyncProvider(RTC.get);   // the function to get the time from the RTC
+setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 Joystick.Init();
 LCD.LCDID=InternalMemory.LCDID_read();
 LCD.Init();

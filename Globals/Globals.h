@@ -59,6 +59,20 @@ void receiveEventMaster(int howMany);
 #include <SD.h>
 #endif //  RA_TOUCH
 
+#if defined RA_STAR
+#undef RA_PLUS
+#endif //  RA_STAR
+
+#if defined(__SAM3X8E__)
+#define wifi
+#define BUSCHECK
+#undef RA_STANDARD
+#undef RA_PLUS
+#define RA_EVOLUTION
+#include "itoa.h"
+#endif
+
+
 #if defined RA_TOUCHDISPLAY
 #define DisplayLEDPWM
 #define PWMEXPANSION
@@ -107,18 +121,22 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define Port2Bit   1<<1
 #define Port1Bit   1<<0
 
-// Flags bits
+// Alert Flags bits
 #define ATOTimeOutFlag	0
 #define OverheatFlag   	1
 #define BusLockFlag   	2
-#define LightsOnFlag   	3
-#define LeakFlag		4
+#define LeakFlag		3
+
+// Status Flag Bits
+#define LightsOnFlag   	0
+
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
+#define WATERLEVEL_CHANNELS				5
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -226,29 +244,33 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define daylight2PWMPin     45
+#define actinic2PWMPin      46
 #define SDPin				49
 #define HW_SPI_Pin			53
 
 // I2C Addresses
-#define I2CEEPROM1          0x50
-#define I2CEEPROM2          0x54
-#define I2CClock            0x68
-#define I2CExpander1        0x20
-#define I2CExpander2        0x21
-#define I2CExpModule        0x38 // 0x38-3f
-#define I2CLeak				0X48
-#define I2CORP				0X4c
-#define I2CSalinity			0X4d
-#define I2CPH				0X4e
-#define I2CWaterLevel		0X4f
-#define I2CHumidity			0x5c
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
 #define I2CRA_Master		0x11
 #define I2CRA_TouchDisplay	0x12
 #define I2CTilt				0x1c
+#define I2CExpander1        0x20
+#define I2CExpander2        0x21
+#define I2CIO_PCF8574       0x27
+#define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
+#define I2CLeak				0X48
+#define I2CMultiWaterLevel	0X49
+#define I2CORP				0X4c
+#define I2CSalinity			0X4d
+#define I2CPH				0X4e
+#define I2CWaterLevel		0X4f
+#define I2CEEPROM1          0x50
+#define I2CEEPROM2          0x54
+#define I2CHumidity			0x5c
+#define I2CClock            0x68
 
 
 // I2C Images Addresses
@@ -286,6 +308,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_BLUE		15
 #define OVERRIDE_RF_INTENSITY	16
 #define OVERRIDE_CHANNELS		17
+#define OVERRIDE_DAYLIGHT2		18
+#define OVERRIDE_ACTINIC2		19
+
 
 // Message IDs
 #define MESSAGE_BUTTON	0
@@ -454,9 +479,25 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DCPumpMode          VarsStart+137
 #define Mem_B_DCPumpSpeed         VarsStart+138
 #define Mem_B_DCPumpDuration      VarsStart+139
+#define Mem_I_WaterLevel1Min	  VarsStart+140
+#define Mem_I_WaterLevel1Max	  VarsStart+142
+#define Mem_I_WaterLevel2Min	  VarsStart+144
+#define Mem_I_WaterLevel2Max	  VarsStart+146
+#define Mem_I_WaterLevel3Min	  VarsStart+148
+#define Mem_I_WaterLevel3Max	  VarsStart+150
+#define Mem_I_WaterLevel4Min	  VarsStart+152
+#define Mem_I_WaterLevel4Max	  VarsStart+154
+#define Mem_B_LEDPWMDaylight2     VarsStart+156
+#define Mem_B_LEDPWMActinic2      VarsStart+157
+#define Mem_B_PWMSlopeStartD2     VarsStart+158
+#define Mem_B_PWMSlopeEndD2	      VarsStart+159
+#define Mem_B_PWMSlopeDurationD2  VarsStart+160
+#define Mem_B_PWMSlopeStartA2     VarsStart+161
+#define Mem_B_PWMSlopeEndA2	      VarsStart+162
+#define Mem_B_PWMSlopeDurationA2  VarsStart+163
 
-#define VarsEnd					  VarsStart+140
-// Next value starts VarsStart+140
+#define VarsEnd					  VarsStart+164
+// Next value starts VarsStart+164
 
 
 // EEProm Pointers

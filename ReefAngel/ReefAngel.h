@@ -64,6 +64,8 @@
 #include <Standard/includes.h>
 #elif defined RA_PLUS
 #include <Plus/includes.h>
+#elif defined RA_STAR
+#include <Star/includes.h>
 #elif defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #include <Touch/includes.h>
 #elif defined RA_EVOLUTION
@@ -76,7 +78,7 @@ class ReefAngelClass
 public:
 	int PHMin,PHMax;
 	ParamsStruct Params;
-	byte Flags;
+	byte Flags,AlertFlags,StatusFlags;
 	bool BusLocked;
 
 	ReefAngelClass();
@@ -85,6 +87,8 @@ public:
 #include <Standard/public.h>
 #elif defined RA_PLUS
 #include <Plus/public.h>
+#elif defined RA_STAR
+#include <Star/public.h>
 #elif defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #include <Touch/public.h>
 #elif defined RA_EVOLUTION
@@ -213,6 +217,11 @@ public:
 	void ClearScreen(byte Color);
 	void ExitMenu();
 	void SetDisplayedMenu(byte value);
+	void WDTReset();
+	void CheckDrawGraph();
+	void CheckFeedingDrawing();
+	void CheckWaterChangeDrawing();
+
 #ifdef CUSTOM_VARIABLES
 	byte CustomVar[8];
 #endif //CUSTOM_VARIABLES
@@ -239,6 +248,7 @@ public:
 	void inline NoWifi() {};
 	void inline NoSD() {};
 	void inline NoTilt() {};
+	void inline Star() {};
 
 #ifdef LEAKDETECTOREXPANSION
 	boolean IsLeakDetected();

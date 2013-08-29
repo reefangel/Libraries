@@ -81,7 +81,7 @@ byte RFClass::RFCheck()
 
 byte RFClass::GetChannel(byte Channel)
 {
-	if (RadionChannelsOverride[Channel]<100)
+	if (RadionChannelsOverride[Channel]<=100)
 		return RadionChannelsOverride[Channel];
 	else
 		return RadionChannels[Channel];	

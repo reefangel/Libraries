@@ -1,3 +1,4 @@
+#ifndef __SAM3X8E__
 /*
  * Copyright 2010 Reef Angel / Roberto Imai
  *
@@ -1616,3 +1617,5 @@ void RA_NokiaLCD::DrawCalibrate(int i, byte x, byte y)
   strcat(text , "   ");
   DrawText(CalibrateColor, DefaultBGColor, x, y, text);
 }
+
+#endif // __SAM3X8E__

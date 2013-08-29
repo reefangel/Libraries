@@ -24,6 +24,7 @@
 
 #include <Globals.h>
 #include <avr/pgmspace.h>
+#include <avr/wdt.h>
 
 #ifdef wifi
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";
@@ -43,8 +44,9 @@ const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
 const prog_char XML_EM1[] PROGMEM = "</EM><EM1>";
 const prog_char XML_REM[] PROGMEM = "</EM1><REM>";
-const prog_char XML_FLAG[] PROGMEM = "</REM><FLAG>";
-const prog_char XML_FLAG_END[] PROGMEM = "</FLAG>";
+const prog_char XML_ALERTFLAG[] PROGMEM = "</REM><AF>";
+const prog_char XML_STATUSFLAG[] PROGMEM = "</AF><SF>";
+const prog_char XML_STATUSFLAG_END[] PROGMEM = "</SF>";
 
 #ifdef DisplayLEDPWM
 const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
@@ -66,8 +68,8 @@ const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
 const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 #endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
-const prog_char XML_WL[] PROGMEM = "<WL>";
-const prog_char XML_WL_END[] PROGMEM = "</WL>";
+const prog_char XML_WL[] PROGMEM = "<WL";
+const prog_char XML_WL_END[] PROGMEM = "</WL";
 #endif  // WATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
@@ -168,6 +170,7 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_LIGHTSOFF	19		// Turn Lights Off
 #define REQ_ALARM_LEAK	20		// Clears the Leak alarm
 #define REQ_OVERRIDE	21		// Channel Override
+#define REQ_REBOOT		22		// Reboot
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
@@ -190,11 +193,14 @@ const prog_char BannerEM1[] PROGMEM = "&em1=";
 const prog_char BannerREM[] PROGMEM = "&rem=";
 const prog_char BannerCustom[] PROGMEM = "&c";
 const prog_char BannerKey[] PROGMEM = "&key=";
-const prog_char BannerFlag[] PROGMEM = "&flag=";
+const prog_char BannerAlertFlag[] PROGMEM = "&af=";
+const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
 	const prog_char BannerPWMD[] PROGMEM = "&pwmd=";
+	const prog_char BannerPWMAO[] PROGMEM = "&pwmao=";
+	const prog_char BannerPWMDO[] PROGMEM = "&pwmdo=";
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
 #ifdef PWMEXPANSION
@@ -236,7 +242,7 @@ const prog_char BannerFlag[] PROGMEM = "&flag=";
 #endif  // PHEXPANSION
 
 #ifdef WATERLEVELEXPANSION
-	const prog_char BannerWL[] PROGMEM = "&wl=";
+	const prog_char BannerWL[] PROGMEM = "&wl";
 #endif  // WATERLEVELEXPANSION
 	
 #ifdef HUMIDITYEXPANSION

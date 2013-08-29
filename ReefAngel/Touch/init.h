@@ -27,6 +27,8 @@ TouchLCD.Init();
 SmallFont.SetFont(f8x8);
 Font.SetFont(f12x12);
 LargeFont.SetFont(ArialBold20);
+setSyncProvider(RTC.get);   // the function to get the time from the RTC
+setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 TS.Init();
 OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Ok",OKBUTTON);
 CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Cancel",CANCELBUTTON);
