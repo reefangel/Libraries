@@ -647,9 +647,6 @@ void RA_NokiaLCD::SendData(byte data)
     SDA1
     CLK1
     ShiftBits(data);
-#ifdef wifi
-    pingSerial();
-#endif  // wifi
 }
 
 void RA_NokiaLCD::SendCMD(byte data)
@@ -658,6 +655,9 @@ void RA_NokiaLCD::SendCMD(byte data)
     SDA0
     CLK1
     ShiftBits(data);
+#ifdef wifi
+    pingSerial();
+#endif  // wifi
 }
 
 
