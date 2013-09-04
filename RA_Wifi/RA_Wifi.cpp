@@ -74,7 +74,7 @@ void pushbuffer(byte inStr)
 		    if (inStr==' ')
 		    {
 		        reqtype=256-reqtype;
-		       if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) || (reqtype == REQ_M_RAW || reqtype == REQ_OVERRIDE || reqtype == REQ_M_TEMP) )
+		       if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) || (reqtype == REQ_M_RAW || reqtype == REQ_OVERRIDE || reqtype == REQ_M_CVAR) )
 		        {
 		        	// must have a comma to have second value
 		        	// verify that the last char was a digit
@@ -186,8 +186,8 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /l1", m_pushback, 7)==0) reqtype = -REQ_LIGHTSON;
             else if (strncmp("GET /boot", m_pushback, 9)==0) reqtype = REQ_REBOOT;
             else if (strncmp("GET /po", m_pushback, 7)==0) { reqtype = -REQ_OVERRIDE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
-#ifdef TEMP_MEMORY
-            else if (strncmp("GET /tmem", m_pushback, 9)==0) { reqtype = -REQ_M_TEMP; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
+#ifdef CUSTOM_VARIABLES
+            else if (strncmp("GET /cvar", m_pushback, 9)==0) { reqtype = -REQ_M_CVAR; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
 #endif
             //else reqtype = -REQ_UNKNOWN;
 		}
@@ -429,7 +429,7 @@ void processHTTP()
 			}  // REQ_RELAY
 			case REQ_M_BYTE:
 			case REQ_M_INT:
-			case REQ_M_TEMP:
+			case REQ_M_CVAR:
 			{
 				int s;
 
@@ -449,9 +449,9 @@ void processHTTP()
 						InternalMemory.write(newweboption2, weboption);
 					else if ( reqtype == REQ_M_INT )
 						InternalMemory.write_int(newweboption2, weboption);
-#ifdef TEMP_MEMORY
-					else if ( reqtype == REQ_M_TEMP )
-						if (newweboption2 < 8) ReefAngel.TempMem[newweboption2]=weboption;
+#ifdef CUSTOM_VARIABLES
+					else if ( reqtype == REQ_M_CVAR )
+						if (newweboption2 < 8) ReefAngel.CustomVar[newweboption2]=weboption;
 #endif
 					// check if we have to reload any timers
 					if ( weboption2 == Mem_I_FeedingTimer )
@@ -502,9 +502,9 @@ void processHTTP()
 						memvalue=InternalMemory.read(newweboption2);
 					else if ( reqtype == REQ_M_INT )
 						memvalue=InternalMemory.read_int(newweboption2);
-#ifdef TEMP_MEMORY
-					else if ( reqtype == REQ_M_TEMP )
-						if (newweboption2 < 8) memvalue=ReefAngel.TempMem[newweboption2];
+#ifdef CUSTOM_VARIABLES
+					else if ( reqtype == REQ_M_CVAR )
+						if (newweboption2 < 8) memvalue=ReefAngel.CustomVar[newweboption2];
 #endif
 					s += intlength(memvalue);
 					PrintHeader(s,1);

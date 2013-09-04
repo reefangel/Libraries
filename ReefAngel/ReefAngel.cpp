@@ -175,12 +175,6 @@ void ReefAngelClass::Init()
 		CustomVar[EID]=0;
 	}
 #endif //CUSTOM_VARIABLES
-#ifdef TEMP_MEMORY
-	for ( byte EID = 0; EID < 8; EID++ )
-	{
-		TempMem[EID]=0;
-	}
-#endif
 }
 
 void ReefAngelClass::Refresh()
