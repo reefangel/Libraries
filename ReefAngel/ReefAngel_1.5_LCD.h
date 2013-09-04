@@ -2531,13 +2531,23 @@ void ReefAngelClass::SetupCalibratePHExp()
 #ifdef WATERLEVELEXPANSION
 void ReefAngelClass::SetupCalibrateWaterLevel()
 {
+	enum choices {
+		WLCHANNEL,
+		CANCEL,
+		OK
+	};
+	byte sel = CANCEL;
+
 	bool bOKSel = false;
 	bool bSave = false;
 	bool bDone = false;
+	bool bRedraw = true;
 	bool bDrawButtons = true;
 	unsigned int iO[2] = {0,0};
 	unsigned int iCal[2] = {0,100};
 	byte offset = 65;
+	int wl_channel = 0;
+
 	// draw labels
 	ClearScreen(DefaultBGColor);
 	for (int b=0;b<2;b++)
@@ -2552,6 +2562,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 		itoa(iCal[b],text,10);
 		strcat(text , " %  ");
 		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, text);
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*7, "Channel:");
 		do
 		{
 #if defined WDT || defined WDT_FORCE
@@ -2564,32 +2575,113 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 			}
 			iO[b]/=15;
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
-			if (  bDrawButtons )
+
+			if (  bRedraw )
 			{
-				if ( bOKSel )
+				switch ( sel )
 				{
-					LCD.DrawOK(true);
-					LCD.DrawCancel(false);
-				}
-				else
+				case WLCHANNEL:
 				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(true);
+					LCD.DrawOption(wl_channel, 1, MENU_START_COL + offset, MENU_START_ROW*7, "", "", 2);
+					if ( bDrawButtons )
+					{
+						LCD.DrawOK(false);
+						LCD.DrawCancel(false);
+					}
+					break;
 				}
+				case OK:
+				{
+					if ( bDrawButtons )
+					{
+						LCD.DrawOption(wl_channel, 0, MENU_START_COL + offset, MENU_START_ROW*7, "", "", 2);
+						LCD.DrawOK(true);
+						LCD.DrawCancel(false);
+					}
+					break;
+				}
+				case CANCEL:
+				{
+					if ( bDrawButtons )
+					{
+						LCD.DrawOption(wl_channel, 0, MENU_START_COL + offset, MENU_START_ROW*7, "", "", 2);
+						LCD.DrawOK(false);
+						LCD.DrawCancel(true);
+					}
+					break;
+				}
+				}
+				bRedraw = false;
 				bDrawButtons = false;
 			}
-			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+			if ( Joystick.IsUp() )
 			{
-				// toggle the selection
-				bOKSel = !bOKSel;
-				bDrawButtons = true;
+				if (sel == WLCHANNEL)
+				{
+					wl_channel++;
+					if ( wl_channel == WATERLEVEL_CHANNELS )
+					{
+						wl_channel = WATERLEVEL_CHANNELS-1;
+					}
+					else
+					{
+						bRedraw = true;
+					}
+				}
 			}
+			if ( Joystick.IsDown() )
+			{
+				if (sel == WLCHANNEL)
+				{
+					wl_channel--;
+					if ( wl_channel < 0 )
+					{
+						wl_channel = 0;
+					}
+					else
+					{
+						bRedraw = true;
+					}
+				}
+			}
+
+			if ( Joystick.IsLeft() )
+			{
+				bRedraw = true;
+				bDrawButtons = true;
+				sel--;
+				if ( sel > OK )
+				{
+					sel = OK;
+				}
+				if (b == 1 && sel == WLCHANNEL)
+					sel = OK;
+			}
+
+			if ( Joystick.IsRight() )
+			{
+				bRedraw = true;
+				bDrawButtons = true;
+				sel++;
+				if ( sel > OK )
+				{
+					if (b==0)
+						sel = WLCHANNEL;
+					else
+						sel = CANCEL;
+				}
+			}
+
 			if ( Joystick.IsButtonPressed() )
 			{
-				bDone = true;
-				if ( bOKSel )
+				if ( sel == OK || sel == WLCHANNEL)
 				{
+					bDone = true;
 					bSave = true;
+				}
+				else if ( sel == CANCEL )
+				{
+					bDone = true;
 				}
 			}
 		} while ( ! bDone );
@@ -2598,8 +2690,29 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 	if ( bSave )
 	{
 		// save WaterLevelMin & WaterLevelMax to memory
-		InternalMemory.WaterLevelMin_write(iO[0]);
-		InternalMemory.WaterLevelMax_write(iO[1]);
+		switch ( wl_channel )
+		{
+		case 0:
+			InternalMemory.WaterLevelMin_write(iO[0]);
+			InternalMemory.WaterLevelMax_write(iO[1]);
+			break;
+		case 1:
+			InternalMemory.WaterLevel1Min_write(iO[0]);
+			InternalMemory.WaterLevel1Max_write(iO[1]);
+			break;
+		case 2:
+			InternalMemory.WaterLevel2Min_write(iO[0]);
+			InternalMemory.WaterLevel2Max_write(iO[1]);
+			break;
+		case 3:
+			InternalMemory.WaterLevel3Min_write(iO[0]);
+			InternalMemory.WaterLevel3Max_write(iO[1]);
+			break;
+		case 4:
+			InternalMemory.WaterLevel4Min_write(iO[0]);
+			InternalMemory.WaterLevel4Max_write(iO[1]);
+			break;
+		}
 	}
 }
 #endif  // WATERLEVELEXPANSION
