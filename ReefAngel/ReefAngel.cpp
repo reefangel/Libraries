@@ -45,6 +45,7 @@ boolean LightsOverride=true;
 
 void ReefAngelClass::Init()
 {
+	WIFI_SERIAL.begin(57600);
 #ifdef RA_STANDARD
 #include <Standard/init.h>
 #elif defined RA_PLUS
@@ -57,7 +58,6 @@ void ReefAngelClass::Init()
 #include <Evolution/init.h>
 #endif //  RA_STANDARD
 
-	WIFI_SERIAL.begin(57600);
 	pinMode(lowATOPin,INPUT);
 	pinMode(highATOPin,INPUT);
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
