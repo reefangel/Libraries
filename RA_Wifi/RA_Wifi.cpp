@@ -74,7 +74,7 @@ void pushbuffer(byte inStr)
 		    if (inStr==' ')
 		    {
 		        reqtype=256-reqtype;
-		       if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) || (reqtype == REQ_M_RAW || reqtype == REQ_OVERRIDE) )
+		       if ( (reqtype == REQ_M_BYTE) || (reqtype == REQ_M_INT) || (reqtype == REQ_M_RAW || reqtype == REQ_OVERRIDE || reqtype == REQ_M_TEMP) )
 		        {
 		        	// must have a comma to have second value
 		        	// verify that the last char was a digit
@@ -186,6 +186,9 @@ void pushbuffer(byte inStr)
             else if (strncmp("GET /l1", m_pushback, 7)==0) reqtype = -REQ_LIGHTSON;
             else if (strncmp("GET /boot", m_pushback, 9)==0) reqtype = REQ_REBOOT;
             else if (strncmp("GET /po", m_pushback, 7)==0) { reqtype = -REQ_OVERRIDE; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
+#ifdef TEMP_MEMORY
+            else if (strncmp("GET /tmem", m_pushback, 9)==0) { reqtype = -REQ_M_TEMP; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
+#endif
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -426,6 +429,7 @@ void processHTTP()
 			}  // REQ_RELAY
 			case REQ_M_BYTE:
 			case REQ_M_INT:
+			case REQ_M_TEMP:
 			{
 				int s;
 
@@ -443,9 +447,12 @@ void processHTTP()
 					// if we have a second value, we write the value to memory
 					if ( reqtype == REQ_M_BYTE )
 						InternalMemory.write(newweboption2, weboption);
-					else
+					else if ( reqtype == REQ_M_INT )
 						InternalMemory.write_int(newweboption2, weboption);
-
+#ifdef TEMP_MEMORY
+					else if ( reqtype == REQ_M_TEMP )
+						if (newweboption2 < 8) ReefAngel.TempMem[newweboption2]=weboption;
+#endif
 					// check if we have to reload any timers
 					if ( weboption2 == Mem_I_FeedingTimer )
 					{
@@ -485,26 +492,28 @@ void processHTTP()
 				}
 				else if ( !bHasSecondValue && (weboption2 >= 0) && (bCommaCount==0) )
 				{
+					int memvalue=0;
 					// get the length first
 					s = 7;  // <M></M>
 					// length of the memory location, twice since it's in the open & close tag
 					s += (intlength(weboption2)*2);
 					// length of the value from memory
 					if ( reqtype == REQ_M_BYTE )
-						s += intlength(InternalMemory.read(newweboption2));
-					else
-						s += intlength(InternalMemory.read_int(newweboption2));
-
+						memvalue=InternalMemory.read(newweboption2);
+					else if ( reqtype == REQ_M_INT )
+						memvalue=InternalMemory.read_int(newweboption2);
+#ifdef TEMP_MEMORY
+					else if ( reqtype == REQ_M_TEMP )
+						if (newweboption2 < 8) memvalue=ReefAngel.TempMem[newweboption2];
+#endif
+					s += intlength(memvalue);
 					PrintHeader(s,1);
 
 					// no second value and no comma, so we read the value from memory
 					PROGMEMprint(XML_M_OPEN);
 					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);
-					if ( reqtype == REQ_M_BYTE )
-						WIFI_SERIAL.print(InternalMemory.read(newweboption2),DEC);
-					else
-						WIFI_SERIAL.print(InternalMemory.read_int(newweboption2),DEC);
+					WIFI_SERIAL.print(memvalue,DEC);
 					PROGMEMprint(XML_M_CLOSE);
 					WIFI_SERIAL.print(weboption2, DEC);
 					PROGMEMprint(XML_CLOSE_TAG);

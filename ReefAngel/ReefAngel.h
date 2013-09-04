@@ -226,6 +226,10 @@ public:
 	byte CustomVar[8];
 #endif //CUSTOM_VARIABLES
 
+#ifdef TEMP_MEMORY
+	byte TempMem[8];
+#endif //TEMP_MEMORY
+
 #ifdef I2CMASTER
 	byte I2CCommand;
 	void UpdateTouchDisplay();
