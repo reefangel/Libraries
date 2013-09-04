@@ -2738,7 +2738,7 @@ SliderClass::SliderClass()
 	current=0;
 	x1=0;
 	y1=0;
-	NeedsRedraw=true;
+	NeedsRedraw=false;
 }
 
 void SliderClass::Create(int icolor, int itextcolor, char *istr)
