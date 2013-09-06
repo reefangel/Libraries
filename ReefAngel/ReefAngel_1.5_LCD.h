@@ -669,11 +669,11 @@ void ReefAngelClass::DisplayMenu()
 	// redrawmenu should only get set from within this function when we move the joystick or press the button
 	byte qty = menuqtysptr[DisplayedMenu];
 	int ptr = menusptr[DisplayedMenu];
-
+	byte PreviousSelectedMenuItem=SelectedMenuItem;
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
-
+	if (redrawmenu) PreviousSelectedMenuItem=0;
 	if ( Joystick.IsUp() )
 	{
 		// process UP press
@@ -759,11 +759,14 @@ void ReefAngelClass::DisplayMenu()
 			bcolor = SelectionBGColor;
 			fcolor = SelectionFGColor;
 		}
-		LCD.Clear(bcolor, MENU_START_COL-3,
-				(i*MENU_START_ROW)+MENU_HEADING_SIZE-1,
-				MENU_END_COL,
-				(i*MENU_START_ROW)+(MENU_HEADING_SIZE+MENU_ITEM_HEIGHT-1));
-		LCD.DrawText(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, buffer);
+		if (i==SelectedMenuItem || i==PreviousSelectedMenuItem || PreviousSelectedMenuItem==0)
+		{
+			LCD.Clear(bcolor, MENU_START_COL-3,
+					(i*MENU_START_ROW)+MENU_HEADING_SIZE-1,
+					MENU_END_COL,
+					(i*MENU_START_ROW)+(MENU_HEADING_SIZE+MENU_ITEM_HEIGHT-1));
+			LCD.DrawText(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, buffer);
+		}
 	}  // for i
 	// once drawn, no need to redraw yet
 	redrawmenu = false;
