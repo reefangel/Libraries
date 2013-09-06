@@ -1477,7 +1477,15 @@ void RA_NokiaLCD::DrawImage(int swidth, int sheight, byte x, byte y, const prog_
         for (byte j = 0; j < 30; j++)
         {
             count+=1;
-            if (count<=swidth*sheight) SendData(~pgm_read_byte_near(iPtr++));
+            if (count<=swidth*sheight)
+            	if (LCDID==0)
+            	{
+            		SendColor12Bit(pgm_read_byte_near(iPtr++));
+            	}
+            	else
+            	{
+            		SendData(~pgm_read_byte_near(iPtr++));
+            	}
         }
     }
     while (count < swidth*sheight);
