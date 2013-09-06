@@ -316,6 +316,7 @@ public:
 	void Portal(char *username, char*key);
 	void SendPortal(char *username, char*key);
 	char *portalusername;
+	void PROGMEMprint1(const prog_char str[]);
 #endif  // wifi
 
 private:

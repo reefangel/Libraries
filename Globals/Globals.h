@@ -29,6 +29,9 @@
 #include <Arduino.h>
 #include <Time.h>
 #include <OneWire.h>
+#include <SPI.h>
+#include <Ethernet.h>
+#include <EthernetDHCP.h>
 #include <avr/pgmspace.h>
 
 static unsigned long RAStart;
@@ -49,6 +52,7 @@ void receiveEventMaster(int howMany);
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
+#define DisplayLEDPWM
 #undef RA_STANDARD
 #define RA_PLUS
 #endif //__AVR_ATmega2560__
@@ -96,6 +100,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 
 #ifdef __PLUS_SPECIAL_WIFI__
 #define WIFI_SERIAL Serial1
+#elif defined RA_STAR
+#define WIFI_SERIAL NetClient
 #else
 #define WIFI_SERIAL Serial
 #endif // __PLUS_SPECIAL_WIFI__
@@ -1350,13 +1356,14 @@ byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDura
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 
+const char* ip_to_str(const uint8_t* ipAddr);
 
 // for virtual functions
-extern "C" void __cxa_pure_virtual(void);
+//extern "C" void __cxa_pure_virtual(void);
 // other fixes
-__extension__ typedef int __guard __attribute__((mode (__DI__)));
-extern "C" int __cxa_guard_acquire(__guard *);
-extern "C" void __cxa_guard_release (__guard *);
-extern "C" void __cxa_guard_abort (__guard *);
+//__extension__ typedef int __guard __attribute__((mode (__DI__)));
+//extern "C" int __cxa_guard_acquire(__guard *);
+//extern "C" void __cxa_guard_release (__guard *);
+//extern "C" void __cxa_guard_abort (__guard *);
 
 #endif  // __GLOBALS_H__
