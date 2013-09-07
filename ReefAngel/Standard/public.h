@@ -5,6 +5,11 @@ RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
 
 void ShowInterface();
+void DrawStandardMain();
+void StoreGraphData();
+void CheckScreenSaver();
+void DisplayFeedingMode();
+void DisplayWaterChangeMode();
 void PrepMenuScreen();
 void DisplayMenu();
 void DisplayMenuHeading();

@@ -20,8 +20,9 @@ NetServer.begin();
 Joystick.Init();
 LCD.LCDID=InternalMemory.LCDID_read();
 LCD.Init();
-LCD.DrawImage(98,38,15,55,RA_LOGO);
+LCD.DrawImage(98,38,15,50,RA_LOGO);
 LCD.BacklightOn();
+Splash=true;
 //0x5241494D
 //0xCF06A31E
 pinMode(actinic2PWMPin,OUTPUT);
