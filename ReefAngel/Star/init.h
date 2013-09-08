@@ -35,6 +35,7 @@ if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 {
 	while(1)
 	{
+		digitalWrite(ledPin,millis()%2000>100);
 		strcpy_P(temptext, NoIMCheck);
 		LCD.DrawText(ModeScreenColor,DefaultBGColor,13,50,temptext);
 		strcpy_P(temptext, NoIMCheck1);
