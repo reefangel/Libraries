@@ -171,6 +171,7 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_ALARM_LEAK	20		// Clears the Leak alarm
 #define REQ_OVERRIDE	21		// Channel Override
 #define REQ_REBOOT		22		// Reboot
+#define REQ_M_CVAR		23		// Custom Variable
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
@@ -179,6 +180,9 @@ const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http:/
 //const prog_char SERVER_RA[] PROGMEM = "<!DOCTYPE html><script src='http://www.reefangel.com/wifi/ra2.js'></script>";
 const prog_char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 const prog_char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
+const prog_char BannerHTTP11[] PROGMEM = " HTTP/1.1\r\n";
+const prog_char BannerHost[] PROGMEM = "Host: forum.reefangel.com\r\n";
+const prog_char BannerConnectionClose[] PROGMEM = "Connection: close\r\n";
 const prog_char BannerT2[] PROGMEM = "&t2=";
 const prog_char BannerT3[] PROGMEM = "&t3=";
 const prog_char BannerPH[] PROGMEM = "&ph=";
