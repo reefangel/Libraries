@@ -180,32 +180,6 @@ void ReefAngelClass::Init()
 void ReefAngelClass::Refresh()
 {
 	WDTReset();
-#ifdef RA_STAR
-	// Check for DHCP state changes
-	EthernetDHCP.poll();
-	if (WIFI_SERIAL.available() && PortalConnection)
-	{
-		while(WIFI_SERIAL.available())
-		{
-			wdt_reset();
-			char c = WIFI_SERIAL.read();
-		}
-	}
-
-	// if the server's disconnected, stop the client
-	if (!WIFI_SERIAL.connected() && PortalConnection)
-	{
-		PortalConnection=false;
-		WIFI_SERIAL.stop();
-	}
-
-	// if request timed out, stop the client
-	if (WIFI_SERIAL.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
-	{
-		PortalConnection=false;
-		WIFI_SERIAL.stop();
-	}
-#endif
 	if (ChangeMode==FEEDING_MODE)
 		FeedingModeStart();
 	if (ChangeMode==WATERCHANGE_MODE)
@@ -450,6 +424,76 @@ void ReefAngelClass::Refresh()
 #endif  // OVERRRIDE_PORTS	
 
 	Relay.Write();
+
+#ifdef RA_STAR
+	// Check for DHCP state changes
+	EthernetDHCP.poll();
+	if (WIFI_SERIAL.available() && PortalConnection)
+	{
+		while(WIFI_SERIAL.available())
+		{
+			wdt_reset();
+			char c = WIFI_SERIAL.read();
+		}
+	}
+
+	// if the server's disconnected, stop the client
+	if (!WIFI_SERIAL.connected() && PortalConnection)
+	{
+		PortalConnection=false;
+		WIFI_SERIAL.stop();
+	}
+
+	// if request timed out, stop the client
+	if (WIFI_SERIAL.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
+	{
+		PortalConnection=false;
+		WIFI_SERIAL.stop();
+	}
+#endif // RA_STAR
+
+#ifdef RANET
+	// Send RANet data
+	if (millis()-RANetlastmillis>RANetDelay)
+	{
+		RANetlastmillis=millis();
+		RANetCRC=0;
+		RANetData[0]=RANetSeq;
+		RANetData[1]=RANET_SIZE*2;
+		for (int a=0;a<MAX_RELAY_EXPANSION_MODULES;a++)
+		{
+#ifdef RelayExp
+			byte TempRelay = Relay.RelayDataE[a];
+			TempRelay &= Relay.RelayMaskOffE[a];
+			TempRelay |= Relay.RelayMaskOnE[a];
+			RANetData[2+a]=TempRelay;
+			RANetData[10+a]=Relay.RANetFallBackE[a];
+#else
+			RANetData[2+a]=0;
+			RANetData[10+a]=0;
+#endif // RelayExp
+		}
+		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+		{
+#ifdef PWMEXPANSION
+			RANetData[18+a]=PWM.GetChannel(a);
+#else
+			RANetData[18+a]=0;
+#endif // PWMEXPANSION
+		}
+		char buf[3];
+		for (int a=0;a<RANET_SIZE;a++)
+		{
+			RANetCRC+=RANetData[a];
+			sprintf(buf,"%02x",RANetData[a]);
+			RANET_SERIAL.print(buf);
+		}
+		sprintf(buf,"%02x",RANetCRC);
+		RANET_SERIAL.println(buf);
+		RANetSeq++;
+	}
+#endif // RANET
+
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor

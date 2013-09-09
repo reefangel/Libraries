@@ -33,8 +33,16 @@ Init	KEYWORD2
 Refresh	KEYWORD2
 SetTemperatureUnit	KEYWORD2
 ConvertTempUnit	KEYWORD2
+Use2014Screen	KEYWORD2
+AddSalinityExpansion	KEYWORD2
+AddORPExpansion	KEYWORD2
+AddPHExpansion	KEYWORD2
+AddWaterLevelExpansion	KEYWORD2
+AddMultiChannelWaterLevelExpansion	KEYWORD2
+AddHumidityExpansion	KEYWORD2
 AddStandardMenu	KEYWORD2
 AddWifi	KEYWORD2
+AddRANet	KEYWORD2
 StandardLights	KEYWORD2
 AddRFExpansion	KEYWORD2
 AddDateTimeMenu	KEYWORD2
@@ -663,6 +671,7 @@ RelayMaskOff	LITERAL2
 RelayDataE	LITERAL2
 RelayMaskOnE	LITERAL2
 RelayMaskOffE	LITERAL2
+RANetFallBackE	LITERAL2
 
 UseMemory	LITERAL2
 Mode	LITERAL2

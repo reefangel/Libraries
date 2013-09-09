@@ -47,6 +47,9 @@ RelayClass::RelayClass()
 #ifdef SaveRelaysPresent
 		RelayPresentE[EID] = true;
 #endif  // SaveRelaysPresent
+#ifdef RANET
+		RANetFallBackE[EID] = 0;
+#endif  // RANET
 	}
 #endif  // RelayExp
 }

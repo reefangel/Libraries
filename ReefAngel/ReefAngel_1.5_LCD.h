@@ -439,6 +439,8 @@ void ReefAngelClass::ShowInterface()
 		{
 #ifdef CUSTOM_MAIN
 			DrawCustomMain();
+#elif defined MAIN_2014
+			Draw2014Main();
 #else
 			DrawStandardMain();
 #endif  // CUSTOM_MAIN
@@ -495,6 +497,232 @@ void ReefAngelClass::ShowInterface()
 		}  // switch DisplayedMenu
 	}  // if showmenu
 }
+
+#ifdef MAIN_2014
+void ReefAngelClass::Draw2014Main()
+{
+	const byte x1[]={0,45,89};
+	const byte x2[]={43,87,131};
+	char text[7];
+	byte offset;
+	byte x,y;
+
+	if (redrawmenu)
+	{
+		redrawmenu=false;
+		LCD.Clear(T1TempColor,0,0,43,13);
+		LCD.Clear(T2TempColor,45,0,87,13);
+		LCD.Clear(T3TempColor,89,0,131,13);
+		LCD.Clear(PHColor,0,26,43,39);
+		LCD.DrawLargeText(COLOR_WHITE,T1TempColor,15,4,"T1");
+		LCD.DrawLargeText(COLOR_WHITE,T2TempColor,58,4,"T2");
+		LCD.DrawLargeText(COLOR_WHITE,T3TempColor,101,4,"T3");
+		LCD.DrawLargeText(COLOR_WHITE,PHColor,15,30,"pH");
+		x=1;
+		y=26;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+		LCD.Clear(APColor,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+15,y+4,"AP");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+		LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+15,y+4,"DP");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined SALINITYEXPANSION
+		LCD.Clear(COLOR_DARKSLATEGREY,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,"SAL");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined ORPEXPANSION
+		LCD.Clear(COLOR_LIME,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_LIME,x1[x]+12,y+4,"ORP");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined PHEXPANSION
+		LCD.Clear(COLOR_DARKGREEN,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKGREEN,x1[x]+12,y+4,"pHE");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined WATERLEVELEXPANSION
+		LCD.Clear(COLOR_CORNFLOWERBLUE,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_CORNFLOWERBLUE,x1[x]+12,y+4,"WL0");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined MULTIWATERLEVELEXPANSION
+		for (int a=1;a<5;a++)
+		{
+			LCD.Clear(COLOR_CORNFLOWERBLUE,x1[x],y,x2[x],y+13);
+			LCD.DrawLargeText(COLOR_WHITE,COLOR_CORNFLOWERBLUE,x1[x]+12,y+4,"WL");
+			ConvertNumToString(text, a, 1);
+			LCD.DrawLargeText(COLOR_WHITE,COLOR_CORNFLOWERBLUE,x1[x]+22,y+4,text);
+			x+=1;
+			if (x==3)
+			{
+				x=0;
+				y+=26;
+			}
+		}
+#endif
+#if defined HUMIDITYEXPANSION
+		LCD.Clear(COLOR_PLUM,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,"HUM");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+		if (y<100)
+		{
+			LCD.DrawImage(15,13,10,100,ARROW_LEFT);
+			LCD.DrawImage(15,13,105,100,ARROW_RIGHT);
+		}
+#endif
+	}
+	offset=intlength(Params.Temp[T1_PROBE])+1;
+	ConvertNumToString(text, Params.Temp[T1_PROBE], 10);
+	LCD.DrawText(T1TempColor,DefaultBGColor, 19-(offset*2),16,text);
+	offset=intlength(Params.Temp[T2_PROBE])+1;
+	ConvertNumToString(text, Params.Temp[T2_PROBE], 10);
+	LCD.DrawText(T2TempColor,DefaultBGColor, 64-(offset*2),16,text);
+	offset=intlength(Params.Temp[T3_PROBE])+1;
+	ConvertNumToString(text, Params.Temp[T3_PROBE], 10);
+	LCD.DrawText(T3TempColor,DefaultBGColor, 108-(offset*2),16,text);
+	offset=intlength(Params.PH)+1;
+	ConvertNumToString(text, Params.PH, 100);
+	LCD.DrawText(PHColor,DefaultBGColor, 20-(offset*2),42,text);
+	x=1;
+	y=42;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+	offset=intlength(PWM.GetActinicValue())+1;
+	ConvertNumToString(text, PWM.GetActinicValue(), 1);
+	LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+	offset=intlength(PWM.GetDaylightValue())+1;
+	ConvertNumToString(text, PWM.GetDaylightValue(), 1);
+	LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined SALINITYEXPANSION
+	offset=intlength(Params.Salinity)+1;
+	ConvertNumToString(text, Params.Salinity, 10);
+	LCD.DrawText(COLOR_DARKSLATEGREY,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined ORPEXPANSION
+	offset=intlength(Params.ORP)+1;
+	ConvertNumToString(text, Params.ORP, 1);
+	LCD.DrawText(COLOR_LIME,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined PHEXPANSION
+	offset=intlength(Params.PHExp)+1;
+	ConvertNumToString(text, Params.PHExp, 100);
+	LCD.DrawText(COLOR_DARKGREEN,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined WATERLEVELEXPANSION
+	offset=intlength(WaterLevel.GetLevel())+1;
+	ConvertNumToString(text, WaterLevel.GetLevel(), 1);
+	LCD.DrawText(COLOR_CORNFLOWERBLUE,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined MULTIWATERLEVELEXPANSION
+	for (int a=1;a<5;a++)
+	{
+		offset=intlength(WaterLevel.GetLevel(a))+1;
+		ConvertNumToString(text, WaterLevel.GetLevel(a), 1);
+		LCD.DrawText(COLOR_CORNFLOWERBLUE,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+	}
+#endif
+#if defined HUMIDITYEXPANSION
+	offset=intlength(Humidity.GetLevel())+1;
+	ConvertNumToString(text, Humidity.GetLevel(), 1);
+	LCD.DrawText(COLOR_PLUM,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+	if (y<100)
+	// display everything on the home screen except the graph
+	// the graph is drawn/updated when we exit the main menu & when the parameters are saved
+#ifdef DATETIME24
+	LCD.DrawDateTimeISO8601(6, 117);
+#else
+	LCD.DrawDate(6, 117);
+#endif // DATETIME24
+
+}
+#endif // MAIN_2014
 
 void ReefAngelClass::DrawStandardMain()
 {
@@ -555,6 +783,8 @@ void ReefAngelClass::StoreGraphData()
 		if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
 	#ifdef CUSTOM_MAIN
 		DrawCustomGraph();
+	#elif defined MAIN_2014
+		// Don't draw anything
 	#else
 		LCD.DrawGraph(5, 5);
 	#endif  // CUSTOM_MAIN
@@ -944,11 +1174,15 @@ void ReefAngelClass::CheckDrawGraph()
 	ClearScreen(DefaultBGColor);
 	// If bus is locked, it will trigger wdt when drawing graph
 	if(!BusLocked) // Only draw if bus is not locked
+	{
 #ifdef CUSTOM_MAIN
-		DrawCustomGraph();
+	DrawCustomGraph();
+#elif defined MAIN_2014
+	// Don't draw anything
 #else
 	LCD.DrawGraph(5, 5);
 #endif  // CUSTOM_MAIN
+	}
 }
 
 void ReefAngelClass::CheckFeedingDrawing()
