@@ -814,9 +814,6 @@ void RA_Wifi::ProcessHTTP()
 		}
 	}  // switch reqtype
 	_wifiSerial->flush();
-#ifdef RA_STAR
-	_wifiSerial->stop();
-#endif
 	m_pushbackindex=0;
     reqtype=0;
     weboption=0;
@@ -1159,9 +1156,6 @@ void RA_Wifi::ProcessSerial()
     {
       bIncoming=false;
       //for (int a=0;a<32;a++) pushbuffer(0);
-#ifdef RA_STAR
-      _wifiSerial->stop();
-#endif
     }
     if (_wifiSerial->available()>0)
     {
@@ -1170,39 +1164,18 @@ void RA_Wifi::ProcessSerial()
 #if defined WDT || defined WDT_FORCE
       wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
-#ifdef RA_STAR
-      if (reqtype>0 && reqtype<128)
-      {
-        bIncoming=false;
-        while(_wifiSerial->available()) _wifiSerial->read();
-      }
-#endif
     }
   }
 
   ProcessHTTP();
 
   _wifiSerial->flush();
-#ifdef RA_STAR
-  _wifiSerial->stop();
-#endif
   m_pushbackindex=0;
 }
 
 void RA_Wifi::ReceiveData()
 {
-#ifdef RA_STAR
-	WIFI_SERIAL = NetServer.available();
-    if (WIFI_SERIAL)
-        while (_wifiSerial->connected())
-        {
-        	wdt_reset();
-            if ( _wifiSerial->available() > 0 ) ProcessHTTP();
-        }
-#else
-    if ( _wifiSerial->available() > 0 ) ProcessSerial();
-#endif
-
+  if ( _wifiSerial->available() > 0 ) ProcessSerial();
 }
 
 void RA_Wifi::PROGMEMprint(const prog_char str[])
