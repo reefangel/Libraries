@@ -388,35 +388,53 @@ const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 //#endif  // InstalledRelayExpansionModules >= 8
 //#endif  // RelayExp
 //};
-
-static char m_pushback[32];
-static byte m_pushbackindex=0;
-static byte reqtype=0;
-static unsigned long timeout;
-static boolean bIncoming=false;
-static boolean auth=false;
-static char authStr[32];
-static int weboption=0;
-static int weboption2=-1;
-static int weboption3=-1;
-static byte bHasSecondValue = false;
-//static byte bHasComma = false;
-static byte bCommaCount = 0;
-static boolean webnegoption=false;
-
-
-void WebResponse (const prog_char *response, long strsize);
-void pushbuffer(byte inStr);
-void PrintHeader(int s, byte type);
-char GetC(int c);
-void ConvertC(char* strIn, char* strOut, byte len);
-void WifiAuthentication(char* userpass);
-void SendXMLData(bool fAtoLog = false);
-void processHTTP();
-void CheckWifi();
 #endif  // wifi
 
-void pingSerial();
-void PROGMEMprint(const prog_char str[]);
+class RA_Wifi: public Print
+{
+  public:
+	  RA_Wifi();
+    void WebResponse (const prog_char* response, long strsize);
+    void ModeResponse(bool fOk);
+    void PushBuffer(byte inStr);
+    void PrintHeader(int s, byte type);
+    char GetC(int c);
+    void ConvertC(char* strIn, char* strOut, byte len);
+    void WifiAuthentication(char* userpass);
+    void SendXMLData(bool fAtoLog = false);
+    void ProcessHTTP();
+    void ProcessSerial();
+    void ReceiveData();
+    void PROGMEMprint(const prog_char str[]);
+    void LoadWebBanner(int pointer, byte qty);
+    void Portal(char* username);
+    void Portal(char* username, char* key);
+    void SendPortal(char* username, char* key);
+    char *portalusername;
+
+    using Print::write;
+    inline size_t write(uint8_t c) { return _wifiSerial->write((uint8_t)c); }
+    inline size_t write(unsigned long n) { return _wifiSerial->write((uint8_t)n); }
+    inline size_t write(long n) { return _wifiSerial->write((uint8_t)n); }
+    inline size_t write(unsigned int n) { return _wifiSerial->write((uint8_t)n); }
+    inline size_t write(int n) { return _wifiSerial->write((uint8_t)n); }
+
+  protected:
+    HardwareSerial* _wifiSerial;
+    char m_pushback[32];
+    byte m_pushbackindex;
+    byte reqtype;
+    unsigned long timeout;
+    boolean bIncoming;
+    boolean auth;
+    char authStr[32];
+    int weboption;
+    int weboption2;
+    int weboption3;
+    byte bHasSecondValue;
+    //static byte bHasComma;
+    byte bCommaCount;
+    boolean webnegoption;
+};
 
 #endif  // __RA_WIFI_H__
