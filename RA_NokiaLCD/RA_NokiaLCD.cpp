@@ -23,7 +23,7 @@
 #include <Globals.h>
 #include <Time.h>
 #include "RA_NokiaLCD.h"
-#include <RA_Wifi.h>
+#include <ReefAngel.h>
 #include <Wire.h>
 #include <InternalEEPROM.h>
 #include <Memory.h>
@@ -656,7 +656,7 @@ void RA_NokiaLCD::SendCMD(byte data)
     CLK1
     ShiftBits(data);
 #ifdef wifi
-    pingSerial();
+    ReefAngel.Network.ReceiveData();
 #endif  // wifi
 }
 
