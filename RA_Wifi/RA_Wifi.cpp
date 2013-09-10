@@ -1188,4 +1188,220 @@ void RA_Wifi::PROGMEMprint(const prog_char str[])
     }
 }
 
+void RA_Wifi::LoadWebBanner(int pointer, byte qty)
+{
+  //  webbannerpointer = pointer;
+  //  webbannerqty = qty;
+}
 
+void RA_Wifi::Portal(char *username)
+{
+  /*
+  static byte LastRelayData;
+    byte TempRelay = Relay.RelayData;
+    TempRelay &= Relay.RelayMaskOff;
+    TempRelay |= Relay.RelayMaskOn;
+    if (TempRelay!=LastRelayData)
+    {
+      Timer[PORTAL_TIMER].ForceTrigger();
+      LastRelayData=TempRelay;
+    }
+#ifdef RelayExp
+  static byte LastRelayDataE[MAX_RELAY_EXPANSION_MODULES];
+
+    for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+  {
+    TempRelay = Relay.RelayDataE[EID];
+    TempRelay &= Relay.RelayMaskOffE[EID];
+    TempRelay |= Relay.RelayMaskOnE[EID];
+      if (TempRelay!=LastRelayDataE[EID])
+      {
+        Timer[PORTAL_TIMER].ForceTrigger();
+        LastRelayDataE[EID]=TempRelay;
+      }
+  }
+#endif  // RelayExp
+   */
+  if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
+  portalusername=username;
+}
+
+void RA_Wifi::Portal(char *username, char *key)
+{
+  if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
+  portalusername=username;
+}
+
+void RA_Wifi::SendPortal(char *username, char*key)
+{
+#ifdef RA_STAR
+  PortalConnection=true;
+  if (connect(PortalServer, 80))
+  {
+#endif
+  ReefAngel.Timer[PORTAL_TIMER].Start();
+  PROGMEMprint(BannerGET);
+  print(ReefAngel.Params.Temp[T1_PROBE], DEC);
+  PROGMEMprint(BannerT2);
+  print(ReefAngel.Params.Temp[T2_PROBE], DEC);
+  PROGMEMprint(BannerT3);
+  print(ReefAngel.Params.Temp[T3_PROBE], DEC);
+  PROGMEMprint(BannerPH);
+  print(ReefAngel.Params.PH, DEC);
+  PROGMEMprint(BannerID);
+  print(username);
+  PROGMEMprint(BannerEM);
+  print(ReefAngel.EM, DEC);
+  PROGMEMprint(BannerEM1);
+  print(ReefAngel.EM1, DEC);
+  PROGMEMprint(BannerREM);
+  print(ReefAngel.REM, DEC);
+  PROGMEMprint(BannerKey);
+  print(key);
+  PROGMEMprint(BannerAlertFlag);
+  print(ReefAngel.AlertFlags);
+  PROGMEMprint(BannerStatusFlag);
+  print(ReefAngel.StatusFlags);
+  PROGMEMprint(BannerATOHIGH);
+  print(ReefAngel.HighATO.IsActive(), DEC);
+  PROGMEMprint(BannerATOLOW);
+  print(ReefAngel.LowATO.IsActive(), DEC);
+  PROGMEMprint(BannerRelayData);
+  print("=");
+  print(ReefAngel.Relay.RelayData, DEC);
+  PROGMEMprint(BannerRelayMaskOn);
+  print("=");
+  print(ReefAngel.Relay.RelayMaskOn, DEC);
+  PROGMEMprint(BannerRelayMaskOff);
+  print("=");
+  print(ReefAngel.Relay.RelayMaskOff, DEC);
+
+#ifdef RelayExp
+  for ( byte x = 0; x < InstalledRelayExpansionModules && x < MAX_RELAY_EXPANSION_MODULES; x++ )
+  {
+    PROGMEMprint(BannerRelayData);
+    print(x+1, DEC);
+    print("=");
+    print(ReefAngel.Relay.RelayDataE[x], DEC);
+    PROGMEMprint(BannerRelayMaskOn);
+    print(x+1, DEC);
+    print("=");
+    print(ReefAngel.Relay.RelayMaskOnE[x], DEC);
+    PROGMEMprint(BannerRelayMaskOff);
+    print(x+1, DEC);
+    print("=");
+    print(ReefAngel.Relay.RelayMaskOffE[x], DEC);
+  }  // for x
+#endif  // RelayExp
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
+  PROGMEMprint(BannerPWMA);
+  print(ReefAngel.PWM.GetActinicValue(), DEC);
+  PROGMEMprint(BannerPWMD);
+  print(ReefAngel.PWM.GetDaylightValue(), DEC);
+  PROGMEMprint(BannerPWMAO);
+  print(ReefAngel.PWM.GetActinicOverrideValue(), DEC);
+  PROGMEMprint(BannerPWMDO);
+  print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
+#endif  // DisplayLEDPWM && ! defined RemoveAllLights
+#ifdef PWMEXPANSION
+  for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
+  {
+    PROGMEMprint(BannerPWME);
+    print(EID, DEC);
+    print("=");
+    print(ReefAngel.PWM.GetChannelValue(EID), DEC);
+    PROGMEMprint(BannerPWME);
+    print(EID, DEC);
+    print("O");
+    print("=");
+    print(ReefAngel.PWM.GetChannelOverrideValue(EID), DEC);
+  }
+#endif  // PWMEXPANSION
+#ifdef RFEXPANSION
+  PROGMEMprint(BannerRFM);
+  print(ReefAngel.RF.Mode, DEC);
+  PROGMEMprint(BannerRFS);
+  print(ReefAngel.RF.Speed, DEC);
+  PROGMEMprint(BannerRFD);
+  print(ReefAngel.RF.Duration, DEC);
+  PROGMEMprint(BannerRFW);
+  print(ReefAngel.RF.GetChannel(0), DEC);
+  PROGMEMprint(BannerRFRB);
+  print(ReefAngel.RF.GetChannel(1), DEC);
+  PROGMEMprint(BannerRFR);
+  print(ReefAngel.RF.GetChannel(2), DEC);
+  PROGMEMprint(BannerRFG);
+  print(ReefAngel.RF.GetChannel(3), DEC);
+  PROGMEMprint(BannerRFB);
+  print(ReefAngel.RF.GetChannel(4), DEC);
+  PROGMEMprint(BannerRFI);
+  print(ReefAngel.RF.GetChannel(5), DEC);
+#endif  // RFEXPANSION
+#ifdef AI_LED
+  PROGMEMprint(BannerAIW);
+  print(ReefAngel.AI.GetChannel(0), DEC);
+  PROGMEMprint(BannerAIB);
+  print(ReefAngel.AI.GetChannel(1), DEC);
+  PROGMEMprint(BannerAIRB);
+  print(ReefAngel.AI.GetChannel(2), DEC);
+#endif  // AI_LED
+#ifdef SALINITYEXPANSION
+  PROGMEMprint(BannerSal);
+  print(ReefAngel.Params.Salinity, DEC);
+#endif  // SALINITYEXPANSION
+#ifdef ORPEXPANSION
+  PROGMEMprint(BannerORP);
+  print(ReefAngel.Params.ORP, DEC);
+#endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+  PROGMEMprint(BannerPHE);
+  print(ReefAngel.Params.PHExp, DEC);
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+  PROGMEMprint(BannerWL);
+  print("=");
+  print(ReefAngel.WaterLevel.GetLevel(), DEC);
+  for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
+  {
+    PROGMEMprint(BannerWL);
+    print(EID, DEC);
+    print("=");
+    print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
+  }
+#endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+  PROGMEMprint(BannerHumidity);
+  print(ReefAngel.Humidity.GetLevel(), DEC);
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+  PROGMEMprint(BannerDCM);
+  print(ReefAngel.DCPump.Mode, DEC);
+  PROGMEMprint(BannerDCS);
+  print(ReefAngel.DCPump.Speed, DEC);
+  PROGMEMprint(BannerDCD);
+  print(ReefAngel.DCPump.Duration, DEC);
+#endif  // DCPUMPCONTROL
+#ifdef IOEXPANSION
+  PROGMEMprint(BannerIO);
+  print(ReefAngel.IO.GetChannel(), DEC);
+#endif  // IOEXPANSION
+#ifdef CUSTOM_VARIABLES
+  for ( byte EID = 0; EID < 8; EID++ )
+  {
+    PROGMEMprint(BannerCustomVar);
+    print(EID, DEC);
+    print("=");
+    print(CustomVar[EID], DEC);
+  }
+#endif  // CUSTOM_VARIABLES
+#ifdef RA_STAR
+  PROGMEMprint(BannerHTTP11);
+  PROGMEMprint(BannerHost);
+  PROGMEMprint(BannerConnectionClose);
+  PortalTimeOut=millis();
+#endif
+  println("\n\n");
+#ifdef RA_STAR
+  }
+#endif
+}
