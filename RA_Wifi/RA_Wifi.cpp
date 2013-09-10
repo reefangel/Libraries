@@ -44,6 +44,7 @@ RA_Wifi::RA_Wifi()
   portalusername="";
 }
 
+#ifdef wifi
 void RA_Wifi::WebResponse (const prog_char *response, long strsize)
 {
 //  P(WebHeaderMsg) = SERVER_HEADER_HTML;
@@ -1405,3 +1406,4 @@ void RA_Wifi::SendPortal(char *username, char*key)
   }
 #endif
 }
+#endif  // wifi
