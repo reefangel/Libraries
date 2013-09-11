@@ -329,6 +329,11 @@ public:
 	void DisplayVersion();
 #endif  // VersionMenu
 
+#if defined wifi || defined RA_STAR
+	void Portal(char *username);
+	void Portal(char *username, char *key);
+#endif
+
 private:
 	time_t menutimeout;
 	byte taddr;

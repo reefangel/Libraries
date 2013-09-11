@@ -1475,6 +1475,18 @@ void ReefAngelClass::SetDisplayedMenu(byte value)
 #endif // RA_TOUCHDISPLAY
 }
 
+#if defined wifi || defined RA_STAR
+void ReefAngelClass::Portal(char *username)
+{
+	Network.Portal(username);
+}
+void ReefAngelClass::Portal(char *username, char *key)
+{
+	Network.Portal(username,key);
+}
+#endif
+
+
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany) {
 	byte d[9];
