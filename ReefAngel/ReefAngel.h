@@ -244,8 +244,16 @@ public:
 	void UpdateTouchDisplay();
 #endif // I2CMASTER
 
+	void inline Use2014Screen() {};
+	void inline AddSalinityExpansion() {};
+	void inline AddORPExpansion() {};
+	void inline AddPHExpansion() {};
+	void inline AddWaterLevelExpansion() {};
+	void inline AddMultiChannelWaterLevelExpansion() {};
+	void inline AddHumidityExpansion() {};
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
+	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
 	void inline AddCustomColors() {};
@@ -320,6 +328,11 @@ public:
 #ifdef VersionMenu
 	void DisplayVersion();
 #endif  // VersionMenu
+
+#if defined wifi || defined RA_STAR
+	void Portal(char *username);
+	void Portal(char *username, char *key);
+#endif
 
 private:
 	time_t menutimeout;

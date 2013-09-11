@@ -409,21 +409,23 @@ enum TimeoutsMenuItem {
 void ReefAngelClass::ShowInterface()
 {
 	Refresh();
+#ifdef RA_STAR
+	if (now()-RAStart<=3) return;
+	if (Splash)
+	{
+		Splash=false;
+		ClearScreen(DefaultBGColor);
+	}
+#endif // RA_STAR
 	// are we displaying the menu or not??
 	if ( showmenu )
 	{
-#if defined WDT || defined WDT_FORCE
-		wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
 		DisplayMenuHeading();
 		DisplayMenu();
 	}
 	else
 	{
 		// not displaying the menu, so we're gonna show the appropriate screen
-#if defined WDT || defined WDT_FORCE
-		wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
 		switch ( DisplayedMenu )
 		{
 		case TOUCH_MENU:
@@ -435,177 +437,25 @@ void ReefAngelClass::ShowInterface()
 		case WL_CALIBRATE_MENU:
 		case DEFAULT_MENU:  // This is the home screen
 		{
-			// process screensaver timeout
-			if ( Timer[LCD_TIMER].IsTriggered() )
-			{
-				// Screensaver timeout expired
-				LCD.BacklightOff();
-			}
-
-			if ( Joystick.IsButtonPressed() )
-			{
-				// turn the backlight on
-				LCD.BacklightOn();
-
-				// TODO check Timer[LCD_TIMER] code
-				if ( Timer[LCD_TIMER].Trigger == 0 )
-				{
-					Timer[LCD_TIMER].Start();
-					return;
-				}
-				PrepMenuScreen();
-				// get out of this function and display the menu
-				return;
-			}
-
-			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
-			{
-				// Turn backlight on
-				LCD.BacklightOn();
-				Timer[LCD_TIMER].Start();
-			}
-
 #ifdef CUSTOM_MAIN
 			DrawCustomMain();
+#elif defined MAIN_2014
+			Draw2014Main();
 #else
-			// display everything on the home screen except the graph
-			// the graph is drawn/updated when we exit the main menu & when the parameters are saved
-#ifdef DATETIME24
-			LCD.DrawDateTimeISO8601(6, 112);
-#else
-			LCD.DrawDate(6, 112);
-#endif // DATETIME24
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
-			LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
-#else  // defined DisplayLEDPWM && ! defined RemoveAllLights
-			LCD.DrawMonitor(15, 60, Params);
-#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
-#if defined WDT || defined WDT_FORCE
-			wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-
-			byte TempRelay = Relay.RelayData;
-			TempRelay &= Relay.RelayMaskOff;
-			TempRelay |= Relay.RelayMaskOn;
-			LCD.DrawOutletBox(12, 93, TempRelay);
+			DrawStandardMain();
 #endif  // CUSTOM_MAIN
-			// Process any checks/tests/events that can happen while displaying the home screen
-			// This can be the timers for wavemakers or any overheat temperatures
-
-			// process timers
-			// If bus is locked, it will trigger wdt when drawing graph
-			if ( Timer[STORE_PARAMS_TIMER].IsTriggered() && !BusLocked) // Only access eeprom if bus is not locked
-			{
-				int CurTemp;
-
-				// Values are stored in the I2CEEPROM1
-				taddr++;
-				if ( taddr >= 120 ) taddr = 0;
-				Timer[STORE_PARAMS_TIMER].Start();
-				CurTemp = map(Params.Temp[T1_PROBE], T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
-				CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-				//LCD.PutPixel(DefaultBGColor,1,1);
-				Memory.Write(taddr, CurTemp);
-				LCD.PutPixel(DefaultBGColor,1,1);
-				CurTemp = map(Params.Temp[T2_PROBE], T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
-				CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-				LCD.PutPixel(DefaultBGColor,1,1);
-				Memory.Write(taddr+120, CurTemp);
-				LCD.PutPixel(DefaultBGColor,1,1);
-				CurTemp = map(Params.Temp[T3_PROBE], T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
-				CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-				//LCD.PutPixel(DefaultBGColor,1,1);
-				Memory.Write(taddr+240, CurTemp);
-				//					LCD.PutPixel(DefaultBGColor,1,1);
-				CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
-				CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
-				//LCD.PutPixel(DefaultBGColor,1,1);
-				Memory.Write(taddr+360, CurTemp);
-				LCD.PutPixel(DefaultBGColor,1,1);
-				if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
-#if defined WDT || defined WDT_FORCE
-				wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-#ifdef CUSTOM_MAIN
-				DrawCustomGraph();
-#else
-				LCD.DrawGraph(5, 5);
-#endif  // CUSTOM_MAIN
-			}
+			StoreGraphData();
+			CheckScreenSaver();
 			break;
 		}  // DEFAULT_MENU
 		case FEEDING_MODE:
 		{
-			int t;
-			bool bDone = false;
-			t = Timer[FEEDING_TIMER].Trigger - now();
-			if ( (t >= 0) && ! Timer[FEEDING_TIMER].IsTriggered() )
-			{
-				LCD.Clear(DefaultBGColor,60+(intlength(t)*5),100,100,108);
-				LCD.DrawText(DefaultFGColor,DefaultBGColor,60,100,t);
-				delay(200);  // to keep from redraw flicker on timer
-			}
-			else
-			{
-				bDone = true;
-			}
-
-			LastStart = now();  // Set the time normal mode is started
-			if ( Joystick.IsButtonPressed() )
-			{
-				// joystick button pressed, so we stop the feeding mode
-				bDone = true;
-			}
-			if ( bDone )
-			{
-				// we're finished, so let's clear the screen and return
-#ifdef SaveRelayState
-				Relay.RelayData = CurrentRelayState;
-#endif  // SaveRelayState
-
-				// turn on ports
-				Relay.RelayMaskOff |= FeedingModePorts;
-				// Compare the delayed on ports with the previous port states
-				Relay.RelayData &= ~(FeedingModePorts & DelayedOnPorts);
-#ifdef RelayExp
-				for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-				{
-					Relay.RelayMaskOffE[i] |= FeedingModePortsE[i];
-					Relay.RelayDataE[i] &= ~(FeedingModePortsE[i] & DelayedOnPortsE[i]);
-				}
-#endif  // RelayExp
-#ifdef RFEXPANSION
-				RF.SetMode(Feeding_Stop,0,0);
-#endif  // RFEXPANSION
-				ExitMenu();
-			}
-			//				Relay.Write();
+			DisplayFeedingMode();
 			break;
 		}
 		case WATERCHANGE_MODE:
 		{
-			LastStart = now();  // Set the time normal mode is started
-			if ( Joystick.IsButtonPressed() )
-			{
-				// we're finished, so let's clear the screen and return
-#ifdef SaveRelayState
-				Relay.RelayData = CurrentRelayState;
-#endif  // SaveRelayState
-
-				// turn on ports
-				Relay.RelayMaskOff |= WaterChangePorts;
-				// Compare the delayed on ports with the previous port states
-				Relay.RelayData &= ~(WaterChangePorts & DelayedOnPorts);
-#ifdef RelayExp
-				for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-				{
-					Relay.RelayMaskOffE[i] |= WaterChangePortsE[i];
-					Relay.RelayDataE[i] &= ~(WaterChangePortsE[i] & DelayedOnPortsE[i]);
-				}
-#endif  // RelayExp
-				ExitMenu();
-			}
-			//				Relay.Write();
+			DisplayWaterChangeMode();
 			break;
 		}
 #ifdef CUSTOM_MENU
@@ -646,9 +496,363 @@ void ReefAngelClass::ShowInterface()
 		}
 		}  // switch DisplayedMenu
 	}  // if showmenu
-#if defined WDT || defined WDT_FORCE
-	wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
+}
+
+#ifdef MAIN_2014
+void ReefAngelClass::Draw2014Main()
+{
+	const byte x1[]={0,45,89};
+	const byte x2[]={43,87,131};
+	char text[7];
+	byte offset;
+	byte x,y;
+
+	if (redrawmenu)
+	{
+		redrawmenu=false;
+		LCD.Clear(T1TempColor,0,0,43,13);
+		LCD.Clear(T2TempColor,45,0,87,13);
+		LCD.Clear(T3TempColor,89,0,131,13);
+		LCD.Clear(PHColor,0,26,43,39);
+		LCD.DrawLargeText(COLOR_WHITE,T1TempColor,15,4,"T1");
+		LCD.DrawLargeText(COLOR_WHITE,T2TempColor,58,4,"T2");
+		LCD.DrawLargeText(COLOR_WHITE,T3TempColor,101,4,"T3");
+		LCD.DrawLargeText(COLOR_WHITE,PHColor,15,30,"pH");
+		x=1;
+		y=26;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+		LCD.Clear(APColor,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+15,y+4,"AP");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+		LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+15,y+4,"DP");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined SALINITYEXPANSION
+		LCD.Clear(COLOR_DARKSLATEGREY,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,"SAL");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined ORPEXPANSION
+		LCD.Clear(COLOR_LIME,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_LIME,x1[x]+12,y+4,"ORP");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined PHEXPANSION
+		LCD.Clear(COLOR_DARKGREEN,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKGREEN,x1[x]+12,y+4,"pHE");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined WATERLEVELEXPANSION
+		LCD.Clear(COLOR_CORNFLOWERBLUE,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_CORNFLOWERBLUE,x1[x]+12,y+4,"WL0");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+#endif
+#if defined MULTIWATERLEVELEXPANSION
+		for (int a=1;a<5;a++)
+		{
+			LCD.Clear(COLOR_CORNFLOWERBLUE,x1[x],y,x2[x],y+13);
+			LCD.DrawLargeText(COLOR_WHITE,COLOR_CORNFLOWERBLUE,x1[x]+12,y+4,"WL");
+			ConvertNumToString(text, a, 1);
+			LCD.DrawLargeText(COLOR_WHITE,COLOR_CORNFLOWERBLUE,x1[x]+22,y+4,text);
+			x+=1;
+			if (x==3)
+			{
+				x=0;
+				y+=26;
+			}
+		}
+#endif
+#if defined HUMIDITYEXPANSION
+		LCD.Clear(COLOR_PLUM,x1[x],y,x2[x],y+13);
+		LCD.DrawLargeText(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,"HUM");
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+		if (y<100)
+		{
+			LCD.DrawImage(15,13,10,100,ARROW_LEFT);
+			LCD.DrawImage(15,13,105,100,ARROW_RIGHT);
+		}
+#endif
+	}
+	offset=intlength(Params.Temp[T1_PROBE])+1;
+	ConvertNumToString(text, Params.Temp[T1_PROBE], 10);
+	LCD.DrawText(T1TempColor,DefaultBGColor, 19-(offset*2),16,text);
+	offset=intlength(Params.Temp[T2_PROBE])+1;
+	ConvertNumToString(text, Params.Temp[T2_PROBE], 10);
+	LCD.DrawText(T2TempColor,DefaultBGColor, 64-(offset*2),16,text);
+	offset=intlength(Params.Temp[T3_PROBE])+1;
+	ConvertNumToString(text, Params.Temp[T3_PROBE], 10);
+	LCD.DrawText(T3TempColor,DefaultBGColor, 108-(offset*2),16,text);
+	offset=intlength(Params.PH)+1;
+	ConvertNumToString(text, Params.PH, 100);
+	LCD.DrawText(PHColor,DefaultBGColor, 20-(offset*2),42,text);
+	x=1;
+	y=42;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+	offset=intlength(PWM.GetActinicValue())+1;
+	ConvertNumToString(text, PWM.GetActinicValue(), 1);
+	LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+	offset=intlength(PWM.GetDaylightValue())+1;
+	ConvertNumToString(text, PWM.GetDaylightValue(), 1);
+	LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined SALINITYEXPANSION
+	offset=intlength(Params.Salinity)+1;
+	ConvertNumToString(text, Params.Salinity, 10);
+	LCD.DrawText(COLOR_DARKSLATEGREY,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined ORPEXPANSION
+	offset=intlength(Params.ORP)+1;
+	ConvertNumToString(text, Params.ORP, 1);
+	LCD.DrawText(COLOR_LIME,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined PHEXPANSION
+	offset=intlength(Params.PHExp)+1;
+	ConvertNumToString(text, Params.PHExp, 100);
+	LCD.DrawText(COLOR_DARKGREEN,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined WATERLEVELEXPANSION
+	offset=intlength(WaterLevel.GetLevel())+1;
+	ConvertNumToString(text, WaterLevel.GetLevel(), 1);
+	LCD.DrawText(COLOR_CORNFLOWERBLUE,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+#if defined MULTIWATERLEVELEXPANSION
+	for (int a=1;a<5;a++)
+	{
+		offset=intlength(WaterLevel.GetLevel(a))+1;
+		ConvertNumToString(text, WaterLevel.GetLevel(a), 1);
+		LCD.DrawText(COLOR_CORNFLOWERBLUE,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+		x+=1;
+		if (x==3)
+		{
+			x=0;
+			y+=26;
+		}
+	}
+#endif
+#if defined HUMIDITYEXPANSION
+	offset=intlength(Humidity.GetLevel())+1;
+	ConvertNumToString(text, Humidity.GetLevel(), 1);
+	LCD.DrawText(COLOR_PLUM,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+	x+=1;
+	if (x==3)
+	{
+		x=0;
+		y+=26;
+	}
+#endif
+	if (y<100)
+	// display everything on the home screen except the graph
+	// the graph is drawn/updated when we exit the main menu & when the parameters are saved
+#ifdef DATETIME24
+	LCD.DrawDateTimeISO8601(6, 117);
+#else
+	LCD.DrawDate(6, 117);
+#endif // DATETIME24
+
+}
+#endif // MAIN_2014
+
+void ReefAngelClass::DrawStandardMain()
+{
+	// display everything on the home screen except the graph
+	// the graph is drawn/updated when we exit the main menu & when the parameters are saved
+#ifdef DATETIME24
+	LCD.DrawDateTimeISO8601(6, 112);
+#else
+	LCD.DrawDate(6, 112);
+#endif // DATETIME24
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
+	LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
+#else  // defined DisplayLEDPWM && ! defined RemoveAllLights
+	LCD.DrawMonitor(15, 60, Params);
+#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+
+	byte TempRelay = Relay.RelayData;
+	TempRelay &= Relay.RelayMaskOff;
+	TempRelay |= Relay.RelayMaskOn;
+	LCD.DrawOutletBox(12, 93, TempRelay);
+}
+
+void ReefAngelClass::StoreGraphData()
+{
+	// Process any checks/tests/events that can happen while displaying the home screen
+	// This can be the timers for wavemakers or any overheat temperatures
+
+	// process timers
+	// If bus is locked, it will trigger wdt when drawing graph
+	if ( Timer[STORE_PARAMS_TIMER].IsTriggered() && !BusLocked) // Only access eeprom if bus is not locked
+	{
+		int CurTemp;
+
+		// Values are stored in the I2CEEPROM1
+		taddr++;
+		if ( taddr >= 120 ) taddr = 0;
+		Timer[STORE_PARAMS_TIMER].Start();
+		CurTemp = map(Params.Temp[T1_PROBE], T1LOW, T1HIGH, 0, 50); // apply the calibration to the sensor reading
+		CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+		//LCD.PutPixel(DefaultBGColor,1,1);
+		Memory.Write(taddr, CurTemp);
+		LCD.PutPixel(DefaultBGColor,1,1);
+		CurTemp = map(Params.Temp[T2_PROBE], T2LOW, T2HIGH, 0, 50); // apply the calibration to the sensor reading
+		CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+		LCD.PutPixel(DefaultBGColor,1,1);
+		Memory.Write(taddr+120, CurTemp);
+		LCD.PutPixel(DefaultBGColor,1,1);
+		CurTemp = map(Params.Temp[T3_PROBE], T3LOW, T3HIGH, 0, 50); // apply the calibration to the sensor reading
+		CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+		//LCD.PutPixel(DefaultBGColor,1,1);
+		Memory.Write(taddr+240, CurTemp);
+		//					LCD.PutPixel(DefaultBGColor,1,1);
+		CurTemp = map(Params.PH, PHLOW, PHHIGH, 0, 50); // apply the calibration to the sensor reading
+		CurTemp = constrain(CurTemp, 0, 50); // in case the sensor value is outside the range seen during calibration
+		//LCD.PutPixel(DefaultBGColor,1,1);
+		Memory.Write(taddr+360, CurTemp);
+		LCD.PutPixel(DefaultBGColor,1,1);
+		if ((taddr%10)==0) InternalMemory.T1Pointer_write(taddr);
+	#ifdef CUSTOM_MAIN
+		DrawCustomGraph();
+	#elif defined MAIN_2014
+		// Don't draw anything
+	#else
+		LCD.DrawGraph(5, 5);
+	#endif  // CUSTOM_MAIN
+	}
+}
+
+void ReefAngelClass::DisplayFeedingMode()
+{
+	int t;
+	bool bDone = false;
+	t = Timer[FEEDING_TIMER].Trigger - now();
+	if ( (t >= 0) && ! Timer[FEEDING_TIMER].IsTriggered() )
+	{
+		LCD.Clear(DefaultBGColor,60+(intlength(t)*5),100,100,108);
+		LCD.DrawText(DefaultFGColor,DefaultBGColor,60,100,t);
+		delay(200);  // to keep from redraw flicker on timer
+	}
+	else
+	{
+		bDone = true;
+	}
+
+	LastStart = now();  // Set the time normal mode is started
+	if ( Joystick.IsButtonPressed() )
+	{
+		// joystick button pressed, so we stop the feeding mode
+		bDone = true;
+	}
+	if ( bDone )
+	{
+		// turn on ports
+		Relay.RelayMaskOff |= FeedingModePorts;
+		// Compare the delayed on ports with the previous port states
+		Relay.RelayData &= ~(FeedingModePorts & DelayedOnPorts);
+#ifdef RelayExp
+		for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+		{
+			Relay.RelayMaskOffE[i] |= FeedingModePortsE[i];
+			Relay.RelayDataE[i] &= ~(FeedingModePortsE[i] & DelayedOnPortsE[i]);
+		}
+#endif  // RelayExp
+#ifdef RFEXPANSION
+		RF.SetMode(Feeding_Stop,0,0);
+#endif  // RFEXPANSION
+		ExitMenu();
+	}
+	//				Relay.Write();
+}
+
+void ReefAngelClass::DisplayWaterChangeMode()
+{
+	LastStart = now();  // Set the time normal mode is started
+	if ( Joystick.IsButtonPressed() )
+	{
+		// turn on ports
+		Relay.RelayMaskOff |= WaterChangePorts;
+		// Compare the delayed on ports with the previous port states
+		Relay.RelayData &= ~(WaterChangePorts & DelayedOnPorts);
+#ifdef RelayExp
+		for ( byte i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+		{
+			Relay.RelayMaskOffE[i] |= WaterChangePortsE[i];
+			Relay.RelayDataE[i] &= ~(WaterChangePortsE[i] & DelayedOnPortsE[i]);
+		}
+#endif  // RelayExp
+		ExitMenu();
+	}
+	//				Relay.Write();
 }
 
 void ReefAngelClass::PrepMenuScreen()
@@ -670,9 +874,6 @@ void ReefAngelClass::DisplayMenu()
 	byte qty = menuqtysptr[DisplayedMenu];
 	int ptr = menusptr[DisplayedMenu];
 	byte PreviousSelectedMenuItem=SelectedMenuItem;
-#if defined WDT || defined WDT_FORCE
-	wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
 	if (redrawmenu) PreviousSelectedMenuItem=0;
 	if ( Joystick.IsUp() )
 	{
@@ -933,16 +1134,55 @@ void ReefAngelClass::RefreshScreen()
 	LCD.PutPixel(DefaultBGColor,1,1);
 }
 
+
+void ReefAngelClass::CheckScreenSaver()
+{
+	// process screensaver timeout
+	if ( Timer[LCD_TIMER].IsTriggered() )
+	{
+		// Screensaver timeout expired
+		LCD.BacklightOff();
+	}
+
+	if ( Joystick.IsButtonPressed() )
+	{
+		// turn the backlight on
+		LCD.BacklightOn();
+
+		// TODO check Timer[LCD_TIMER] code
+		if ( Timer[LCD_TIMER].Trigger == 0 )
+		{
+			Timer[LCD_TIMER].Start();
+			return;
+		}
+		PrepMenuScreen();
+		// get out of this function and display the menu
+		return;
+	}
+
+	if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
+	{
+		// Turn backlight on
+		LCD.BacklightOn();
+		Timer[LCD_TIMER].Start();
+	}
+}
+
+
 void ReefAngelClass::CheckDrawGraph()
 {
 	ClearScreen(DefaultBGColor);
 	// If bus is locked, it will trigger wdt when drawing graph
 	if(!BusLocked) // Only draw if bus is not locked
+	{
 #ifdef CUSTOM_MAIN
-		DrawCustomGraph();
+	DrawCustomGraph();
+#elif defined MAIN_2014
+	// Don't draw anything
 #else
 	LCD.DrawGraph(5, 5);
 #endif  // CUSTOM_MAIN
+	}
 }
 
 void ReefAngelClass::CheckFeedingDrawing()

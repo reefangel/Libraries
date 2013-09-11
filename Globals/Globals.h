@@ -106,6 +106,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define WIFI_SERIAL Serial
 #endif // __PLUS_SPECIAL_WIFI__
 
+#define RANET_SERIAL	Serial2
 
 // Outlets on Relay box
 #define Port8   8
@@ -143,6 +144,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
 #define WATERLEVEL_CHANNELS				5
+
+#define RANET_SIZE						24 // We do not count CRC nor \r\n
+#define RANET_MODULES					9 // 8 Exp. Boxes, 1 Dimming
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -514,6 +518,7 @@ When adding more variables, use the previous value plus 1 or 2
 // Internal Memory Check Pointer - 4 byte length (954-957)
 #define IMPointer			954
 
+#define RANetDelay			100
 #define bit9600Delay 		101
 #define KeyPressRate		250
 #define DEGREE_F            0
@@ -1329,6 +1334,7 @@ extern byte AtoEventCount;  // Defined in RA_ATO.cpp
 extern boolean LightsOverride;
 
 // globally usable functions
+void inline pingSerial() {};
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);

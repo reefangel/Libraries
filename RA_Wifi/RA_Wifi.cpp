@@ -1392,7 +1392,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
     PROGMEMprint(BannerCustomVar);
     print(EID, DEC);
     print("=");
-    print(CustomVar[EID], DEC);
+    print(ReefAngel.CustomVar[EID], DEC);
   }
 #endif  // CUSTOM_VARIABLES
 #ifdef RA_STAR
