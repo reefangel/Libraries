@@ -410,6 +410,8 @@ class RA_Wifi: public Print
     void Portal(char* username);
     void Portal(char* username, char* key);
     void SendPortal(char* username, char* key);
+    inline void CheckWifi(){};
+    inline void pingSerial(){};
     char *portalusername;
 
     using Print::write;

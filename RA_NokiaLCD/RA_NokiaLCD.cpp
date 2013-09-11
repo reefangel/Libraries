@@ -655,9 +655,9 @@ void RA_NokiaLCD::SendCMD(byte data)
     SDA0
     CLK1
     ShiftBits(data);
-#ifdef wifi
+#if defined wifi || defined RA_STAR
     ReefAngel.Network.ReceiveData();
-#endif  // wifi
+#endif  // wifi || RA_STAR
 }
 
 
