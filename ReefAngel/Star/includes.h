@@ -2,19 +2,13 @@
 
 #include <RA_NokiaLCD.h>
 #include <RA_Joystick.h>
+#include <RA_Wifi.h>
+#include <RA_Wiznet5100.h>
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 #define wdtenabled 1
 
 static unsigned long ButtonDebounce;
-static EthernetServer NetServer(2000);
-static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-static IPAddress NetIP(192,168,1,200);
-const IPAddress PortalServer(198,171,134,6);
-static EthernetClient NetClient;
-static boolean PortalConnection=false;
-static unsigned long PortalTimeOut=millis();
-#define PORTAL_TIMEOUT	10000
 
 #ifdef CUSTOM_MAIN
 void DrawCustomMain();

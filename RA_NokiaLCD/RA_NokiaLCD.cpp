@@ -94,7 +94,7 @@
 #define RDID2    0xDB 	// read ID2
 #define RDID3    0xDC 	// read ID3
 
-#if defined(__AVR_ATmega2560__)
+#if defined(__AVR_ATmega2560__)  || defined(__AVR_ATmega1280__)
 #define BL0 cbi(PORTE,4);
 #define BL1 sbi(PORTE,4);
 #define CS0 cbi(PORTE,5);
@@ -602,7 +602,7 @@ const prog_uchar init_code_S6B33B[] PROGMEM = {
 RA_NokiaLCD::RA_NokiaLCD()
 {
 	LCDID=255;
-#if defined(__AVR_ATmega2560__)
+#if defined(__AVR_ATmega2560__)  || defined(__AVR_ATmega1280__)
     pinMode(BL,OUTPUT);
     pinMode(CS,OUTPUT);
     pinMode(CLK,OUTPUT);

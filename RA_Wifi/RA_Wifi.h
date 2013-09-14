@@ -26,7 +26,7 @@
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 
-#ifdef wifi
+#if defined wifi || defined RA_STAR
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";
 const prog_char XML_T1[] PROGMEM = "</ID><T1>";
 const prog_char XML_T2[] PROGMEM = "</T1><T2>";
@@ -422,7 +422,6 @@ class RA_Wifi: public Print
     inline size_t write(int n) { return _wifiSerial->write((uint8_t)n); }
 
   protected:
-    HardwareSerial* _wifiSerial;
     char m_pushback[32];
     byte m_pushbackindex;
     byte reqtype;
@@ -437,6 +436,9 @@ class RA_Wifi: public Print
     //static byte bHasComma;
     byte bCommaCount;
     boolean webnegoption;
+
+  private:
+    HardwareSerial* _wifiSerial;
 };
 
 #endif  // __RA_WIFI_H__
