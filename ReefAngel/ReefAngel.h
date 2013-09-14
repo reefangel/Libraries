@@ -36,12 +36,9 @@
 #include <Memory.h>
 #include <DCPump.h>
 #include <DS1307RTC.h>
-#ifdef wifi
+#if defined wifi || defined RA_STAR
 #include <RA_Wifi.h>
 #endif  // wifi
-#ifdef RA_STAR
-#include <RA_Star.h>
-#endif  // RA_STAR
 #if defined ORPEXPANSION
 #include <ORP.h>
 #endif  // defined ORPEXPANSION
@@ -109,9 +106,6 @@ public:
 	RelayClass Relay;
 #ifdef wifi
 	RA_Wifi Network;
-#endif  // wifi
-#ifdef RA_STAR
-  RA_Star Network;
 #endif  // RA_STAR
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;

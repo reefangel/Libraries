@@ -423,30 +423,31 @@ void ReefAngelClass::Refresh()
 	Relay.Write();
 
 #ifdef RA_STAR
-	// Check for DHCP state changes
-	EthernetDHCP.poll();
-	if (WIFI_SERIAL.available() && PortalConnection)
-	{
-		while(WIFI_SERIAL.available())
-		{
-			wdt_reset();
-			char c = WIFI_SERIAL.read();
-		}
-	}
-
-	// if the server's disconnected, stop the client
-	if (!WIFI_SERIAL.connected() && PortalConnection)
-	{
-		PortalConnection=false;
-		WIFI_SERIAL.stop();
-	}
-
-	// if request timed out, stop the client
-	if (WIFI_SERIAL.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
-	{
-		PortalConnection=false;
-		WIFI_SERIAL.stop();
-	}
+	Network.Update();
+//	// Check for DHCP state changes
+//	EthernetDHCP.poll();
+//	if (WIFI_SERIAL.available() && PortalConnection)
+//	{
+//		while(WIFI_SERIAL.available())
+//		{
+//			wdt_reset();
+//			char c = WIFI_SERIAL.read();
+//		}
+//	}
+//
+//	// if the server's disconnected, stop the client
+//	if (!WIFI_SERIAL.connected() && PortalConnection)
+//	{
+//		PortalConnection=false;
+//		WIFI_SERIAL.stop();
+//	}
+//
+//	// if request timed out, stop the client
+//	if (WIFI_SERIAL.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
+//	{
+//		PortalConnection=false;
+//		WIFI_SERIAL.stop();
+//	}
 #endif // RA_STAR
 
 #ifdef RANET
@@ -1480,13 +1481,12 @@ void ReefAngelClass::Portal(char *username)
 {
 	Network.Portal(username);
 }
+
 void ReefAngelClass::Portal(char *username, char *key)
 {
 	Network.Portal(username,key);
 }
 #endif
-
-
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany) {
 	byte d[9];

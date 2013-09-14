@@ -19,16 +19,18 @@
   * Updates Released under Apache License, Version 2.0
   */
 
-#include "RA_Wifi.h"
 #include <Globals.h>
-
+#if defined wifi || defined RA_STAR
+#include "RA_Wifi.h"
 #include <DS1307RTC.h>
 #include <ReefAngel.h>
 
 RA_Wifi::RA_Wifi()
 {
+#if !defined RA_STAR
   _wifiSerial = &WIFI_SERIAL;
   _wifiSerial->begin(57600);
+#endif  // wifi
 
   m_pushbackindex=0;
   reqtype=0;
@@ -44,7 +46,6 @@ RA_Wifi::RA_Wifi()
   portalusername="";
 }
 
-#ifdef wifi
 void RA_Wifi::WebResponse (const prog_char *response, long strsize)
 {
 //  P(WebHeaderMsg) = SERVER_HEADER_HTML;
@@ -1236,8 +1237,8 @@ void RA_Wifi::Portal(char *username, char *key)
 void RA_Wifi::SendPortal(char *username, char*key)
 {
 #ifdef RA_STAR
-  PortalConnection=true;
-  if (connect(PortalServer, 80))
+  ReefAngel.Network.PortalConnection=true;
+  if (NetClient.connect(PortalServer, 80))
   {
 #endif
   ReefAngel.Timer[PORTAL_TIMER].Start();
@@ -1399,7 +1400,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerHTTP11);
   PROGMEMprint(BannerHost);
   PROGMEMprint(BannerConnectionClose);
-  PortalTimeOut=millis();
+  ReefAngel.Network.PortalTimeOut=millis();
 #endif
   println("\n\n");
 #ifdef RA_STAR

@@ -3,6 +3,7 @@
 DS1307RTC RTC;
 RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
+RA_Wiznet5100 Network;
 
 boolean Splash;
 byte RANetSeq, RANetCRC;
