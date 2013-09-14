@@ -19,17 +19,34 @@
   * Updates Released under Apache License, Version 2.0
   */
 
-#include "RA_Wifi.h"
 #include <Globals.h>
-
-
-#ifdef wifi
-
+#if defined wifi || defined RA_STAR
+#include "RA_Wifi.h"
 #include <DS1307RTC.h>
-#include <rtc_clock.h>
 #include <ReefAngel.h>
 
-void WebResponse (const prog_char *response, long strsize)
+RA_Wifi::RA_Wifi()
+{
+#if !defined RA_STAR
+  _wifiSerial = &WIFI_SERIAL;
+  _wifiSerial->begin(57600);
+#endif  // wifi
+
+  m_pushbackindex=0;
+  reqtype=0;
+  bIncoming=false;
+  auth=false;
+  weboption=0;
+  weboption2=-1;
+  weboption3=-1;
+  bHasSecondValue = false;
+//  bHasComma = false;
+  bCommaCount = 0;
+  webnegoption=false;
+  portalusername="";
+}
+
+void RA_Wifi::WebResponse (const prog_char *response, long strsize)
 {
 //  P(WebHeaderMsg) = SERVER_HEADER_HTML;
 //  printP(WebHeaderMsg);
@@ -37,7 +54,7 @@ void WebResponse (const prog_char *response, long strsize)
 	PROGMEMprint(response);
 }
 
-void ModeResponse(bool fOk)
+void RA_Wifi::ModeResponse(bool fOk)
 {
 	uint8_t s;
 	if ( fOk )
@@ -53,7 +70,7 @@ void ModeResponse(bool fOk)
 	PROGMEMprint(XML_MODE_CLOSE);
 }
 
-void pushbuffer(byte inStr)
+void RA_Wifi::PushBuffer(byte inStr)
 {
 	m_pushback[m_pushbackindex]=inStr;
 	m_pushback[m_pushbackindex+1]=0;
@@ -193,40 +210,9 @@ void pushbuffer(byte inStr)
 	}
 }
 
-void processHTTP()
+void RA_Wifi::ProcessHTTP()
 {
-    bIncoming=true;
-    timeout=millis();
-    while (bIncoming)
-    {
-		if (millis()-timeout>100)
-		{
-			bIncoming=false;
-			//for (int a=0;a<32;a++) pushbuffer(0);
-#ifdef RA_STAR
-			WIFI_SERIAL.stop();
-#endif
-		}
-		if (WIFI_SERIAL.available()>0)
-		{
-			pushbuffer(WIFI_SERIAL.read());
-			timeout=millis();
-#if defined WDT || defined WDT_FORCE
-			wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-#ifdef RA_STAR
-			if (reqtype>0 && reqtype<128)
-			{
-				bIncoming=false;
-				while(WIFI_SERIAL.available()) WIFI_SERIAL.read();
-			}
-#endif
-		}
-    }
-    if (webnegoption) weboption*=-1;
-
-#ifdef RA_STAR
-#endif
+  if (webnegoption) weboption*=-1;
 	switch ( reqtype )
 	{
 		case REQ_ROOT:
@@ -315,7 +301,7 @@ void processHTTP()
 			char temp[6];
 			int s=170;
 			//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM><AF></AF><SF></SF></RA>
-			s += strlen(ReefAngel.portalusername);
+			s += strlen(portalusername);
 			s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
@@ -491,11 +477,11 @@ void processHTTP()
 				PrintHeader(s,1);
 
 				PROGMEMprint(XML_M_OPEN);
-				WIFI_SERIAL.print(weboption2, DEC);
+				print(weboption2, DEC);
 				PROGMEMprint(XML_CLOSE_TAG);
 				PROGMEMprint(XML_OK);
 				PROGMEMprint(XML_M_CLOSE);
-				WIFI_SERIAL.print(weboption2, DEC);
+				print(weboption2, DEC);
 				PROGMEMprint(XML_CLOSE_TAG);
 			}
 			else if ( !bHasSecondValue && (weboption2 >= 0) && (bCommaCount==0) )
@@ -519,11 +505,11 @@ void processHTTP()
 
 				// no second value and no comma, so we read the value from memory
 				PROGMEMprint(XML_M_OPEN);
-				WIFI_SERIAL.print(weboption2, DEC);
+				print(weboption2, DEC);
 				PROGMEMprint(XML_CLOSE_TAG);
-				WIFI_SERIAL.print(memvalue,DEC);
+				print(memvalue,DEC);
 				PROGMEMprint(XML_M_CLOSE);
-				WIFI_SERIAL.print(weboption2, DEC);
+				print(weboption2, DEC);
 				PROGMEMprint(XML_CLOSE_TAG);
 			}
 			else
@@ -566,11 +552,11 @@ void processHTTP()
 				s += (intlength(weboption2)*2);
 				PrintHeader(s,1);
 				PROGMEMprint(XML_P_OPEN);
-				WIFI_SERIAL.print(weboption2, DEC);
+				print(weboption2, DEC);
 				PROGMEMprint(XML_CLOSE_TAG);
 				PROGMEMprint(XML_OK);
 				PROGMEMprint(XML_P_CLOSE);
-				WIFI_SERIAL.print(weboption2, DEC);
+				print(weboption2, DEC);
 				PROGMEMprint(XML_CLOSE_TAG);
 			}
 			else
@@ -620,8 +606,8 @@ void processHTTP()
 				for ( int x = memStart; x < memEnd; x++ )
 				{
 					m=InternalMemory.read(x);
-					if (m<16) WIFI_SERIAL.print("0");
-					WIFI_SERIAL.print(m,HEX);
+					if (m<16) print("0");
+					print(m,HEX);
 				}  // for x
 			}
 			PROGMEMprint(XML_MEM_CLOSE);
@@ -632,7 +618,7 @@ void processHTTP()
 			int s = 7;
 			s += strlen(ReefAngel_Version);
 			PrintHeader(s,1);
-			WIFI_SERIAL.print("<V>"ReefAngel_Version"</V>");
+			print("<V>"ReefAngel_Version"</V>");
 			break;
 		}  // REQ_VERSION
 		case REQ_DATE:
@@ -686,17 +672,17 @@ void processHTTP()
 			else if ( weboption == -2 )
 			{
 				time_t n = now();
-				WIFI_SERIAL.print("<HR>");
-				WIFI_SERIAL.print(hour(n), DEC);
-				WIFI_SERIAL.print("</HR><MIN>");
-				WIFI_SERIAL.print(minute(n), DEC);
-				WIFI_SERIAL.print("</MIN><MON>");
-				WIFI_SERIAL.print(month(n), DEC);
-				WIFI_SERIAL.print("</MON><DAY>");
-				WIFI_SERIAL.print(day(n), DEC);
-				WIFI_SERIAL.print("</DAY><YR>");
-				WIFI_SERIAL.print(year(n), DEC);
-				WIFI_SERIAL.print("</YR>");
+				print("<HR>");
+				print(hour(n), DEC);
+				print("</HR><MIN>");
+				print(minute(n), DEC);
+				print("</MIN><MON>");
+				print(month(n), DEC);
+				print("</MON><DAY>");
+				print(day(n), DEC);
+				print("</DAY><YR>");
+				print(year(n), DEC);
+				print("</YR>");
 			}
 			else
 			{
@@ -829,34 +815,31 @@ void processHTTP()
 			break;
 		}
 	}  // switch reqtype
-	WIFI_SERIAL.flush();
-#ifdef RA_STAR
-	WIFI_SERIAL.stop();
-#endif
+	_wifiSerial->flush();
 	m_pushbackindex=0;
     reqtype=0;
     weboption=0;
     webnegoption=false;
 }
 
-void PrintHeader(int s, byte type)
+void RA_Wifi::PrintHeader(int s, byte type)
 {
 	PROGMEMprint(SERVER_HEADER1);
 	if (type)
-		WIFI_SERIAL.print("xml");
+		print("xml");
 	else
-		WIFI_SERIAL.print("html");
+		print("html");
 	PROGMEMprint(SERVER_HEADER2);
-	WIFI_SERIAL.print(s, DEC);
-	WIFI_SERIAL.print("\r\n\r\n");
+	print(s, DEC);
+	print("\r\n\r\n");
 }
 
-char GetC(int c)
+char RA_Wifi::GetC(int c)
 {
 	return pgm_read_byte(c+EncodingChars);
 }
 
-void ConvertC(char* strIn, char* strOut, byte len)
+void RA_Wifi::ConvertC(char* strIn, char* strOut, byte len)
 {
 	strOut[0] = GetC(strIn[0]>>2);
 	strOut[1] = GetC(((strIn[0]&0x03)<<4)|((strIn[1]&0xf0)>>4));
@@ -864,7 +847,7 @@ void ConvertC(char* strIn, char* strOut, byte len)
 	strOut[3] = len>2?GetC(strIn[2]&0x3f ):'=';
 }
 
-void WifiAuthentication(char* userpass)
+void RA_Wifi::WifiAuthentication(char* userpass)
 {
 	char* authPtr;
 	int len = strlen(userpass);
@@ -881,29 +864,29 @@ void WifiAuthentication(char* userpass)
 	*(authPtr + authPtrSize) = 0;
 	strcpy(authStr,authPtr);
 	free(authPtr);
-	WIFI_SERIAL.println(authStr);
+	println(authStr);
 }
 
-void SendXMLData(bool fAtoLog /*= false*/)
+void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 {
 	// This function is used for sending the XML data on the wifi interface
 	// It prints the strings from program memory instead of RAM
 	PROGMEMprint(XML_ID);
-	WIFI_SERIAL.print(ReefAngel.portalusername);
+	print(portalusername);
 	PROGMEMprint(XML_T1);
-	WIFI_SERIAL.print(ReefAngel.Params.Temp[T1_PROBE]);
+	print(ReefAngel.Params.Temp[T1_PROBE]);
 	PROGMEMprint(XML_T2);
-	WIFI_SERIAL.print(ReefAngel.Params.Temp[T2_PROBE]);
+	print(ReefAngel.Params.Temp[T2_PROBE]);
 	PROGMEMprint(XML_T3);
-	WIFI_SERIAL.print(ReefAngel.Params.Temp[T3_PROBE]);
+	print(ReefAngel.Params.Temp[T3_PROBE]);
 	PROGMEMprint(XML_PH);
-	WIFI_SERIAL.print(ReefAngel.Params.PH);
+	print(ReefAngel.Params.PH);
 	PROGMEMprint(XML_R);
-	WIFI_SERIAL.print(ReefAngel.Relay.RelayData,DEC);
+	print(ReefAngel.Relay.RelayData,DEC);
 	PROGMEMprint(XML_RON);
-	WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOn,DEC);
+	print(ReefAngel.Relay.RelayMaskOn,DEC);
 	PROGMEMprint(XML_ROFF);
-	WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOff,DEC);
+	print(ReefAngel.Relay.RelayMaskOff,DEC);
 	PROGMEMprint(XML_RE_CLOSE);
 	PROGMEMprint(XML_RE_OFF);
 	PROGMEMprint(XML_CLOSE_TAG);
@@ -912,120 +895,120 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	{
 		// relay data
 		PROGMEMprint(XML_RE_OPEN);
-		WIFI_SERIAL.print(EID+1, DEC);
+		print(EID+1, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		WIFI_SERIAL.print(ReefAngel.Relay.RelayDataE[EID],DEC);
+		print(ReefAngel.Relay.RelayDataE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
-		WIFI_SERIAL.print(EID+1, DEC);
+		print(EID+1, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 		// relay on mask
 		PROGMEMprint(XML_RE_OPEN);
 		PROGMEMprint(XML_RE_ON);
-		WIFI_SERIAL.print(EID+1, DEC);
+		print(EID+1, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOnE[EID],DEC);
+		print(ReefAngel.Relay.RelayMaskOnE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
 		PROGMEMprint(XML_RE_ON);
-		WIFI_SERIAL.print(EID+1, DEC);
+		print(EID+1, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 		// relay off mask
 		PROGMEMprint(XML_RE_OPEN);
 		PROGMEMprint(XML_RE_OFF);
-		WIFI_SERIAL.print(EID+1, DEC);
+		print(EID+1, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		WIFI_SERIAL.print(ReefAngel.Relay.RelayMaskOffE[EID],DEC);
+		print(ReefAngel.Relay.RelayMaskOffE[EID],DEC);
 		PROGMEMprint(XML_RE_CLOSE);
 		PROGMEMprint(XML_RE_OFF);
-		WIFI_SERIAL.print(EID+1, DEC);
+		print(EID+1, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // RelayExp
 	PROGMEMprint(XML_ATOLOW);
-	WIFI_SERIAL.print(ReefAngel.LowATO.IsActive());
+	print(ReefAngel.LowATO.IsActive());
 	PROGMEMprint(XML_ATOHIGH);
-	WIFI_SERIAL.print(ReefAngel.HighATO.IsActive());
+	print(ReefAngel.HighATO.IsActive());
 	PROGMEMprint(XML_EM);
-	WIFI_SERIAL.print(ReefAngel.EM, DEC);
+	print(ReefAngel.EM, DEC);
 	PROGMEMprint(XML_EM1);
-	WIFI_SERIAL.print(ReefAngel.EM1, DEC);
+	print(ReefAngel.EM1, DEC);
 	PROGMEMprint(XML_REM);
-	WIFI_SERIAL.print(ReefAngel.REM, DEC);
+	print(ReefAngel.REM, DEC);
 	PROGMEMprint(XML_ALERTFLAG);
-	WIFI_SERIAL.print(ReefAngel.AlertFlags, DEC);
+	print(ReefAngel.AlertFlags, DEC);
 	PROGMEMprint(XML_STATUSFLAG);
-	WIFI_SERIAL.print(ReefAngel.StatusFlags, DEC);
+	print(ReefAngel.StatusFlags, DEC);
 	PROGMEMprint(XML_STATUSFLAG_END);
 #ifdef DisplayLEDPWM
 	PROGMEMprint(XML_PWMA);
-	WIFI_SERIAL.print(ReefAngel.PWM.GetActinicValue(), DEC);
+	print(ReefAngel.PWM.GetActinicValue(), DEC);
 	PROGMEMprint(XML_PWMD);
-	WIFI_SERIAL.print(ReefAngel.PWM.GetDaylightValue(), DEC);
+	print(ReefAngel.PWM.GetDaylightValue(), DEC);
 	PROGMEMprint(XML_PWMAO);
-	WIFI_SERIAL.print(ReefAngel.PWM.GetActinicOverrideValue(), DEC);
+	print(ReefAngel.PWM.GetActinicOverrideValue(), DEC);
 	PROGMEMprint(XML_PWMDO);
-	WIFI_SERIAL.print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
+	print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
 	PROGMEMprint(XML_PWMDO_END);
 #endif  // DisplayLEDPWM
 #ifdef SALINITYEXPANSION
 	PROGMEMprint(XML_SAL);
-	WIFI_SERIAL.print(ReefAngel.Params.Salinity, DEC);
+	print(ReefAngel.Params.Salinity, DEC);
 	PROGMEMprint(XML_SAL_END);
 #endif  // SALINITYEXPANSION
 #ifdef ORPEXPANSION
 	PROGMEMprint(XML_ORP);
-	WIFI_SERIAL.print(ReefAngel.Params.ORP, DEC);
+	print(ReefAngel.Params.ORP, DEC);
 	PROGMEMprint(XML_ORP_END);
 #endif  // ORPEXPANSION
 #ifdef PHEXPANSION
 	PROGMEMprint(XML_PHEXP);
-	WIFI_SERIAL.print(ReefAngel.Params.PHExp, DEC);
+	print(ReefAngel.Params.PHExp, DEC);
 	PROGMEMprint(XML_PHEXP_END);
 #endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
 	PROGMEMprint(XML_WL);
 	PROGMEMprint(XML_CLOSE_TAG);
-	WIFI_SERIAL.print(ReefAngel.WaterLevel.GetLevel(), DEC);
+	print(ReefAngel.WaterLevel.GetLevel(), DEC);
 	PROGMEMprint(XML_WL_END);
 	PROGMEMprint(XML_CLOSE_TAG);
 	for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
 	{
 		PROGMEMprint(XML_WL);
-		WIFI_SERIAL.print(EID, DEC);
+		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		WIFI_SERIAL.print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
+		print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
 		PROGMEMprint(XML_WL_END);
-		WIFI_SERIAL.print(EID, DEC);
+		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // WATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 	PROGMEMprint(XML_HUM);
-	WIFI_SERIAL.print(ReefAngel.Humidity.GetLevel(), DEC);
+	print(ReefAngel.Humidity.GetLevel(), DEC);
 	PROGMEMprint(XML_HUM_END);
 #endif  // HUMIDITYEXPANSION
 #ifdef DCPUMPCONTROL
 	PROGMEMprint(XML_DCM);
-	WIFI_SERIAL.print(ReefAngel.DCPump.Mode, DEC);
+	print(ReefAngel.DCPump.Mode, DEC);
 	PROGMEMprint(XML_DCM_END);
-	WIFI_SERIAL.print(ReefAngel.DCPump.Speed, DEC);
+	print(ReefAngel.DCPump.Speed, DEC);
 	PROGMEMprint(XML_DCS_END);
-	WIFI_SERIAL.print(ReefAngel.DCPump.Duration, DEC);
+	print(ReefAngel.DCPump.Duration, DEC);
 	PROGMEMprint(XML_DCD_END);
 #endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 	PROGMEMprint(XML_IO);
-	WIFI_SERIAL.print(ReefAngel.IO.GetChannel(), DEC);
+	print(ReefAngel.IO.GetChannel(), DEC);
 	PROGMEMprint(XML_IO_END);
 #endif  // IOEXPANSION
 #ifdef CUSTOM_VARIABLES
 	for ( byte EID = 0; EID < 8; EID++ )
 	{
 		PROGMEMprint(XML_C);
-		WIFI_SERIAL.print(EID, DEC);
+		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		WIFI_SERIAL.print(ReefAngel.CustomVar[EID], DEC);
+		print(ReefAngel.CustomVar[EID], DEC);
 		PROGMEMprint(XML_C_END);
-		WIFI_SERIAL.print(EID, DEC);
+		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // CUSTOM_VARIABLES
@@ -1033,69 +1016,69 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
 	{
 		PROGMEMprint(XML_PWME);
-		WIFI_SERIAL.print(EID, DEC);
+		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
-		WIFI_SERIAL.print(ReefAngel.PWM.GetChannelValue(EID), DEC);
+		print(ReefAngel.PWM.GetChannelValue(EID), DEC);
 		PROGMEMprint(XML_PWME_END);
-		WIFI_SERIAL.print(EID, DEC);
+		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 		PROGMEMprint(XML_PWME);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("O");
+		print(EID, DEC);
+		print("O");
 		PROGMEMprint(XML_CLOSE_TAG);
-		WIFI_SERIAL.print(ReefAngel.PWM.GetChannelOverrideValue(EID), DEC);
+		print(ReefAngel.PWM.GetChannelOverrideValue(EID), DEC);
 		PROGMEMprint(XML_PWME_END);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("O");
+		print(EID, DEC);
+		print("O");
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // PWMEXPANSION
 #ifdef AI_LED
 	PROGMEMprint(XML_AIW);
-	WIFI_SERIAL.print(ReefAngel.AI.GetChannel(0), DEC);
+	print(ReefAngel.AI.GetChannel(0), DEC);
 	PROGMEMprint(XML_AIW_END);
-	WIFI_SERIAL.print(ReefAngel.AI.GetChannel(1), DEC);
+	print(ReefAngel.AI.GetChannel(1), DEC);
 	PROGMEMprint(XML_AIB_END);
-	WIFI_SERIAL.print(ReefAngel.AI.GetChannel(2), DEC);
+	print(ReefAngel.AI.GetChannel(2), DEC);
 	PROGMEMprint(XML_AIRB_END);
-	WIFI_SERIAL.print(ReefAngel.AI.GetOverrideChannel(0), DEC);
+	print(ReefAngel.AI.GetOverrideChannel(0), DEC);
 	PROGMEMprint(XML_AIWO_END);
-	WIFI_SERIAL.print(ReefAngel.AI.GetOverrideChannel(1), DEC);
+	print(ReefAngel.AI.GetOverrideChannel(1), DEC);
 	PROGMEMprint(XML_AIBO_END);
-	WIFI_SERIAL.print(ReefAngel.AI.GetOverrideChannel(2), DEC);
+	print(ReefAngel.AI.GetOverrideChannel(2), DEC);
 	PROGMEMprint(XML_AIRBO_END);
 #endif  // AI_LED
 #ifdef RFEXPANSION
 	PROGMEMprint(XML_RFM);
-	WIFI_SERIAL.print(ReefAngel.RF.Mode, DEC);
+	print(ReefAngel.RF.Mode, DEC);
 	PROGMEMprint(XML_RFM_END);
-	WIFI_SERIAL.print(ReefAngel.RF.Speed, DEC);
+	print(ReefAngel.RF.Speed, DEC);
 	PROGMEMprint(XML_RFS_END);
-	WIFI_SERIAL.print(ReefAngel.RF.Duration, DEC);
+	print(ReefAngel.RF.Duration, DEC);
 	PROGMEMprint(XML_RFD_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetChannel(0), DEC);
+	print(ReefAngel.RF.GetChannel(0), DEC);
 	PROGMEMprint(XML_RFW_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetChannel(1), DEC);
+	print(ReefAngel.RF.GetChannel(1), DEC);
 	PROGMEMprint(XML_RFRB_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetChannel(2), DEC);
+	print(ReefAngel.RF.GetChannel(2), DEC);
 	PROGMEMprint(XML_RFR_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetChannel(3), DEC);
+	print(ReefAngel.RF.GetChannel(3), DEC);
 	PROGMEMprint(XML_RFG_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetChannel(4), DEC);
+	print(ReefAngel.RF.GetChannel(4), DEC);
 	PROGMEMprint(XML_RFB_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetChannel(5), DEC);
+	print(ReefAngel.RF.GetChannel(5), DEC);
 	PROGMEMprint(XML_RFI_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(0), DEC);
+	print(ReefAngel.RF.GetOverrideChannel(0), DEC);
 	PROGMEMprint(XML_RFWO_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(1), DEC);
+	print(ReefAngel.RF.GetOverrideChannel(1), DEC);
 	PROGMEMprint(XML_RFRBO_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(2), DEC);
+	print(ReefAngel.RF.GetOverrideChannel(2), DEC);
 	PROGMEMprint(XML_RFRO_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(3), DEC);
+	print(ReefAngel.RF.GetOverrideChannel(3), DEC);
 	PROGMEMprint(XML_RFGO_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(4), DEC);
+	print(ReefAngel.RF.GetOverrideChannel(4), DEC);
 	PROGMEMprint(XML_RFBO_END);
-	WIFI_SERIAL.print(ReefAngel.RF.GetOverrideChannel(5), DEC);
+	print(ReefAngel.RF.GetOverrideChannel(5), DEC);
 	PROGMEMprint(XML_RFIO_END);
 #endif  // RFEXPANSION
 #ifdef ENABLE_ATO_LOGGING
@@ -1108,12 +1091,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// low start time
 			loc = (b * ATOEventSize) + ATOEventStart;
 			PROGMEMprint(XML_ATOLOW_LOG_OPEN);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
-			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
+			print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOLOW_LOG_CLOSE);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -1121,12 +1104,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// low stop time
 			loc += ATOEventOffStart;
 			PROGMEMprint(XML_ATOLOW_LOG_OPEN);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
-			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
+			print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOLOW_LOG_CLOSE);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -1135,12 +1118,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// high start time
 			loc = (b * ATOEventSize) + ATOEventStart + (ATOEventSize * MAX_ATO_LOG_EVENTS);
 			PROGMEMprint(XML_ATOHIGH_LOG_OPEN);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
-			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
+			print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOHIGH_LOG_CLOSE);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_ON);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -1148,12 +1131,12 @@ void SendXMLData(bool fAtoLog /*= false*/)
 			// high stop time
 			loc += ATOEventOffStart;
 			PROGMEMprint(XML_ATOHIGH_LOG_OPEN);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
-			WIFI_SERIAL.print(InternalMemory.read_dword(loc), DEC);
+			print(InternalMemory.read_dword(loc), DEC);
 			PROGMEMprint(XML_ATOHIGH_LOG_CLOSE);
-			WIFI_SERIAL.print(b,DEC);
+			print(b,DEC);
 			PROGMEMprint(XML_RE_OFF);
 			PROGMEMprint(XML_CLOSE_TAG);
 			// zero out memory after sent
@@ -1165,34 +1148,263 @@ void SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_END);
 }
 
-void CheckWifi(){};
-
-#endif  // wifi
-
-void pingSerial()
+void RA_Wifi::ProcessSerial()
 {
-#ifdef RA_STAR
-	WIFI_SERIAL = NetServer.available();
-    if (WIFI_SERIAL)
-        while (WIFI_SERIAL.connected())
-        {
-        	wdt_reset();
-            if ( WIFI_SERIAL.available() > 0 ) processHTTP();
-        }
-#else
-#if defined wifi && not defined NOWIFI
-    if ( WIFI_SERIAL.available() > 0 ) processHTTP();
-#endif  // wifi
-#endif
+  bIncoming=true;
+  timeout=millis();
+  while (bIncoming)
+  {
+    if (millis()-timeout>100)
+    {
+      bIncoming=false;
+      //for (int a=0;a<32;a++) pushbuffer(0);
+    }
+    if (_wifiSerial->available()>0)
+    {
+      PushBuffer(_wifiSerial->read());
+      timeout=millis();
+#if defined WDT || defined WDT_FORCE
+      wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+    }
+  }
 
+  ProcessHTTP();
+
+  _wifiSerial->flush();
+  m_pushbackindex=0;
 }
 
-void PROGMEMprint(const prog_char str[])
+void RA_Wifi::ReceiveData()
+{
+  if ( _wifiSerial->available() > 0 ) ProcessSerial();
+}
+
+void RA_Wifi::PROGMEMprint(const prog_char str[])
 {
     char c;
     if(!str) return;
     while((c = pgm_read_byte(str++)))
-        WIFI_SERIAL.write(c);
+    {
+      write(c);
+    }
 }
 
+void RA_Wifi::LoadWebBanner(int pointer, byte qty)
+{
+  //  webbannerpointer = pointer;
+  //  webbannerqty = qty;
+}
 
+void RA_Wifi::Portal(char *username)
+{
+  /*
+  static byte LastRelayData;
+    byte TempRelay = Relay.RelayData;
+    TempRelay &= Relay.RelayMaskOff;
+    TempRelay |= Relay.RelayMaskOn;
+    if (TempRelay!=LastRelayData)
+    {
+      Timer[PORTAL_TIMER].ForceTrigger();
+      LastRelayData=TempRelay;
+    }
+#ifdef RelayExp
+  static byte LastRelayDataE[MAX_RELAY_EXPANSION_MODULES];
+
+    for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+  {
+    TempRelay = Relay.RelayDataE[EID];
+    TempRelay &= Relay.RelayMaskOffE[EID];
+    TempRelay |= Relay.RelayMaskOnE[EID];
+      if (TempRelay!=LastRelayDataE[EID])
+      {
+        Timer[PORTAL_TIMER].ForceTrigger();
+        LastRelayDataE[EID]=TempRelay;
+      }
+  }
+#endif  // RelayExp
+   */
+  if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
+  portalusername=username;
+}
+
+void RA_Wifi::Portal(char *username, char *key)
+{
+  if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
+  portalusername=username;
+}
+
+void RA_Wifi::SendPortal(char *username, char*key)
+{
+#ifdef RA_STAR
+  ReefAngel.Network.PortalConnection=true;
+  if (NetClient.connect(PortalServer, 80))
+  {
+#endif
+  ReefAngel.Timer[PORTAL_TIMER].Start();
+  PROGMEMprint(BannerGET);
+  print(ReefAngel.Params.Temp[T1_PROBE], DEC);
+  PROGMEMprint(BannerT2);
+  print(ReefAngel.Params.Temp[T2_PROBE], DEC);
+  PROGMEMprint(BannerT3);
+  print(ReefAngel.Params.Temp[T3_PROBE], DEC);
+  PROGMEMprint(BannerPH);
+  print(ReefAngel.Params.PH, DEC);
+  PROGMEMprint(BannerID);
+  print(username);
+  PROGMEMprint(BannerEM);
+  print(ReefAngel.EM, DEC);
+  PROGMEMprint(BannerEM1);
+  print(ReefAngel.EM1, DEC);
+  PROGMEMprint(BannerREM);
+  print(ReefAngel.REM, DEC);
+  PROGMEMprint(BannerKey);
+  print(key);
+  PROGMEMprint(BannerAlertFlag);
+  print(ReefAngel.AlertFlags);
+  PROGMEMprint(BannerStatusFlag);
+  print(ReefAngel.StatusFlags);
+  PROGMEMprint(BannerATOHIGH);
+  print(ReefAngel.HighATO.IsActive(), DEC);
+  PROGMEMprint(BannerATOLOW);
+  print(ReefAngel.LowATO.IsActive(), DEC);
+  PROGMEMprint(BannerRelayData);
+  print("=");
+  print(ReefAngel.Relay.RelayData, DEC);
+  PROGMEMprint(BannerRelayMaskOn);
+  print("=");
+  print(ReefAngel.Relay.RelayMaskOn, DEC);
+  PROGMEMprint(BannerRelayMaskOff);
+  print("=");
+  print(ReefAngel.Relay.RelayMaskOff, DEC);
+
+#ifdef RelayExp
+  for ( byte x = 0; x < InstalledRelayExpansionModules && x < MAX_RELAY_EXPANSION_MODULES; x++ )
+  {
+    PROGMEMprint(BannerRelayData);
+    print(x+1, DEC);
+    print("=");
+    print(ReefAngel.Relay.RelayDataE[x], DEC);
+    PROGMEMprint(BannerRelayMaskOn);
+    print(x+1, DEC);
+    print("=");
+    print(ReefAngel.Relay.RelayMaskOnE[x], DEC);
+    PROGMEMprint(BannerRelayMaskOff);
+    print(x+1, DEC);
+    print("=");
+    print(ReefAngel.Relay.RelayMaskOffE[x], DEC);
+  }  // for x
+#endif  // RelayExp
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
+  PROGMEMprint(BannerPWMA);
+  print(ReefAngel.PWM.GetActinicValue(), DEC);
+  PROGMEMprint(BannerPWMD);
+  print(ReefAngel.PWM.GetDaylightValue(), DEC);
+  PROGMEMprint(BannerPWMAO);
+  print(ReefAngel.PWM.GetActinicOverrideValue(), DEC);
+  PROGMEMprint(BannerPWMDO);
+  print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
+#endif  // DisplayLEDPWM && ! defined RemoveAllLights
+#ifdef PWMEXPANSION
+  for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
+  {
+    PROGMEMprint(BannerPWME);
+    print(EID, DEC);
+    print("=");
+    print(ReefAngel.PWM.GetChannelValue(EID), DEC);
+    PROGMEMprint(BannerPWME);
+    print(EID, DEC);
+    print("O");
+    print("=");
+    print(ReefAngel.PWM.GetChannelOverrideValue(EID), DEC);
+  }
+#endif  // PWMEXPANSION
+#ifdef RFEXPANSION
+  PROGMEMprint(BannerRFM);
+  print(ReefAngel.RF.Mode, DEC);
+  PROGMEMprint(BannerRFS);
+  print(ReefAngel.RF.Speed, DEC);
+  PROGMEMprint(BannerRFD);
+  print(ReefAngel.RF.Duration, DEC);
+  PROGMEMprint(BannerRFW);
+  print(ReefAngel.RF.GetChannel(0), DEC);
+  PROGMEMprint(BannerRFRB);
+  print(ReefAngel.RF.GetChannel(1), DEC);
+  PROGMEMprint(BannerRFR);
+  print(ReefAngel.RF.GetChannel(2), DEC);
+  PROGMEMprint(BannerRFG);
+  print(ReefAngel.RF.GetChannel(3), DEC);
+  PROGMEMprint(BannerRFB);
+  print(ReefAngel.RF.GetChannel(4), DEC);
+  PROGMEMprint(BannerRFI);
+  print(ReefAngel.RF.GetChannel(5), DEC);
+#endif  // RFEXPANSION
+#ifdef AI_LED
+  PROGMEMprint(BannerAIW);
+  print(ReefAngel.AI.GetChannel(0), DEC);
+  PROGMEMprint(BannerAIB);
+  print(ReefAngel.AI.GetChannel(1), DEC);
+  PROGMEMprint(BannerAIRB);
+  print(ReefAngel.AI.GetChannel(2), DEC);
+#endif  // AI_LED
+#ifdef SALINITYEXPANSION
+  PROGMEMprint(BannerSal);
+  print(ReefAngel.Params.Salinity, DEC);
+#endif  // SALINITYEXPANSION
+#ifdef ORPEXPANSION
+  PROGMEMprint(BannerORP);
+  print(ReefAngel.Params.ORP, DEC);
+#endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+  PROGMEMprint(BannerPHE);
+  print(ReefAngel.Params.PHExp, DEC);
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+  PROGMEMprint(BannerWL);
+  print("=");
+  print(ReefAngel.WaterLevel.GetLevel(), DEC);
+  for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
+  {
+    PROGMEMprint(BannerWL);
+    print(EID, DEC);
+    print("=");
+    print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
+  }
+#endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+  PROGMEMprint(BannerHumidity);
+  print(ReefAngel.Humidity.GetLevel(), DEC);
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+  PROGMEMprint(BannerDCM);
+  print(ReefAngel.DCPump.Mode, DEC);
+  PROGMEMprint(BannerDCS);
+  print(ReefAngel.DCPump.Speed, DEC);
+  PROGMEMprint(BannerDCD);
+  print(ReefAngel.DCPump.Duration, DEC);
+#endif  // DCPUMPCONTROL
+#ifdef IOEXPANSION
+  PROGMEMprint(BannerIO);
+  print(ReefAngel.IO.GetChannel(), DEC);
+#endif  // IOEXPANSION
+#ifdef CUSTOM_VARIABLES
+  for ( byte EID = 0; EID < 8; EID++ )
+  {
+    PROGMEMprint(BannerCustomVar);
+    print(EID, DEC);
+    print("=");
+    print(ReefAngel.CustomVar[EID], DEC);
+  }
+#endif  // CUSTOM_VARIABLES
+#ifdef RA_STAR
+  PROGMEMprint(BannerHTTP11);
+  PROGMEMprint(BannerHost);
+  PROGMEMprint(BannerConnectionClose);
+  ReefAngel.Network.PortalTimeOut=millis();
+#endif
+  println("\n\n");
+#ifdef RA_STAR
+  }
+#endif
+}
+#endif  // wifi
