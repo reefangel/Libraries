@@ -32,6 +32,8 @@ pinMode(actinic2PWMPin,OUTPUT);
 pinMode(daylight2PWMPin,OUTPUT);
 digitalWrite(actinic2PWMPin,LOW); //pull down resistor on actinicPWMPin
 digitalWrite(daylight2PWMPin,LOW); //pull down resistor on daylightPWMPin
+DDRJ&=(0<<4); //PJ4 as input (Alarm pin)
+PORTJ|=(1<<4); //PJ4 pull up
 
 char temptext[25];
 if (InternalMemory.IMCheck_read()!=0xCF06A31E)
@@ -50,3 +52,8 @@ if (InternalMemory.IMCheck_read()!=0xCF06A31E)
     // Initialize the Nested Menus
     InitMenus();
 #endif  // CUSTOM_MENU
+
+#ifdef MAIN_2014
+    MenuItem_2014=PARAMS_2014;
+    InitCustomLabels();
+#endif // MAIN_2014

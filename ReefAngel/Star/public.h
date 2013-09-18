@@ -3,15 +3,14 @@
 DS1307RTC RTC;
 RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
+RA_ATOALARMClass AlarmInput;
 
-boolean Splash;
 byte RANetSeq, RANetCRC;
 byte RANetData[RANET_SIZE];
 byte RANetStatus[RANET_SIZE];
 unsigned long RANetlastmillis;
 
 void ShowInterface();
-void Draw2014Main();
 void DrawStandardMain();
 void StoreGraphData();
 void CheckScreenSaver();

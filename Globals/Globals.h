@@ -141,6 +141,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
+#define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
 #define WATERLEVEL_CHANNELS				5
@@ -616,6 +617,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define ORP_CALIBRATE_MENU	245
 #define PHE_CALIBRATE_MENU	244
 #define WL_CALIBRATE_MENU	243
+
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 

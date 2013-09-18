@@ -147,6 +147,13 @@ public:
 	byte SelectedMenuItem;
 	byte DisplayedMenu;
 	bool showmenu;
+#ifdef MAIN_2014
+	boolean Splash;
+	byte MenuItem_2014;
+	String CustomLabels[72];
+	void InitCustomLabels();
+	void Draw2014Main();
+#endif // MAIN_2014
 
 	// Ports to toggle during different modes
 	byte FeedingModePorts;
@@ -257,6 +264,7 @@ public:
 	void inline NoSD() {};
 	void inline NoTilt() {};
 	void inline Star() {};
+	void inline ChangeWifiPort() {};
 
 #ifdef LEAKDETECTOREXPANSION
 	boolean IsLeakDetected();
@@ -336,6 +344,7 @@ private:
 	byte menuqtysptr[Total_Menus];
 	byte PreviousMenu;
 	bool redrawmenu;
+	void CheckOffset(byte &x, byte &y);
 
 };
 
