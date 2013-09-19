@@ -48,7 +48,7 @@ void receiveEventMaster(int howMany);
 
 #define RA_STANDARD // We start assuming it is a Standard Reef Angel
 
-#if defined(__AVR_ATmega2560__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
@@ -65,6 +65,7 @@ void receiveEventMaster(int howMany);
 
 #if defined RA_STAR
 #undef RA_PLUS
+#undef wifi
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
@@ -1336,6 +1337,7 @@ extern byte AtoEventCount;  // Defined in RA_ATO.cpp
 extern boolean LightsOverride;
 
 // globally usable functions
+void inline pingSerial() {};
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
