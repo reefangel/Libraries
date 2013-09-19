@@ -19,7 +19,7 @@
   * Updated by:  Curt Binder
   * Updates Released under Apache License, Version 2.0
   */
-
+#include <SPI.h>
 #include <Globals.h>
 #include <Time.h>
 #include "RA_NokiaLCD.h"
@@ -42,6 +42,8 @@
 #else
 #define RESET 6       // Digital 6 --> #RESET
 #endif //REEFANGEL_MINI
+
+#define bitOut(cond) PORTG = clk0; PORTE = (cond ? dat1 : dat0); PORTG = clk1
 
 // Phillips PCF8833 Command Set
 #define NOP      0x00 	// nop
@@ -99,10 +101,17 @@
 #define BL1 sbi(PORTE,4);
 #define CS0 cbi(PORTE,5);
 #define CS1 sbi(PORTE,5);
+#ifdef HWSPILCD
+#define CLK0 cbi(PORTB,1);
+#define CLK1 sbi(PORTB,1);
+#define SDA0 cbi(PORTB,2);
+#define SDA1 sbi(PORTB,2);
+#else
 #define CLK0 cbi(PORTG,5);
 #define CLK1 sbi(PORTG,5);
 #define SDA0 cbi(PORTE,3);
 #define SDA1 sbi(PORTE,3);
+#endif // HWSPILCD
 #define RESET0 cbi(PORTH,3);
 #define RESET1 sbi(PORTH,3);
 #else  // __AVR_ATmega2560__
@@ -605,71 +614,98 @@ RA_NokiaLCD::RA_NokiaLCD()
 #if defined(__AVR_ATmega2560__)
     pinMode(BL,OUTPUT);
     pinMode(CS,OUTPUT);
+#if not defined HWSPILCD
     pinMode(CLK,OUTPUT);
     pinMode(SDA,OUTPUT);
+    digitalWrite(CLK,HIGH);
+    digitalWrite(SDA,HIGH);
+#endif // HWSPILCD
     pinMode(RESET,OUTPUT);
     digitalWrite(BL,HIGH);
     digitalWrite(CS,HIGH);
-    digitalWrite(CLK,HIGH);
-    digitalWrite(SDA,HIGH);
     digitalWrite(RESET,HIGH);
 #else  // __AVR_ATmega2560__
     DDRD |= B01111100;   // Set SPI pins as output
     PORTD |= B01111000;  // Set SPI pins HIGH
 #endif  // __AVR_ATmega2560__
+#ifdef HWSPILCD
+    SPI.begin();
+#endif // HWSPILCD
 }
 
-
-
-void RA_NokiaLCD::ShiftBits(byte b)
+void RA_NokiaLCD::SendData(const byte data)
 {
-    byte Bit;
+#ifdef HWSPILCD
+	CLK0
+	SPCR=0;
+	CS0
+	SDA1
+	CLK1
+	SPCR=0x50;
+	SPI.transfer(data);
+	CS1
+#else
+	byte dat1 = PORTE | 0x08;
+	byte dat0 = PORTE & ~0x08;
+	byte clk1 = PORTG | 0x20;
+	byte clk0 = PORTG & ~0x20;
 
-    for (Bit = 0; Bit < 8; Bit++)     // 8 Bit Write
-    {
-        CLK0          // Standby SCLK
-        if((b&0x80)>>7)
-        {
-            SDA1
-        }
-        else
-        {
-            SDA0
-        }
-        CLK1          // Strobe signal bit
-        b <<= 1;   // Next bit data
-    }
+	bitOut(1);
+	bitOut(data & 0x80);
+	bitOut(data & 0x40);
+	bitOut(data & 0x20);
+	bitOut(data & 0x10);
+	bitOut(data & 0x08);
+	bitOut(data & 0x04);
+	bitOut(data & 0x02);
+	bitOut(data & 0x01);
+#endif // HWSPILCD
 }
 
-void RA_NokiaLCD::SendData(byte data)
+void RA_NokiaLCD::SendCMD(const byte data)
 {
+#ifdef HWSPILCD
     CLK0
-    SDA1
-    CLK1
-    ShiftBits(data);
-}
-
-void RA_NokiaLCD::SendCMD(byte data)
-{
-    CLK0
+	SPCR=0;
+    CS0
     SDA0
     CLK1
-    ShiftBits(data);
+    SPCR=0x50;
+    SPI.transfer(data);
+    CS1
+    CS0
+    CS1
+#else
+	byte dat1 = PORTE | 0x08;
+	byte dat0 = PORTE & ~0x08;
+	byte clk1 = PORTG | 0x20;
+	byte clk0 = PORTG & ~0x20;
+
+    bitOut(0);
+	bitOut(data & 0x80);
+	bitOut(data & 0x40);
+	bitOut(data & 0x20);
+	bitOut(data & 0x10);
+	bitOut(data & 0x08);
+	bitOut(data & 0x04);
+	bitOut(data & 0x02);
+	bitOut(data & 0x01);
+#endif // HWSPILCD
 #ifdef wifi
     pingSerial();
 #endif  // wifi
 }
 
 
-void RA_NokiaLCD::SendColor12Bit(byte color)
+inline void RA_NokiaLCD::SendColor12Bit(const byte &color)
 {
-	int R=(color&0xE0)>>5;
-	if (R>=4) R=((R*2)+1); else R=R<<1;
-	int G=(color&0x1C)>>2;
-	if (G>=4) G=((G*2)+1)<<4; else G=G<<5;
-	int B=(color&0x03)*5;
-	SendData(R);
-	SendData(G+B);
+    byte RR = (color & 0xE0) >> 4;
+    if (RR >= 8) RR++;
+    byte GG = (color & 0x1C) << 3;
+    if (GG >= 0x70) GG += 16;
+    byte BB = (color & 0x03) * 5;
+	SendData(RR);
+	SendData(GG+BB);
 }
 
 void RA_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
@@ -697,6 +733,7 @@ void RA_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
 	    SendData(y1);
 	    SendData(y2);
 	}
+	SendCMD(RAMWR);
 }
 
 void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
@@ -714,9 +751,6 @@ void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
 
     SetBox(xmin,ymin,xmax,ymax);
 
-    // WRITE MEMORY
-	if (LCDID!=0) SendCMD(RAMWR);
-
     // loop on total number of pixels / 2
     for (i = 0; i<(xmax - xmin + 1); i++)
     {
@@ -725,9 +759,6 @@ void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
         //SendData((color << 4) | ((color & 0xF0) >> 4));
         //SendData(((color >> 4) & 0xF0) | (color & 0x0F));
         //SendData((color & 0xF0) | (color >> 8));
-#if defined WDT || defined WDT_FORCE
-	wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
     	for (int j=0; j<(ymax - ymin + 1); j++)
     	{
 			if (LCDID==0)
@@ -835,7 +866,6 @@ void RA_NokiaLCD::DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, ui
 		break;
 	}
 	SetBox(x,y,x+xoffset,y);
-	SendCMD(RAMWR);
 	for(i=inc;i>=0;i--)
 	{
 		if (1<<i & c)
@@ -964,7 +994,6 @@ void RA_NokiaLCD::DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, 
 {
 	int i;
 	SetBox(x,y,x,y+15);
-	SendCMD(RAMWR);
 	for(i=0;i<16;i++)
 	{
 		if (1<<i & c)
@@ -997,7 +1026,6 @@ void RA_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor, byte x, byte y,char c)
 {
     byte i;
     SetBox(x,y,x,y+7);
-    if (LCDID!=0) SendCMD(RAMWR);
     for(i=0;i<8;i++)
     {
 		if (1<<i & c)
@@ -1022,7 +1050,8 @@ void RA_NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y, char *text)
             c = pgm_read_byte_near(font + j);
             DrawTextLine(fcolor, bcolor, x++, y, c);
         }
-        DrawTextLine(fcolor, bcolor, x++, y, 0);
+//        DrawTextLine(fcolor, bcolor, x++, y, 0);
+        x++;
         text++;
     }
 }
@@ -1057,7 +1086,6 @@ void RA_NokiaLCD::PutPixel(byte color, byte x, byte y)
 	}
 	else
 	{
-		SendCMD(RAMWR);
 		SendData(~color);
 	}
 }

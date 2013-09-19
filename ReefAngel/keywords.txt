@@ -43,6 +43,7 @@ AddHumidityExpansion	KEYWORD2
 AddStandardMenu	KEYWORD2
 AddWifi	KEYWORD2
 AddRANet	KEYWORD2
+AddSPILCD	KEYWORD2
 StandardLights	KEYWORD2
 AddRFExpansion	KEYWORD2
 AddDateTimeMenu	KEYWORD2
