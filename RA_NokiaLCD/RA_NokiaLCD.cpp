@@ -673,8 +673,6 @@ void RA_NokiaLCD::SendCMD(const byte data)
     SPCR=0x50;
     SPI.transfer(data);
     CS1
-    CS0
-    CS1
 #else
 	byte dat1 = PORTE | 0x08;
 	byte dat0 = PORTE & ~0x08;
