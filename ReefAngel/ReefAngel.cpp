@@ -696,6 +696,7 @@ void ReefAngelClass::ApplySalinityCompensation()
 #ifdef LEAKDETECTOREXPANSION
 boolean ReefAngelClass::IsLeakDetected()
 {
+	boolean detect=false;
 	int iLeak=0;
 	Wire.requestFrom(I2CLeak, 2);
 	if (Wire.available())
@@ -704,7 +705,9 @@ boolean ReefAngelClass::IsLeakDetected()
 		iLeak = iLeak<<8;
 		iLeak += Wire.read();
 	}
-	return iLeak>2000?true:false;
+	detect=iLeak>2000;
+	detect|=analogRead(LeakPin)<400;
+	return detect;
 }
 
 void ReefAngelClass::LeakCheck()
