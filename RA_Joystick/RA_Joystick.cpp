@@ -25,11 +25,11 @@
 RA_JoystickClass::RA_JoystickClass()
 {
 	pinMode(okPin, INPUT);
-#ifdef REEFANGEL_ONE
+#ifdef RA_STAR
 	digitalWrite(okPin, LOW); //pull down resistor on okPin
 #else	
 	digitalWrite(okPin, HIGH); //pull up resistor on okPin
-#endif //REEFANGEL_ONE
+#endif //RA_STAR
 }
 
 void RA_JoystickClass::Init()
@@ -70,13 +70,13 @@ bool RA_JoystickClass::IsButtonPressed()
 bool RA_JoystickClass::IsUp()
 {
 	JoystickCenter();
-#if defined REEFANGEL_ONE
+#if defined RA_STAR
 	if ( (analogRead(VPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
 	if ( (analogRead(VPin)>750 && analogRead(HPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #else
 	if ( (analogRead(VPin)>CalV+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //defined REEFANGEL_ONE || defined REEFANGEL_MINI	
+#endif //defined RA_STAR || defined REEFANGEL_MINI
 	{
 		CheckTurbo();
 		return true;
@@ -90,13 +90,13 @@ bool RA_JoystickClass::IsUp()
 bool RA_JoystickClass::IsDown()
 {
 	JoystickCenter();
-#ifdef REEFANGEL_ONE
+#ifdef RA_STAR
 	if ( (analogRead(HPin)<750 && analogRead(HPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
 	if ( (analogRead(HPin)>750 && analogRead(VPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #else	
 	if ( (analogRead(VPin)<CalV-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //REEFANGEL_ONE	
+#endif //RA_STAR
 	{
 		CheckTurbo();
 		return true;
@@ -110,13 +110,13 @@ bool RA_JoystickClass::IsDown()
 bool RA_JoystickClass::IsRight()
 {
 	JoystickCenter();
-#ifdef REEFANGEL_ONE
+#ifdef RA_STAR
 	if ( (analogRead(HPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
 	if (false)
 #else	
 	if ( (analogRead(HPin)<CalH-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //REEFANGEL_ONE	
+#endif //RA_STAR
 	{
 		CheckTurbo();
 		return true;
@@ -130,13 +130,13 @@ bool RA_JoystickClass::IsRight()
 bool RA_JoystickClass::IsLeft()
 {
 	JoystickCenter();
-#ifdef REEFANGEL_ONE
+#ifdef RA_STAR
 	if ( (analogRead(VPin)<750 && analogRead(VPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
 	if (false)		
 #else	
 	if ( (analogRead(HPin)>CalH+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //REEFANGEL_ONE	
+#endif //RA_STAR
 	{
 		CheckTurbo();
 		return true;
@@ -149,15 +149,15 @@ bool RA_JoystickClass::IsLeft()
 
 void RA_JoystickClass::JoystickCenter()
 {
-#if defined REEFANGEL_ONE || defined REEFANGEL_MINI
-	if ( (analogRead(VPin)<10) &&
-         (analogRead(HPin)<10) )
+#if defined RA_STAR || defined REEFANGEL_MINI
+	if ( (analogRead(VPin)<30) &&
+         (analogRead(HPin)<30) )
 #else
 	if ( (analogRead(VPin)<CalV+70) &&
          (analogRead(VPin)>CalV-70) &&
          (analogRead(HPin)<CalH+70) &&
          (analogRead(HPin)>CalH-70) )
-#endif //defined REEFANGEL_ONE || defined REEFANGEL_MINI
+#endif //defined RA_STAR || defined REEFANGEL_MINI
 	{
 		KeyCount = 0;
 		KeyTurbo = 1;
@@ -168,7 +168,7 @@ void RA_JoystickClass::JoystickCenter()
 void RA_JoystickClass::CheckTurbo()
 {
 	KeyCount++;
-	if (KeyCount > 5)
+	if (KeyCount > 7)
         KeyTurbo = 5;
     KeyKeep = millis();
 }
