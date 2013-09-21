@@ -706,7 +706,9 @@ boolean ReefAngelClass::IsLeakDetected()
 		iLeak += Wire.read();
 	}
 	detect=iLeak>2000;
+#ifdef EMBEDDED_LEAK
 	detect|=analogRead(LeakPin)<400;
+#endif // EMBEDDED_LEAK
 	return detect;
 }
 

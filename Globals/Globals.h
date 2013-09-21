@@ -67,6 +67,7 @@ void receiveEventMaster(int howMany);
 #undef RA_PLUS
 #undef wifi
 #define ETH_WIZ5100
+#define EMBEDDED_LEAK
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
