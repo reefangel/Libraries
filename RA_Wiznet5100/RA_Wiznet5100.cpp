@@ -29,20 +29,28 @@ void RA_Wiznet5100::Init()
 	//    Serial.print(".");
 	//  }
 	//  Serial.println();
-
+	DDRD|=(1<<4); // Port PD4 output
+	DDRD|=(1<<5); // Port PD5 output
 }
 
 void RA_Wiznet5100::Update()
 {
 	// Check for any changes on the DHCP status
 	EthernetDHCP.poll();
-	
+
+	const byte* ipAddr=EthernetDHCP.ipAddress();
+
+	if (ipAddr[0]!=0)
+		sbi(PORTD,5);
+	else
+		cbi(PORTD,5);
 	// Let's check for any incoming data
     ReceiveData();
 
     // Read and dump what the server is returning from the Portal GET request.
 	if (NetClient.available() && PortalConnection)
 	{
+		sbi(PORTD,4);
 		while(NetClient.available())
 		{
 			wdt_reset();
@@ -53,6 +61,7 @@ void RA_Wiznet5100::Update()
 	// if the server has disconnected, stop the client
 	if (!NetClient.connected() && PortalConnection)
 	{
+		cbi(PORTD,4);
 		PortalConnection=false;
 		NetClient.stop();
 	}
@@ -60,6 +69,7 @@ void RA_Wiznet5100::Update()
 	// if request timed out, stop the client
 	if (NetClient.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
 	{
+		cbi(PORTD,4);
 		PortalConnection=false;
 		NetClient.stop();
 	}
@@ -70,6 +80,7 @@ void RA_Wiznet5100::ReceiveData()
 	NetClient=NetServer.available();
 	if (NetClient)
 	{
+		sbi(PORTD,4);
 		while (NetClient.connected())
 		{
 			wdt_reset();
@@ -86,6 +97,7 @@ void RA_Wiznet5100::ProcessEthernet()
 	{
 		if (millis()-timeout>100)
 		{
+			cbi(PORTD,4);
 			bIncoming=false;
 			NetClient.stop();
 		}
@@ -108,6 +120,7 @@ void RA_Wiznet5100::ProcessEthernet()
 	wdt_reset();
 	ProcessHTTP();
 
+	cbi(PORTD,4);
 	NetClient.stop();
 	m_pushbackindex=0;
 }
