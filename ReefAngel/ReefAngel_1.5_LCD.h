@@ -1290,7 +1290,7 @@ void ReefAngelClass::Draw2014Main()
 		case RELAY8_2014:
 			x=52;
 			y=5;
-			for (int a=0+(MenuItem_2014-1)*8;a<8+(MenuItem_2014-1)*8;a++)
+			for (int a=0+(MenuItem_2014-RELAY_2014)*8;a<8+(MenuItem_2014-RELAY_2014)*8;a++)
 			{
 				char buf[16];
 				CustomLabels[a].toCharArray(buf,16);
@@ -1543,7 +1543,7 @@ void ReefAngelClass::Draw2014Main()
 	case RELAY8_2014:
 		x=52;
 		y=5;
-		for (int a=0+(MenuItem_2014-1)*10;a<8+(MenuItem_2014-1)*10;a++)
+		for (int a=0+(MenuItem_2014-RELAY_2014)*10;a<8+(MenuItem_2014-RELAY_2014)*10;a++)
 		{
 			if (Relay.isMaskOn(a+1)) LCD.DrawImage(22,6,7,y+1,RELAY_ON);
 			else if (Relay.isMaskOff(a+1)) LCD.DrawImage(22,6,7,y+1,RELAY_OFF);
