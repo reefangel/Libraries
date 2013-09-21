@@ -43,8 +43,11 @@
 #define RESET 6       // Digital 6 --> #RESET
 #endif //REEFANGEL_MINI
 
+#if defined(__AVR_ATmega2560__)  || defined(__AVR_ATmega1280__)
 #define bitOut(cond) PORTG = clk0; PORTE = (cond ? dat1 : dat0); PORTG = clk1
-
+#else  // __AVR_ATmega2560__
+#define bitOut(cond) PORTD = clk0; PORTD = (cond ? dat1 : dat0); PORTD = clk1
+#endif  // __AVR_ATmega2560__
 // Phillips PCF8833 Command Set
 #define NOP      0x00 	// nop
 #define SWRESET  0x01 	// software reset
@@ -645,11 +648,17 @@ void RA_NokiaLCD::SendData(const byte data)
 	SPI.transfer(data);
 	CS1
 #else
+#if defined(__AVR_ATmega2560__)  || defined(__AVR_ATmega1280__)
 	byte dat1 = PORTE | 0x08;
 	byte dat0 = PORTE & ~0x08;
 	byte clk1 = PORTG | 0x20;
 	byte clk0 = PORTG & ~0x20;
-
+#else  // __AVR_ATmega2560__
+	byte dat1 = PORTD | 0x20;
+	byte dat0 = PORTD & ~0x20;
+	byte clk1 = PORTD | 0x10;
+	byte clk0 = PORTD & ~0x10;
+#endif  // __AVR_ATmega2560__
 	bitOut(1);
 	bitOut(data & 0x80);
 	bitOut(data & 0x40);
@@ -674,10 +683,17 @@ void RA_NokiaLCD::SendCMD(const byte data)
     SPI.transfer(data);
     CS1
 #else
+#if defined(__AVR_ATmega2560__)  || defined(__AVR_ATmega1280__)
 	byte dat1 = PORTE | 0x08;
 	byte dat0 = PORTE & ~0x08;
 	byte clk1 = PORTG | 0x20;
 	byte clk0 = PORTG & ~0x20;
+#else  // __AVR_ATmega2560__
+	byte dat1 = PORTD | 0x20;
+	byte dat0 = PORTD & ~0x20;
+	byte clk1 = PORTD | 0x10;
+	byte clk0 = PORTD & ~0x10;
+#endif  // __AVR_ATmega2560__
 
     bitOut(0);
 	bitOut(data & 0x80);
