@@ -153,7 +153,7 @@ void ReefAngelClass::Init()
 	}
 #endif  // RelayExp
 
-#if defined wifi || defined I2CMASTER
+#if defined wifi || defined I2CMASTER || defined ETH_WIZ5100
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
 	EM1 = HUMbit + DCPumpbit;
 

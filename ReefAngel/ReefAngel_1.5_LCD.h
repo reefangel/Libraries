@@ -1177,6 +1177,9 @@ void ReefAngelClass::Draw2014Main()
 	if (Joystick.IsLeft())
 	{
 		if (--MenuItem_2014>STATUS_FLAGS_2014) MenuItem_2014=STATUS_FLAGS_2014;
+#ifndef RA_PLUS
+		if (MenuItem_2014==RELAY_2014) MenuItem_2014--;
+#endif
 #ifdef RelayExp
 		if (MenuItem_2014>=RELAY1_2014 && MenuItem_2014<=RELAY8_2014)
 			for (int a=MenuItem_2014-RELAY1_2014;a>=0;a--)
@@ -1193,6 +1196,9 @@ void ReefAngelClass::Draw2014Main()
 	if (Joystick.IsRight())
 	{
 		if (++MenuItem_2014>STATUS_FLAGS_2014) MenuItem_2014=PARAMS_2014;
+#ifndef RA_PLUS
+		if (MenuItem_2014==RELAY_2014) MenuItem_2014++;
+#endif
 #ifdef RelayExp
 		if (MenuItem_2014>=RELAY1_2014 && MenuItem_2014<=RELAY8_2014)
 			for (int a=MenuItem_2014-RELAY1_2014;a<MAX_RELAY_EXPANSION_MODULES;a++)
@@ -1280,6 +1286,7 @@ void ReefAngelClass::Draw2014Main()
 #endif // LEAKDETECTOREXPANSION
 			break;
 		case RELAY_2014:
+#ifdef RelayExp
 		case RELAY1_2014:
 		case RELAY2_2014:
 		case RELAY3_2014:
@@ -1288,6 +1295,7 @@ void ReefAngelClass::Draw2014Main()
 		case RELAY6_2014:
 		case RELAY7_2014:
 		case RELAY8_2014:
+#endif // RelayExp
 			x=52;
 			y=5;
 			for (int a=0+(MenuItem_2014-RELAY_2014)*8;a<8+(MenuItem_2014-RELAY_2014)*8;a++)
@@ -1531,8 +1539,8 @@ void ReefAngelClass::Draw2014Main()
 		LCD.DrawImage(8,8,x,y,IsLeakDetected()?ATO_GREEN:ATO_RED);
 #endif // LEAKDETECTOREXPANSION
 		break;
-
 	case RELAY_2014:
+#ifdef RelayExp
 	case RELAY1_2014:
 	case RELAY2_2014:
 	case RELAY3_2014:
@@ -1541,6 +1549,7 @@ void ReefAngelClass::Draw2014Main()
 	case RELAY6_2014:
 	case RELAY7_2014:
 	case RELAY8_2014:
+#endif // RelayExp
 		x=52;
 		y=5;
 		for (int a=0+(MenuItem_2014-RELAY_2014)*10;a<8+(MenuItem_2014-RELAY_2014)*10;a++)
