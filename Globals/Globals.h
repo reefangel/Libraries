@@ -48,7 +48,7 @@ void receiveEventMaster(int howMany);
 
 #define RA_STANDARD // We start assuming it is a Standard Reef Angel
 
-#if defined(__AVR_ATmega2560__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
@@ -65,6 +65,9 @@ void receiveEventMaster(int howMany);
 
 #if defined RA_STAR
 #undef RA_PLUS
+#undef wifi
+#define ETH_WIZ5100
+#define EMBEDDED_LEAK
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
@@ -106,6 +109,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define WIFI_SERIAL Serial
 #endif // __PLUS_SPECIAL_WIFI__
 
+#define RANET_SERIAL	Serial2
 
 // Outlets on Relay box
 #define Port8   8
@@ -140,9 +144,13 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
+#define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
 #define WATERLEVEL_CHANNELS				5
+
+#define RANET_SIZE						24 // We do not count CRC nor \r\n
+#define RANET_MODULES					9 // 8 Exp. Boxes, 1 Dimming
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -234,6 +242,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define VPin                0
 #define HPin                1
 #define VBAT				2
+#define LeakPin             5
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
 //#define Piezo               16 
@@ -514,6 +523,7 @@ When adding more variables, use the previous value plus 1 or 2
 // Internal Memory Check Pointer - 4 byte length (954-957)
 #define IMPointer			954
 
+#define RANetDelay			100
 #define bit9600Delay 		101
 #define KeyPressRate		250
 #define DEGREE_F            0
@@ -611,6 +621,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define ORP_CALIBRATE_MENU	245
 #define PHE_CALIBRATE_MENU	244
 #define WL_CALIBRATE_MENU	243
+
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
@@ -1329,6 +1340,7 @@ extern byte AtoEventCount;  // Defined in RA_ATO.cpp
 extern boolean LightsOverride;
 
 // globally usable functions
+void inline pingSerial() {};
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
@@ -1355,8 +1367,6 @@ byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync);
 byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
-
-const char* ip_to_str(const uint8_t* ipAddr);
 
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);

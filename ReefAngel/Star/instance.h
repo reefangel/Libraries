@@ -1,4 +1,4 @@
-// Plus
+// Star
 
 ReefAngelClass::ReefAngelClass()
 {

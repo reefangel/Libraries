@@ -35,6 +35,10 @@
 #include <Timer.h>
 #include <Memory.h>
 #include <DCPump.h>
+#include <DS1307RTC.h>
+#if defined wifi || defined RA_STAR
+#include <RA_Wifi.h>
+#endif  // wifi
 #if defined ORPEXPANSION
 #include <ORP.h>
 #endif  // defined ORPEXPANSION
@@ -100,6 +104,12 @@ public:
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
 	RelayClass Relay;
+#ifdef wifi
+	RA_Wifi Network;
+#endif  // wifi
+#ifdef ETH_WIZ5100
+	RA_Wiznet5100 Network;
+#endif // ETH_WIZ5100
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -147,6 +157,13 @@ public:
 	byte SelectedMenuItem;
 	byte DisplayedMenu;
 	bool showmenu;
+#ifdef MAIN_2014
+	boolean Splash;
+	byte MenuItem_2014;
+	String CustomLabels[72];
+	void InitCustomLabels();
+	void Draw2014Main();
+#endif // MAIN_2014
 
 	// Ports to toggle during different modes
 	byte FeedingModePorts;
@@ -231,13 +248,22 @@ public:
 	void UpdateTouchDisplay();
 #endif // I2CMASTER
 
+	void inline Use2014Screen() {};
+	void inline AddSalinityExpansion() {};
+	void inline AddORPExpansion() {};
+	void inline AddPHExpansion() {};
+	void inline AddWaterLevelExpansion() {};
+	void inline AddMultiChannelWaterLevelExpansion() {};
+	void inline AddHumidityExpansion() {};
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
+	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
 	void inline AddCustomColors() {};
 	void inline AddBusCheck() {};
 	void inline AddPortOverrides() {};
+	void inline AddSPILCD() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
 	void inline ReverseATOLow() {};
@@ -249,6 +275,7 @@ public:
 	void inline NoSD() {};
 	void inline NoTilt() {};
 	void inline Star() {};
+	void inline ChangeWifiPort() {};
 
 #ifdef LEAKDETECTOREXPANSION
 	boolean IsLeakDetected();
@@ -308,16 +335,10 @@ public:
 	void DisplayVersion();
 #endif  // VersionMenu
 
-	// WebBanner
-#ifdef wifi
-	void LoadWebBanner(int pointer, byte qty);
-	void WebBanner();
+#if defined wifi || defined RA_STAR
 	void Portal(char *username);
-	void Portal(char *username, char*key);
-	void SendPortal(char *username, char*key);
-	char *portalusername;
-	void PROGMEMprint1(const prog_char str[]);
-#endif  // wifi
+	void Portal(char *username, char *key);
+#endif
 
 private:
 	time_t menutimeout;
@@ -328,6 +349,7 @@ private:
 	byte menuqtysptr[Total_Menus];
 	byte PreviousMenu;
 	bool redrawmenu;
+	void CheckOffset(byte &x, byte &y);
 
 };
 

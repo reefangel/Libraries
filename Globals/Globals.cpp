@@ -577,13 +577,6 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset)
 	return constrain(WaveSpeed+amplitude,0,100);
 }
 
-const char* ip_to_str(const uint8_t* ipAddr)
-{
-  static char buf[16];
-  sprintf(buf, "%d.%d.%d.%d\0", ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
-  return buf;
-}
-
 // for pure virtual functions
 //void __cxa_pure_virtual(void){};
 // other fixes

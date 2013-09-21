@@ -95,5 +95,13 @@ public:
 };
 #endif // WATERLEVELEXPANSION
 
+#if defined RA_STAR
+class RA_ATOALARMClass : public RA_ATOClass
+{
+public:
+	inline bool IsActive() { return !(PINJ & (1<<PJ4)); }
+};
+#endif // RA_STAR
+
 #endif  // __RA_ATO_H__
 

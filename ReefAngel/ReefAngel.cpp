@@ -23,7 +23,6 @@
 #include <Wire.h>
 #include <DS1307RTC.h>
 #include "ReefAngel.h"
-#include <RA_Wifi.h>
 
 byte ButtonPress = 0;
 
@@ -154,12 +153,10 @@ void ReefAngelClass::Init()
 	}
 #endif  // RelayExp
 
-#if defined wifi || defined I2CMASTER
+#if defined wifi || defined I2CMASTER || defined ETH_WIZ5100
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
 	EM1 = HUMbit + DCPumpbit;
-#ifdef wifi
-	portalusername="";
-#endif // wifi
+
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
 	{
@@ -168,7 +165,7 @@ void ReefAngelClass::Init()
 #else  // RelayExp
 	REM = 0;
 #endif  // RelayExp
-#endif  // wifi
+#endif  // wifi || I2CMASTER
 #ifdef CUSTOM_VARIABLES
 	for ( byte EID = 0; EID < 8; EID++ )
 	{
@@ -180,32 +177,6 @@ void ReefAngelClass::Init()
 void ReefAngelClass::Refresh()
 {
 	WDTReset();
-#ifdef RA_STAR
-	// Check for DHCP state changes
-	EthernetDHCP.poll();
-	if (WIFI_SERIAL.available() && PortalConnection)
-	{
-		while(WIFI_SERIAL.available())
-		{
-			wdt_reset();
-			char c = WIFI_SERIAL.read();
-		}
-	}
-
-	// if the server's disconnected, stop the client
-	if (!WIFI_SERIAL.connected() && PortalConnection)
-	{
-		PortalConnection=false;
-		WIFI_SERIAL.stop();
-	}
-
-	// if request timed out, stop the client
-	if (WIFI_SERIAL.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
-	{
-		PortalConnection=false;
-		WIFI_SERIAL.stop();
-	}
-#endif
 	if (ChangeMode==FEEDING_MODE)
 		FeedingModeStart();
 	if (ChangeMode==WATERCHANGE_MODE)
@@ -450,6 +421,53 @@ void ReefAngelClass::Refresh()
 #endif  // OVERRRIDE_PORTS	
 
 	Relay.Write();
+
+#ifdef ETH_WIZ5100
+	Network.Update();
+#endif // ETH_WIZ5100
+
+#ifdef RANET
+	// Send RANet data
+	if (millis()-RANetlastmillis>RANetDelay)
+	{
+		RANetlastmillis=millis();
+		RANetCRC=0;
+		RANetData[0]=RANetSeq;
+		RANetData[1]=RANET_SIZE*2;
+		for (int a=0;a<MAX_RELAY_EXPANSION_MODULES;a++)
+		{
+#ifdef RelayExp
+			byte TempRelay = Relay.RelayDataE[a];
+			TempRelay &= Relay.RelayMaskOffE[a];
+			TempRelay |= Relay.RelayMaskOnE[a];
+			RANetData[2+a]=TempRelay;
+			RANetData[10+a]=Relay.RANetFallBackE[a];
+#else
+			RANetData[2+a]=0;
+			RANetData[10+a]=0;
+#endif // RelayExp
+		}
+		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+		{
+#ifdef PWMEXPANSION
+			RANetData[18+a]=PWM.GetChannel(a);
+#else
+			RANetData[18+a]=0;
+#endif // PWMEXPANSION
+		}
+		char buf[3];
+		for (int a=0;a<RANET_SIZE;a++)
+		{
+			RANetCRC+=RANetData[a];
+			sprintf(buf,"%02x",RANetData[a]);
+			RANET_SERIAL.print(buf);
+		}
+		sprintf(buf,"%02x",RANetCRC);
+		RANET_SERIAL.println(buf);
+		RANetSeq++;
+	}
+#endif // RANET
+
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor
@@ -678,6 +696,7 @@ void ReefAngelClass::ApplySalinityCompensation()
 #ifdef LEAKDETECTOREXPANSION
 boolean ReefAngelClass::IsLeakDetected()
 {
+	boolean detect=false;
 	int iLeak=0;
 	Wire.requestFrom(I2CLeak, 2);
 	if (Wire.available())
@@ -686,7 +705,11 @@ boolean ReefAngelClass::IsLeakDetected()
 		iLeak = iLeak<<8;
 		iLeak += Wire.read();
 	}
-	return iLeak>2000?true:false;
+	detect=iLeak>2000;
+#ifdef EMBEDDED_LEAK
+	detect|=analogRead(LeakPin)<400;
+#endif // EMBEDDED_LEAK
+	return detect;
 }
 
 void ReefAngelClass::LeakCheck()
@@ -1260,238 +1283,6 @@ void ReefAngelClass::Wavemaker2(byte WMRelay)
 	//#endif
 }
 
-#ifdef wifi
-void ReefAngelClass::LoadWebBanner(int pointer, byte qty)
-{
-	//	webbannerpointer = pointer;
-	//	webbannerqty = qty;
-}
-
-void ReefAngelClass::Portal(char *username)
-{
-	/*
-	static byte LastRelayData;
-    byte TempRelay = Relay.RelayData;
-    TempRelay &= Relay.RelayMaskOff;
-    TempRelay |= Relay.RelayMaskOn;
-    if (TempRelay!=LastRelayData)
-    {
-    	Timer[PORTAL_TIMER].ForceTrigger();
-    	LastRelayData=TempRelay;
-    }
-#ifdef RelayExp
-	static byte LastRelayDataE[MAX_RELAY_EXPANSION_MODULES];
-
-    for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
-	{
-		TempRelay = Relay.RelayDataE[EID];
-		TempRelay &= Relay.RelayMaskOffE[EID];
-		TempRelay |= Relay.RelayMaskOnE[EID];
-	    if (TempRelay!=LastRelayDataE[EID])
-	    {
-	    	Timer[PORTAL_TIMER].ForceTrigger();
-	    	LastRelayDataE[EID]=TempRelay;
-	    }
-	}
-#endif  // RelayExp
-	 */
-	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
-	portalusername=username;
-}
-
-void ReefAngelClass::Portal(char *username, char *key)
-{
-	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
-	portalusername=username;
-}
-
-void ReefAngelClass::SendPortal(char *username, char*key)
-{
-#ifdef RA_STAR
-	PortalConnection=true;
-	if (WIFI_SERIAL.connect(PortalServer, 80))
-	{
-#endif
-	Timer[PORTAL_TIMER].Start();
-	PROGMEMprint1(BannerGET);
-	WIFI_SERIAL.print(Params.Temp[T1_PROBE], DEC);
-	PROGMEMprint1(BannerT2);
-	WIFI_SERIAL.print(Params.Temp[T2_PROBE], DEC);
-	PROGMEMprint1(BannerT3);
-	WIFI_SERIAL.print(Params.Temp[T3_PROBE], DEC);
-	PROGMEMprint1(BannerPH);
-	WIFI_SERIAL.print(Params.PH, DEC);
-	PROGMEMprint1(BannerID);
-	WIFI_SERIAL.print(username);
-	PROGMEMprint1(BannerEM);
-	WIFI_SERIAL.print(EM, DEC);
-	PROGMEMprint1(BannerEM1);
-	WIFI_SERIAL.print(EM1, DEC);
-	PROGMEMprint1(BannerREM);
-	WIFI_SERIAL.print(REM, DEC);
-	PROGMEMprint1(BannerKey);
-	WIFI_SERIAL.print(key);
-	PROGMEMprint1(BannerAlertFlag);
-	WIFI_SERIAL.print(AlertFlags);
-	PROGMEMprint1(BannerStatusFlag);
-	WIFI_SERIAL.print(StatusFlags);
-	PROGMEMprint1(BannerATOHIGH);
-	WIFI_SERIAL.print(HighATO.IsActive(), DEC);
-	PROGMEMprint1(BannerATOLOW);
-	WIFI_SERIAL.print(LowATO.IsActive(), DEC);
-	PROGMEMprint1(BannerRelayData);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(Relay.RelayData, DEC);
-	PROGMEMprint1(BannerRelayMaskOn);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(Relay.RelayMaskOn, DEC);
-	PROGMEMprint1(BannerRelayMaskOff);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(Relay.RelayMaskOff, DEC);
-
-#ifdef RelayExp
-	for ( byte x = 0; x < InstalledRelayExpansionModules && x < MAX_RELAY_EXPANSION_MODULES; x++ )
-	{
-		PROGMEMprint1(BannerRelayData);
-		WIFI_SERIAL.print(x+1, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(Relay.RelayDataE[x], DEC);
-		PROGMEMprint1(BannerRelayMaskOn);
-		WIFI_SERIAL.print(x+1, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(Relay.RelayMaskOnE[x], DEC);
-		PROGMEMprint1(BannerRelayMaskOff);
-		WIFI_SERIAL.print(x+1, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(Relay.RelayMaskOffE[x], DEC);
-	}  // for x
-#endif  // RelayExp
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
-	PROGMEMprint1(BannerPWMA);
-	WIFI_SERIAL.print(PWM.GetActinicValue(), DEC);
-	PROGMEMprint1(BannerPWMD);
-	WIFI_SERIAL.print(PWM.GetDaylightValue(), DEC);
-	PROGMEMprint1(BannerPWMAO);
-	WIFI_SERIAL.print(PWM.GetActinicOverrideValue(), DEC);
-	PROGMEMprint1(BannerPWMDO);
-	WIFI_SERIAL.print(PWM.GetDaylightOverrideValue(), DEC);
-#endif  // DisplayLEDPWM && ! defined RemoveAllLights
-#ifdef PWMEXPANSION
-	for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
-	{
-		PROGMEMprint1(BannerPWME);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(PWM.GetChannelValue(EID), DEC);
-		PROGMEMprint1(BannerPWME);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("O");
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(PWM.GetChannelOverrideValue(EID), DEC);
-	}
-#endif  // PWMEXPANSION
-#ifdef RFEXPANSION
-	PROGMEMprint1(BannerRFM);
-	WIFI_SERIAL.print(RF.Mode, DEC);
-	PROGMEMprint1(BannerRFS);
-	WIFI_SERIAL.print(RF.Speed, DEC);
-	PROGMEMprint1(BannerRFD);
-	WIFI_SERIAL.print(RF.Duration, DEC);
-	PROGMEMprint1(BannerRFW);
-	WIFI_SERIAL.print(RF.GetChannel(0), DEC);
-	PROGMEMprint1(BannerRFRB);
-	WIFI_SERIAL.print(RF.GetChannel(1), DEC);
-	PROGMEMprint1(BannerRFR);
-	WIFI_SERIAL.print(RF.GetChannel(2), DEC);
-	PROGMEMprint1(BannerRFG);
-	WIFI_SERIAL.print(RF.GetChannel(3), DEC);
-	PROGMEMprint1(BannerRFB);
-	WIFI_SERIAL.print(RF.GetChannel(4), DEC);
-	PROGMEMprint1(BannerRFI);
-	WIFI_SERIAL.print(RF.GetChannel(5), DEC);
-#endif  // RFEXPANSION
-#ifdef AI_LED
-	PROGMEMprint1(BannerAIW);
-	WIFI_SERIAL.print(AI.GetChannel(0), DEC);
-	PROGMEMprint1(BannerAIB);
-	WIFI_SERIAL.print(AI.GetChannel(1), DEC);
-	PROGMEMprint1(BannerAIRB);
-	WIFI_SERIAL.print(AI.GetChannel(2), DEC);
-#endif  // AI_LED
-#ifdef SALINITYEXPANSION
-	PROGMEMprint1(BannerSal);
-	WIFI_SERIAL.print(Params.Salinity, DEC);
-#endif  // SALINITYEXPANSION
-#ifdef ORPEXPANSION
-	PROGMEMprint1(BannerORP);
-	WIFI_SERIAL.print(Params.ORP, DEC);
-#endif  // ORPEXPANSION
-#ifdef PHEXPANSION
-	PROGMEMprint1(BannerPHE);
-	WIFI_SERIAL.print(Params.PHExp, DEC);
-#endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
-	PROGMEMprint1(BannerWL);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(WaterLevel.GetLevel(), DEC);
-	for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
-	{
-		PROGMEMprint1(BannerWL);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(WaterLevel.GetLevel(EID), DEC);
-	}
-#endif  // WATERLEVELEXPANSION
-#ifdef HUMIDITYEXPANSION
-	PROGMEMprint1(BannerHumidity);
-	WIFI_SERIAL.print(Humidity.GetLevel(), DEC);
-#endif  // HUMIDITYEXPANSION
-#ifdef DCPUMPCONTROL
-	PROGMEMprint1(BannerDCM);
-	WIFI_SERIAL.print(DCPump.Mode, DEC);
-	PROGMEMprint1(BannerDCS);
-	WIFI_SERIAL.print(DCPump.Speed, DEC);
-	PROGMEMprint1(BannerDCD);
-	WIFI_SERIAL.print(DCPump.Duration, DEC);
-#endif  // DCPUMPCONTROL
-#ifdef IOEXPANSION
-	PROGMEMprint1(BannerIO);
-	WIFI_SERIAL.print(IO.GetChannel(), DEC);
-#endif  // IOEXPANSION
-#ifdef CUSTOM_VARIABLES
-	for ( byte EID = 0; EID < 8; EID++ )
-	{
-		PROGMEMprint1(BannerCustomVar);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(CustomVar[EID], DEC);
-	}
-#endif  // CUSTOM_VARIABLES
-#ifdef RA_STAR
-	PROGMEMprint1(BannerHTTP11);
-	PROGMEMprint1(BannerHost);
-	PROGMEMprint1(BannerConnectionClose);
-	PortalTimeOut=millis();
-#endif
-	WIFI_SERIAL.println("\n\n");
-#ifdef RA_STAR
-	}
-#endif
-}
-
-void ReefAngelClass::PROGMEMprint1(const prog_char str[])
-{
-	// For some reason this function was needed.
-	// I guess the precompiler doesn't like the #define WIFI_SERIAL NetClient.
-	// Weird...
-    char c;
-    if(!str) return;
-    while((c = pgm_read_byte(str++)))
-        WIFI_SERIAL.write(c);
-}
-
-#endif  // wifi
-
 void ReefAngelClass::FeedingModeStart()
 {
 	// turn off ports
@@ -1666,6 +1457,17 @@ void ReefAngelClass::SetDisplayedMenu(byte value)
 #endif // RA_TOUCHDISPLAY
 }
 
+#if defined wifi || defined ETH_WIZ5100
+void ReefAngelClass::Portal(char *username)
+{
+	Network.Portal(username);
+}
+
+void ReefAngelClass::Portal(char *username, char *key)
+{
+	Network.Portal(username,key);
+}
+#endif
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany) {
 	byte d[9];
