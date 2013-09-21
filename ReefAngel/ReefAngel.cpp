@@ -422,33 +422,9 @@ void ReefAngelClass::Refresh()
 
 	Relay.Write();
 
-#ifdef RA_STAR
+#ifdef ETH_WIZ5100
 	Network.Update();
-//	// Check for DHCP state changes
-//	EthernetDHCP.poll();
-//	if (WIFI_SERIAL.available() && PortalConnection)
-//	{
-//		while(WIFI_SERIAL.available())
-//		{
-//			wdt_reset();
-//			char c = WIFI_SERIAL.read();
-//		}
-//	}
-//
-//	// if the server's disconnected, stop the client
-//	if (!WIFI_SERIAL.connected() && PortalConnection)
-//	{
-//		PortalConnection=false;
-//		WIFI_SERIAL.stop();
-//	}
-//
-//	// if request timed out, stop the client
-//	if (WIFI_SERIAL.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
-//	{
-//		PortalConnection=false;
-//		WIFI_SERIAL.stop();
-//	}
-#endif // RA_STAR
+#endif // ETH_WIZ5100
 
 #ifdef RANET
 	// Send RANet data
@@ -1476,7 +1452,7 @@ void ReefAngelClass::SetDisplayedMenu(byte value)
 #endif // RA_TOUCHDISPLAY
 }
 
-#if defined wifi || defined RA_STAR
+#if defined wifi || defined ETH_WIZ5100
 void ReefAngelClass::Portal(char *username)
 {
 	Network.Portal(username);

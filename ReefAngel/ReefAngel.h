@@ -106,7 +106,10 @@ public:
 	RelayClass Relay;
 #ifdef wifi
 	RA_Wifi Network;
-#endif  // RA_STAR
+#endif  // wifi
+#ifdef ETH_WIZ5100
+	RA_Wiznet5100 Network;
+#endif // ETH_WIZ5100
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights

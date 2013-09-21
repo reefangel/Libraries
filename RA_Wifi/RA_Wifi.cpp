@@ -20,17 +20,17 @@
   */
 
 #include <Globals.h>
-#if defined wifi || defined RA_STAR
+#if defined wifi || defined ETH_WIZ5100
 #include "RA_Wifi.h"
 #include <DS1307RTC.h>
 #include <ReefAngel.h>
 
 RA_Wifi::RA_Wifi()
 {
-#if !defined RA_STAR
+#if !defined ETH_WIZ5100
   _wifiSerial = &WIFI_SERIAL;
   _wifiSerial->begin(57600);
-#endif  // wifi
+#endif  // ETH_WIZ5100
 
   m_pushbackindex=0;
   reqtype=0;
@@ -815,7 +815,10 @@ void RA_Wifi::ProcessHTTP()
 			break;
 		}
 	}  // switch reqtype
-	_wifiSerial->flush();
+#if defined WDT || defined WDT_FORCE
+      wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+
 	m_pushbackindex=0;
     reqtype=0;
     weboption=0;
@@ -1236,7 +1239,7 @@ void RA_Wifi::Portal(char *username, char *key)
 
 void RA_Wifi::SendPortal(char *username, char*key)
 {
-#ifdef RA_STAR
+#ifdef ETH_WIZ5100
   ReefAngel.Network.PortalConnection=true;
   if (NetClient.connect(PortalServer, 80))
   {
@@ -1396,15 +1399,15 @@ void RA_Wifi::SendPortal(char *username, char*key)
     print(ReefAngel.CustomVar[EID], DEC);
   }
 #endif  // CUSTOM_VARIABLES
-#ifdef RA_STAR
+#ifdef ETH_WIZ5100
   PROGMEMprint(BannerHTTP11);
   PROGMEMprint(BannerHost);
   PROGMEMprint(BannerConnectionClose);
   ReefAngel.Network.PortalTimeOut=millis();
-#endif
+#endif // ETH_WIZ5100
   println("\n\n");
-#ifdef RA_STAR
+#ifdef ETH_WIZ5100
   }
-#endif
+#endif // ETH_WIZ5100
 }
 #endif  // wifi

@@ -66,6 +66,7 @@ void receiveEventMaster(int howMany);
 #if defined RA_STAR
 #undef RA_PLUS
 #undef wifi
+#define ETH_WIZ5100
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
@@ -1364,8 +1365,6 @@ byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync);
 byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
-
-const char* ip_to_str(const uint8_t* ipAddr);
 
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);

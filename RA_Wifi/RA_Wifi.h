@@ -26,7 +26,7 @@
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 
-#if defined wifi || defined RA_STAR
+#if defined wifi || defined ETH_WIZ5100
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";
 const prog_char XML_T1[] PROGMEM = "</ID><T1>";
 const prog_char XML_T2[] PROGMEM = "</T1><T2>";
@@ -414,12 +414,14 @@ class RA_Wifi: public Print
     inline void pingSerial(){};
     char *portalusername;
 
+#ifndef ETH_WIZ5100
     using Print::write;
     inline size_t write(uint8_t c) { return _wifiSerial->write((uint8_t)c); }
     inline size_t write(unsigned long n) { return _wifiSerial->write((uint8_t)n); }
     inline size_t write(long n) { return _wifiSerial->write((uint8_t)n); }
     inline size_t write(unsigned int n) { return _wifiSerial->write((uint8_t)n); }
     inline size_t write(int n) { return _wifiSerial->write((uint8_t)n); }
+#endif // ETH_WIZ5100
 
   protected:
     char m_pushback[32];

@@ -4,7 +4,6 @@ DS1307RTC RTC;
 RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
 RA_ATOALARMClass AlarmInput;
-RA_Wiznet5100 Network;
 
 byte RANetSeq, RANetCRC;
 byte RANetData[RANET_SIZE];

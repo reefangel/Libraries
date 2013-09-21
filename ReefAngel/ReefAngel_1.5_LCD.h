@@ -2116,6 +2116,12 @@ void ReefAngelClass::DisplayVersion()
 #ifdef RelayExp
 	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,40,InstalledRelayExpansionModules);
 #endif  // RelayExp
+#ifdef ETH_WIZ5100
+	const byte* ipAddr=EthernetDHCP.ipAddress();
+	char buf[20];
+	sprintf(buf, "IP: %d.%d.%d.%d\0", ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
+	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,50,buf);
+#endif
 }
 #endif  // VersionMenu
 

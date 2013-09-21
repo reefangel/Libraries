@@ -8,7 +8,7 @@
 #ifndef RA_WIZNET5100_H_
 #define RA_WIZNET5100_H_
 
-#ifdef RA_STAR
+#ifdef ETH_WIZ5100
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
@@ -24,22 +24,22 @@ static EthernetClient NetClient;
 
 class RA_Wiznet5100 : public RA_Wifi
 {
-  public:
-    RA_Wiznet5100();
-    void Init();
-    void ReceiveData();
-    void ProcessEthernet();
-    void Update();
-    boolean PortalConnection;
-    unsigned long PortalTimeOut;
+public:
+	RA_Wiznet5100();
+	void Init();
+	void ReceiveData();
+	void ProcessEthernet();
+	void Update();
+	boolean PortalConnection;
+	unsigned long PortalTimeOut;
 
-  protected:
-    size_t write(uint8_t c);
-    size_t write(unsigned long n);
-    size_t write(long n);
-    size_t write(unsigned int n);
-    size_t write(int n);
+protected:
+	size_t write(uint8_t c);
+	size_t write(unsigned long n);
+	size_t write(long n);
+	size_t write(unsigned int n);
+	size_t write(int n);
 };
-#endif  // RA_STAR
+#endif  // ETH_WIZ5100
 #endif /* RA_WIZNET5100_H_ */
 

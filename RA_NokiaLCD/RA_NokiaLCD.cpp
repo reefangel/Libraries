@@ -689,9 +689,9 @@ void RA_NokiaLCD::SendCMD(const byte data)
 	bitOut(data & 0x02);
 	bitOut(data & 0x01);
 #endif // HWSPILCD
-#if defined wifi || defined RA_STAR
+#if defined wifi
     ReefAngel.Network.ReceiveData();
-#endif  // wifi || RA_STAR
+#endif  // wifi
 }
 
 
