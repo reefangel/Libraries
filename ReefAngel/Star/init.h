@@ -35,6 +35,8 @@ digitalWrite(actinic2PWMPin,LOW); //pull down resistor on actinicPWMPin
 digitalWrite(daylight2PWMPin,LOW); //pull down resistor on daylightPWMPin
 DDRJ&=(0<<4); //PJ4 as input (Alarm pin)
 PORTJ|=(1<<4); //PJ4 pull up
+DDRH|=(1<<2); // Port PH2 output (Exp Bus Power)
+cbi(PORTH,2); // Turn on exp bus power
 
 char temptext[25];
 if (InternalMemory.IMCheck_read()!=0xCF06A31E)
