@@ -104,6 +104,7 @@ private:
 
 public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);
+	void DrawCenterSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal, byte num_spaces);
 	void DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, int high, int low, byte warn_color);
 	void DrawSingleGraph(byte color, byte x, byte y, int EEaddr);
 

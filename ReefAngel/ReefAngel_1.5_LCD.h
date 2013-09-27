@@ -1115,7 +1115,8 @@ const unsigned PROGMEM char BAR_I_RIGHT[] = {
 
 enum ScreenItem {
 	PARAMS_2014,
-	INPUT_2004,
+	DIMMING_2014,
+	INPUT_2014,
 	RELAY_2014,
 #ifdef RelayExp
 	RELAY1_2014,
@@ -1131,7 +1132,7 @@ enum ScreenItem {
 	WL_2014,
 #endif // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
-	DIMMING_2014,
+	DIMMING_E_2014,
 #endif // PWMEXPANSION
 #ifdef IOEXPANSION
 	IO_2014,
@@ -1167,6 +1168,7 @@ void ReefAngelClass::Draw2014Main()
 {
 	const byte x1[]={0,45,89};
 	const byte x2[]={43,87,131};
+	const byte x3[]={22,66,110};
 	char text[7];
 	byte offset;
 	byte x,y,w;
@@ -1231,22 +1233,22 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawLargeText(COLOR_WHITE,PHColor,15,30,"pH");
 			x=1;
 			y=26;
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+15,y+4,"AP");
-			CheckOffset(x,y);
-			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+15,y+4,"DP");
-			CheckOffset(x,y);
-#endif // DisplayLEDPWM
-#ifdef RA_STAR
-			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+12,y+4,"AP2");
-			CheckOffset(x,y);
-			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+12,y+4,"DP2");
-			CheckOffset(x,y);
-#endif // RA_STAR
+//#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+//			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
+//			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+15,y+4,"AP");
+//			CheckOffset(x,y);
+//			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
+//			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+15,y+4,"DP");
+//			CheckOffset(x,y);
+//#endif // DisplayLEDPWM
+//#ifdef RA_STAR
+//			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
+//			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+12,y+4,"AP2");
+//			CheckOffset(x,y);
+//			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
+//			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+12,y+4,"DP2");
+//			CheckOffset(x,y);
+//#endif // RA_STAR
 #if defined SALINITYEXPANSION
 			LCD.Clear(COLOR_DARKSLATEGREY,x1[x],y,x2[x],y+13);
 			LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,"SAL");
@@ -1268,7 +1270,23 @@ void ReefAngelClass::Draw2014Main()
 			CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 			break;
-		case INPUT_2004:
+		case DIMMING_2014:
+			x=5;
+			y=5;
+			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,37,y,"Dimming");
+			y+=20;
+			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Daylight");
+			y+=20;
+			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Actinic");
+			y+=20;
+#ifdef RA_STAR
+			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Daylight 2");
+			y+=20;
+			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Actinic 2");
+			y+=20;
+#endif // RA_STAR
+			break;
+		case INPUT_2014:
 			x=25;
 			y=5;
 			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,47,y,"Input");
@@ -1321,7 +1339,7 @@ void ReefAngelClass::Draw2014Main()
 			break;
 #endif // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
-		case DIMMING_2014:
+		case DIMMING_E_2014:
 			x=5;
 			y=5;
 			for (int a=0; a<PWM_EXPANSION_CHANNELS; a++)
@@ -1465,66 +1483,113 @@ void ReefAngelClass::Draw2014Main()
 	switch (MenuItem_2014)
 	{
 	case PARAMS_2014:
-		offset=intlength(Params.Temp[T1_PROBE])+1;
-		ConvertNumToString(text, Params.Temp[T1_PROBE], 10);
-		LCD.DrawText(T1TempColor,DefaultBGColor, 19-(offset*2),16,text);
-		offset=intlength(Params.Temp[T2_PROBE])+1;
-		ConvertNumToString(text, Params.Temp[T2_PROBE], 10);
-		LCD.DrawText(T2TempColor,DefaultBGColor, 64-(offset*2),16,text);
-		offset=intlength(Params.Temp[T3_PROBE])+1;
-		ConvertNumToString(text, Params.Temp[T3_PROBE], 10);
-		LCD.DrawText(T3TempColor,DefaultBGColor, 108-(offset*2),16,text);
-		offset=intlength(Params.PH)+1;
-		ConvertNumToString(text, Params.PH, 100);
-		LCD.DrawText(PHColor,DefaultBGColor, 20-(offset*2),42,text);
+//		offset=intlength(Params.Temp[T1_PROBE])+1;
+//		ConvertNumToString(text, Params.Temp[T1_PROBE], 10);
+//		LCD.DrawText(T1TempColor,DefaultBGColor, 19-(offset*2),16,text);
+//		offset=intlength(Params.Temp[T2_PROBE])+1;
+//		ConvertNumToString(text, Params.Temp[T2_PROBE], 10);
+//		LCD.DrawText(T2TempColor,DefaultBGColor, 64-(offset*2),16,text);
+//		offset=intlength(Params.Temp[T3_PROBE])+1;
+//		ConvertNumToString(text, Params.Temp[T3_PROBE], 10);
+//		LCD.DrawText(T3TempColor,DefaultBGColor, 108-(offset*2),16,text);
+//		offset=intlength(Params.PH)+1;
+//		ConvertNumToString(text, Params.PH, 100);
+//		LCD.DrawText(PHColor,DefaultBGColor, 20-(offset*2),42,text);
+		LCD.DrawCenterSingleMonitor(Params.Temp[T1_PROBE],T1TempColor,22,16,10,1);
+		LCD.DrawCenterSingleMonitor(Params.Temp[T2_PROBE],T2TempColor,66,16,10,1);
+		LCD.DrawCenterSingleMonitor(Params.Temp[T3_PROBE],T3TempColor,110,16,10,1);
+		LCD.DrawCenterSingleMonitor(Params.PH,PHColor,22,42,100,1);
 		x=1;
 		y=42;
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-		offset=intlength(PWM.GetActinicValue())+1;
-		ConvertNumToString(text, PWM.GetActinicValue(), 1);
-		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-		CheckOffset(x,y);
-		offset=intlength(PWM.GetDaylightValue())+1;
-		ConvertNumToString(text, PWM.GetDaylightValue(), 1);
-		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-		CheckOffset(x,y);
-#endif // DisplayLEDPWM
-#ifdef RA_STAR
-		offset=intlength(PWM.GetActinic2Value())+1;
-		ConvertNumToString(text, PWM.GetActinic2Value(), 1);
-		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-		CheckOffset(x,y);
-		offset=intlength(PWM.GetDaylight2Value())+1;
-		ConvertNumToString(text, PWM.GetDaylight2Value(), 1);
-		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-		CheckOffset(x,y);
-#endif // RA_STAR
+//#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+//		offset=intlength(PWM.GetActinicValue())+1;
+//		ConvertNumToString(text, PWM.GetActinicValue(), 1);
+//		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+//		CheckOffset(x,y);
+//		offset=intlength(PWM.GetDaylightValue())+1;
+//		ConvertNumToString(text, PWM.GetDaylightValue(), 1);
+//		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+//		CheckOffset(x,y);
+//#endif // DisplayLEDPWM
+//#ifdef RA_STAR
+//		offset=intlength(PWM.GetActinic2Value())+1;
+//		ConvertNumToString(text, PWM.GetActinic2Value(), 1);
+//		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+//		CheckOffset(x,y);
+//		offset=intlength(PWM.GetDaylight2Value())+1;
+//		ConvertNumToString(text, PWM.GetDaylight2Value(), 1);
+//		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+//		CheckOffset(x,y);
+//#endif // RA_STAR
 #if defined SALINITYEXPANSION
-		offset=intlength(Params.Salinity)+1;
-		ConvertNumToString(text, Params.Salinity, 10);
-		LCD.DrawText(COLOR_DARKSLATEGREY,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+		LCD.DrawCenterSingleMonitor(Params.Salinity,COLOR_DARKSLATEGREY,x3[x],y,1,1);
 		CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
-		offset=intlength(Params.ORP)+1;
-		ConvertNumToString(text, Params.ORP, 1);
-		LCD.DrawText(COLOR_LIME,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+		LCD.DrawCenterSingleMonitor(Params.ORP,COLOR_LIME,x3[x],y,1,1);
 		CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
-		offset=intlength(Params.PHExp)+1;
-		ConvertNumToString(text, Params.PHExp, 100);
-		LCD.DrawText(COLOR_DARKGREEN,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+		LCD.DrawCenterSingleMonitor(Params.PHExp,COLOR_DARKGREEN,x3[x],y,1,1);
 		CheckOffset(x,y);
 #endif // PHEXPANSION
 #if defined HUMIDITYEXPANSION
-		offset=intlength(Humidity.GetLevel())+1;
-		ConvertNumToString(text, Humidity.GetLevel(), 1);
-		LCD.DrawText(COLOR_PLUM,DefaultBGColor, x1[x]+19-(offset*2),y,text);
+		LCD.DrawCenterSingleMonitor(Humidity.GetLevel(),COLOR_PLUM,x3[x],y,1,1);
 		CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 		break;
-	case INPUT_2004:
+	case DIMMING_2014:
+		x=5;
+		y=31;
+		byte d1,a1;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+		d1=PWM.GetDaylightValue();
+		a1=PWM.GetActinicValue();
+#else // DisplayLEDPWM
+		d1=0;
+		a1=0;
+#endif // DisplayLEDPWM
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,d1);
+		for(int b=0; b<d1; b++)
+			LCD.DrawImage(1,6,b+5,y+2,BAR_D_LEFT);
+		LCD.DrawImage(2,6,d1+5,y+2,BAR_CENTER);
+		for(int b=d1; b<100; b++)
+			LCD.DrawImage(1,6,b+7,y+2,BAR_D_RIGHT);
+		y+=20;
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,a1);
+		for(int b=0; b<a1; b++)
+			LCD.DrawImage(1,6,b+5,y+2,BAR_RB_LEFT);
+		LCD.DrawImage(2,6,a1+5,y+2,BAR_CENTER);
+		for(int b=a1; b<100; b++)
+			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
+		y+=20;
+#ifdef RA_STAR
+		byte d2,a2;
+		d2=PWM.GetDaylight2Value();
+		a2=PWM.GetActinic2Value();
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,d2);
+		for(int b=0; b<d2; b++)
+			LCD.DrawImage(1,6,b+5,y+2,BAR_D_LEFT);
+		LCD.DrawImage(2,6,d2+5,y+2,BAR_CENTER);
+		for(int b=d2; b<100; b++)
+			LCD.DrawImage(1,6,b+7,y+2,BAR_D_RIGHT);
+		y+=20;
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
+		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,a2);
+		for(int b=0; b<a2; b++)
+			LCD.DrawImage(1,6,b+5,y+2,BAR_RB_LEFT);
+		LCD.DrawImage(2,6,a2+5,y+2,BAR_CENTER);
+		for(int b=a2; b<100; b++)
+			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
+		y+=20;
+#endif // RA_STAR
+
+
+		break;
+	case INPUT_2014:
 		x=8;
 		y=25;
 		LCD.DrawImage(8,8,x,y,LowATO.IsActive()?ATO_GREEN:ATO_RED);
@@ -1581,7 +1646,7 @@ void ReefAngelClass::Draw2014Main()
 		break;
 #endif // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
-	case DIMMING_2014:
+	case DIMMING_E_2014:
 		x=5;
 		y=11;
 		for (int a=0; a<PWM_EXPANSION_CHANNELS; a++)
@@ -1605,7 +1670,7 @@ void ReefAngelClass::Draw2014Main()
 		y=5;
 		for (int a=0; a<IO_EXPANSION_CHANNELS; a++)
 		{
-			LCD.DrawImage(8,8,x,y,IO.GetChannel(a)?ATO_GREEN:ATO_RED);
+			LCD.DrawImage(8,8,x,y,IO.GetChannel(a)?ATO_RED:ATO_GREEN);
 			y+=17;
 		}
 		break;

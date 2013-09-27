@@ -1064,8 +1064,7 @@ void RA_NokiaLCD::DrawText(byte fcolor, byte bcolor, byte x, byte y, char *text)
             c = pgm_read_byte_near(font + j);
             DrawTextLine(fcolor, bcolor, x++, y, c);
         }
-//        DrawTextLine(fcolor, bcolor, x++, y, 0);
-        x++;
+        DrawTextLine(fcolor, bcolor, x++, y, 0);
         text++;
     }
 }
@@ -1423,6 +1422,20 @@ void RA_NokiaLCD::DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte 
     Clear(DefaultBGColor,x,y,x+30,y+8);
     DrawText(fcolor,DefaultBGColor,x,y,text);
 }
+
+void RA_NokiaLCD::DrawCenterSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal, byte num_spaces)
+{
+	char text[16];
+	byte offset=(intlength(Temp)+intlength(decimal)-1)*6/2;
+	offset+=(num_spaces*6);
+	if ( Temp == 0xFFFF ) Temp = 0;
+	if (Temp==0) offset+=3;
+	ConvertNumToString(text, Temp, decimal);
+    Clear(DefaultBGColor,x-offset,y,x-offset+(num_spaces*6)-1,y+7);
+    Clear(DefaultBGColor,x+offset-(num_spaces*6),y,x+offset,y+7);
+    DrawText(fcolor,DefaultBGColor,x-offset+(num_spaces*6),y,text);
+}
+
 void RA_NokiaLCD::DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, int high, int low, byte warn_color)
 {
   int mod=second()%2;
