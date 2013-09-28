@@ -567,11 +567,17 @@ void ReefAngelClass::Refresh()
 		LED.Off();
 		BusLocked=true;  // Bus is locked
 		bitSet(AlertFlags,BusLockFlag);
+#ifdef RA_STAR
+		sbi(PORTH,2); // Turn off exp bus power
+#endif // RA_STAR
 	}
 	else
 	{
 		BusLocked=false;  // Bus is not locked
 		bitClear(AlertFlags,BusLockFlag);
+#ifdef RA_STAR
+		cbi(PORTH,2); // Turn on exp bus power
+#endif // RA_STAR
 	}
 #endif
 }

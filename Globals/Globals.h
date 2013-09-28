@@ -68,6 +68,7 @@ void receiveEventMaster(int howMany);
 #undef wifi
 #define ETH_WIZ5100
 #define EMBEDDED_LEAK
+#define DIGITAL_JOYSTICK
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)

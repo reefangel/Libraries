@@ -235,6 +235,9 @@ SetInterval	KEYWORD2
 GetLevel	KEYWORD2
 Read	KEYWORD2
 
+#Network
+DirectAccess	KEYWORD2
+
 #InternalEEPROM
 
 MHOnHour_read	KEYWORD2
@@ -527,6 +530,7 @@ Timer	LITERAL1
 WaterLevel	LITERAL1
 Humidity	LITERAL1
 DCPump	LITERAL1
+Network	LITERAL1
 
 #######################################
 # Constants (LITERAL1)
