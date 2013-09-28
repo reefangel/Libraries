@@ -113,6 +113,35 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	}
 }
 
+int get8BitLuminanceValue(byte Percentage)
+{
+  return getLuminanceValue(255, 101, Percentage);
+}
+
+int get12BitLuminanceValue(byte Percentage)
+{
+  return getLuminanceValue(4095, 101, Percentage);
+}
+
+int getLuminanceValue(int PwmMax, int Steps, byte Percentage)
+{
+  int value;
+  float Lum, Pwm;
+  Lum = ((float) Percentage / (Steps - 1)) * 100.0;
+
+  if (Lum < 8.0)
+  {
+    Pwm = Lum / 903.3;
+  }
+  else
+  {
+    Pwm = pow(((Lum + 16) / 116), 3);
+  }
+
+  value = (int) round (Pwm * PwmMax);
+  return value;
+}
+
 byte MoonPhase()
 {
 	int m,d,y;
