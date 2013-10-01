@@ -140,6 +140,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 
 // Status Flag Bits
 #define LightsOnFlag   	0
+#define FeedingFlag   	1
+#define WaterChangeFlag	2
 
 
 // Relay Box Modules

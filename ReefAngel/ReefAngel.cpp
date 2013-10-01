@@ -1291,6 +1291,7 @@ void ReefAngelClass::Wavemaker2(byte WMRelay)
 
 void ReefAngelClass::FeedingModeStart()
 {
+	bitSet(StatusFlags,FeedingFlag);
 	// turn off ports
 	Relay.RelayMaskOff &= ~FeedingModePorts;
 #ifdef RelayExp
@@ -1311,6 +1312,7 @@ void ReefAngelClass::FeedingModeStart()
 
 void ReefAngelClass::WaterChangeModeStart()
 {
+	bitSet(StatusFlags,WaterChangeFlag);
 	// turn off ports
 	Relay.RelayMaskOff &= ~WaterChangePorts;
 #ifdef RelayExp
@@ -1448,6 +1450,8 @@ void ReefAngelClass::LightsOff()
 void ReefAngelClass::ExitMenu()
 {
 	// Handles the cleanup to return to the main screen
+	bitClear(StatusFlags,FeedingFlag);
+	bitClear(StatusFlags,WaterChangeFlag);
 	WDTReset();
 	ClearScreen(DefaultBGColor);
 	Timer[LCD_TIMER].Start();
