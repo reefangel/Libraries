@@ -1315,10 +1315,16 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #endif  // HUMIDITYEXPANSION
 
 #ifdef DCPUMPCONTROL
-	#define DCPumpbit		2
+	#define DCPumpbit	2
 #else
-	#define DCPumpbit		0
+	#define DCPumpbit	0
 #endif  // DCPUMPCONTROL
+
+#ifdef LEAKDETECTOREXPANSION
+	#define Leakbit		4
+#else
+	#define Leakbit		0
+#endif  // LEAKDETECTOREXPANSION
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

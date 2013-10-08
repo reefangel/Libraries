@@ -155,7 +155,7 @@ void ReefAngelClass::Init()
 
 #if defined wifi || defined I2CMASTER || defined ETH_WIZ5100
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
-	EM1 = HUMbit + DCPumpbit;
+	EM1 = HUMbit + DCPumpbit + Leakbit;
 
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
@@ -1457,6 +1457,7 @@ void ReefAngelClass::ExitMenu()
 	Timer[LCD_TIMER].Start();
 	SetDisplayedMenu(DEFAULT_MENU);
 	CheckDrawGraph();
+	redrawmenu=true;
 }
 
 void ReefAngelClass::SetDisplayedMenu(byte value)

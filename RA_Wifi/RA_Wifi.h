@@ -120,6 +120,20 @@ const prog_char XML_IO_END[] PROGMEM = "</IO>";
 const prog_char XML_C[] PROGMEM = "<C";
 const prog_char XML_C_END[] PROGMEM = "</C";
 #endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+const prog_char XML_LEAK[] PROGMEM = "<LEAK>";
+const prog_char XML_LEAK_END[] PROGMEM = "</LEAK>";
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+const prog_char XML_ALARM[] PROGMEM = "<ALARM>";
+const prog_char XML_ALARM_END[] PROGMEM = "</ALARM>";
+const prog_char XML_PWMA2[] PROGMEM = "<PWMA2>";
+const prog_char XML_PWMD2[] PROGMEM = "</PWMA2><PWMD2>";
+const prog_char XML_PWMA2O[] PROGMEM = "</PWMD2><PWMA2O>";
+const prog_char XML_PWMD2O[] PROGMEM = "</PWMA2O><PWMD2O>";
+const prog_char XML_PWMD2O_END[] PROGMEM = "</PWMD2O>";
+#endif  // RA_STAR
+
 #ifdef ENABLE_ATO_LOGGING
 const prog_char XML_ATOLOW_LOG_OPEN[] PROGMEM = "<AL";
 const prog_char XML_ATOLOW_LOG_CLOSE[] PROGMEM = "</AL";
@@ -259,11 +273,21 @@ const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 	const prog_char BannerDCD[] PROGMEM = "&dcd=";
 #endif  // DCPUMPCONTROL
 
-
 #ifdef CUSTOM_VARIABLES
 	const prog_char BannerCustomVar[] PROGMEM = "&c";
 #endif //CUSTOM_VARIABLES
 
+#ifdef LEAKDETECTOREXPANSION
+	const prog_char BannerLeak[] PROGMEM = "&leak=";
+#endif  // LEAKDETECTOREXPANSION
+
+#ifdef RA_STAR
+	const prog_char BannerAlarm[] PROGMEM = "&alarm=";
+	const prog_char BannerPWMA2[] PROGMEM = "&pwma2=";
+	const prog_char BannerPWMD2[] PROGMEM = "&pwmd2=";
+	const prog_char BannerPWMA2O[] PROGMEM = "&pwma2o=";
+	const prog_char BannerPWMD2O[] PROGMEM = "&pwmd2o=";
+#endif  // RA_STAR
 
 //const prog_char probe1_tag[] PROGMEM = "t1n";
 //const prog_char probe2_tag[] PROGMEM = "t2n";
