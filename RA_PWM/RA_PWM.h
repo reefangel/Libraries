@@ -116,6 +116,7 @@ public:
 #endif  // PWMEXPANSION
 
 private:
+	byte lastcrc;
 	byte ActinicPWMValue;
 	byte DaylightPWMValue;
 	byte ActinicPWMOverride;

@@ -39,6 +39,7 @@ RA_PWMClass::RA_PWMClass()
     LightsOverride = true; // Enable PWM override when lights on
 #ifdef PWMEXPANSION
     Present=false;
+    lastcrc=-1;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
 	{
 		ExpansionChannel[a]=0;
@@ -441,16 +442,24 @@ void RA_PWMClass::ExpansionSetPercent(byte p)
 
 void RA_PWMClass::ExpansionWrite()
 {
-	// setup PCA9685 for data receive
-	// we need this to make sure it will work if connected ofter controller is booted, so we need to send it all the time.
-	Wire.beginTransmission(I2CPWM_PCA9685);
-	Wire.write(0);
-	Wire.write(0xa1);
-	Wire.endTransmission();
+	byte thiscrc=0;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
+		thiscrc+=GetChannelValue(a);
+	if (millis()%60000<200) lastcrc=-1;
+	if (lastcrc!=thiscrc || millis()<5000)
 	{
-		Expansion(a,ExpansionChannel[a]);
-	}	
+		lastcrc=thiscrc;
+		// setup PCA9685 for data receive
+		// we need this to make sure it will work if connected ofter controller is booted, so we need to send it all the time.
+		Wire.beginTransmission(I2CPWM_PCA9685);
+		Wire.write(0);
+		Wire.write(0xa1);
+		Wire.endTransmission();
+		for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
+		{
+			Expansion(a,GetChannelValue(a));
+		}
+	}
 }
 
 byte RA_PWMClass::GetChannelValue(byte Channel)
