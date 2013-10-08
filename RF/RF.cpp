@@ -27,6 +27,7 @@ RFClass::RFClass()
 {
 	UseMemory=true;
 	VortechEnable=true;
+	lastcrc=-1;
 	for ( byte a = 0; a < RF_CHANNELS; a++ )
 	{
 		RadionChannels[a]=0;
@@ -56,7 +57,12 @@ void RFClass::SetMode(byte mode, byte speed, byte duration)
 			Speed=speed;
 			Duration=duration;
 			speed*=2.55;
-			SendData(mode, speed, duration);
+			if (millis()%60000<200) lastcrc=-1;
+			if ( (lastcrc!=mode+speed+duration) || millis()<5000 )
+			{
+				SendData(mode, speed, duration);
+				lastcrc=mode+speed+duration;
+			}
 		}
 		if (mode==TurnOff) VortechEnable=false;
 	}
