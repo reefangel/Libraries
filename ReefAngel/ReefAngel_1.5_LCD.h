@@ -1149,6 +1149,9 @@ enum ScreenItem {
 #ifdef DCPUMPCONTROL
 	DCPUMP_2014,
 #endif // DCPUMPCONTROL
+#ifdef CUSTOM_VARIABLES
+	CUSTOMVAR_2014,
+#endif // CUSTOM_VARIABLES
 	ALERT_FLAGS_2014,
 	STATUS_FLAGS_2014
 };
@@ -1255,8 +1258,8 @@ void ReefAngelClass::Draw2014Main()
 			CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
-			LCD.Clear(COLOR_LIME,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_LIME,x1[x]+12,y+4,"ORP");
+			LCD.Clear(COLOR_SADDLEBROWN,x1[x],y,x2[x],y+13);
+			LCD.DrawLargeText(COLOR_WHITE,COLOR_SADDLEBROWN,x1[x]+12,y+4,"ORP");
 			CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
@@ -1420,6 +1423,19 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Speed");
 			break;
 #endif // DCPUMPCONTROL
+#ifdef CUSTOM_VARIABLES
+		case CUSTOMVAR_2014:
+			x=15;
+			y=5;
+			for (int a=0; a<8; a++)
+			{
+				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Var");
+				ConvertNumToString(text, a, 1);
+				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,48,y,text);
+				y+=12;
+			}
+			break;
+#endif // CUSTOM_VARIABLES
 		case ALERT_FLAGS_2014:
 			x=25;
 			y=5;
@@ -1456,6 +1472,7 @@ void ReefAngelClass::Draw2014Main()
 				}
 			}
 			break;
+
 		case STATUS_FLAGS_2014:
 			x=25;
 			y=5;
@@ -1526,7 +1543,7 @@ void ReefAngelClass::Draw2014Main()
 		CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
-		LCD.DrawCenterSingleMonitor(Params.ORP,COLOR_LIME,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Params.ORP,COLOR_SADDLEBROWN,x3[x],y,1,1);
 		CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
@@ -1789,6 +1806,18 @@ void ReefAngelClass::Draw2014Main()
 		y+=17;
 		break;
 #endif // DCPUMPCONTROL
+#ifdef CUSTOM_VARIABLES
+	case CUSTOMVAR_2014:
+		x=90;
+		y=5;
+		for (int a=0; a<8; a++)
+		{
+			ConvertNumToString(text, CustomVar[a], 1);
+			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,text);
+			y+=12;
+		}
+		break;
+#endif // CUSTOM_VARIABLES
 	}
 #ifdef DATETIME24
 	LCD.DrawDateTimeISO8601(6, 107);
