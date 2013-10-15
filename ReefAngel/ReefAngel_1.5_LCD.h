@@ -1539,7 +1539,7 @@ void ReefAngelClass::Draw2014Main()
 //		CheckOffset(x,y);
 //#endif // RA_STAR
 #if defined SALINITYEXPANSION
-		LCD.DrawCenterSingleMonitor(Params.Salinity,COLOR_DARKSLATEGREY,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Params.Salinity,COLOR_DARKSLATEGREY,x3[x],y,10,1);
 		CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
@@ -1547,11 +1547,11 @@ void ReefAngelClass::Draw2014Main()
 		CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
-		LCD.DrawCenterSingleMonitor(Params.PHExp,COLOR_DARKGREEN,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Params.PHExp,COLOR_DARKGREEN,x3[x],y,100,1);
 		CheckOffset(x,y);
 #endif // PHEXPANSION
 #if defined HUMIDITYEXPANSION
-		LCD.DrawCenterSingleMonitor(Humidity.GetLevel(),COLOR_PLUM,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Humidity.GetLevel(),COLOR_PLUM,x3[x],y,10,1);
 		CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 		break;
@@ -3400,6 +3400,7 @@ void ReefAngelClass::SetupCalibratePH()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=PH_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3415,6 +3416,9 @@ void ReefAngelClass::SetupCalibratePH()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<30;a++)
 			{
@@ -3453,6 +3457,7 @@ void ReefAngelClass::SetupCalibratePH()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	redrawmenu = true;
 	if ( bSave )
 	{
 		// save PHMin & PHMax to memory
@@ -3488,6 +3493,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=PH_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3513,6 +3519,9 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iValue[b]=0;
 			for (int a=0;a<30;a++)
 			{
@@ -3649,6 +3658,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 		} while ( ! bDone );
 	}
 
+	redrawmenu = true;
 	ClearScreen(DefaultBGColor);
 
 	if ( bSave )
@@ -3674,6 +3684,7 @@ void ReefAngelClass::SetupCalibrateSalinity()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=SAL_CALIBRATE_MENU;
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Salinity");
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
 	do
@@ -3681,6 +3692,9 @@ void ReefAngelClass::SetupCalibrateSalinity()
 #if defined WDT || defined WDT_FORCE
 		wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+		ReefAngel.Network.ReceiveData();
+#endif  // wifi
 		iS=0;
 		for (int a=0;a<15;a++)
 		{
@@ -3718,6 +3732,8 @@ void ReefAngelClass::SetupCalibrateSalinity()
 		}
 	} while ( ! bDone );
 
+	ClearScreen(DefaultBGColor);
+	redrawmenu = true;
 	if ( bSave )
 	{
 		// save SalMax to memory
@@ -3741,6 +3757,7 @@ void ReefAngelClass::SetupCalibrateORP()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=ORP_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3758,6 +3775,9 @@ void ReefAngelClass::SetupCalibrateORP()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<15;a++)
 			{
@@ -3796,6 +3816,7 @@ void ReefAngelClass::SetupCalibrateORP()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	redrawmenu = true;
 	if ( bSave )
 	{
 		// save ORPMin & ORPMax to memory
@@ -3819,6 +3840,7 @@ void ReefAngelClass::SetupCalibratePHExp()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=PHE_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3834,6 +3856,9 @@ void ReefAngelClass::SetupCalibratePHExp()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<15;a++)
 			{
@@ -3872,6 +3897,7 @@ void ReefAngelClass::SetupCalibratePHExp()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	redrawmenu = true;
 	if ( bSave )
 	{
 		// save PHExpMin & PHExpMax to memory
@@ -3905,6 +3931,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=WL_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3923,6 +3950,9 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<15;a++)
 			{
@@ -4041,6 +4071,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 			}
 		} while ( ! bDone );
 	}
+	redrawmenu = true;
 	ClearScreen(DefaultBGColor);
 	if ( bSave )
 	{

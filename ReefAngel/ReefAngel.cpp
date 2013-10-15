@@ -177,10 +177,30 @@ void ReefAngelClass::Init()
 void ReefAngelClass::Refresh()
 {
 	WDTReset();
-	if (ChangeMode==FEEDING_MODE)
+	switch (ChangeMode)
+	{
+	case FEEDING_MODE:
 		FeedingModeStart();
-	if (ChangeMode==WATERCHANGE_MODE)
+		break;
+	case WATERCHANGE_MODE:
 		WaterChangeModeStart();
+		break;
+	case PH_CALIBRATE_MENU:
+		SetupCalibratePH();
+		break;
+	case SAL_CALIBRATE_MENU:
+		SetupCalibrateSalinity();
+		break;
+	case ORP_CALIBRATE_MENU:
+		SetupCalibrateORP();
+		break;
+	case PHE_CALIBRATE_MENU:
+		SetupCalibratePHExp();
+		break;
+	case WL_CALIBRATE_MENU:
+		SetupCalibrateWaterLevel();
+		break;
+	}
 	ChangeMode=0;
 	boolean LightRelayOn=false;
 	for (int l=0;l<8;l++)

@@ -205,6 +205,7 @@ void RA_Wifi::PushBuffer(byte inStr)
 #ifdef CUSTOM_VARIABLES
             else if (strncmp("GET /cvar", m_pushback, 9)==0) { reqtype = -REQ_M_CVAR; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
 #endif
+            else if (strncmp("GET /cal", m_pushback, 8)==0) { reqtype = -REQ_CALIBRATION; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -756,8 +757,14 @@ void RA_Wifi::ProcessHTTP()
 		}
 		case REQ_BTN_PRESS:
 		{
-			// Only accept button press for feeding and water change mode
-			if ( ReefAngel.DisplayedMenu == FEEDING_MODE || ReefAngel.DisplayedMenu==WATERCHANGE_MODE )
+			// Only accept button press for feeding, water change or calibration modes
+			if ( ReefAngel.DisplayedMenu == FEEDING_MODE ||
+				ReefAngel.DisplayedMenu == WATERCHANGE_MODE ||
+				ReefAngel.DisplayedMenu == PH_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == SAL_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == ORP_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == PHE_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == WL_CALIBRATE_MENU )
 			{
 				// Simulate a button press to stop the modes
 				ButtonPress++;
@@ -823,6 +830,29 @@ void RA_Wifi::ProcessHTTP()
 			// Reboot
 			ModeResponse(true);
 			while(1);
+			break;
+		}
+		case REQ_CALIBRATION:
+		{
+			ModeResponse(true);
+			if (weboption==0)
+				ReefAngel.ChangeMode=PH_CALIBRATE_MENU;
+#ifdef SALINITYEXPANSION
+			if (weboption==1)
+				ReefAngel.ChangeMode=SAL_CALIBRATE_MENU;
+#endif // SALINITYEXPANSION
+#ifdef ORPEXPANSION
+			if (weboption==2)
+				ReefAngel.ChangeMode=ORP_CALIBRATE_MENU;
+#endif // ORPEXPANSION
+#ifdef PHEXPANSION
+			if (weboption==3)
+				ReefAngel.ChangeMode=PHE_CALIBRATE_MENU;
+#endif // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+			if (weboption==4)
+				ReefAngel.ChangeMode=WL_CALIBRATE_MENU;
+#endif // WATERLEVELEXPANSION
 			break;
 		}
 		default:

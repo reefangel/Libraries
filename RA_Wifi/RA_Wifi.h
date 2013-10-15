@@ -186,6 +186,7 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_OVERRIDE	21		// Channel Override
 #define REQ_REBOOT		22		// Reboot
 #define REQ_M_CVAR		23		// Custom Variable
+#define REQ_CALIBRATION	24		// Calibration
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
