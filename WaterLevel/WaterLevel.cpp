@@ -54,7 +54,7 @@ int WaterLevelClass::Read(byte channel)
 	Wire.write(addr);
 	Wire.write(0x83);
 	Wire.endTransmission();
-	delay(1); // It takes 1ms for convertion to be completed
+	delay(10); // It takes 10ms for conversion to be completed
 	Wire.beginTransmission(I2CMultiWaterLevel);
 	Wire.write(0); // Convert Pointer
 	Wire.endTransmission();
