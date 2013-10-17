@@ -3457,7 +3457,9 @@ void ReefAngelClass::SetupCalibratePH()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
 	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save PHMin & PHMax to memory
@@ -3657,10 +3659,10 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 			}
 		} while ( ! bDone );
 	}
-
-	redrawmenu = true;
 	ClearScreen(DefaultBGColor);
-
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
@@ -3731,9 +3733,10 @@ void ReefAngelClass::SetupCalibrateSalinity()
 			}
 		}
 	} while ( ! bDone );
-
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
 	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save SalMax to memory
@@ -3816,7 +3819,9 @@ void ReefAngelClass::SetupCalibrateORP()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
 	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save ORPMin & ORPMax to memory
@@ -3897,7 +3902,9 @@ void ReefAngelClass::SetupCalibratePHExp()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
 	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save PHExpMin & PHExpMax to memory
@@ -4071,8 +4078,10 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 			}
 		} while ( ! bDone );
 	}
-	redrawmenu = true;
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save WaterLevelMin & WaterLevelMax to memory
