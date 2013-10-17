@@ -188,18 +188,26 @@ void ReefAngelClass::Refresh()
 	case PH_CALIBRATE_MENU:
 		SetupCalibratePH();
 		break;
+#ifdef SALINITYEXPANSION
 	case SAL_CALIBRATE_MENU:
 		SetupCalibrateSalinity();
 		break;
+#endif // SALINITYEXPANSION
+#ifdef ORPEXPANSION
 	case ORP_CALIBRATE_MENU:
 		SetupCalibrateORP();
 		break;
+#endif // ORPEXPANSION
+#ifdef PHEXPANSION
 	case PHE_CALIBRATE_MENU:
 		SetupCalibratePHExp();
 		break;
+#endif // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
 		SetupCalibrateWaterLevel();
 		break;
+#endif // WATERLEVELEXPANSION
 	}
 	ChangeMode=0;
 	boolean LightRelayOn=false;
