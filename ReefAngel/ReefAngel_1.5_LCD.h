@@ -3956,7 +3956,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 			iO[b]=0;
 			for (int a=0;a<15;a++)
 			{
-				iO[b] += WaterLevel.Read();
+				iO[b] += WaterLevel.Read(wl_channel);
 			}
 			iO[b]/=15;
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
