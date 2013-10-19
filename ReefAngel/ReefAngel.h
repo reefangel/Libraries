@@ -157,8 +157,8 @@ public:
 	byte SelectedMenuItem;
 	byte DisplayedMenu;
 	bool showmenu;
-#ifdef MAIN_2014
 	boolean Splash;
+#ifdef MAIN_2014
 	byte MenuItem_2014;
 	String CustomLabels[72];
 	void InitCustomLabels();
