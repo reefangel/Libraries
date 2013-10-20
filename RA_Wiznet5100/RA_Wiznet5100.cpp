@@ -44,65 +44,69 @@ void RA_Wiznet5100::Update()
 	const byte* ipAddr=EthernetDHCP.ipAddress();
 
 	if (ipAddr[0]!=0)
+	{
 		sbi(PORTD,5);
-	else
-		cbi(PORTD,5);
-	// Let's check for any incoming data
-    ReceiveData();
+		// Let's check for any incoming data
+	    ReceiveData();
 
-    //Portal server
-    // Read and dump what the server is returning from the Portal GET request.
-	if (NetClient.available() && PortalConnection)
-	{
-		while(NetClient.available())
+	    //Portal server
+	    // Read and dump what the server is returning from the Portal GET request.
+		if (NetClient.available() && PortalConnection)
 		{
-			wdt_reset();
-			char c = NetClient.read();
-		}
-	}
-
-	// if the server has disconnected, stop the client
-	if (!NetClient.connected() && PortalConnection)
-	{
-		PortalConnection=false;
-		NetClient.stop();
-	}
-
-	// if request timed out, stop the client
-	if (NetClient.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
-	{
-		PortalConnection=false;
-		NetClient.stop();
-	}
-
-	// Relay server
-	if (!RelayClient.connected()) // Check for relay server closed connection
-	{
-		cbi(PORTD,4);
-		RelayConnected=false;
-		RelayIndex=0;
-		RelayClient.stop(); // Make sure we free up the client
-		delay(100);
-		RelayClient.noblockconnect(RelayServer, 80);
-	}
-	else
-	{
-		if (RelayClient.checkconnect()==0x17) // Check for connection established
-		{
-			if (!RelayConnected)
+			while(NetClient.available())
 			{
-				sbi(PORTD,4);
-				RelayConnected=true;
-//				Serial1.println("Connected");
-				RelayClient.print("POST /");
-				RelayClient.print(uid);
-				RelayClient.println(" HTTP/1.1");
-				RelayClient.println("Upgrade: PTTH/1.0");
-				RelayClient.println("Connection: Upgrade");
-				RelayClient.println("Host: try.yaler.net");
-				RelayClient.println();
+				wdt_reset();
+				char c = NetClient.read();
 			}
 		}
+
+		// if the server has disconnected, stop the client
+		if (!NetClient.connected() && PortalConnection)
+		{
+			PortalConnection=false;
+			NetClient.stop();
+		}
+
+		// if request timed out, stop the client
+		if (NetClient.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
+		{
+			PortalConnection=false;
+			NetClient.stop();
+		}
+
+		// Relay server
+		if (!RelayClient.connected()) // Check for relay server closed connection
+		{
+			cbi(PORTD,4);
+			RelayConnected=false;
+			RelayIndex=0;
+			RelayClient.stop(); // Make sure we free up the client
+			delay(100);
+			RelayClient.noblockconnect(RelayServer, 80);
+		}
+		else
+		{
+			if (RelayClient.checkconnect()==0x17) // Check for connection established
+			{
+				if (!RelayConnected)
+				{
+					sbi(PORTD,4);
+					RelayConnected=true;
+	//				Serial1.println("Connected");
+					RelayClient.print("POST /");
+					RelayClient.print(uid);
+					RelayClient.println(" HTTP/1.1");
+					RelayClient.println("Upgrade: PTTH/1.0");
+					RelayClient.println("Connection: Upgrade");
+					RelayClient.println("Host: try.yaler.net");
+					RelayClient.println();
+				}
+			}
+		}
+	}
+	else
+	{
+		cbi(PORTD,5);
 	}
 }
 
@@ -161,7 +165,7 @@ void RA_Wiznet5100::ProcessEthernet()
 	wdt_reset();
 	ProcessHTTP();
 
-	cbi(PORTD,4);
+//	cbi(PORTD,4);
 	NetClient.stop();
 	m_pushbackindex=0;
 }
@@ -212,7 +216,7 @@ void RA_Wiznet5100::ProcessRelayEthernet()
 	wdt_reset();
 	ProcessHTTP();
 //	Serial1.println("Done processing");
-	cbi(PORTD,4);
+//	cbi(PORTD,4);
 	RelayIndex=0;
 	RelayClient.stop();
 	m_pushbackindex=0;
