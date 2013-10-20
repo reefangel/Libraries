@@ -69,6 +69,9 @@ void receiveEventMaster(int howMany);
 #define ETH_WIZ5100
 #define EMBEDDED_LEAK
 #define DIGITAL_JOYSTICK
+#define HWSPILCD
+#define MAIN_2014
+#define FONT_8x8
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
