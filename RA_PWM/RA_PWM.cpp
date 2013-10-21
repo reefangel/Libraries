@@ -444,7 +444,7 @@ void RA_PWMClass::ExpansionWrite()
 {
 	byte thiscrc=0;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
-		thiscrc+=GetChannelValue(a)*a;
+		thiscrc+=GetChannelValue(a)*(a+1);
 	if (millis()%60000<200) lastcrc=-1;
 	if (lastcrc!=thiscrc || millis()<5000)
 	{
