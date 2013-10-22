@@ -72,6 +72,7 @@ void RA_Wifi::ModeResponse(bool fOk)
 
 void RA_Wifi::PushBuffer(byte inStr)
 {
+	Serial.write(inStr);
 	m_pushback[m_pushbackindex]=inStr;
 	m_pushback[m_pushbackindex+1]=0;
 	if (reqtype>0 && reqtype<128)
@@ -1297,23 +1298,41 @@ void RA_Wifi::Portal(char *username)
 #endif  // RelayExp
    */
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
+#ifdef ETH_WIZ5100
+  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,"");
+#endif
   portalusername=username;
 }
 
 void RA_Wifi::Portal(char *username, char *key)
 {
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
+#ifdef ETH_WIZ5100
+  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,key);
+#endif
   portalusername=username;
 }
 
 void RA_Wifi::SendPortal(char *username, char*key)
 {
-#ifdef ETH_WIZ5100
-  ReefAngel.Network.PortalConnection=true;
-  if (NetClient.connect(PortalServer, 80))
-  {
-#endif
   ReefAngel.Timer[PORTAL_TIMER].Start();
+#ifdef ETH_WIZ5100
+  Serial.println("Portal Call");
+  if (!ReefAngel.Network.FoundIP) return;
+  if (!ReefAngel.Network.PortalConnection)
+  {
+	  ReefAngel.Network.PortalConnection=true;
+	  PortalWaiting=false;
+	  ReefAngel.Network.PortalConnect();
+	  Serial.println("Connecting...");
+  }
+  else
+  {
+	if (ReefAngel.Network.IsPortalConnected() && !PortalWaiting) // Check for connection established
+	{
+		PortalWaiting=true;
+		Serial.println("Connected");
+#endif
   PROGMEMprint(BannerGET);
   print(ReefAngel.Params.Temp[T1_PROBE], DEC);
   PROGMEMprint(BannerT2);
@@ -1492,6 +1511,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif // ETH_WIZ5100
   println("\n\n");
 #ifdef ETH_WIZ5100
+	Serial.println("Data Sent");
+	}
   }
 #endif // ETH_WIZ5100
 }

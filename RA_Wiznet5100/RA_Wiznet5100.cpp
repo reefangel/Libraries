@@ -14,7 +14,6 @@
 
 RA_Wiznet5100::RA_Wiznet5100()
 {
-	PortalConnection=false;
 	PortalTimeOut=millis();
 }
 
@@ -31,9 +30,13 @@ void RA_Wiznet5100::Init()
 	//  Serial.println();
 	DDRD|=(1<<4); // Port PD4 output
 	DDRD|=(1<<5); // Port PD5 output
+	FoundIP=false;
 	RelayConnected=false;
 	RelayIndex=0;
 	RelayClient.setTimeout(100);
+	PortalClient.setTimeout(100);
+	PortalConnection=false;
+	PortalWaiting=false;
 }
 
 void RA_Wiznet5100::Update()
@@ -45,33 +48,40 @@ void RA_Wiznet5100::Update()
 
 	if (ipAddr[0]!=0)
 	{
+		FoundIP=true;
 		sbi(PORTD,5);
 		// Let's check for any incoming data
 	    ReceiveData();
 
 	    //Portal server
 	    // Read and dump what the server is returning from the Portal GET request.
-		if (NetClient.available() && PortalConnection)
+		if (PortalClient.available() && PortalConnection)
 		{
-			while(NetClient.available())
+			Serial.println("Receiving Data...");
+			while(PortalClient.available())
 			{
 				wdt_reset();
-				char c = NetClient.read();
+				char c = PortalClient.read();
+				Serial.write(c);
 			}
+			Serial.println();
+			Serial.println("Portal Received");
 		}
 
 		// if the server has disconnected, stop the client
-		if (!NetClient.connected() && PortalConnection)
+		if (!PortalClient.connected() && PortalConnection)
 		{
+			Serial.println("Portal Disconnected");
 			PortalConnection=false;
-			NetClient.stop();
+			PortalClient.stop();
 		}
 
 		// if request timed out, stop the client
-		if (NetClient.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
+		if (PortalClient.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
 		{
+			Serial.println("Portal Timeout");
 			PortalConnection=false;
-			NetClient.stop();
+			PortalClient.stop();
 		}
 
 		// Relay server
@@ -106,6 +116,7 @@ void RA_Wiznet5100::Update()
 	}
 	else
 	{
+		FoundIP=false;
 		cbi(PORTD,5);
 	}
 }
@@ -227,11 +238,22 @@ void RA_Wiznet5100::DirectAccess(String uniqueid)
 	uid=uniqueid;
 }
 
-size_t RA_Wiznet5100::write(uint8_t c) { if (RelayIndex) return RelayClient.write((uint8_t)c); else return NetClient.write((uint8_t)c); }
-size_t RA_Wiznet5100::write(unsigned long n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
-size_t RA_Wiznet5100::write(long n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
-size_t RA_Wiznet5100::write(unsigned int n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
-size_t RA_Wiznet5100::write(int n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
+void RA_Wiznet5100::PortalConnect()
+{
+	  PortalClient.noblockconnect(PortalServer, 80);
+	  PortalTimeOut=millis();
+}
+
+boolean RA_Wiznet5100::IsPortalConnected()
+{
+	return PortalClient.checkconnect()==0x17;
+}
+
+size_t RA_Wiznet5100::write(uint8_t c) { if (RelayIndex) return RelayClient.write((uint8_t)c); else if (PortalConnection) return PortalClient.write((uint8_t)c); else return NetClient.write((uint8_t)c); }
+//size_t RA_Wiznet5100::write(unsigned long n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else if (PortalConnection) return PortalClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
+//size_t RA_Wiznet5100::write(long n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else if (PortalConnection) return PortalClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
+//size_t RA_Wiznet5100::write(unsigned int n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else if (PortalConnection) return PortalClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
+//size_t RA_Wiznet5100::write(int n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else if (PortalConnection) return PortalClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }
 
 #endif // ETH_WIZ5100
 
