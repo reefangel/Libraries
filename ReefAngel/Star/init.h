@@ -43,7 +43,7 @@ DDRJ&=(0<<4); //PJ4 as input (Alarm pin)
 PORTJ|=(1<<4); //PJ4 pull up
 DDRH|=(1<<2); // Port PH2 output (Exp Bus Power)
 cbi(PORTH,2); // Turn on exp bus power
-SDFound=(PINJ & (1<<PJ3))!=0;
+SDFound=(PINJ & (1<<PJ3))==0;
 if (SDFound) SD.begin(SDPin);
 wdt_reset();
 

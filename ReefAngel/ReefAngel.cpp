@@ -363,7 +363,7 @@ void ReefAngelClass::Refresh()
 #if defined RA_STAR
 	analogWrite(actinic2PWMPin, PWM.GetActinic2Value()*2.55);
 	analogWrite(daylight2PWMPin, PWM.GetDaylight2Value()*2.55);
-	SDFound=(PINJ & (1<<PJ3))!=0;
+	SDFound=(PINJ & (1<<PJ3))==0;
 #endif // RA_STAR
 
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
