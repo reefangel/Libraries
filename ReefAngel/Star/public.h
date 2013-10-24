@@ -10,6 +10,8 @@ byte RANetData[RANET_SIZE];
 byte RANetStatus[RANET_SIZE];
 unsigned long RANetlastmillis;
 
+bool SDFound;
+
 void ShowInterface();
 void DrawStandardMain();
 void StoreGraphData();

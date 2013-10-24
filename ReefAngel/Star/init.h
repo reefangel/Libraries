@@ -13,6 +13,10 @@ I2CCommand=0;
 Wire.onReceive(NULL);
 Wire.onRequest(NULL);
 Wire.begin();
+pinMode(SDPin,OUTPUT);
+digitalWrite(SDPin,HIGH);
+pinMode(HW_SPI_Pin,OUTPUT);
+SPI.begin();
 #endif
 setSyncProvider(RTC.get);   // the function to get the time from the RTC
 setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
@@ -33,10 +37,15 @@ pinMode(actinic2PWMPin,OUTPUT);
 pinMode(daylight2PWMPin,OUTPUT);
 digitalWrite(actinic2PWMPin,LOW); //pull down resistor on actinicPWMPin
 digitalWrite(daylight2PWMPin,LOW); //pull down resistor on daylightPWMPin
+DDRJ&=(0<<3); //PJ3 as input (SD card detect pin)
+PORTJ|=(1<<3); //PJ3 pull up
 DDRJ&=(0<<4); //PJ4 as input (Alarm pin)
 PORTJ|=(1<<4); //PJ4 pull up
 DDRH|=(1<<2); // Port PH2 output (Exp Bus Power)
 cbi(PORTH,2); // Turn on exp bus power
+SDFound=(PINJ & (1<<PJ3))!=0;
+if (SDFound) SD.begin(SDPin);
+wdt_reset();
 
 char temptext[25];
 if (InternalMemory.IMCheck_read()!=0xCF06A31E)
