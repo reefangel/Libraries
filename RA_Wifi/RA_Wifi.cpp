@@ -72,7 +72,6 @@ void RA_Wifi::ModeResponse(bool fOk)
 
 void RA_Wifi::PushBuffer(byte inStr)
 {
-	Serial.write(inStr);
 	m_pushback[m_pushbackindex]=inStr;
 	m_pushback[m_pushbackindex+1]=0;
 	if (reqtype>0 && reqtype<128)
