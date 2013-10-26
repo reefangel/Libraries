@@ -155,8 +155,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define RF_CHANNELS						6
 #define WATERLEVEL_CHANNELS				5
 
-#define RANET_SIZE						24 // We do not count CRC nor \r\n
-#define RANET_MODULES					9 // 8 Exp. Boxes, 1 Dimming
+// 8 Exp. Boxes, 1 Dimming
+// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
+#define RANET_SIZE						26
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file

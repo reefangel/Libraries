@@ -462,7 +462,7 @@ void ReefAngelClass::Refresh()
 		RANetlastmillis=millis();
 		RANetCRC=0;
 		RANetData[0]=RANetSeq;
-		RANetData[1]=RANET_SIZE*2;
+		RANetData[1]=RANET_SIZE;
 		for (int a=0;a<MAX_RELAY_EXPANSION_MODULES;a++)
 		{
 #ifdef RelayExp
@@ -479,20 +479,23 @@ void ReefAngelClass::Refresh()
 		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 		{
 #ifdef PWMEXPANSION
-			RANetData[18+a]=PWM.GetChannel(a);
+			RANetData[18+a]=PWM.GetChannelValue(a);
 #else
 			RANetData[18+a]=0;
 #endif // PWMEXPANSION
 		}
-		char buf[3];
-		for (int a=0;a<RANET_SIZE;a++)
+//		char buf[3];
+		for (int a=0;a<RANET_SIZE-2;a++)
 		{
 			RANetCRC+=RANetData[a];
-			sprintf(buf,"%02x",RANetData[a]);
-			RANET_SERIAL.print(buf);
+			RANET_SERIAL.write(RANetData[a]);
+//			sprintf(buf,"%02x",RANetData[a]);
+//			RANET_SERIAL.print(buf);
 		}
-		sprintf(buf,"%02x",RANetCRC);
-		RANET_SERIAL.println(buf);
+		RANET_SERIAL.write(RANetCRC);
+		RANET_SERIAL.println();
+//		sprintf(buf,"%02x",RANetCRC);
+//		RANET_SERIAL.println(buf);
 		RANetSeq++;
 	}
 #endif // RANET
