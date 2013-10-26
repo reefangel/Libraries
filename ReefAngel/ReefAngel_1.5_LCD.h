@@ -96,6 +96,9 @@ const prog_char mainmenu_0_label[] PROGMEM = "Feeding";
 const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
 const prog_char mainmenu_2_label[] PROGMEM = "ATO Clear";
 const prog_char mainmenu_3_label[] PROGMEM = "Overheat Clear";
+#ifdef LEAKDETECTOREXPANSION
+const prog_char mainmenu_11_label[] PROGMEM = "Leak Clear";
+#endif  // LEAKDETECTOREXPANSION
 const prog_char mainmenu_4_label[] PROGMEM = "PH Calibration";
 #ifdef SALINITYEXPANSION
 const prog_char mainmenu_5_label[] PROGMEM = "Sal Calibration";
@@ -120,6 +123,9 @@ PROGMEM const char * const mainmenu_items[] = {
 		mainmenu_1_label,
 		mainmenu_2_label,
 		mainmenu_3_label,
+#ifdef LEAKDETECTOREXPANSION
+		mainmenu_11_label,
+#endif  // LEAKDETECTOREXPANSION
 		mainmenu_4_label,
 #ifdef SALINITYEXPANSION
 		mainmenu_5_label,
@@ -145,6 +151,9 @@ enum MainMenuItem {
 	MainMenu_WaterChangeMode,
 	MainMenu_ATOClear,
 	MainMenu_OverheatClear,
+#ifdef LEAKDETECTOREXPANSION
+	MainMenu_LeakClear,
+#endif  // LEAKDETECTOREXPANSION
 	MainMenu_PHCalibration,
 #ifdef SALINITYEXPANSION
 	MainMenu_SalinityCalibration,
@@ -180,6 +189,9 @@ const prog_char mainmenu_3_label[] PROGMEM = "Temps ->";
 const prog_char mainmenu_4_label[] PROGMEM = "Timeouts ->";
 #endif  // if defined SetupExtras || defined ATOSetup
 const prog_char mainmenu_5_label[] PROGMEM = "Setup ->";
+#ifdef LEAKDETECTOREXPANSION
+const prog_char mainmenu_7_label[] PROGMEM = "Leak Clear";
+#endif  // LEAKDETECTOREXPANSION
 #ifdef VersionMenu
 const prog_char mainmenu_6_label[] PROGMEM = "Version";
 #endif  // VersionMenu
@@ -194,6 +206,9 @@ PROGMEM const char * const mainmenu_items[] = {
 		mainmenu_4_label,
 #endif  // if defined SetupExtras || defined ATOSetup
 		mainmenu_5_label,
+#ifdef LEAKDETECTOREXPANSION
+		mainmenu_7_label,
+#endif  // LEAKDETECTOREXPANSION
 #ifdef VersionMenu
 		mainmenu_6_label
 #endif  // VersionMenu
@@ -209,6 +224,9 @@ enum MainMenuItem {
 	MainMenu_Timeouts,
 #endif  // if defined SetupExtras || defined ATOSetup
 	MainMenu_Setup,
+#ifdef LEAKDETECTOREXPANSION
+	MainMenu_LeakClear,
+#endif  // LEAKDETECTOREXPANSION
 #ifdef VersionMenu
 	MainMenu_Version
 #endif  // VersionMenu
@@ -2585,6 +2603,15 @@ void ReefAngelClass::ProcessButtonPressMain()
 	}
 #endif  // SIMPLE_MENU
 
+#ifdef LEAKDETECTOREXPANSION
+	case MainMenu_LeakClear:
+	{
+		LeakClear();
+		DisplayMenuEntry("Clear Leak");
+		showmenu = false;
+		break;
+	}
+#endif // LEAKDETECTOREXPANSION
 
 #ifdef VersionMenu
 	case MainMenu_Version:
