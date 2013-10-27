@@ -77,6 +77,7 @@ void ReefAngelClass::Init()
 	Flags = 0;
 	AlertFlags = 0;
 	StatusFlags = 0;
+	Splash=true;
 	Relay.AllOff();
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;

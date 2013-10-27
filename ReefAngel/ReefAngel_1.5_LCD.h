@@ -434,7 +434,7 @@ void ReefAngelClass::ShowInterface()
 		Splash=false;
 		ClearScreen(DefaultBGColor);
 	}
-#endif // RA_STAR
+#endif // MAIN_2014
 	// are we displaying the menu or not??
 	if ( showmenu )
 	{
