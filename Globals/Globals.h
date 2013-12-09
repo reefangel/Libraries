@@ -268,6 +268,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define okPin               13
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
+#define BuzzerPin			48
 #define SDPin				49
 #define HW_SPI_Pin			53
 
@@ -329,9 +330,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_GREEN		14
 #define OVERRIDE_RF_BLUE		15
 #define OVERRIDE_RF_INTENSITY	16
-#define OVERRIDE_CHANNELS		17
-#define OVERRIDE_DAYLIGHT2		18
-#define OVERRIDE_ACTINIC2		19
+#define OVERRIDE_DAYLIGHT2		17
+#define OVERRIDE_ACTINIC2		18
+#define OVERRIDE_CHANNELS		19 // This is the last channel for if comparisons
 
 
 // Message IDs
@@ -1088,9 +1089,9 @@ typedef struct Compensation
 uint16_t read16(File f);
 uint32_t read32(File f);
 
-//#define ILI9341
+#define ILI9341
 //#define HX8347D
-#define HX8347G
+//#define HX8347G
 
 const prog_char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
 const prog_char NoIMLine2[] PROGMEM = "File";

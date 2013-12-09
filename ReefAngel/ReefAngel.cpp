@@ -187,26 +187,46 @@ void ReefAngelClass::Refresh()
 		WaterChangeModeStart();
 		break;
 	case PH_CALIBRATE_MENU:
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		SetupTouchCalibratePH();
+#else
 		SetupCalibratePH();
+#endif // RA_TOUCH
 		break;
 #ifdef SALINITYEXPANSION
 	case SAL_CALIBRATE_MENU:
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		SetupTouchCalibrateSal();
+#else
 		SetupCalibrateSalinity();
+#endif // RA_TOUCH
 		break;
 #endif // SALINITYEXPANSION
 #ifdef ORPEXPANSION
 	case ORP_CALIBRATE_MENU:
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		SetupTouchCalibrateORP();
+#else
 		SetupCalibrateORP();
+#endif // RA_TOUCH
 		break;
 #endif // ORPEXPANSION
 #ifdef PHEXPANSION
 	case PHE_CALIBRATE_MENU:
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		SetupTouchCalibratePHExp();
+#else
 		SetupCalibratePHExp();
+#endif // RA_TOUCH
 		break;
 #endif // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		SetupTouchCalibrateWL();
+#else
 		SetupCalibrateWaterLevel();
+#endif // RA_TOUCH
 		break;
 #endif // WATERLEVELEXPANSION
 	}

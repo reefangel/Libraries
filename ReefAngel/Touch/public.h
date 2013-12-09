@@ -19,7 +19,6 @@ FuncPtr menu_button_functions2[6];
 FuncPtr menu_button_functions3[6];
 FuncPtr menu_button_functions4[6];
 
-boolean Splash;
 byte LastOrientation;
 boolean MilitaryTime;
 signed char DisplayedScreen;

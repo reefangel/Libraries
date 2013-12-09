@@ -15,6 +15,7 @@ Wire.begin();
 pinMode(SDPin,OUTPUT);
 digitalWrite(SDPin,HIGH);
 pinMode(HW_SPI_Pin,OUTPUT);
+pinMode(BuzzerPin,OUTPUT);
 SPI.begin();
 #endif
 setSyncProvider(RTC.get);   // the function to get the time from the RTC

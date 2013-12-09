@@ -567,6 +567,10 @@ void RA_Wifi::ProcessHTTP()
 #ifdef RFEXPANSION
 				if (weboption2>=11 && weboption2<=16) ReefAngel.RF.SetChannelOverride(weboption2-11,weboption);
 #endif // RFEXPANSION
+#ifdef RA_STAR
+				if (weboption2==17) ReefAngel.PWM.SetDaylight2Override(weboption);
+				else if (weboption2==18) ReefAngel.PWM.SetActinic2Override(weboption);
+#endif // RA_STAR
 				s = 9;  // <P>OK</P>
 				// add in the channel, twice
 				s += (intlength(weboption2)*2);

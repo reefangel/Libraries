@@ -75,3 +75,6 @@ void SetupDateTime();
 void SetupDosingPump();
 #endif  // DosingPumpSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
+
+void BuzzerOn(byte style=0);
+void BuzzerOff();
