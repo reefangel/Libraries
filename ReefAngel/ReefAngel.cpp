@@ -69,6 +69,14 @@ void ReefAngelClass::Init()
 #endif // DisplayLEDPWM
 	digitalWrite(0,HIGH); //pull up resistor on RX
 	digitalWrite(1,HIGH); //pull up resistor on TX
+#ifdef __AVR_ATmega2560__
+	digitalWrite(14,HIGH); //pull up resistor on TX3
+	digitalWrite(15,HIGH); //pull up resistor on RX3
+	digitalWrite(16,HIGH); //pull up resistor on TX2
+	digitalWrite(17,HIGH); //pull up resistor on RX2
+	digitalWrite(18,HIGH); //pull up resistor on TX1
+	digitalWrite(19,HIGH); //pull up resistor on RX1
+#endif // __AVR_ATmega2560__
 	TempSensor.Init();
 	RAStart=now();
 	LastStart = RAStart;  // Set the time normal mode is started
@@ -1634,107 +1642,110 @@ void SendMaster(byte ID, byte data1, byte data2)
 #ifdef I2CMASTER 
 void ReefAngelClass::UpdateTouchDisplay()
 {
-	// ID 0 - T1, T2, T3 and pH
-	Wire.beginTransmission(I2CRA_TouchDisplay);
-	Wire.write(0);
-	Wire.write(Params.Temp[T1_PROBE]%256);
-	Wire.write(Params.Temp[T1_PROBE]/256);
-	Wire.write(Params.Temp[T2_PROBE]%256);
-	Wire.write(Params.Temp[T2_PROBE]/256);
-	Wire.write(Params.Temp[T3_PROBE]%256);
-	Wire.write(Params.Temp[T3_PROBE]/256);
-	Wire.write(Params.PH%256);
-	Wire.write(Params.PH/256);
-	Wire.endTransmission();
-	delay(10);
-	wdt_reset();
-
-	// ID 1 - R, RON, ROFF, ATO, EM, REM, DisplayedMenu and AlertFlags
-	byte atostatus=0;
-	Wire.beginTransmission(I2CRA_TouchDisplay);
-	Wire.write(1);
-	Wire.write(Relay.RelayData);
-	Wire.write(Relay.RelayMaskOn);
-	Wire.write(Relay.RelayMaskOff);
-	if (ReefAngel.LowATO.IsActive())
-		bitSet(atostatus,0);
-	else
-		bitClear(atostatus,0);
-	if (ReefAngel.HighATO.IsActive())
-		bitSet(atostatus,1);
-	else
-		bitClear(atostatus,1);
-	Wire.write(atostatus);
-	Wire.write(EM);
-	Wire.write(REM);
-	Wire.write(DisplayedMenu);
-	Wire.write(AlertFlags);
-	Wire.endTransmission();
-	delay(10);
-	wdt_reset();
-
-	// ID 2 - PWM Daylight, Actinic and Exp. Channels
-	Wire.beginTransmission(I2CRA_TouchDisplay);
-	Wire.write(2);
-#ifdef DisplayLEDPWM
-	Wire.write(PWM.GetDaylightValue());
-	Wire.write(PWM.GetActinicValue());
-#else
-	Wire.write(0);
-	Wire.write(0);
-#endif  // DisplayLEDPWM
-
-#ifdef PWMEXPANSION
-	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-		Wire.write(PWM.GetChannelValue(a));
-#else
-	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+	if (millis()-lastmasterupdate>1000)
+	{
+		lastmasterupdate=millis();
+		// ID 0 - T1, T2, T3 and pH
+		Wire.beginTransmission(I2CRA_TouchDisplay);
 		Wire.write(0);
-#endif //  PWMEXPANSION
-	Wire.endTransmission();
-	delay(10);
-	wdt_reset();
-
-	// ID 3 - RF Mode, Speed and Duration - AI Channels
-#ifdef RFEXPANSION
-	Wire.beginTransmission(I2CRA_TouchDisplay);
-	Wire.write(3);
-	Wire.write(RF.Mode);
-	Wire.write(RF.Speed);
-	Wire.write(RF.Duration);
-#ifdef AI_LED
-	Wire.write(AI.GetChannel(0));
-	Wire.write(AI.GetChannel(1));
-	Wire.write(AI.GetChannel(2));
+		Wire.write(Params.Temp[T1_PROBE]%256);
+		Wire.write(Params.Temp[T1_PROBE]/256);
+		Wire.write(Params.Temp[T2_PROBE]%256);
+		Wire.write(Params.Temp[T2_PROBE]/256);
+		Wire.write(Params.Temp[T3_PROBE]%256);
+		Wire.write(Params.Temp[T3_PROBE]/256);
+		Wire.write(Params.PH%256);
+		Wire.write(Params.PH/256);
+		Wire.endTransmission();
+		delay(10);
+		wdt_reset();
+	
+		// ID 1 - R, RON, ROFF, ATO, EM, REM, DisplayedMenu and AlertFlags
+		byte atostatus=0;
+		Wire.beginTransmission(I2CRA_TouchDisplay);
+		Wire.write(1);
+		Wire.write(Relay.RelayData);
+		Wire.write(Relay.RelayMaskOn);
+		Wire.write(Relay.RelayMaskOff);
+		if (ReefAngel.LowATO.IsActive())
+			bitSet(atostatus,0);
+		else
+			bitClear(atostatus,0);
+		if (ReefAngel.HighATO.IsActive())
+			bitSet(atostatus,1);
+		else
+			bitClear(atostatus,1);
+		Wire.write(atostatus);
+		Wire.write(EM);
+		Wire.write(REM);
+		Wire.write(DisplayedMenu);
+		Wire.write(AlertFlags);
+		Wire.endTransmission();
+		delay(10);
+		wdt_reset();
+	
+		// ID 2 - PWM Daylight, Actinic and Exp. Channels
+		Wire.beginTransmission(I2CRA_TouchDisplay);
+		Wire.write(2);
+#ifdef DisplayLEDPWM
+		Wire.write(PWM.GetDaylightValue());
+		Wire.write(PWM.GetActinicValue());
 #else
-	Wire.write(0);
-	Wire.write(0);
-	Wire.write(0);
+		Wire.write(0);
+		Wire.write(0);
+#endif  // DisplayLEDPWM
+	
+#ifdef PWMEXPANSION
+		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+			Wire.write(PWM.GetChannelValue(a));
+#else
+		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+			Wire.write(0);
+#endif //  PWMEXPANSION
+		Wire.endTransmission();
+		delay(10);
+		wdt_reset();
+	
+		// ID 3 - RF Mode, Speed and Duration - AI Channels
+#ifdef RFEXPANSION
+		Wire.beginTransmission(I2CRA_TouchDisplay);
+		Wire.write(3);
+		Wire.write(RF.Mode);
+		Wire.write(RF.Speed);
+		Wire.write(RF.Duration);
+#ifdef AI_LED
+		Wire.write(AI.GetChannel(0));
+		Wire.write(AI.GetChannel(1));
+		Wire.write(AI.GetChannel(2));
+#else
+		Wire.write(0);
+		Wire.write(0);
+		Wire.write(0);
 #endif // AI_LED
 #ifdef IOEXPANSION
-	Wire.write(IO.IOPorts);
+		Wire.write(IO.IOPorts);
 #else
-	Wire.write(0);
+		Wire.write(0);
 #endif // IOEXPANSION
-	Wire.write(0);
-	Wire.endTransmission();
-	delay(10);
-	wdt_reset();
+		Wire.write(0);
+		Wire.endTransmission();
+		delay(10);
+		wdt_reset();
 #endif //  RFEXPANSION
-
-	// ID 4 - RF Radion Channels
+	
+		// ID 4 - RF Radion Channels
 #ifdef RFEXPANSION
-	Wire.beginTransmission(I2CRA_TouchDisplay);
-	Wire.write(4);
-	for (int a=0;a<RF_CHANNELS;a++)
-		Wire.write(RF.RadionChannels[a]);
-	Wire.write(0);
-	Wire.write(0);
-	Wire.endTransmission();
-	delay(10);
-	wdt_reset();
+		Wire.beginTransmission(I2CRA_TouchDisplay);
+		Wire.write(4);
+		for (int a=0;a<RF_CHANNELS;a++)
+			Wire.write(RF.RadionChannels[a]);
+		Wire.write(0);
+		Wire.write(0);
+		Wire.endTransmission();
+		delay(10);
+		wdt_reset();
 #endif //  RFEXPANSION
-
+	}
 	if (DisplayedMenu==FEEDING_MODE)
 	{
 		// ID 0 - Feeding Timer

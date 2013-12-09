@@ -246,6 +246,7 @@ public:
 #ifdef I2CMASTER
 	byte I2CCommand;
 	void UpdateTouchDisplay();
+	unsigned long lastmasterupdate;
 #endif // I2CMASTER
 
 	void inline Use2014Screen() {};
