@@ -80,6 +80,7 @@ class ReefAngelClass
 {
 
 public:
+	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
 	byte Flags,AlertFlags,StatusFlags;
@@ -244,8 +245,11 @@ public:
 #endif //CUSTOM_VARIABLES
 
 #ifdef I2CMASTER
+#define MASTERARRAYSIZE	100
+	byte olddata[MASTERARRAYSIZE];
 	byte I2CCommand;
 	void UpdateTouchDisplay();
+	void MasterWrite(int value, byte index);
 	unsigned long lastmasterupdate;
 #endif // I2CMASTER
 
@@ -279,6 +283,9 @@ public:
 	void inline ChangeWifiPort() {};
 
 #ifdef LEAKDETECTOREXPANSION
+#ifdef RA_TOUCHDISPLAY
+	boolean LeakStatus;
+#endif // RA_TOUCHDISPLAY
 	boolean IsLeakDetected();
 	void LeakCheck();
 	void LeakClear();

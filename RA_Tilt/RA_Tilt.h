@@ -32,14 +32,12 @@ public:
 	RA_Tilt();
 	void Init();
 	void Refresh();
-	inline signed char  GetX() { return x; }
-	inline signed char  GetY() { return y; }
 	byte GetOrientation();
 	byte readRegister(byte addressToRead);
 	void writeRegister(byte addressToWrite, byte dataToWrite);
 
 private:
-	signed char x,y;
+	byte pl;
 	byte orientation;
 };
 #endif // __RA_TILT_H__

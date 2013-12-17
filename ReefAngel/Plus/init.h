@@ -1,5 +1,6 @@
 // Plus
 
+Board=RAPlus;
 wdt_enable(WDTO_1S);
 LCD.BacklightOff();
 #ifdef I2CMASTER 

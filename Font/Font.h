@@ -47,10 +47,14 @@ class FontClass
 		void DrawText(long n);
 		void DrawText(int ix, int iy, long n);
 		void DrawText(int iFC, int iBC,int ix, int iy, long n);
+		void DrawText(String str);
+		void DrawText(int ix, int iy, String str);
+		void DrawText(int iFC, int iBC,int ix, int iy, String str);		
 		void DrawTextP(const prog_char *str);
 		void DrawTextP(int ix, int iy, const prog_char *str);
 		void DrawTextP(int iFC, int iBC,int ix, int iy, const prog_char *str);
 		void DrawCenterText(int ix, int iy, char *str);
+		void DrawCenterText(int ix, int iy, String str);
 		void DrawCenterTextP(int ix, int iy, const prog_char *str);
 		void DrawCenterNumber(int ix, int iy, long n, byte decimal);
 		int inline GetX() { return x; }

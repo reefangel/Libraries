@@ -30,7 +30,7 @@ RA_PWMClass::RA_PWMClass()
     DaylightPWMValue = 0;
     ActinicPWMOverride = 255; // Anything over 100 disables override
     DaylightPWMOverride = 255; // Anything over 100 disables override
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_TOUCHDISPLAY
     Actinic2PWMValue = 0;
     Daylight2PWMValue = 0;
     Actinic2PWMOverride = 255; // Anything over 100 disables override
@@ -229,7 +229,7 @@ void RA_PWMClass::Override(byte Channel, byte Value)
 	else if (Channel>=OVERRIDE_CHANNEL0 && Channel<=OVERRIDE_CHANNEL5) // Dimming Expansion channel 0-5
 		SetChannelOverride(Channel-OVERRIDE_CHANNEL0,Value);
 #endif // PWMEXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_TOUCHDISPLAY
 	else if (Channel==OVERRIDE_DAYLIGHT2) // Daylight2 channel
 		SetDaylight2Override(Value);
 	else if (Channel==OVERRIDE_ACTINIC2) // Actinic2 channel
@@ -237,7 +237,7 @@ void RA_PWMClass::Override(byte Channel, byte Value)
 #endif
 }
 
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_TOUCHDISPLAY
 byte RA_PWMClass::GetActinic2Value()
 {
 	if (Actinic2PWMOverride<=100)

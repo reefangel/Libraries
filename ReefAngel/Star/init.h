@@ -1,4 +1,5 @@
 // Star
+Board=RAStar;
 wdt_enable(WDTO_1S);
 Serial1.begin(57600);
 Serial2.begin(57600);

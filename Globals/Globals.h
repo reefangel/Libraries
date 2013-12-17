@@ -96,6 +96,10 @@ void receiveEventMaster(int howMany);
 #define PHEXPANSION
 #define WATERLEVELEXPANSION
 #define AI_LED
+#define HUMIDITYEXPANSION
+#define DCPUMPCONTROL
+#define LEAKDETECTOREXPANSION
+#define CUSTOM_VARIABLES
 #endif // RA_TOUCHDISPLAY
 
 #if defined RA_TOUCH || defined DCPUMPCONTROL
@@ -114,6 +118,13 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #endif // __PLUS_SPECIAL_WIFI__
 
 #define RANET_SERIAL	Serial2
+
+// Board ids
+#define RA				0
+#define RAPlus			1
+#define RATouchDisplay	2
+#define RATouch			3
+#define	RAStar			4			
 
 // Outlets on Relay box
 #define Port8   8
@@ -341,6 +352,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define MESSAGE_CHANNEL_OVERRIDE	2
 #define MESSAGE_MENU	3
 #define MESSAGE_COMMAND	4
+#define MESSAGE_RESEND_ALL	5
+
 
 // I2C Command IDs
 // Don't use command 0. It is going to be used to clear the command check on function UpdateTouchDisplay()
@@ -348,6 +361,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define COMMAND_CLEAR_OVERHEAT	2
 #define COMMAND_LIGHTS_ON	3
 #define COMMAND_LIGHTS_OFF	4
+#define COMMAND_CLEAR_LEAK	5
 
 /*
 EEPROM locations
@@ -670,11 +684,13 @@ When adding more variables, use the previous value plus 1 or 2
 #define DIVISION					RGB565(0x40, 0x40, 0x40)
 #define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
 #define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
-#define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
+#define RFLABELBAR					RGB565(0x27, 0xA0, 0x78)
 #define RFLABELBAR1					RGB565(0x46, 0xd1, 0xFF)
 #define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
-#define IOLABELBAR					RGB565(0x89, 0x21, 0xaa)
+#define IOLABELBAR					RGB565(0x89, 0x21, 0x3a)
 #define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
+#define DCLABELBAR					RGB565(0xA1, 0xC5, 0x59)
+#define CVARLABELBAR				RGB565(0xF6, 0x03, 0xFF)
 #define PWMWHITE					COLOR_ORANGE
 #define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
 #define PWMRED						COLOR_RED
@@ -936,103 +952,126 @@ typedef struct Compensation
 #define Sync		1
 #define AntiSync	2
 
-//Internal EEPROM
+// Internal EEPROM
 #define TS_CALIBRATION_ADDRESS 		0x0
 #define TT_COMPENSATION_ADDRESS 	0x10
 
-#define	Probe1Name					0x400
-#define	Probe2Name					0x410
-#define	Probe3Name					0x420
+// Custom Labels
 
-#define	PWMChannel1					0x430
-#define	PWMChannel2					0x440
-#define	PWMChannel3					0x450
-#define	PWMChannel4					0x460
-#define	PWMChannel5					0x470
-#define	PWMChannel6					0x480
+#define Port1Label				0
+#define Port2Label				1
+#define Port3Label				2
+#define Port4Label				3
+#define Port5Label				4
+#define Port6Label				5
+#define Port7Label				6
+#define Port8Label				7
+#define Box1_Port1Label			8
+#define Box1_Port2Label			9
+#define Box1_Port3Label			10
+#define Box1_Port4Label			11
+#define Box1_Port5Label			12
+#define Box1_Port6Label			13
+#define Box1_Port7Label			14
+#define Box1_Port8Label			15
+#define Box2_Port1Label			16
+#define Box2_Port2Label			17
+#define Box2_Port3Label			17
+#define Box2_Port4Label			18
+#define Box2_Port5Label			20
+#define Box2_Port6Label			21
+#define Box2_Port7Label			22
+#define Box2_Port8Label			23
+#define Box3_Port1Label			24
+#define Box3_Port2Label			25
+#define Box3_Port3Label			26
+#define Box3_Port4Label			27
+#define Box3_Port5Label			28
+#define Box3_Port6Label			29
+#define Box3_Port7Label			30
+#define Box3_Port8Label			31
+#define Box4_Port1Label			32
+#define Box4_Port2Label			33
+#define Box4_Port3Label			34
+#define Box4_Port4Label			35
+#define Box4_Port5Label			36
+#define Box4_Port6Label			37
+#define Box4_Port7Label			38
+#define Box4_Port8Label			39
+#define Box5_Port1Label			40
+#define Box5_Port2Label			41
+#define Box5_Port3Label			42
+#define Box5_Port4Label			43
+#define Box5_Port5Label			44
+#define Box5_Port6Label			45
+#define Box5_Port7Label			46
+#define Box5_Port8Label			47
+#define Box6_Port1Label			48
+#define Box6_Port2Label			49
+#define Box6_Port3Label			50
+#define Box6_Port4Label			51
+#define Box6_Port5Label			52
+#define Box6_Port6Label			53
+#define Box6_Port7Label			54
+#define Box6_Port8Label			55
+#define Box7_Port1Label			56
+#define Box7_Port2Label			57
+#define Box7_Port3Label			58
+#define Box7_Port4Label			59
+#define Box7_Port5Label			60
+#define Box7_Port6Label			61
+#define Box7_Port7Label			62
+#define Box7_Port8Label			63
+#define Box8_Port1Label			64
+#define Box8_Port2Label			65
+#define Box8_Port3Label			66
+#define Box8_Port4Label			67
+#define Box8_Port5Label			68
+#define Box8_Port6Label			69
+#define Box8_Port7Label			70
+#define Box8_Port8Label			71
+#define Temp1Label				72
+#define Temp2Label				73
+#define Temp3Label				74
+#define PHLabel					75
+#define ATOLowLabel				76
+#define ATOHighLabel			77
+#define AlarmLabel				78
+#define DaylightLabel			79
+#define ActinicLabel			80
+#define Daylight2Label			81
+#define Actinic2Label			82
+#define DimmingChannel0Label	83
+#define DimmingChannel1Label	84
+#define DimmingChannel2Label	85
+#define DimmingChannel3Label	86
+#define DimmingChannel4Label	87
+#define DimmingChannel5Label	88
+#define IOChannel0Label			89
+#define IOChannel1Label			90
+#define IOChannel2Label			91
+#define IOChannel3Label			92
+#define IOChannel4Label			93
+#define IOChannel5Label			94
+#define SalinityLabel			95
+#define ORPLabel				96
+#define PHExpLabel				97
+#define WaterLevelLabel			98
+#define WaterLevel1Label		99
+#define WaterLevel2Label		100
+#define WaterLevel3Label		101
+#define WaterLevel4Label		102
+#define HumidityLabel			103
+#define LeakLabel				104
+#define CustomVar0Label			105
+#define CustomVar1Label			106
+#define CustomVar2Label			107
+#define CustomVar3Label			108
+#define CustomVar4Label			109
+#define CustomVar5Label			110
+#define CustomVar6Label			111
+#define CustomVar7Label			112
 
-#define	IOChannel1					0x490
-#define	IOChannel2					0x4a0
-#define	IOChannel3					0x4b0
-#define	IOChannel4					0x4c0
-#define	IOChannel5					0x4d0
-#define	IOChannel6					0x4e0
-
-#define	R1Name						0x500
-#define	R2Name						0x510
-#define	R3Name						0x520
-#define	R4Name						0x530
-#define	R5Name						0x540
-#define	R6Name						0x550
-#define	R7Name						0x560
-#define	R8Name						0x570
-#define	R11Name						0x580
-#define	R12Name						0x590
-#define	R13Name						0x5a0
-#define	R14Name						0x5b0
-#define	R15Name						0x5c0
-#define	R16Name						0x5d0
-#define	R17Name						0x5e0
-#define	R18Name						0x5f0
-#define	R21Name						0x600
-#define	R22Name						0x610
-#define	R23Name						0x620
-#define	R24Name						0x630
-#define	R25Name						0x640
-#define	R26Name						0x650
-#define	R27Name						0x660
-#define	R28Name						0x670
-#define	R31Name						0x680
-#define	R32Name						0x690
-#define	R33Name						0x6a0
-#define	R34Name						0x6b0
-#define	R35Name						0x6c0
-#define	R36Name						0x6d0
-#define	R37Name						0x6e0
-#define	R38Name						0x6f0
-#define	R41Name						0x700
-#define	R42Name						0x710
-#define	R43Name						0x720
-#define	R44Name						0x730
-#define	R45Name						0x740
-#define	R46Name						0x750
-#define	R47Name						0x760
-#define	R48Name						0x770
-#define	R51Name						0x780
-#define	R52Name						0x790
-#define	R53Name						0x7a0
-#define	R54Name						0x7b0
-#define	R55Name						0x7c0
-#define	R56Name						0x7d0
-#define	R57Name						0x7e0
-#define	R58Name						0x7f0
-#define	R61Name						0x800
-#define	R62Name						0x810
-#define	R63Name						0x820
-#define	R64Name						0x830
-#define	R65Name						0x840
-#define	R66Name						0x850
-#define	R67Name						0x860
-#define	R68Name						0x870
-#define	R71Name						0x880
-#define	R72Name						0x890
-#define	R73Name						0x8a0
-#define	R74Name						0x8b0
-#define	R75Name						0x8c0
-#define	R76Name						0x8d0
-#define	R77Name						0x8e0
-#define	R78Name						0x8f0
-#define	R81Name						0x900
-#define	R82Name						0x910
-#define	R83Name						0x920
-#define	R84Name						0x930
-#define	R85Name						0x940
-#define	R86Name						0x950
-#define	R87Name						0x960
-#define	R88Name						0x970
-
-#define ATOLowName					0xa00
-#define ATOHighName					0xa10
 
 // IsRelayPresent function from Don Edvalson
 #define MAIN_RELAY 0xff
@@ -1047,22 +1086,25 @@ typedef struct Compensation
 
 //Main Screens
 #define MAIN_SCREEN			0
-#define RELAY_BOX			1
-#define EXP_BOX_1			2
-#define EXP_BOX_2			3
-#define EXP_BOX_3			4
-#define EXP_BOX_4			5
-#define EXP_BOX_5			6
-#define EXP_BOX_6			7
-#define EXP_BOX_7			8
-#define EXP_BOX_8			9
-#define PWM_SCREEN			10
-#define RF_SCREEN			11
-#define RF_SCREEN1			12
-#define AI_SCREEN			13
-#define IO_SCREEN			14
+#define DIMMING_ATO			1
+#define RELAY_BOX			2
+#define EXP_BOX_1			3
+#define EXP_BOX_2			4
+#define EXP_BOX_3			5
+#define EXP_BOX_4			6
+#define EXP_BOX_5			7
+#define EXP_BOX_6			8
+#define EXP_BOX_7			9
+#define EXP_BOX_8			10
+#define PWM_SCREEN			11
+#define RF_SCREEN			12
+#define RF_SCREEN1			13
+#define AI_SCREEN			14
+#define IO_SCREEN			15
+#define DCPUMP_SCREEN		16
+#define CVAR_SCREEN			17
+#define MAX_SCREENS			18 // Highest ID for main screens
 #define DIMMING_OVERRIDE	127
-#define MAX_SCREENS			15 // Highest ID for main screens
 
 //Menu Screens
 #define MAIN_MENU_SCREEN	0
@@ -1075,7 +1117,6 @@ typedef struct Compensation
 #define TouchSample						20
 #define TouchSlideDelta					20
 #define TouchPressure					1500
-#define MAX_RELAY_EXPANSION_MODULES		8
 #define FONT_HEADER 					7
 #define TS_CALIBRATION_XMIN				700
 #define TS_CALIBRATION_XMAX				3200
@@ -1151,16 +1192,6 @@ const prog_char WL_CALI6[] PROGMEM = "%";
 const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
 
 // Labels
-const prog_char LABEL_TEMP[] PROGMEM = "Temp ";
-const prog_char LABEL_RELAY[] PROGMEM = "Relay ";
-const prog_char LABEL_CHANNEL[] PROGMEM = "Ch. ";
-const prog_char LABEL_PH[] PROGMEM = "pH";
-const prog_char LABEL_SALINITY[] PROGMEM = "Salinity";
-const prog_char LABEL_ORP[] PROGMEM = "ORP";
-const prog_char LABEL_PHE[] PROGMEM = "PH Exp";
-const prog_char LABEL_WL[] PROGMEM = "Water Lvl";
-const prog_char LABEL_ACTINIC[] PROGMEM = "Actinic";
-const prog_char LABEL_DAYLIGHT[] PROGMEM = "Daylight";
 const prog_char LABEL_AI_WHITE[] PROGMEM = "White";
 const prog_char LABEL_AI_BLUE[] PROGMEM = "Blue";
 const prog_char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
@@ -1172,9 +1203,6 @@ const prog_char LABEL_RF_BLUE[] PROGMEM = "Green";
 const prog_char LABEL_RF_GREEN[] PROGMEM = "Blue";
 const prog_char LABEL_RF_INTENSITY[] PROGMEM = "Intensity";
 static PROGMEM const char *LABEL_RF[] = {LABEL_RF_WHITE, LABEL_RF_ROYAL_BLUE, LABEL_RF_RED, LABEL_RF_BLUE, LABEL_RF_GREEN, LABEL_RF_INTENSITY};
-const prog_char LABEL_ATOHIGHPORT[] PROGMEM = "ATO Low";
-const prog_char LABEL_ATOLOWPORT[] PROGMEM = "ATO High";
-const prog_char LABEL_IOPORT[] PROGMEM = "Input Port ";
 const prog_char LABEL_MODE[] PROGMEM = "Mode";
 const prog_char LABEL_DURATION[] PROGMEM = "Duration";
 const prog_char LABEL_SPEED[] PROGMEM = "Speed";
@@ -1195,7 +1223,10 @@ const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
 const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
 const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
 const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL};
+const prog_char DCPUMP_LABEL[] PROGMEM = "DC Pump";
+const prog_char CVAR_LABEL[] PROGMEM = "Custom Variables";
+
+static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";

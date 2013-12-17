@@ -12,6 +12,10 @@ ButtonClass OkButton;
 ButtonClass CancelButton;
 ProgressBarClass PB[6];
 SliderClass Slider;
+RA_ATOALARMClass AlarmInput;
+
+String CustomLabels[128];
+ParamsStruct LastParams;
 typedef void (ReefAngelClass::* FuncPtr) (); // declare function pointers
 FuncPtr MenuFunctionPtr;
 FuncPtr menu_button_functions1[6];
@@ -35,7 +39,7 @@ byte CalStep;
 
 void SetOrientation(byte o);
 void CalibrateTouchScreen();
-void SaveInitialSettings();
+void InitCustomLabels();
 void ChangeDisplayedScreen(signed char index);
 void MainScreen();
 void ResetScreenSaver();

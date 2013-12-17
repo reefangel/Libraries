@@ -45,6 +45,7 @@ boolean LightsOverride=true;
 void ReefAngelClass::Init()
 {
 	Serial.begin(57600);
+	
 #ifdef RA_STANDARD
 #include <Standard/init.h>
 #elif defined RA_PLUS
@@ -181,6 +182,9 @@ void ReefAngelClass::Init()
 		CustomVar[EID]=0;
 	}
 #endif //CUSTOM_VARIABLES
+#ifdef RA_TOUCHDISPLAY
+	SendMaster(MESSAGE_RESEND_ALL,0,0);
+#endif // RA_TOUCHDISPLAY	
 }
 
 void ReefAngelClass::Refresh()
@@ -399,8 +403,11 @@ void ReefAngelClass::Refresh()
 	if (!Splash)
 	{
 #if not defined NOTILT
-		Tilt.Refresh();
-		SetOrientation(Tilt.GetOrientation());
+		if (!ReefAngel.Sleeping)
+		{
+			Tilt.Refresh();
+			SetOrientation(Tilt.GetOrientation());
+		}
 #endif // NOTILT 
 	}
 	if ((millis()>SplashDuration) && Splash)
@@ -410,7 +417,6 @@ void ReefAngelClass::Refresh()
 		{
 			BL1;
 			CalibrateTouchScreen();
-			SaveInitialSettings();
 		}
 		if(SDFound)	TouchLCD.FullClear(BKCOLOR);
 	}
@@ -776,6 +782,10 @@ boolean ReefAngelClass::IsLeakDetected()
 #ifdef EMBEDDED_LEAK
 	detect|=analogRead(LeakPin)<400;
 #endif // EMBEDDED_LEAK
+#ifdef RA_TOUCHDISPLAY
+	detect=LeakStatus;
+#endif // RA_TOUCHDISPLAY
+	
 	return detect;
 }
 
@@ -1542,7 +1552,8 @@ void ReefAngelClass::Portal(char *username, char *key)
 #endif
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany) {
-	byte d[9];
+	byte d[4];
+	byte crc=0;
 	wdt_reset();
 	if (ReefAngel.Sleeping)
 	{
@@ -1551,58 +1562,292 @@ void receiveEvent(int howMany) {
 	}
 	else
 	{
-		if (howMany==9)
+		if (howMany==4)
 		{
-			for(int a=0;a<9;a++) d[a]=Wire.read();
-			switch (d[0])
+			crc=0;
+			for(int a=0;a<4;a++)
 			{
-			case 0:
-				ReefAngel.Params.Temp[T1_PROBE]=d[1]+(d[2]<<8);
-				ReefAngel.Params.Temp[T2_PROBE]=d[3]+(d[4]<<8);
-				ReefAngel.Params.Temp[T3_PROBE]=d[5]+(d[6]<<8);
-				ReefAngel.Params.PH=d[7]+(d[8]<<8);
-				break;
-			case 1:
-				ReefAngel.Relay.RelayData=d[1];
-				ReefAngel.Relay.RelayMaskOn=d[2];
-				ReefAngel.Relay.RelayMaskOff=d[3];
-				ReefAngel.LowATO.SetActive(bitRead(d[4],0));
-				ReefAngel.HighATO.SetActive(bitRead(d[4],1));
-				ReefAngel.EM=d[5];
-				ReefAngel.REM=d[6];
-				if (ReefAngel.DisplayedMenu!=d[7])
+				d[a]=Wire.read();
+				crc+=d[a];
+			}
+			crc-=d[3];
+			if (crc==d[3] && d[0]=='$')
+			{
+				switch (d[1])
 				{
-					if (ReefAngel.DisplayedMenu!=TOUCH_MENU)
+				case 0:
+					if (ReefAngel.DisplayedMenu!=d[2])
 					{
-						// deduct 100 from the value to indicate we are coming from an interrupt.
-					ReefAngel.DisplayedMenu=d[7]-100;
+						if (ReefAngel.DisplayedMenu!=TOUCH_MENU)
+						{
+							// deduct 100 from the value to indicate we are coming from an interrupt.
+						ReefAngel.DisplayedMenu=d[2]-100;
+						}
 					}
+					break;
+				case 1:
+					ReefAngel.Board=d[2];
+					break;
+				case 2:
+					ReefAngel.AlertFlags=d[2];
+					break;
+				case 3:
+					ReefAngel.StatusFlags=d[2];
+					break;
+				case 4:
+					ReefAngel.Params.Temp[T1_PROBE]=((ReefAngel.Params.Temp[T1_PROBE]/256)<<8)+d[2];
+					break;
+				case 5:
+					ReefAngel.Params.Temp[T1_PROBE]=(d[2]<<8) + (ReefAngel.Params.Temp[T1_PROBE]%256);
+					break;
+				case 6:
+					ReefAngel.Params.Temp[T2_PROBE]=((ReefAngel.Params.Temp[T2_PROBE]/256)<<8)+d[2];
+					break;
+				case 7:
+					ReefAngel.Params.Temp[T2_PROBE]=(d[2]<<8) + (ReefAngel.Params.Temp[T2_PROBE]%256);
+					break;
+				case 8:
+					ReefAngel.Params.Temp[T3_PROBE]=((ReefAngel.Params.Temp[T3_PROBE]/256)<<8)+d[2];
+					break;
+				case 9:
+					ReefAngel.Params.Temp[T3_PROBE]=(d[2]<<8) + (ReefAngel.Params.Temp[T3_PROBE]%256);
+					break;
+				case 10:
+					ReefAngel.Params.PH=((ReefAngel.Params.PH/256)<<8)+d[2];
+					break;
+				case 11:
+					ReefAngel.Params.PH=(d[2]<<8) + (ReefAngel.Params.PH%256);
+					break;
+				case 12:
+					ReefAngel.LowATO.SetActive(bitRead(d[2],0));
+					ReefAngel.HighATO.SetActive(bitRead(d[2],1));
+					ReefAngel.AlarmInput.SetActive(bitRead(d[2],2));
+					ReefAngel.LeakStatus=bitRead(d[2],3);
+					break;
+				case 13:
+					ReefAngel.PWM.SetDaylight(d[2]);
+					break;
+				case 14:
+					ReefAngel.PWM.SetActinic(d[2]);
+					break;
+				case 15:
+					ReefAngel.PWM.SetDaylight2(d[2]);
+					break;
+				case 16:
+					ReefAngel.PWM.SetActinic2(d[2]);
+					break;
+				case 17:
+					ReefAngel.Relay.RelayData=d[2];
+					break;
+				case 18:
+					ReefAngel.Relay.RelayMaskOn=d[2];
+					break;
+				case 19:
+					ReefAngel.Relay.RelayMaskOff=d[2];
+					break;
+				case 20:
+				case 21:
+				case 22:
+				case 23:
+				case 24:
+				case 25:
+					ReefAngel.PWM.SetChannel(d[1]-20,d[2]);
+					break;
+				case 26:
+					ReefAngel.RF.Mode=d[2];
+					break;
+				case 27:
+					ReefAngel.RF.Speed=d[2];
+					break;
+				case 28:
+					ReefAngel.RF.Duration=d[2];
+					break;
+				case 29:
+				case 30:
+				case 31:
+				case 32:
+				case 33:
+				case 34:
+					ReefAngel.RF.RadionChannels[d[1]-29]=d[2];
+					break;
+				case 35:
+				case 36:
+				case 37:
+					ReefAngel.AI.SetChannel(d[1]-35,d[2]);
+					break;
+				case 38:
+					ReefAngel.IO.IOPorts=d[2];
+					break;
+				case 39:
+					ReefAngel.DCPump.Mode=d[2];
+					break;
+				case 40:
+					ReefAngel.DCPump.Speed=d[2];
+					break;
+				case 41:
+					ReefAngel.DCPump.Duration=d[2];
+					break;
+				case 42:
+					ReefAngel.Relay.RelayDataE[0]=d[2];
+					break;
+				case 43:
+					ReefAngel.Relay.RelayMaskOnE[0]=d[2];
+					break;
+				case 44:
+					ReefAngel.Relay.RelayMaskOffE[0]=d[2];
+					break;
+				case 45:
+					ReefAngel.Relay.RelayDataE[1]=d[2];
+					break;
+				case 46:
+					ReefAngel.Relay.RelayMaskOnE[1]=d[2];
+					break;
+				case 47:
+					ReefAngel.Relay.RelayMaskOffE[1]=d[2];
+					break;
+				case 48:
+					ReefAngel.Relay.RelayDataE[2]=d[2];
+					break;
+				case 49:
+					ReefAngel.Relay.RelayMaskOnE[2]=d[2];
+					break;
+				case 50:
+					ReefAngel.Relay.RelayMaskOffE[2]=d[2];
+					break;
+				case 51:
+					ReefAngel.Relay.RelayDataE[3]=d[2];
+					break;
+				case 52:
+					ReefAngel.Relay.RelayMaskOnE[3]=d[2];
+					break;
+				case 53:
+					ReefAngel.Relay.RelayMaskOffE[3]=d[2];
+					break;
+				case 54:
+					ReefAngel.Relay.RelayDataE[4]=d[2];
+					break;
+				case 55:
+					ReefAngel.Relay.RelayMaskOnE[4]=d[2];
+					break;
+				case 56:
+					ReefAngel.Relay.RelayMaskOffE[4]=d[2];
+					break;
+				case 57:
+					ReefAngel.Relay.RelayDataE[5]=d[2];
+					break;
+				case 58:
+					ReefAngel.Relay.RelayMaskOnE[5]=d[2];
+					break;
+				case 59:
+					ReefAngel.Relay.RelayMaskOffE[5]=d[2];
+					break;
+				case 60:
+					ReefAngel.Relay.RelayDataE[6]=d[2];
+					break;
+				case 61:
+					ReefAngel.Relay.RelayMaskOnE[6]=d[2];
+					break;
+				case 62:
+					ReefAngel.Relay.RelayMaskOffE[6]=d[2];
+					break;
+				case 63:
+					ReefAngel.Relay.RelayDataE[7]=d[2];
+					break;
+				case 64:
+					ReefAngel.Relay.RelayMaskOnE[7]=d[2];
+					break;
+				case 65:
+					ReefAngel.Relay.RelayMaskOffE[7]=d[2];
+					break;
+				case 66:
+					ReefAngel.Params.Salinity=((ReefAngel.Params.Salinity/256)<<8)+d[2];
+					break;
+				case 67:
+					ReefAngel.Params.Salinity=(d[2]<<8) + (ReefAngel.Params.Salinity%256);
+					break;
+				case 68:
+					ReefAngel.Params.ORP=((ReefAngel.Params.ORP/256)<<8)+d[2];
+					break;
+				case 69:
+					ReefAngel.Params.ORP=(d[2]<<8) + (ReefAngel.Params.ORP%256);
+					break;
+				case 70:
+					ReefAngel.Params.PHExp=((ReefAngel.Params.PHExp/256)<<8)+d[2];
+					break;
+				case 71:
+					ReefAngel.Params.PHExp=(d[2]<<8) + (ReefAngel.Params.PHExp%256);
+					break;
+				case 72:
+					ReefAngel.Humidity.SetLevel(((ReefAngel.Humidity.GetLevel()/256)<<8)+d[2]);
+					break;
+				case 73:
+					ReefAngel.Humidity.SetLevel((d[2]<<8) + (ReefAngel.Humidity.GetLevel()%256));
+					break;
+				case 74:
+					ReefAngel.WaterLevel.SetLevel(0,((ReefAngel.WaterLevel.GetLevel()/256)<<8)+d[2]);
+					break;
+				case 75:
+					ReefAngel.WaterLevel.SetLevel(0,(d[2]<<8) + (ReefAngel.WaterLevel.GetLevel()%256));
+					break;
+				case 76:
+					ReefAngel.WaterLevel.SetLevel(1,((ReefAngel.WaterLevel.GetLevel(1)/256)<<8)+d[2]);
+					break;
+				case 77:
+					ReefAngel.WaterLevel.SetLevel(1,(d[2]<<8) + (ReefAngel.WaterLevel.GetLevel(1)%256));
+					break;
+				case 78:
+					ReefAngel.WaterLevel.SetLevel(2,((ReefAngel.WaterLevel.GetLevel(2)/256)<<8)+d[2]);
+					break;
+				case 79:
+					ReefAngel.WaterLevel.SetLevel(2,(d[2]<<8) + (ReefAngel.WaterLevel.GetLevel(2)%256));
+					break;
+				case 80:
+					ReefAngel.WaterLevel.SetLevel(3,((ReefAngel.WaterLevel.GetLevel(3)/256)<<8)+d[2]);
+					break;
+				case 81:
+					ReefAngel.WaterLevel.SetLevel(3,(d[2]<<8) + (ReefAngel.WaterLevel.GetLevel(3)%256));
+					break;
+				case 82:
+					ReefAngel.WaterLevel.SetLevel(4,((ReefAngel.WaterLevel.GetLevel(4)/256)<<8)+d[2]);
+					break;
+				case 83:
+					ReefAngel.WaterLevel.SetLevel(4,(d[2]<<8) + (ReefAngel.WaterLevel.GetLevel(4)%256));
+					break;
+				case 84:
+					ReefAngel.EM=d[2];
+					break;
+				case 85:
+					ReefAngel.EM1=d[2];
+					break;
+				case 86:
+					ReefAngel.REM=d[2];
+					break;
+				case 87:
+					ReefAngel.CustomVar[0]=d[2];
+					break;
+				case 88:
+					ReefAngel.CustomVar[1]=d[2];
+					break;
+				case 89:
+					ReefAngel.CustomVar[2]=d[2];
+					break;
+				case 90:
+					ReefAngel.CustomVar[3]=d[2];
+					break;
+				case 91:
+					ReefAngel.CustomVar[4]=d[2];
+					break;
+				case 92:
+					ReefAngel.CustomVar[5]=d[2];
+					break;
+				case 93:
+					ReefAngel.CustomVar[6]=d[2];
+					break;
+				case 94:
+					ReefAngel.CustomVar[7]=d[2];
+					break;
+				// Don't go over 99. The max array is set to 100
 				}
-				ReefAngel.AlertFlags=d[8];
-				break;
-			case 2:
-				ReefAngel.PWM.SetDaylight(d[1]);
-				ReefAngel.PWM.SetActinic(d[2]);
-				for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-					ReefAngel.PWM.SetChannel(a,d[a+3]);
-				break;
-			case 3:
-				ReefAngel.RF.Mode=d[1];
-				ReefAngel.RF.Speed=d[2];
-				ReefAngel.RF.Duration=d[3];
-				ReefAngel.AI.SetChannel(0,d[4]);
-				ReefAngel.AI.SetChannel(1,d[5]);
-				ReefAngel.AI.SetChannel(2,d[6]);
-				ReefAngel.IO.IOPorts=d[7];
-				break;
-			case 4:
-				ReefAngel.RF.RadionChannels[0]=d[1];
-				ReefAngel.RF.RadionChannels[1]=d[2];
-				ReefAngel.RF.RadionChannels[2]=d[3];
-				ReefAngel.RF.RadionChannels[3]=d[4];
-				ReefAngel.RF.RadionChannels[4]=d[5];
-				ReefAngel.RF.RadionChannels[5]=d[6];
-				break;
 			}
 		}
 		else if (howMany==3)
@@ -1645,28 +1890,7 @@ void ReefAngelClass::UpdateTouchDisplay()
 	if (millis()-lastmasterupdate>1000)
 	{
 		lastmasterupdate=millis();
-		// ID 0 - T1, T2, T3 and pH
-		Wire.beginTransmission(I2CRA_TouchDisplay);
-		Wire.write(0);
-		Wire.write(Params.Temp[T1_PROBE]%256);
-		Wire.write(Params.Temp[T1_PROBE]/256);
-		Wire.write(Params.Temp[T2_PROBE]%256);
-		Wire.write(Params.Temp[T2_PROBE]/256);
-		Wire.write(Params.Temp[T3_PROBE]%256);
-		Wire.write(Params.Temp[T3_PROBE]/256);
-		Wire.write(Params.PH%256);
-		Wire.write(Params.PH/256);
-		Wire.endTransmission();
-		delay(10);
-		wdt_reset();
-	
-		// ID 1 - R, RON, ROFF, ATO, EM, REM, DisplayedMenu and AlertFlags
 		byte atostatus=0;
-		Wire.beginTransmission(I2CRA_TouchDisplay);
-		Wire.write(1);
-		Wire.write(Relay.RelayData);
-		Wire.write(Relay.RelayMaskOn);
-		Wire.write(Relay.RelayMaskOff);
 		if (ReefAngel.LowATO.IsActive())
 			bitSet(atostatus,0);
 		else
@@ -1675,76 +1899,74 @@ void ReefAngelClass::UpdateTouchDisplay()
 			bitSet(atostatus,1);
 		else
 			bitClear(atostatus,1);
-		Wire.write(atostatus);
-		Wire.write(EM);
-		Wire.write(REM);
-		Wire.write(DisplayedMenu);
-		Wire.write(AlertFlags);
-		Wire.endTransmission();
-		delay(10);
-		wdt_reset();
-	
-		// ID 2 - PWM Daylight, Actinic and Exp. Channels
-		Wire.beginTransmission(I2CRA_TouchDisplay);
-		Wire.write(2);
-#ifdef DisplayLEDPWM
-		Wire.write(PWM.GetDaylightValue());
-		Wire.write(PWM.GetActinicValue());
-#else
-		Wire.write(0);
-		Wire.write(0);
-#endif  // DisplayLEDPWM
-	
-#ifdef PWMEXPANSION
+#ifdef RA_STAR
+		if (ReefAngel.AlarmInput.IsActive())
+			bitSet(atostatus,2);
+		else
+			bitClear(atostatus,2);		
+#endif // RA_STAR
+#if defined RA_STAR || defined LEAKDETECTOREXPANSION
+		if (ReefAngel.IsLeakDetected())
+			bitSet(atostatus,3);
+		else
+			bitClear(atostatus,3);		
+#endif // defined RA_STAR || defined LEAKDETECTOREXPANSION
+		
+		MasterWrite(DisplayedMenu,0);
+		MasterWrite(Board,1);
+		MasterWrite(AlertFlags,2);
+		MasterWrite(StatusFlags,3);
+		MasterWrite(Params.Temp[T1_PROBE],4);
+		MasterWrite(Params.Temp[T2_PROBE],6);
+		MasterWrite(Params.Temp[T3_PROBE],8);
+		MasterWrite(Params.PH,10);
+		MasterWrite(atostatus,12);
+		MasterWrite(PWM.GetDaylightValue(),13);
+		MasterWrite(PWM.GetActinicValue(),14);
+		MasterWrite(PWM.GetDaylight2Value(),15);
+		MasterWrite(PWM.GetActinic2Value(),16);
+		MasterWrite(Relay.RelayData,17);
+		MasterWrite(Relay.RelayMaskOn,18);
+		MasterWrite(Relay.RelayMaskOff,19);
 		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-			Wire.write(PWM.GetChannelValue(a));
-#else
-		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-			Wire.write(0);
-#endif //  PWMEXPANSION
-		Wire.endTransmission();
-		delay(10);
-		wdt_reset();
-	
-		// ID 3 - RF Mode, Speed and Duration - AI Channels
-#ifdef RFEXPANSION
-		Wire.beginTransmission(I2CRA_TouchDisplay);
-		Wire.write(3);
-		Wire.write(RF.Mode);
-		Wire.write(RF.Speed);
-		Wire.write(RF.Duration);
-#ifdef AI_LED
-		Wire.write(AI.GetChannel(0));
-		Wire.write(AI.GetChannel(1));
-		Wire.write(AI.GetChannel(2));
-#else
-		Wire.write(0);
-		Wire.write(0);
-		Wire.write(0);
-#endif // AI_LED
-#ifdef IOEXPANSION
-		Wire.write(IO.IOPorts);
-#else
-		Wire.write(0);
-#endif // IOEXPANSION
-		Wire.write(0);
-		Wire.endTransmission();
-		delay(10);
-		wdt_reset();
-#endif //  RFEXPANSION
-	
-		// ID 4 - RF Radion Channels
-#ifdef RFEXPANSION
-		Wire.beginTransmission(I2CRA_TouchDisplay);
-		Wire.write(4);
+			MasterWrite(PWM.GetChannelValue(a),20+a);
+		MasterWrite(RF.Mode,26);
+		MasterWrite(RF.Speed,27);
+		MasterWrite(RF.Duration,28);
 		for (int a=0;a<RF_CHANNELS;a++)
-			Wire.write(RF.RadionChannels[a]);
-		Wire.write(0);
-		Wire.write(0);
-		Wire.endTransmission();
-		delay(10);
-		wdt_reset();
-#endif //  RFEXPANSION
+			MasterWrite(RF.RadionChannels[a],29+a);
+		MasterWrite(AI.GetChannel(0),35);
+		MasterWrite(AI.GetChannel(1),36);
+		MasterWrite(AI.GetChannel(2),37);
+		MasterWrite(IO.IOPorts,38);
+		MasterWrite(DCPump.Mode,39);
+		MasterWrite(DCPump.Speed,40);
+		MasterWrite(DCPump.Duration,41);
+		for (int a=0;a<MAX_RELAY_EXPANSION_MODULES;a++)
+		{
+			MasterWrite(Relay.RelayDataE[a],42+(a*3));
+			MasterWrite(Relay.RelayMaskOnE[a],43+(a*3));
+			MasterWrite(Relay.RelayMaskOffE[a],44+(a*3));
+		}
+		MasterWrite(Params.Salinity,66);
+		MasterWrite(Params.ORP,68);
+		MasterWrite(Params.PHExp,70);
+		MasterWrite(Humidity.GetLevel(),72);
+		MasterWrite(WaterLevel.GetLevel(),74);
+		MasterWrite(WaterLevel.GetLevel(1),76);
+		MasterWrite(WaterLevel.GetLevel(2),78);
+		MasterWrite(WaterLevel.GetLevel(3),80);
+		MasterWrite(WaterLevel.GetLevel(4),82);
+		MasterWrite(EM,84);
+		MasterWrite(EM1,85);
+		MasterWrite(REM,86);
+#ifdef CUSTOM_VARIABLES
+	for ( byte EID = 0; EID < 8; EID++ )
+		MasterWrite(CustomVar[EID],87+EID);
+		// Don't go over 99. The max array is set to 100
+	
+#endif //CUSTOM_VARIABLES
+
 	}
 	if (DisplayedMenu==FEEDING_MODE)
 	{
@@ -1766,7 +1988,50 @@ void ReefAngelClass::UpdateTouchDisplay()
 		LightsOn();
 	if (I2CCommand==COMMAND_LIGHTS_OFF)
 		LightsOff();
+	if (I2CCommand==COMMAND_CLEAR_LEAK)
+		LeakClear();
 	I2CCommand=0;
+}
+
+void ReefAngelClass::MasterWrite(int value, byte index)
+{
+	byte data[3];
+	byte crc=0;
+	if ((value&0xff)!=olddata[index])
+	{
+		olddata[index]=value&0xff;
+		crc=0;
+		data[0]='$';
+		data[1]=index;
+		data[2]=olddata[index];
+		for (int a=0;a<3;a++)
+			crc+=data[a];
+		Wire.beginTransmission(I2CRA_TouchDisplay);
+		Wire.write(data,3);
+		Wire.write(crc);
+		Wire.endTransmission();
+		delay(10);
+		wdt_reset();
+	}
+	if (value>255)
+	{
+		if (value!=(olddata[index]<<8)+olddata[index+1])
+		{
+			olddata[index+1]=value>>8;
+			crc=0;
+			data[0]='$';
+			data[1]=index+1;
+			data[2]=olddata[index+1];
+			for (int a=0;a<3;a++)
+				crc+=data[a];
+			Wire.beginTransmission(I2CRA_TouchDisplay);
+			Wire.write(data,3);
+			Wire.write(crc);
+			Wire.endTransmission();
+			delay(10);
+			wdt_reset();
+		}
+	}
 }
 
 void receiveEventMaster(int howMany)
@@ -1778,55 +2043,64 @@ void receiveEventMaster(int howMany)
 		for(int a=0;a<3;a++) d[a]=Wire.read();
 		switch (d[0])
 		{
-		case MESSAGE_BUTTON: // Simulate button press
-		{
-			if (d[1]==1 && d[2]==1) ButtonPress++;
-			break;
-		}
-		case MESSAGE_RELAY_OVERRIDE: // Override relay ports
-		{
-			ReefAngel.Relay.Override(d[1],d[2]);
-			break;
-		}
-		case MESSAGE_CHANNEL_OVERRIDE: // Override Channels
-		{
-			if (d[1]<=OVERRIDE_CHANNEL5)
-				ReefAngel.PWM.Override(d[1],d[2]);
-			if (d[1]>=OVERRIDE_AI_WHITE && d[1]<=OVERRIDE_AI_BLUE)
-				ReefAngel.AI.Override(d[1]-OVERRIDE_AI_WHITE,d[2]);
-			if (d[1]>=OVERRIDE_RF_WHITE && d[1]<=OVERRIDE_RF_INTENSITY)
-				ReefAngel.RF.Override(d[1]-OVERRIDE_RF_WHITE,d[2]);
-			break;
-		}
-		case MESSAGE_MENU: // Change menu screen
-		{
-			if (d[1]==d[2])
+			case MESSAGE_BUTTON: // Simulate button press
 			{
-				switch (d[1])
-				{
-				case FEEDING_MODE:
-				case WATERCHANGE_MODE:
-					ReefAngel.ChangeMode=d[1];
-					break;
-				case TOUCH_MENU:
-				case DATE_TIME_MENU:
-				case PH_CALIBRATE_MENU:
-				case SAL_CALIBRATE_MENU:
-				case ORP_CALIBRATE_MENU:
-				case PHE_CALIBRATE_MENU:
-				case WL_CALIBRATE_MENU:
-				case DEFAULT_MENU:
-					ReefAngel.DisplayedMenu=d[1];
-					break;
-				}
+				if (d[1]==1 && d[2]==1) ButtonPress++;
+				break;
 			}
-			break;
-		}
-		case MESSAGE_COMMAND: // I2C Commands
-		{
-			ReefAngel.I2CCommand=d[1];
-			break;
-		}
+			case MESSAGE_RELAY_OVERRIDE: // Override relay ports
+			{
+				ReefAngel.Relay.Override(d[1],d[2]);
+				break;
+			}
+			case MESSAGE_CHANNEL_OVERRIDE: // Override Channels
+			{
+				if (d[1]<=OVERRIDE_CHANNEL5)
+					ReefAngel.PWM.Override(d[1],d[2]);
+				if (d[1]>=OVERRIDE_AI_WHITE && d[1]<=OVERRIDE_AI_BLUE)
+					ReefAngel.AI.Override(d[1]-OVERRIDE_AI_WHITE,d[2]);
+				if (d[1]>=OVERRIDE_RF_WHITE && d[1]<=OVERRIDE_RF_INTENSITY)
+					ReefAngel.RF.Override(d[1]-OVERRIDE_RF_WHITE,d[2]);
+				if (d[1]>=OVERRIDE_DAYLIGHT2 && d[1]<=OVERRIDE_ACTINIC2)
+					ReefAngel.PWM.Override(d[1],d[2]);
+				
+				break;
+			}
+			case MESSAGE_MENU: // Change menu screen
+			{
+				if (d[1]==d[2])
+				{
+					switch (d[1])
+					{
+					case FEEDING_MODE:
+					case WATERCHANGE_MODE:
+						ReefAngel.ChangeMode=d[1];
+						break;
+					case TOUCH_MENU:
+					case DATE_TIME_MENU:
+					case PH_CALIBRATE_MENU:
+					case SAL_CALIBRATE_MENU:
+					case ORP_CALIBRATE_MENU:
+					case PHE_CALIBRATE_MENU:
+					case WL_CALIBRATE_MENU:
+					case DEFAULT_MENU:
+						ReefAngel.DisplayedMenu=d[1];
+						break;
+					}
+				}
+				break;
+			}
+			case MESSAGE_COMMAND: // I2C Commands
+			{
+				ReefAngel.I2CCommand=d[1];
+				break;
+			}
+			case MESSAGE_RESEND_ALL: // Resend all data
+			{
+				for (int a=0;a<MASTERARRAYSIZE;a++)
+					ReefAngel.olddata[a]=0;
+				break;
+			}
 		}
 	}
 	else

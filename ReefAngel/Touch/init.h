@@ -1,16 +1,6 @@
 // Touch
 
 wdt_enable(WDTO_1S);
-#ifdef RA_TOUCHDISPLAY
-Wire.onReceive(receiveEvent);
-Wire.onRequest(NULL);
-Wire.begin(I2CRA_TouchDisplay);
-#elif defined RA_TOUCH
-Wire.onReceive(NULL);
-Wire.onRequest(NULL);
-Wire.begin();
-#endif // RA_TOUCHDISPLAY
-
 EM=0;
 EM1=0;
 REM=0;
@@ -23,6 +13,7 @@ Sleeping=false;
 pinMode(53,OUTPUT);
 digitalWrite(53,HIGH); // Pull up resistor on hardware SS SPI
 SPI.begin();
+wdt_reset();
 TouchLCD.Init();
 SmallFont.SetFont(f8x8);
 Font.SetFont(f12x12);
@@ -30,11 +21,14 @@ LargeFont.SetFont(ArialBold20);
 setSyncProvider(RTC.get);   // the function to get the time from the RTC
 setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 TS.Init();
+wdt_reset();
 OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Ok",OKBUTTON);
 CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Cancel",CANCELBUTTON);
 Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
 Slider.SetPosition(0,50);
 Slider.Refresh();
+wdt_reset();
+InitCustomLabels();
 for(int a=0;a<6;a++)
 	PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");
 MenuFunctionPtr=&ReefAngelClass::Touch; // default pointer
@@ -96,3 +90,14 @@ if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 		wdt_reset();
 	}
 }
+#ifdef RA_TOUCHDISPLAY
+Board=RATouchDisplay;
+Wire.onReceive(receiveEvent);
+Wire.onRequest(NULL);
+Wire.begin(I2CRA_TouchDisplay);
+#elif defined RA_TOUCH
+Board=RATouch;
+Wire.onReceive(NULL);
+Wire.onRequest(NULL);
+Wire.begin();
+#endif // RA_TOUCHDISPLAY
