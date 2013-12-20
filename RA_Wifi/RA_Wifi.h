@@ -23,10 +23,10 @@
 #define __RA_WIFI_H__
 
 #include <Globals.h>
-#include <avr/pgmspace.h>
-#include <avr/wdt.h>
 
 #if defined wifi || defined ETH_WIZ5100
+#include <avr/pgmspace.h>
+#include <avr/wdt.h>
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";
 const prog_char XML_T1[] PROGMEM = "</ID><T1>";
 const prog_char XML_T2[] PROGMEM = "</T1><T2>";

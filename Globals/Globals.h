@@ -30,9 +30,12 @@
 #include <Time.h>
 #include <OneWire.h>
 #include <SPI.h>
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
+#endif
 #include <avr/pgmspace.h>
+
 
 static unsigned long RAStart;
 
@@ -75,8 +78,7 @@ void receiveEventMaster(int howMany);
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
-#define wifi
-#define BUSCHECK
+#define DisplayLEDPWM
 #undef RA_STANDARD
 #undef RA_PLUS
 #define RA_EVOLUTION
@@ -277,8 +279,14 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#if defined(__SAM3X8E__)
+#define AlarmPin          	30
+#define daylight2PWMPin     5
+#define actinic2PWMPin      6
+#else //
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
+#endif //__SAM3X8E__
 #define BuzzerPin			48
 #define SDPin				49
 #define HW_SPI_Pin			53

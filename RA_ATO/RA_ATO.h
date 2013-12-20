@@ -95,19 +95,23 @@ public:
 };
 #endif // WATERLEVELEXPANSION
 
-#if defined RA_STAR || defined RA_TOUCHDISPLAY
+#if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
 class RA_ATOALARMClass : public RA_ATOClass
 {
 public:
 #ifdef ATO_LOW_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return !activestatus; }
+#elif defined(__SAM3X8E__)
+    inline bool IsActive() { return digitalRead(AlarmPin); }
 #else // RA_TOUCHDISPLAY
     inline bool IsActive() { return (PINJ & (1<<PJ4)); }
 #endif // RA_TOUCHDISPLAY
 #else // ATO_LOW_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
+#elif defined(__SAM3X8E__)
+    inline bool IsActive() { return !digitalRead(AlarmPin); }
 #else // RA_TOUCHDISPLAY
     inline bool IsActive() { return !(PINJ & (1<<PJ4)); }
 #endif // RA_TOUCHDISPLAY

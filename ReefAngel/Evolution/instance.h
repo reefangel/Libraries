@@ -33,3 +33,7 @@ void ReefAngelClass::CheckWaterChangeDrawing()
 void ReefAngelClass::RefreshScreen()
 {
 }
+
+void ReefAngelClass::SetupCalibratePH()
+{
+}

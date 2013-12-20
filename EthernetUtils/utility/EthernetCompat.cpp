@@ -20,9 +20,12 @@
 
 #include <utility/EthernetCompat.h>
 
+#if not defined(__SAM3X8E__)
+
 #if defined(__ETHERNET_COMPAT_BONJOUR__)
 
 #if defined(ARDUINO) && ARDUINO > 18   // Arduino 0019 or later
+
 
 #include <utility/socket.h>
 #include <utility/w5100.h>
@@ -47,9 +50,9 @@ const uint8_t ECSnMrMulticast    = SnMR::MULTI;
   inline static void setSS()     { PORTB &= ~_BV(0); };
   inline static void resetSS()   { PORTB |=  _BV(0); };
 #else
-  inline static void initSS()    { DDRB  |=  _BV(2); };
-  inline static void setSS()     { PORTB &= ~_BV(2); };
-  inline static void resetSS()   { PORTB |=  _BV(2); };
+  inline static void initSS()    { };
+  inline static void setSS()     { };
+  inline static void resetSS()   { };
 #endif
 
 uint16_t ethernet_compat_write_private(uint16_t _addr, uint8_t *_buf, uint16_t _len)
@@ -314,3 +317,4 @@ void ethernet_compat_write_SUBR(uint8_t* subnetMask)
 
 #endif // Arduino 0018 or earlier
 #endif // __ETHERNET_COMPAT_BONJOUR__
+#endif // __SAM3X8E__

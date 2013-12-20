@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <Arduino.h>
 
+#if not defined(__SAM3X8E__)
+
 extern "C" {
    #include <wiring.h>
    #include <utility/EthernetUtil.h>
@@ -408,3 +410,5 @@ DNSError_t EthernetDNSClass::resolveHostName(const char* hostName, byte ipAddr[4
 }
 
 EthernetDNSClass EthernetDNS;
+
+#endif // __SAM3X8E__

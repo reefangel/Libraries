@@ -20,6 +20,8 @@
   */
 
 #include <Globals.h>
+#if not defined(__SAM3X8E__)
+
 #if defined wifi || defined ETH_WIZ5100
 #include "RA_Wifi.h"
 #include <DS1307RTC.h>
@@ -995,7 +997,7 @@ void RA_Wifi::ProcessHTTP()
 		}
 	}  // switch reqtype
 #if defined WDT || defined WDT_FORCE
-      wdt_reset();
+	ReefAngel.WDTReset();
 #endif  // defined WDT || defined WDT_FORCE
 
 	m_pushbackindex=0;
@@ -1520,7 +1522,7 @@ void RA_Wifi::ProcessSerial()
       PushBuffer(_wifiSerial->read());
       timeout=millis();
 #if defined WDT || defined WDT_FORCE
-      wdt_reset();
+      ReefAngel.WDTReset();
 #endif  // defined WDT || defined WDT_FORCE
     }
   }
@@ -1800,3 +1802,5 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif // ETH_WIZ5100
 }
 #endif  // wifi
+
+#endif // __SAM3X8E__
