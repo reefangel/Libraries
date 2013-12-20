@@ -33,7 +33,7 @@ public:
 	unsigned long AImillis;
 	void SetPort(byte portnum);
 	void inline SetChannel(byte Channel, byte Value) { if (Channel<AI_CHANNELS) AIChannels[Channel]=Value; };
-	void inline SetChannelOverride(byte Channel, byte Value) { if (Channel<AI_CHANNELS) AIChannelsOverride[Channel]=Value; };
+	void inline SetChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<AI_CHANNELS) AIChannelsOverride[Channel]=Value; };
 	byte GetChannel(byte Channel);
 	byte inline GetOverrideChannel(byte Channel) { return AIChannelsOverride[Channel]; };
 	void inline SetStreamDelay(int delay) { StreamDelay=delay; };

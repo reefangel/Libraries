@@ -29,20 +29,62 @@
 #include <Arduino.h>
 #include <Time.h>
 #include <OneWire.h>
+#include <SPI.h>
+#include <Ethernet.h>
+#include <EthernetDHCP.h>
 #include <avr/pgmspace.h>
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
-#include <SD.h>
-#endif //  REEFTOUCH
+static unsigned long RAStart;
+
+#ifdef RA_TOUCHDISPLAY
+void receiveEvent(int howMany);
+void SendMaster(byte ID, byte data1, byte data2);
+#endif RA_TOUCHDISPLAY
+
+#ifdef I2CMASTER
+void receiveEventMaster(int howMany);
+#endif // I2CMASTER
 
 
-#if defined(__AVR_ATmega2560__)
+#define RA_STANDARD // We start assuming it is a Standard Reef Angel
+
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
+#define DisplayLEDPWM
+#undef RA_STANDARD
+#define RA_PLUS
 #endif //__AVR_ATmega2560__
 
-#if defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#undef RA_STANDARD
+#undef RA_PLUS
+#include <SD.h>
+#endif //  RA_TOUCH
+
+#if defined RA_STAR
+#undef RA_PLUS
+#undef wifi
+#define ETH_WIZ5100
+#define EMBEDDED_LEAK
+#define DIGITAL_JOYSTICK
+#define HWSPILCD
+#define MAIN_2014
+#define FONT_8x8
+#endif //  RA_STAR
+
+#if defined(__SAM3X8E__)
+#define wifi
+#define BUSCHECK
+#undef RA_STANDARD
+#undef RA_PLUS
+#define RA_EVOLUTION
+#include "itoa.h"
+#endif
+
+
+#if defined RA_TOUCHDISPLAY
 #define DisplayLEDPWM
 #define PWMEXPANSION
 #define DisplayLEDPWM
@@ -54,22 +96,24 @@
 #define PHEXPANSION
 #define WATERLEVELEXPANSION
 #define AI_LED
-#endif // REEFTOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 
-#if defined REEFTOUCH || defined DCPUMPCONTROL
+#if defined RA_TOUCH || defined DCPUMPCONTROL
 #define DisplayLEDPWM
-#endif // REEFTOUCH
+#endif // RA_TOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
 
-
 #ifdef __PLUS_SPECIAL_WIFI__
 #define WIFI_SERIAL Serial1
+#elif defined RA_STAR
+#define WIFI_SERIAL NetClient
 #else
 #define WIFI_SERIAL Serial
 #endif // __PLUS_SPECIAL_WIFI__
 
+#define RANET_SERIAL	Serial2
 
 // Outlets on Relay box
 #define Port8   8
@@ -91,18 +135,29 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define Port2Bit   1<<1
 #define Port1Bit   1<<0
 
-// Flags bits
+// Alert Flags bits
 #define ATOTimeOutFlag	0
 #define OverheatFlag   	1
 #define BusLockFlag   	2
-#define LightsOnFlag   	3
-#define LeakFlag		4
+#define LeakFlag		3
+
+// Status Flag Bits
+#define LightsOnFlag   	0
+#define FeedingFlag   	1
+#define WaterChangeFlag	2
+
 
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
+#define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
+#define WATERLEVEL_CHANNELS				5
+
+// 8 Exp. Boxes, 1 Dimming
+// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
+#define RANET_SIZE						26
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -194,6 +249,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define VPin                0
 #define HPin                1
 #define VBAT				2
+#define LeakPin             5
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
 //#define Piezo               16 
@@ -210,29 +266,33 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define daylight2PWMPin     45
+#define actinic2PWMPin      46
 #define SDPin				49
 #define HW_SPI_Pin			53
 
 // I2C Addresses
-#define I2CEEPROM1          0x50
-#define I2CEEPROM2          0x54
-#define I2CClock            0x68
-#define I2CExpander1        0x20
-#define I2CExpander2        0x21
-#define I2CExpModule        0x38 // 0x38-3f
-#define I2CLeak				0X48
-#define I2CORP				0X4c
-#define I2CSalinity			0X4d
-#define I2CPH				0X4e
-#define I2CWaterLevel		0X4f
-#define I2CHumidity			0x5c
 #define I2CPWM				0x08
 #define I2CIO				0x09
 #define I2CRF				0X10
 #define I2CRA_Master		0x11
 #define I2CRA_TouchDisplay	0x12
 #define I2CTilt				0x1c
+#define I2CExpander1        0x20
+#define I2CExpander2        0x21
+#define I2CIO_PCF8574       0x27
+#define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
+#define I2CLeak				0X48
+#define I2CMultiWaterLevel	0X49
+#define I2CORP				0X4c
+#define I2CSalinity			0X4d
+#define I2CPH				0X4e
+#define I2CWaterLevel		0X4f
+#define I2CEEPROM1          0x50
+#define I2CEEPROM2          0x54
+#define I2CHumidity			0x5c
+#define I2CClock            0x68
 
 
 // I2C Images Addresses
@@ -270,6 +330,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_BLUE		15
 #define OVERRIDE_RF_INTENSITY	16
 #define OVERRIDE_CHANNELS		17
+#define OVERRIDE_DAYLIGHT2		18
+#define OVERRIDE_ACTINIC2		19
+
 
 // Message IDs
 #define MESSAGE_BUTTON	0
@@ -438,9 +501,25 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DCPumpMode          VarsStart+137
 #define Mem_B_DCPumpSpeed         VarsStart+138
 #define Mem_B_DCPumpDuration      VarsStart+139
+#define Mem_I_WaterLevel1Min	  VarsStart+140
+#define Mem_I_WaterLevel1Max	  VarsStart+142
+#define Mem_I_WaterLevel2Min	  VarsStart+144
+#define Mem_I_WaterLevel2Max	  VarsStart+146
+#define Mem_I_WaterLevel3Min	  VarsStart+148
+#define Mem_I_WaterLevel3Max	  VarsStart+150
+#define Mem_I_WaterLevel4Min	  VarsStart+152
+#define Mem_I_WaterLevel4Max	  VarsStart+154
+#define Mem_B_LEDPWMDaylight2     VarsStart+156
+#define Mem_B_LEDPWMActinic2      VarsStart+157
+#define Mem_B_PWMSlopeStartD2     VarsStart+158
+#define Mem_B_PWMSlopeEndD2	      VarsStart+159
+#define Mem_B_PWMSlopeDurationD2  VarsStart+160
+#define Mem_B_PWMSlopeStartA2     VarsStart+161
+#define Mem_B_PWMSlopeEndA2	      VarsStart+162
+#define Mem_B_PWMSlopeDurationA2  VarsStart+163
 
-#define VarsEnd					  VarsStart+140
-// Next value starts VarsStart+140
+#define VarsEnd					  VarsStart+164
+// Next value starts VarsStart+164
 
 
 // EEProm Pointers
@@ -451,6 +530,7 @@ When adding more variables, use the previous value plus 1 or 2
 // Internal Memory Check Pointer - 4 byte length (954-957)
 #define IMPointer			954
 
+#define RANetDelay			100
 #define bit9600Delay 		101
 #define KeyPressRate		250
 #define DEGREE_F            0
@@ -533,6 +613,8 @@ When adding more variables, use the previous value plus 1 or 2
 #define MENU_END_COL        124
 #define MAX_Y               128
 #define MAX_X               128
+
+// DisplayedMenu IDs
 #define DEFAULT_MENU        255
 #define EXCEED_TIMEOUT_MENU 254
 #define FEEDING_MODE		253
@@ -540,6 +622,13 @@ When adding more variables, use the previous value plus 1 or 2
 #define ALT_SCREEN_MODE		251
 #define RETURN_MAIN_MODE	250
 #define TOUCH_MENU			249
+#define DATE_TIME_MENU		248
+#define PH_CALIBRATE_MENU	247
+#define SAL_CALIBRATE_MENU	246
+#define ORP_CALIBRATE_MENU	245
+#define PHE_CALIBRATE_MENU	244
+#define WL_CALIBRATE_MENU	243
+
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
 
@@ -553,10 +642,11 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
+#define COLOR_MIDNIGHTBLUE          RGB565(0x00, 0x33, 0x66)
 #define COLOR_ROYALBLUE             RGB565(0x45, 0x71, 0xda)
 #define COLOR_LIGHTBLUE             RGB565(0xad, 0xd8, 0xe6)
 #define COLOR_RED                   RGB565(0xFF, 0x00, 0x00)
@@ -567,6 +657,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define COLOR_CYAN                  RGB565(0x00, 0xFF, 0xFF)
 #define COLOR_GRAY                  RGB565(0x80, 0x80, 0x40)
 #define COLOR_SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define COLOR_GRAY88                RGB565(0xE0, 0xE0, 0xE0)
 #define COLOR_GOLD                  RGB565(0xA0, 0xA0, 0x40)
 #define COLOR_ORANGE				RGB565(0xFF, 0x80, 0x00)
 #define TOPBAR_BC					COLOR_WHITE
@@ -590,7 +681,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define PWMBLUE						COLOR_BLUE
 #define PWMINTENSITY				COLOR_MAGENTA
 #define DefaultBGColor				BKCOLOR
-#else //  REEFTOUCH
+#else //  RA_TOUCH
 
 //  Global Colors
 #define COLOR_BLACK                 0x00
@@ -727,7 +818,7 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define DefaultFGColor      COLOR_BLACK  // Default text color
 #define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
 
-#endif //  REEFTOUCH
+#endif //  RA_TOUCH
 
 #endif  // COLORS_PDE
 
@@ -823,7 +914,7 @@ typedef struct  {
 #define Celsius		1
 #define Fahrenheit	0
 
-//ReefTouch Block
+//Reef Angel Touch Block
 
 typedef struct Calibration
 {
@@ -980,24 +1071,26 @@ typedef struct Compensation
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
 #define SplashDuration					5000
-#define TouchSample						10
+#define TouchSample						20
 #define TouchSlideDelta					20
-#define TouchPressure					900
+#define TouchPressure					1500
 #define MAX_RELAY_EXPANSION_MODULES		8
 #define FONT_HEADER 					7
-#define TS_CALIBRATION_XMIN				500
-#define TS_CALIBRATION_XMAX				3600
-#define TS_CALIBRATION_YMIN				500
-#define TS_CALIBRATION_YMAX				3600
-#define TS_CALIBRATION_DELTA			500
+#define TS_CALIBRATION_XMIN				700
+#define TS_CALIBRATION_XMAX				3200
+#define TS_CALIBRATION_YMIN				700
+#define TS_CALIBRATION_YMAX				3200
+#define TS_CALIBRATION_DELTA			800
+#define CALIBRATION_TIMER				3
 
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 
 uint16_t read16(File f);
 uint32_t read32(File f);
 
-#define ILI9341
+//#define ILI9341
 //#define HX8347D
+#define HX8347G
 
 const prog_char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
 const prog_char NoIMLine2[] PROGMEM = "File";
@@ -1006,11 +1099,55 @@ const prog_char NoIMLine4[] PROGMEM = "Example Codes";
 const prog_char NoIMLine5[] PROGMEM = "InitialInternalMemory";
 
 // Touch PROGMEM Strings
-// Calibration
+// TouchScreen Calibration
 const prog_char CALI1[] PROGMEM = "Touch Screen";
 const prog_char CALI2[] PROGMEM = "Calibration";
 const prog_char CALI3[] PROGMEM = "Please touch";
 const prog_char CALI4[] PROGMEM = "the red circle";
+
+// pH Calibration
+const prog_char PH_CALI1[] PROGMEM = "Please place the pH probe in";
+const prog_char PH_CALI2[] PROGMEM = "calibration solution";
+const prog_char PH_CALI3[] PROGMEM = "and touch Ok button";
+const prog_char PH_CALI4[] PROGMEM = "Calibrating";
+const prog_char PH_CALI5[] PROGMEM = "Please wait...";
+const prog_char PH_CALI6[] PROGMEM = "Calculating Calibration...";
+const prog_char PH_CALI7[] PROGMEM = "Your calibration value is";
+const prog_char PH_CALI8[] PROGMEM = "Please write it down";
+const prog_char PH_CALI9[] PROGMEM = "for your records";
+const prog_char PH_CALI10[] PROGMEM = "Please rinse the pH probe";
+const prog_char PH_CALI11[] PROGMEM = "with RO/DI water";
+const prog_char PH_CALI12[] PROGMEM = "Ready to save values";
+const prog_char PH_CALI13[] PROGMEM = "Proceed?";
+const prog_char PH_CALI14[] PROGMEM = "Calibration Completed";
+
+// Salinity Calibration
+const prog_char SAL_CALI1[] PROGMEM = "Please place the Salinity probe in";
+const prog_char SAL_CALI2[] PROGMEM = "ppt";
+const prog_char NO_SAL1[] PROGMEM = "No Salinity Expansion";
+const prog_char NO_SAL2[] PROGMEM = "Module Found";
+
+// ORP Calibration
+const prog_char ORP_CALI1[] PROGMEM = "Please connect the terminator";
+const prog_char ORP_CALI2[] PROGMEM = "Please place the ORP probe in";
+const prog_char ORP_CALI3[] PROGMEM = "mV";
+const prog_char ORP_CALI4[] PROGMEM = "Please disconnect the";
+const prog_char ORP_CALI5[] PROGMEM = "terminator and connect";
+const prog_char ORP_CALI6[] PROGMEM = "ORP probe";
+
+const prog_char NO_ORP1[] PROGMEM = "No ORP Expansion";
+
+// pHExp Calibration
+const prog_char NO_PHE1[] PROGMEM = "No pH Expansion";
+
+// WL Calibration
+const prog_char WL_CALI1[] PROGMEM = "Please hold the PVC";
+const prog_char WL_CALI2[] PROGMEM = "pipe out of the water";
+const prog_char WL_CALI3[] PROGMEM = "Please immerse the PVC";
+const prog_char WL_CALI4[] PROGMEM = "pipe in water until";
+const prog_char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
+const prog_char WL_CALI6[] PROGMEM = "%";
+const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
 
 // Labels
 const prog_char LABEL_TEMP[] PROGMEM = "Temp ";
@@ -1123,7 +1260,7 @@ static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_ADJUST, MENU_BUTT
 static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
 static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
 
-#endif //  REEFTOUCH
+#endif //  RA_TOUCH
 
 // EM Bits
 #ifdef PWMEXPANSION
@@ -1182,10 +1319,16 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #endif  // HUMIDITYEXPANSION
 
 #ifdef DCPUMPCONTROL
-	#define DCPumpbit		2
+	#define DCPumpbit	2
 #else
-	#define DCPumpbit		0
+	#define DCPumpbit	0
 #endif  // DCPUMPCONTROL
+
+#ifdef LEAKDETECTOREXPANSION
+	#define Leakbit		4
+#else
+	#define Leakbit		0
+#endif  // LEAKDETECTOREXPANSION
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))
@@ -1210,6 +1353,7 @@ extern byte AtoEventCount;  // Defined in RA_ATO.cpp
 extern boolean LightsOverride;
 
 // globally usable functions
+void inline pingSerial() {};
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
@@ -1237,13 +1381,12 @@ byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDura
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 
-
 // for virtual functions
-extern "C" void __cxa_pure_virtual(void);
+//extern "C" void __cxa_pure_virtual(void);
 // other fixes
-__extension__ typedef int __guard __attribute__((mode (__DI__)));
-extern "C" int __cxa_guard_acquire(__guard *);
-extern "C" void __cxa_guard_release (__guard *);
-extern "C" void __cxa_guard_abort (__guard *);
+//__extension__ typedef int __guard __attribute__((mode (__DI__)));
+//extern "C" int __cxa_guard_acquire(__guard *);
+//extern "C" void __cxa_guard_release (__guard *);
+//extern "C" void __cxa_guard_abort (__guard *);
 
 #endif  // __GLOBALS_H__

@@ -1,3 +1,4 @@
+#ifndef __SAM3X8E__
 /*
  * DS1307RTC.h - library for DS1307 RTC
  * This library is intended to be uses with Arduino Time.h library functions
@@ -36,4 +37,4 @@ extern DS1307RTC RTC;
 
 #endif
  
-
+#endif // __SAM3X8E__

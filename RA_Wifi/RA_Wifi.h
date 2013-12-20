@@ -24,8 +24,9 @@
 
 #include <Globals.h>
 #include <avr/pgmspace.h>
+#include <avr/wdt.h>
 
-#ifdef wifi
+#if defined wifi || defined ETH_WIZ5100
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";
 const prog_char XML_T1[] PROGMEM = "</ID><T1>";
 const prog_char XML_T2[] PROGMEM = "</T1><T2>";
@@ -43,8 +44,9 @@ const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
 const prog_char XML_EM1[] PROGMEM = "</EM><EM1>";
 const prog_char XML_REM[] PROGMEM = "</EM1><REM>";
-const prog_char XML_FLAG[] PROGMEM = "</REM><FLAG>";
-const prog_char XML_FLAG_END[] PROGMEM = "</FLAG>";
+const prog_char XML_ALERTFLAG[] PROGMEM = "</REM><AF>";
+const prog_char XML_STATUSFLAG[] PROGMEM = "</AF><SF>";
+const prog_char XML_STATUSFLAG_END[] PROGMEM = "</SF>";
 
 #ifdef DisplayLEDPWM
 const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
@@ -66,8 +68,8 @@ const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
 const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 #endif  // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
-const prog_char XML_WL[] PROGMEM = "<WL>";
-const prog_char XML_WL_END[] PROGMEM = "</WL>";
+const prog_char XML_WL[] PROGMEM = "<WL";
+const prog_char XML_WL_END[] PROGMEM = "</WL";
 #endif  // WATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
@@ -118,6 +120,20 @@ const prog_char XML_IO_END[] PROGMEM = "</IO>";
 const prog_char XML_C[] PROGMEM = "<C";
 const prog_char XML_C_END[] PROGMEM = "</C";
 #endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+const prog_char XML_LEAK[] PROGMEM = "<LEAK>";
+const prog_char XML_LEAK_END[] PROGMEM = "</LEAK>";
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+const prog_char XML_ALARM[] PROGMEM = "<ALARM>";
+const prog_char XML_ALARM_END[] PROGMEM = "</ALARM>";
+const prog_char XML_PWMA2[] PROGMEM = "<PWMA2>";
+const prog_char XML_PWMD2[] PROGMEM = "</PWMA2><PWMD2>";
+const prog_char XML_PWMA2O[] PROGMEM = "</PWMD2><PWMA2O>";
+const prog_char XML_PWMD2O[] PROGMEM = "</PWMA2O><PWMD2O>";
+const prog_char XML_PWMD2O_END[] PROGMEM = "</PWMD2O>";
+#endif  // RA_STAR
+
 #ifdef ENABLE_ATO_LOGGING
 const prog_char XML_ATOLOW_LOG_OPEN[] PROGMEM = "<AL";
 const prog_char XML_ATOLOW_LOG_CLOSE[] PROGMEM = "</AL";
@@ -146,6 +162,85 @@ const prog_char SERVER_HEADER2[] PROGMEM = "\r\nContent-Length: ";
 const prog_char SERVER_DENY[] PROGMEM = "HTTP/1.1 401 Access Denied\r\nWWW-Authenticate: Basic realm=Reef Angel Controller\r\nContent-Length: 0\r\n";
 const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server</h1>";
 
+#ifndef RA_STANDARD
+const prog_char JSON_OPEN[] PROGMEM = "{\"json\":{";
+const prog_char JSON_ID[] PROGMEM = "ID";
+const prog_char JSON_T1[] PROGMEM = "T1";
+const prog_char JSON_T2[] PROGMEM = "T2";
+const prog_char JSON_T3[] PROGMEM = "T3";
+const prog_char JSON_PH[] PROGMEM = "PH";
+const prog_char JSON_R[] PROGMEM = "R";
+const prog_char JSON_RON[] PROGMEM = "RON";
+const prog_char JSON_ROFF[] PROGMEM = "ROFF";
+const prog_char JSON_ATOLOW[] PROGMEM = "ATOLOW";
+const prog_char JSON_ATOHIGH[] PROGMEM = "ATOHIGH";
+const prog_char JSON_EM[] PROGMEM = "EM";
+const prog_char JSON_EM1[] PROGMEM = "EM1";
+const prog_char JSON_REM[] PROGMEM = "REM";
+const prog_char JSON_ALERTFLAG[] PROGMEM = "AF";
+const prog_char JSON_STATUSFLAG[] PROGMEM = "SF";
+
+#ifdef DisplayLEDPWM
+const prog_char JSON_PWMA[] PROGMEM = "PWMA";
+const prog_char JSON_PWMD[] PROGMEM = "PWMD";
+#endif  // DisplayLEDPWM
+#ifdef ORPEXPANSION
+const prog_char JSON_ORP[] PROGMEM = "ORP";
+#endif  // ORPEXPANSION
+#ifdef SALINITYEXPANSION
+const prog_char JSON_SAL[] PROGMEM = "SAL";
+#endif  // SALINITYEXPANSION
+#ifdef PHEXPANSION
+const prog_char JSON_PHEXP[] PROGMEM = "PHE";
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+const prog_char JSON_WL[] PROGMEM = "WL";
+#endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+const prog_char JSON_HUM[] PROGMEM = "HUM";
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+const prog_char JSON_DCM[] PROGMEM = "DCM";
+const prog_char JSON_DCS[] PROGMEM = "DCS";
+const prog_char JSON_DCD[] PROGMEM = "DCD";
+#endif  // DCPUMPCONTROL
+#ifdef PWMEXPANSION
+const prog_char JSON_PWME[] PROGMEM = "PWME";
+#endif  // PWMEXPANSION
+#ifdef AI_LED
+const prog_char JSON_AIW[] PROGMEM = "AIW";
+const prog_char JSON_AIB[] PROGMEM = "AIB";
+const prog_char JSON_AIRB[] PROGMEM = "AIRB";
+#endif  // AI_LED
+#ifdef RFEXPANSION
+const prog_char JSON_RFM[] PROGMEM = "RFM";
+const prog_char JSON_RFS[] PROGMEM = "RFS";
+const prog_char JSON_RFD[] PROGMEM = "RFD";
+const prog_char JSON_RFW[] PROGMEM = "RFW";
+const prog_char JSON_RFRB[] PROGMEM = "RFRB";
+const prog_char JSON_RFR[] PROGMEM = "RFR";
+const prog_char JSON_RFG[] PROGMEM = "RFG";
+const prog_char JSON_RFB[] PROGMEM = "RFB";
+const prog_char JSON_RFI[] PROGMEM = "RFI";
+#endif  // RFEXPANSION
+#ifdef IOEXPANSION
+const prog_char JSON_IO[] PROGMEM = "IO";
+#endif  // IOEXPANSION
+#ifdef CUSTOM_VARIABLES
+const prog_char JSON_C[] PROGMEM = "C";
+#endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+const prog_char JSON_LEAK[] PROGMEM = "LEAK";
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+const prog_char JSON_ALARM[] PROGMEM = "ALARM";
+const prog_char JSON_PWMA2[] PROGMEM = "PWMA2";
+const prog_char JSON_PWMD2[] PROGMEM = "PWMD2";
+#endif  // RA_STAR
+const prog_char JSON_CLOSE[] PROGMEM = "}}";
+
+#endif // RA_STANDARD
+
 // REQUEST TYPES
 #define REQ_ROOT		1		// Default page
 #define REQ_WIFI		2		// Wifi page
@@ -168,14 +263,21 @@ const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server
 #define REQ_LIGHTSOFF	19		// Turn Lights Off
 #define REQ_ALARM_LEAK	20		// Clears the Leak alarm
 #define REQ_OVERRIDE	21		// Channel Override
+#define REQ_REBOOT		22		// Reboot
+#define REQ_M_CVAR		23		// Custom Variable
+#define REQ_CALIBRATION	24		// Calibration
+#define REQ_JSON		25		// JSON export
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
 #define P(name)   static const prog_char name[] PROGMEM
-const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
-//const prog_char SERVER_RA[] PROGMEM = "<!DOCTYPE html><script src='http://www.reefangel.com/wifi/ra2.js'></script>";
+//const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
+const prog_char SERVER_RA[] PROGMEM = "<!DOCTYPE html><script src='http://www.reefangel.com/wifi/ra2.js'></script>";
 const prog_char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 const prog_char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
+const prog_char BannerHTTP11[] PROGMEM = " HTTP/1.1\r\n";
+const prog_char BannerHost[] PROGMEM = "Host: forum.reefangel.com\r\n";
+const prog_char BannerConnectionClose[] PROGMEM = "Connection: close\r\n";
 const prog_char BannerT2[] PROGMEM = "&t2=";
 const prog_char BannerT3[] PROGMEM = "&t3=";
 const prog_char BannerPH[] PROGMEM = "&ph=";
@@ -190,11 +292,14 @@ const prog_char BannerEM1[] PROGMEM = "&em1=";
 const prog_char BannerREM[] PROGMEM = "&rem=";
 const prog_char BannerCustom[] PROGMEM = "&c";
 const prog_char BannerKey[] PROGMEM = "&key=";
-const prog_char BannerFlag[] PROGMEM = "&flag=";
+const prog_char BannerAlertFlag[] PROGMEM = "&af=";
+const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
 	const prog_char BannerPWMD[] PROGMEM = "&pwmd=";
+	const prog_char BannerPWMAO[] PROGMEM = "&pwmao=";
+	const prog_char BannerPWMDO[] PROGMEM = "&pwmdo=";
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
 #ifdef PWMEXPANSION
@@ -236,7 +341,7 @@ const prog_char BannerFlag[] PROGMEM = "&flag=";
 #endif  // PHEXPANSION
 
 #ifdef WATERLEVELEXPANSION
-	const prog_char BannerWL[] PROGMEM = "&wl=";
+	const prog_char BannerWL[] PROGMEM = "&wl";
 #endif  // WATERLEVELEXPANSION
 	
 #ifdef HUMIDITYEXPANSION
@@ -249,11 +354,21 @@ const prog_char BannerFlag[] PROGMEM = "&flag=";
 	const prog_char BannerDCD[] PROGMEM = "&dcd=";
 #endif  // DCPUMPCONTROL
 
-
 #ifdef CUSTOM_VARIABLES
 	const prog_char BannerCustomVar[] PROGMEM = "&c";
 #endif //CUSTOM_VARIABLES
 
+#ifdef LEAKDETECTOREXPANSION
+	const prog_char BannerLeak[] PROGMEM = "&leak=";
+#endif  // LEAKDETECTOREXPANSION
+
+#ifdef RA_STAR
+	const prog_char BannerAlarm[] PROGMEM = "&alarm=";
+	const prog_char BannerPWMA2[] PROGMEM = "&pwma2=";
+	const prog_char BannerPWMD2[] PROGMEM = "&pwmd2=";
+	const prog_char BannerPWMA2O[] PROGMEM = "&pwma2o=";
+	const prog_char BannerPWMD2O[] PROGMEM = "&pwmd2o=";
+#endif  // RA_STAR
 
 //const prog_char probe1_tag[] PROGMEM = "t1n";
 //const prog_char probe2_tag[] PROGMEM = "t2n";
@@ -378,35 +493,64 @@ const prog_char BannerFlag[] PROGMEM = "&flag=";
 //#endif  // InstalledRelayExpansionModules >= 8
 //#endif  // RelayExp
 //};
-
-static char m_pushback[32];
-static byte m_pushbackindex=0;
-static byte reqtype=0;
-static unsigned long timeout;
-static boolean bIncoming=false;
-static boolean auth=false;
-static char authStr[32];
-static int weboption=0;
-static int weboption2=-1;
-static int weboption3=-1;
-static byte bHasSecondValue = false;
-//static byte bHasComma = false;
-static byte bCommaCount = 0;
-static boolean webnegoption=false;
-
-
-void WebResponse (const prog_char *response, long strsize);
-void pushbuffer(byte inStr);
-void PrintHeader(int s, byte type);
-char GetC(int c);
-void ConvertC(char* strIn, char* strOut, byte len);
-void WifiAuthentication(char* userpass);
-void SendXMLData(bool fAtoLog = false);
-void processHTTP();
-void CheckWifi();
 #endif  // wifi
 
-void pingSerial();
-void PROGMEMprint(const prog_char str[]);
+class RA_Wifi: public Print
+{
+  public:
+	  RA_Wifi();
+    void WebResponse (const prog_char* response, long strsize);
+    void ModeResponse(bool fOk);
+    void PushBuffer(byte inStr);
+    void PrintHeader(int s, byte type);
+    char GetC(int c);
+    void ConvertC(char* strIn, char* strOut, byte len);
+    void WifiAuthentication(char* userpass);
+    void SendXMLData(bool fAtoLog = false);
+#ifndef RA_STANDARD
+    void SendJSONData();
+    void SendSingleJSON(const prog_char str[], int value, char* suffix="");
+    void SendSingleJSON(const prog_char str[], char* value);
+#endif // RA_STANDARD
+    void ProcessHTTP();
+    void ProcessSerial();
+    void ReceiveData();
+    void PROGMEMprint(const prog_char str[]);
+    void LoadWebBanner(int pointer, byte qty);
+    void Portal(char* username);
+    void Portal(char* username, char* key);
+    void SendPortal(char* username, char* key);
+    inline void CheckWifi(){};
+    inline void pingSerial(){};
+    char *portalusername;
+
+#ifndef ETH_WIZ5100
+    using Print::write;
+    inline size_t write(uint8_t c) { return _wifiSerial->write((uint8_t)c); }
+    inline size_t write(unsigned long n) { return _wifiSerial->write((uint8_t)n); }
+    inline size_t write(long n) { return _wifiSerial->write((uint8_t)n); }
+    inline size_t write(unsigned int n) { return _wifiSerial->write((uint8_t)n); }
+    inline size_t write(int n) { return _wifiSerial->write((uint8_t)n); }
+#endif // ETH_WIZ5100
+
+  protected:
+    char m_pushback[32];
+    byte m_pushbackindex;
+    byte reqtype;
+    unsigned long timeout;
+    boolean bIncoming;
+    boolean auth;
+    char authStr[32];
+    int weboption;
+    int weboption2;
+    int weboption3;
+    byte bHasSecondValue;
+    //static byte bHasComma;
+    byte bCommaCount;
+    boolean webnegoption;
+
+  private:
+    HardwareSerial* _wifiSerial;
+};
 
 #endif  // __RA_WIFI_H__

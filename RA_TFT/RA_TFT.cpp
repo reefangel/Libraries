@@ -31,7 +31,7 @@ void RA_TFT::Init()
 	RST1;
 	delay(15);
 
-#ifdef HX8347D
+#if defined HX8347D || defined HX8347G
 	//CMO2.8+HX8347D
 	//Driving ability Setting
 	SendComData(0x00EA,0x0000); //PTBA[15:8]
@@ -247,7 +247,6 @@ void RA_TFT::Init()
 	  delay(100);
 	  SendCom(0x00,0x29);
 	  delay(100);
-	  SendCom(0x00,0x2c);
 
 #endif
 	
@@ -284,9 +283,6 @@ void RA_TFT::WriteBus(byte H,byte L)
 void RA_TFT::Clear(int color, int x1, int y1, int x2, int y2)
 {
 	SetBox(x1,y1,x2,y2);
-#ifdef ILI9341
-	SendCom(0x00,0x2C);   /* Write RAM Memory */
-#endif
 	SendData(color>>8,color&0x00ff);
 	CS0;
 	for(int i=0;i<(y2-y1+1);i++)
@@ -303,7 +299,7 @@ void RA_TFT::Clear(int color, int x1, int y1, int x2, int y2)
 
 void RA_TFT::SetBox(int x1, int y1, int x2, int y2)
 {
-#ifdef HX8347D	
+#if defined HX8347D || defined HX8347G
 	SendComData(0x0002,x1>>8);     // Column address start2
 	SendComData(0x0003,x1);    // Column address start1
 	SendComData(0x0004,x2>>8);     // Column address end2
@@ -325,6 +321,7 @@ void RA_TFT::SetBox(int x1, int y1, int x2, int y2)
 	SendData(0x00,y1);
 	SendData(0x00,y2>>8);	
 	SendData(0x00,y2);	
+	SendCom(0x00,0x2C);   /* Write RAM Memory */
 #endif
 	
 }
@@ -332,9 +329,6 @@ void RA_TFT::SetBox(int x1, int y1, int x2, int y2)
 void RA_TFT::DrawPixel(int color, int x, int y)
 {
 	SetBox(x, y, x, y);
-#ifdef ILI9341
-	SendCom(0x00,0x2C);   /* Write RAM Memory */
-#endif
 	SendData(color>>8,color&0x00ff);
 //	CS0;
 //	WR0;
