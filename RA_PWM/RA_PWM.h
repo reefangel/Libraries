@@ -31,8 +31,8 @@ public:
 	RA_PWMClass();
 	void inline SetActinic(byte value) { ActinicPWMValue = value; };
 	void inline SetDaylight(byte value) { DaylightPWMValue = value; };
-	void inline SetActinicOverride(byte value) { ActinicPWMOverride = value; };
-	void inline SetDaylightOverride(byte value) { DaylightPWMOverride = value; };
+	void inline SetActinicOverride(byte value) { if (value>100) value=255; ActinicPWMOverride = value; };
+	void inline SetDaylightOverride(byte value) { if (value>100) value=255; DaylightPWMOverride = value; };
 	byte GetActinicValue();
 	byte GetDaylightValue();
 	byte inline GetActinicOverrideValue() { return ActinicPWMOverride; };
@@ -50,16 +50,39 @@ public:
 	void StandardActinic(byte MinuteOffset);
 	void StandardDaylight(byte MinuteOffset);
 	void Override(byte Channel, byte Value);
+#ifdef RA_STAR
+	void inline SetActinic2(byte value) { Actinic2PWMValue = value; };
+	void inline SetDaylight2(byte value) { Daylight2PWMValue = value; };
+	void inline SetActinic2Override(byte value) { if (value>100) value=255; Actinic2PWMOverride = value; };
+	void inline SetDaylight2Override(byte value) { if (value>100) value=255; Daylight2PWMOverride = value; };
+	byte GetActinic2Value();
+	byte GetDaylight2Value();
+	byte inline GetActinic2OverrideValue() { return Actinic2PWMOverride; };
+	byte inline GetDaylight2OverrideValue() { return Daylight2PWMOverride; };
+	void Actinic2PWMSlope(byte MinuteOffset);
+	void Daylight2PWMSlope(byte MinuteOffset);
+	void Actinic2PWMSlope();
+	void Daylight2PWMSlope();
+	void Actinic2PWMParabola(byte MinuteOffset);
+	void Daylight2PWMParabola(byte MinuteOffset);
+	void Actinic2PWMParabola();
+	void Daylight2PWMParabola();
+	void StandardActinic2();
+	void StandardDaylight2();
+	void StandardActinic2(byte MinuteOffset);
+	void StandardDaylight2(byte MinuteOffset);
+#endif
 	
 #ifdef PWMEXPANSION
 	byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
 	byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
 	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
-	void inline SetChannelOverride(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannelOverride[Channel]=Value; };
+	void inline SetChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannelOverride[Channel]=Value; };
 	void Expansion(byte cmd, byte data);
 	void ExpansionSetPercent(byte p);
 	void ExpansionWrite();
 	byte GetChannelValue(byte Channel);
+	byte inline GetChannelOverrideValue(byte Channel) { return ExpansionChannelOverride[Channel]; };
 	void Channel0PWMSlope();
 	void Channel1PWMSlope();
 	void Channel2PWMSlope();
@@ -93,11 +116,17 @@ public:
 #endif  // PWMEXPANSION
 
 private:
+	byte lastcrc;
 	byte ActinicPWMValue;
 	byte DaylightPWMValue;
 	byte ActinicPWMOverride;
 	byte DaylightPWMOverride;
-	
+#ifdef RA_STAR
+	byte Actinic2PWMValue;
+	byte Daylight2PWMValue;
+	byte Actinic2PWMOverride;
+	byte Daylight2PWMOverride;
+#endif
 };
 
 #endif  // __RA_PWM_H__

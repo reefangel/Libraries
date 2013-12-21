@@ -2,19 +2,35 @@
   time.h - low level time and date functions
 */
 
+/*
+  July 3 2011 - fixed elapsedSecsThisWeek macro (thanks Vincent Valdy for this)
+              - fixed  daysToTime_t macro (thanks maniacbug)
+*/     
+
 #ifndef _Time_h
+#ifdef __cplusplus
 #define _Time_h
 
 #include <inttypes.h>
-#if ARDUINO >= 100
-#include "Arduino.h"       // for delayMicroseconds, digitalPinToBitMask, etc
-#else
-#include "WProgram.h"      // for delayMicroseconds
-#include "pins_arduino.h"  // for digitalPinToBitMask, etc
+#ifndef __AVR__
+#include <sys/types.h> // for __time_t_defined, but avr libc lacks sys/types.h
 #endif
 
-typedef unsigned long time_t;
 
+#if !defined(__time_t_defined) // avoid conflict with newlib or other posix libc
+typedef unsigned long time_t;
+#endif
+
+
+// This ugly hack allows us to define C++ overloaded functions, when included
+// from within an extern "C", as newlib's sys/stat.h does.  Actually it is
+// intended to include "time.h" from the C library (on ARM, but AVR does not
+// have that file at all).  On Mac and Windows, the compiler will find this
+// "Time.h" instead of the C library "time.h", so we may cause other weird
+// and unpredictable effects by conflicting with the C library header "time.h",
+// but at least this hack lets us define C++ functions as intended.  Hopefully
+// nothing too terrible will result from overriding the C library header?!
+extern "C++" {
 typedef enum {timeNotSet, timeNeedsSync, timeSet
 }  timeStatus_t ;
 
@@ -45,6 +61,7 @@ typedef struct  {
 typedef time_t(*getExternalTime)();
 //typedef void  (*setExternalTime)(const time_t); // not used in this version
 
+static  const uint8_t monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31}; // API starts months from 1, this array starts from 0
 
 /*==============================================================================*/
 /* Useful Constants */
@@ -63,19 +80,23 @@ typedef time_t(*getExternalTime)();
 #define dayOfWeek(_time_)  ((( _time_ / SECS_PER_DAY + 4)  % DAYS_PER_WEEK)+1) // 1 = Sunday
 #define elapsedDays(_time_) ( _time_ / SECS_PER_DAY)  // this is number of days since Jan 1 1970
 #define elapsedSecsToday(_time_)  (_time_ % SECS_PER_DAY)   // the number of seconds since last midnight 
+// The following macros are used in calculating alarms and assume the clock is set to a date later than Jan 1 1971
+// Always set the correct time before settting alarms
 #define previousMidnight(_time_) (( _time_ / SECS_PER_DAY) * SECS_PER_DAY)  // time at the start of the given day
-#define nextMidnight(_time_) ( previousMidnight(_time_)  + SECS_PER_DAY ) // time at the end of the given day 
-#define elapsedSecsThisWeek(_time_)  (elapsedSecsToday(_time_) +  (dayOfWeek(_time_) * SECS_PER_DAY) )   
+#define nextMidnight(_time_) ( previousMidnight(_time_)  + SECS_PER_DAY )   // time at the end of the given day 
+#define elapsedSecsThisWeek(_time_)  (elapsedSecsToday(_time_) +  ((dayOfWeek(_time_)-1) * SECS_PER_DAY) )   // note that week starts on day 1
+#define previousSunday(_time_)  (_time_ - elapsedSecsThisWeek(_time_))      // time at the start of the week for the given time
+#define nextSunday(_time_) ( previousSunday(_time_)+SECS_PER_WEEK)          // time at the end of the week for the given time
+
 
 /* Useful Macros for converting elapsed time to a time_t */
 #define minutesToTime_t ((M)) ( (M) * SECS_PER_MIN)  
 #define hoursToTime_t   ((H)) ( (H) * SECS_PER_HOUR)  
-#define daysToTime_t    ((H)) ( (D) * SECS_PER_DAY) 
+#define daysToTime_t    ((D)) ( (D) * SECS_PER_DAY) // fixed on Jul 22 2011
 #define weeksToTime_t   ((W)) ( (W) * SECS_PER_WEEK)   
 
 /*============================================================================*/
 /*  time and date functions   */
-time_t ScheduleTime(uint8_t ScheduleHour, uint8_t ScheduleMinute, uint8_t ScheduleSecond);
 int     hour();            // the hour now 
 int     hour(time_t t);    // the hour for the given time
 int     hourFormat12();    // the hour now in 12 hour format
@@ -118,6 +139,7 @@ void    setSyncInterval(time_t interval); // set the number of seconds between r
 void breakTime(time_t time, tmElements_t &tm);  // break time_t into elements
 time_t makeTime(tmElements_t &tm);  // convert time elements into time_t
 
-
+} // extern "C++"
+#endif // __cplusplus
 #endif /* _Time_h */
 

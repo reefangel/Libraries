@@ -36,7 +36,7 @@ AIClass::AIClass()
 
 byte AIClass::GetChannel(byte Channel)
 {
-	if (AIChannelsOverride[Channel]<100)
+	if (AIChannelsOverride[Channel]<=100)
 		return AIChannelsOverride[Channel];
 	else
 		return AIChannels[Channel];

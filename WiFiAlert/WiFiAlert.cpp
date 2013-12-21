@@ -27,9 +27,9 @@ void WiFiAlert::Send(char *message, boolean force)
 void WiFiAlert::WiFiSendAlert(char *message)
 {
   Serial.print("GET /status/wifialert.aspx?id=");
-  Serial.print(ReefAngel.portalusername);
+  Serial.print(ReefAngel.Network.portalusername);
   Serial.print("&key=");
-  Serial.print(ReefAngel.portalkey);
+  Serial.print(ReefAngel.Network.portalkey);
   Serial.print("&msg=");
   Serial.println(message);
   Serial.println("\n\n");

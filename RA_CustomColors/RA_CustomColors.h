@@ -36,7 +36,7 @@ The values can range from 0x00 to 0xFF.  Most of the common colors are specified
 of your own hex code (number) is most likely not needed.  If you want to see what the colors will look like,
 on the ReefAngel Google Groups page is a Color Chart image that will show you the colors.
 */
-#if defined REEFTOUCH || defined REEFTOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
@@ -51,6 +51,7 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define COLOR_CYAN                  RGB565(0x00, 0xFF, 0xFF)
 #define COLOR_GRAY                  RGB565(0x80, 0x80, 0x40)
 #define COLOR_SILVER                RGB565(0xA0, 0xA0, 0x80)
+#define COLOR_GRAY88                RGB565(0xE0, 0xE0, 0xE0)
 #define COLOR_GOLD                  RGB565(0xA0, 0xA0, 0x40)
 #define COLOR_ORANGE				RGB565(0xFF, 0x80, 0x00)
 #define TOPBAR_BC					COLOR_WHITE
@@ -75,7 +76,7 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define PWMINTENSITY				COLOR_MAGENTA
 #define DefaultBGColor				BKCOLOR
 
-#else //  REEFTOUCH
+#else //  RA_TOUCH
 
 #define T1TempColor         COLOR_RED  // Text color for the T1 temp probe (homescreen)
 #define T2TempColor         COLOR_CHOCOLATE  // Text color for the T2 temp probe (homescreen)
@@ -100,6 +101,6 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define DefaultFGColor      COLOR_BLACK  // Default text color
 #define GraphDotLineColor   0x49    // color of the dotted line in the middle of the graph
 
-#endif //  REEFTOUCH
+#endif //  RA_TOUCH
 
 #endif  // __RA_CUSTOMCOLORS_H__

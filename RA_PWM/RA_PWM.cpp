@@ -30,9 +30,16 @@ RA_PWMClass::RA_PWMClass()
     DaylightPWMValue = 0;
     ActinicPWMOverride = 255; // Anything over 100 disables override
     DaylightPWMOverride = 255; // Anything over 100 disables override
+#ifdef RA_STAR
+    Actinic2PWMValue = 0;
+    Daylight2PWMValue = 0;
+    Actinic2PWMOverride = 255; // Anything over 100 disables override
+    Daylight2PWMOverride = 255; // Anything over 100 disables override
+#endif
     LightsOverride = true; // Enable PWM override when lights on
 #ifdef PWMEXPANSION
     Present=false;
+    lastcrc=-1;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
 	{
 		ExpansionChannel[a]=0;
@@ -43,7 +50,7 @@ RA_PWMClass::RA_PWMClass()
 
 byte RA_PWMClass::GetActinicValue()
 {
-	if (ActinicPWMOverride<100)
+	if (ActinicPWMOverride<=100)
 		return ActinicPWMOverride;
 	else
 		return ActinicPWMValue;
@@ -51,7 +58,7 @@ byte RA_PWMClass::GetActinicValue()
 
 byte RA_PWMClass::GetDaylightValue()
 {
-	if (DaylightPWMOverride<100)
+	if (DaylightPWMOverride<=100)
 		return DaylightPWMOverride;
 	else
 		return DaylightPWMValue;
@@ -222,8 +229,186 @@ void RA_PWMClass::Override(byte Channel, byte Value)
 	else if (Channel>=OVERRIDE_CHANNEL0 && Channel<=OVERRIDE_CHANNEL5) // Dimming Expansion channel 0-5
 		SetChannelOverride(Channel-OVERRIDE_CHANNEL0,Value);
 #endif // PWMEXPANSION
-
+#ifdef RA_STAR
+	else if (Channel==OVERRIDE_DAYLIGHT2) // Daylight2 channel
+		SetDaylight2Override(Value);
+	else if (Channel==OVERRIDE_ACTINIC2) // Actinic2 channel
+		SetActinic2Override(Value);
+#endif
 }
+
+#ifdef RA_STAR
+byte RA_PWMClass::GetActinic2Value()
+{
+	if (Actinic2PWMOverride<=100)
+		return Actinic2PWMOverride;
+	else
+		return Actinic2PWMValue;
+}
+
+byte RA_PWMClass::GetDaylight2Value()
+{
+	if (Daylight2PWMOverride<=100)
+		return Daylight2PWMOverride;
+	else
+		return Daylight2PWMValue;
+}
+
+void RA_PWMClass::Actinic2PWMSlope(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetActinic2(PWMSlope(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartA2_read(),
+			InternalMemory.PWMSlopeEndA2_read(),
+			InternalMemory.PWMSlopeDurationA2_read(),
+			Actinic2PWMValue
+			));
+}
+
+void RA_PWMClass::Daylight2PWMSlope(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetDaylight2(PWMSlope(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartD2_read(),
+			InternalMemory.PWMSlopeEndD2_read(),
+			InternalMemory.PWMSlopeDurationD2_read(),
+			Daylight2PWMValue
+			));
+}
+
+void RA_PWMClass::Actinic2PWMSlope()
+{
+	Actinic2PWMSlope(InternalMemory.ActinicOffset_read());
+}
+
+void RA_PWMClass::Daylight2PWMSlope()
+{
+	SetDaylight2(PWMSlope(
+			InternalMemory.StdLightsOnHour_read(),
+			InternalMemory.StdLightsOnMinute_read(),
+			InternalMemory.StdLightsOffHour_read(),
+			InternalMemory.StdLightsOffMinute_read(),
+			InternalMemory.PWMSlopeStartD2_read(),
+			InternalMemory.PWMSlopeEndD2_read(),
+			InternalMemory.PWMSlopeDurationD2_read(),
+			Daylight2PWMValue
+			));
+}
+
+void RA_PWMClass::Actinic2PWMParabola(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetActinic2(PWMParabola(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartA2_read(),
+			InternalMemory.PWMSlopeEndA2_read(),
+			Actinic2PWMValue
+			));
+}
+
+void RA_PWMClass::Daylight2PWMParabola(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetDaylight2(PWMParabola(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartD2_read(),
+			InternalMemory.PWMSlopeEndD2_read(),
+			Daylight2PWMValue
+			));
+}
+
+void RA_PWMClass::Actinic2PWMParabola()
+{
+	Actinic2PWMParabola(InternalMemory.ActinicOffset_read());
+}
+
+void RA_PWMClass::Daylight2PWMParabola()
+{
+	SetDaylight2(PWMParabola(
+			InternalMemory.StdLightsOnHour_read(),
+			InternalMemory.StdLightsOnMinute_read(),
+			InternalMemory.StdLightsOffHour_read(),
+			InternalMemory.StdLightsOffMinute_read(),
+			InternalMemory.PWMSlopeStartD2_read(),
+			InternalMemory.PWMSlopeEndD2_read(),
+			Daylight2PWMValue
+			));
+}
+
+void RA_PWMClass::StandardActinic2()
+{
+	SetDaylight2(PWMParabola(
+			InternalMemory.StdLightsOnHour_read(),
+			InternalMemory.StdLightsOnMinute_read(),
+			InternalMemory.StdLightsOffHour_read(),
+			InternalMemory.StdLightsOffMinute_read(),
+			0,
+			InternalMemory.LEDPWMActinic2_read(),
+			0
+			));
+}
+
+void RA_PWMClass::StandardDaylight2()
+{
+	SetDaylight2(PWMParabola(
+			InternalMemory.StdLightsOnHour_read(),
+			InternalMemory.StdLightsOnMinute_read(),
+			InternalMemory.StdLightsOffHour_read(),
+			InternalMemory.StdLightsOffMinute_read(),
+			0,
+			InternalMemory.LEDPWMDaylight2_read(),
+			0
+			));
+}
+
+void RA_PWMClass::StandardActinic2(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetActinic2(PWMParabola(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			0,
+			InternalMemory.LEDPWMActinic2_read(),
+			0
+			));
+}
+
+void RA_PWMClass::StandardDaylight2(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetDaylight2(PWMParabola(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			0,
+			InternalMemory.LEDPWMDaylight2_read(),
+			0
+			));
+}
+#endif
 
 #ifdef PWMEXPANSION
 
@@ -257,21 +442,29 @@ void RA_PWMClass::ExpansionSetPercent(byte p)
 
 void RA_PWMClass::ExpansionWrite()
 {
-	// setup PCA9685 for data receive
-	// we need this to make sure it will work if connected ofter controller is booted, so we need to send it all the time.
-	Wire.beginTransmission(I2CPWM_PCA9685);
-	Wire.write(0);
-	Wire.write(0xa1);
-	Wire.endTransmission();
+	byte thiscrc=0;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
+		thiscrc+=GetChannelValue(a)*(a+1);
+	if (millis()%60000<200) lastcrc=-1;
+	if (lastcrc!=thiscrc || millis()<5000)
 	{
-		Expansion(a,ExpansionChannel[a]);
-	}	
+		lastcrc=thiscrc;
+		// setup PCA9685 for data receive
+		// we need this to make sure it will work if connected ofter controller is booted, so we need to send it all the time.
+		Wire.beginTransmission(I2CPWM_PCA9685);
+		Wire.write(0);
+		Wire.write(0xa1);
+		Wire.endTransmission();
+		for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
+		{
+			Expansion(a,GetChannelValue(a));
+		}
+	}
 }
 
 byte RA_PWMClass::GetChannelValue(byte Channel)
 {
-	if (ExpansionChannelOverride[Channel]<100)
+	if (ExpansionChannelOverride[Channel]<=100)
 		return ExpansionChannelOverride[Channel];
 	else
 		return ExpansionChannel[Channel];
