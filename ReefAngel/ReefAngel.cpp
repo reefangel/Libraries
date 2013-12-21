@@ -265,6 +265,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(DCPump.Speed);
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(DCPump.Speed);
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*DCPump.Speed);
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -278,6 +280,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(ReefCrestMode(DCPump.Speed,10,DCPump.DaylightChannel-1));
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(ReefCrestMode(DCPump.Speed,10,DCPump.ActinicChannel-1));
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*ReefCrestMode(DCPump.Speed,10,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -291,6 +295,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(ReefCrestMode(DCPump.Speed,20,DCPump.DaylightChannel-1));
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(ReefCrestMode(DCPump.Speed,20,DCPump.ActinicChannel-1));
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*ReefCrestMode(DCPump.Speed,20,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -304,6 +310,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.DaylightChannel-1));
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ActinicChannel-1));
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -317,6 +325,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.DaylightChannel-1));
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.ActinicChannel-1));
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -330,6 +340,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.DaylightChannel-1));
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ActinicChannel-1));
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -343,6 +355,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(TidalSwellMode(DCPump.Speed,DCPump.DaylightChannel-1));
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(TidalSwellMode(DCPump.Speed,DCPump.ActinicChannel-1));
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*TidalSwellMode(DCPump.Speed,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -357,6 +371,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(DCPump.FeedingSpeed);
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(DCPump.FeedingSpeed);
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*DCPump.FeedingSpeed);
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -369,6 +385,8 @@ void ReefAngelClass::Refresh()
 			PWM.SetDaylight(DCPump.WaterChangeSpeed);
 		if (DCPump.ActinicChannel!=None)
 			PWM.SetActinic(DCPump.WaterChangeSpeed);
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*DCPump.WaterChangeSpeed);
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
