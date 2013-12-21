@@ -44,7 +44,6 @@ RA_Wifi::RA_Wifi()
   bCommaCount = 0;
   webnegoption=false;
   portalusername="";
-  portalkey="";
 }
 
 void RA_Wifi::WebResponse (const prog_char *response, long strsize)
@@ -1591,7 +1590,6 @@ void RA_Wifi::Portal(char *username, char *key)
   if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,key);
 #endif
   portalusername=username;
-  portalkey=key;
 }
 
 void RA_Wifi::SendPortal(char *username, char*key)
