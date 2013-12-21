@@ -17,7 +17,7 @@
 #ifndef __RA_COLORS_H__
 #define __RA_COLORS_H__
 
-#ifdef REEFTOUCH
+#ifdef RA_TOUCH
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -45,7 +45,7 @@
 #define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
 #define DefaultBGColor				BKCOLOR
 
-#else //  REEFTOUCH
+#else //  RA_TOUCH
 
 //  Global Colors
 #define COLOR_BLACK                 0x00
@@ -141,6 +141,6 @@
 #define COLOR_LIGHTGOLDENRODYELLOW  0xFE
 #define COLOR_WHITE                 0xFF
 
-#endif //  REEFTOUCH
+#endif //  RA_TOUCH
 
 #endif  // __RA_COLORS_H__

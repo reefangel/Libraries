@@ -18,8 +18,11 @@
 #define __INTERNAL_EEPROM_H__
 
 #include <inttypes.h>
+#if not defined __SAM3X8E__
 #include <avr/eeprom.h>
-
+#else
+#include "Memory.h"
+#endif // __SAM3X8E__
 /*
 This class reads/writes to the internal EEPROM memory
 */
@@ -191,6 +194,28 @@ class InternalEEPROMClass {
         void DP3Timer_write(const uint8_t value);
         uint8_t LCDID_read();
         void LCDID_write(const uint8_t value);
+        uint8_t DCPumpMode_read();
+        void DCPumpMode_write(const uint8_t value);
+        uint8_t DCPumpSpeed_read();
+        void DCPumpSpeed_write(const uint8_t value);
+        uint8_t DCPumpDuration_read();
+        void DCPumpDuration_write(const uint8_t value);
+        uint8_t LEDPWMDaylight2_read();
+        void LEDPWMDaylight2_write(const uint8_t value);
+        uint8_t LEDPWMActinic2_read();
+        void LEDPWMActinic2_write(const uint8_t value);
+        uint8_t PWMSlopeStartD2_read();
+        void PWMSlopeStartD2_write(const uint8_t value);
+        uint8_t PWMSlopeEndD2_read();
+        void PWMSlopeEndD2_write(const uint8_t value);
+        uint8_t PWMSlopeDurationD2_read();
+        void PWMSlopeDurationD2_write(const uint8_t value);
+        uint8_t PWMSlopeStartA2_read();
+        void PWMSlopeStartA2_write(const uint8_t value);
+        uint8_t PWMSlopeEndA2_read();
+        void PWMSlopeEndA2_write(const uint8_t value);
+        uint8_t PWMSlopeDurationA2_read();
+        void PWMSlopeDurationA2_write(const uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();
@@ -249,6 +274,22 @@ class InternalEEPROMClass {
         void SalTempComp_write(const int value);
         int DP3RepeatInterval_read();
         void DP3RepeatInterval_write(const int value);
+        int WaterLevel1Max_read();
+        void WaterLevel1Max_write(const int value);
+        int WaterLevel1Min_read();
+        void WaterLevel1Min_write(const int value);
+        int WaterLevel2Max_read();
+        void WaterLevel2Max_write(const int value);
+        int WaterLevel2Min_read();
+        void WaterLevel2Min_write(const int value);
+        int WaterLevel3Max_read();
+        void WaterLevel3Max_write(const int value);
+        int WaterLevel3Min_read();
+        void WaterLevel3Min_write(const int value);
+        int WaterLevel4Max_read();
+        void WaterLevel4Max_write(const int value);
+        int WaterLevel4Min_read();
+        void WaterLevel4Min_write(const int value);
         
         unsigned long IMCheck_read();
         void IMCheck_write(const unsigned long value);

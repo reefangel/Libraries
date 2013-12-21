@@ -47,6 +47,9 @@ RelayClass::RelayClass()
 #ifdef SaveRelaysPresent
 		RelayPresentE[EID] = true;
 #endif  // SaveRelaysPresent
+#ifdef RANET
+		RANetFallBackE[EID] = 0;
+#endif  // RANET
 	}
 #endif  // RelayExp
 }
@@ -148,7 +151,7 @@ void RelayClass::Set(byte ID, boolean Status)
 
 void RelayClass::Write()
 {
-#ifndef REEFTOUCHDISPLAY
+#ifndef RA_TOUCHDISPLAY
     byte TempRelay = RelayData;
 	byte present = 0;
     TempRelay &= RelayMaskOff;
@@ -175,7 +178,7 @@ void RelayClass::Write()
 #endif  // SaveRelaysPresent
 	}
 #endif  // RelayExp
-#endif  // REEFTOUCHDISPLAY
+#endif  // RA_TOUCHDISPLAY
 }
 
 boolean RelayClass::Status(byte ID)
@@ -189,6 +192,30 @@ boolean RelayClass::Status(byte ID)
    }
 #endif  // RelayExp
    return false;
+}
+
+boolean RelayClass::isMaskOn(byte ID) {
+  if ( ID < 9 ) return bitRead(RelayMaskOn, ID-1);
+#ifdef RelayExp
+  if ( (ID > 10) && (ID < 89) )
+  {
+    byte EID = byte(ID/10);
+    return bitRead(RelayMaskOnE[EID-1], (ID%10)-1);
+  }
+#endif  // RelayExp
+  return false;
+}
+
+boolean RelayClass::isMaskOff(byte ID) {
+  if ( ID < 9 ) return !bitRead(RelayMaskOff, ID-1);
+#ifdef RelayExp
+  if ( (ID > 10) && (ID < 89) )
+  {
+    byte EID = byte(ID/10);
+    return !bitRead(RelayMaskOffE[EID-1], (ID%10)-1);
+  }
+#endif  // RelayExp
+  return false;
 }
 
 void RelayClass::Override(byte ID, byte type)

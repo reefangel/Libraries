@@ -1,3 +1,4 @@
+#ifndef __SAM3X8E__
 /*
  * Copyright 2010 Reef Angel / Roberto Imai
  *
@@ -43,7 +44,6 @@ public:
     RA_NokiaLCD();
     byte LCDID;
 
-#ifndef REEFTOUCH
 	void Init();
 	void Sleep();
 	void Wake();
@@ -91,10 +91,9 @@ public:
 
 private:
 	void SetBox(byte x1, byte y1, byte x2, byte y2);
-	void SendCMD(byte data);
-	void SendData(byte data);
-	void SendColor12Bit(byte color);
-	void ShiftBits(byte b);
+	void SendCMD(const byte data);
+	void SendData(const byte data);
+	void SendColor12Bit(const byte &color);
 	void DrawTextLine(byte fcolor, byte bcolor, byte x, byte y, char c);
 #if defined FONT_8x8 || defined FONT_8x16 || defined FONT_12x16 || defined NUMBERS_8x8 || defined NUMBERS_8x16 || defined NUMBERS_12x16
 	void DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c, byte height);
@@ -105,11 +104,13 @@ private:
 
 public:
 	void DrawSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal);
+	void DrawCenterSingleMonitor(int Temp, byte fcolor, byte x, byte y, byte decimal, byte num_spaces);
 	void DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, int high, int low, byte warn_color);
 	void DrawSingleGraph(byte color, byte x, byte y, int EEaddr);
-#endif //  REEFTOUCH
 
 };
 
 
 #endif  // __RA_NOKIALCD_H__
+
+#endif // __SAM3X8E__

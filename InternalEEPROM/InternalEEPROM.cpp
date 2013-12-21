@@ -838,6 +838,116 @@ void InternalEEPROMClass::LCDID_write(const uint8_t value)
     write(Mem_B_LCDID, value);
 }
 
+uint8_t InternalEEPROMClass::DCPumpMode_read()
+{
+    return read(Mem_B_DCPumpMode);
+}
+
+void InternalEEPROMClass::DCPumpMode_write(const uint8_t value)
+{
+    write(Mem_B_DCPumpMode, value);
+}
+
+uint8_t InternalEEPROMClass::DCPumpSpeed_read()
+{
+    return read(Mem_B_DCPumpSpeed);
+}
+
+void InternalEEPROMClass::DCPumpSpeed_write(const uint8_t value)
+{
+    write(Mem_B_DCPumpSpeed, value);
+}
+
+uint8_t InternalEEPROMClass::DCPumpDuration_read()
+{
+    return read(Mem_B_DCPumpDuration);
+}
+
+void InternalEEPROMClass::DCPumpDuration_write(const uint8_t value)
+{
+    write(Mem_B_DCPumpDuration, value);
+}
+
+uint8_t InternalEEPROMClass::LEDPWMDaylight2_read()
+{
+    return read(Mem_B_LEDPWMDaylight2);
+}
+
+void InternalEEPROMClass::LEDPWMDaylight2_write(const uint8_t value)
+{
+    write(Mem_B_LEDPWMDaylight2, value);
+}
+
+uint8_t InternalEEPROMClass::LEDPWMActinic2_read()
+{
+    return read(Mem_B_LEDPWMActinic2);
+}
+
+void InternalEEPROMClass::LEDPWMActinic2_write(const uint8_t value)
+{
+    write(Mem_B_LEDPWMActinic2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeStartD2_read()
+{
+    return read(Mem_B_PWMSlopeStartD2);
+}
+
+void InternalEEPROMClass::PWMSlopeStartD2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeStartD2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeEndD2_read()
+{
+    return read(Mem_B_PWMSlopeEndD2);
+}
+
+void InternalEEPROMClass::PWMSlopeEndD2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeEndD2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeDurationD2_read()
+{
+    return read(Mem_B_PWMSlopeDurationD2);
+}
+
+void InternalEEPROMClass::PWMSlopeDurationD2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeDurationD2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeStartA2_read()
+{
+    return read(Mem_B_PWMSlopeStartA2);
+}
+
+void InternalEEPROMClass::PWMSlopeStartA2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeStartA2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeEndA2_read()
+{
+    return read(Mem_B_PWMSlopeEndA2);
+}
+
+void InternalEEPROMClass::PWMSlopeEndA2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeEndA2, value);
+}
+
+uint8_t InternalEEPROMClass::PWMSlopeDurationA2_read()
+{
+    return read(Mem_B_PWMSlopeDurationA2);
+}
+
+void InternalEEPROMClass::PWMSlopeDurationA2_write(const uint8_t value)
+{
+    write(Mem_B_PWMSlopeDurationA2, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {
@@ -1129,36 +1239,143 @@ void InternalEEPROMClass::IMCheck_write(const unsigned long value)
 	write_dword(IMPointer, value);
 }
 
+void InternalEEPROMClass::WaterLevel1Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel1Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel1Max_read()
+{
+    return read_int(Mem_I_WaterLevel1Max);
+}
+
+void InternalEEPROMClass::WaterLevel1Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel1Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel1Min_read()
+{
+    return read_int(Mem_I_WaterLevel1Min);
+}
+
+void InternalEEPROMClass::WaterLevel2Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel2Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel2Max_read()
+{
+    return read_int(Mem_I_WaterLevel2Max);
+}
+
+void InternalEEPROMClass::WaterLevel2Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel2Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel2Min_read()
+{
+    return read_int(Mem_I_WaterLevel2Min);
+}
+
+void InternalEEPROMClass::WaterLevel3Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel3Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel3Max_read()
+{
+    return read_int(Mem_I_WaterLevel3Max);
+}
+
+void InternalEEPROMClass::WaterLevel3Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel3Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel3Min_read()
+{
+    return read_int(Mem_I_WaterLevel3Min);
+}
+
+void InternalEEPROMClass::WaterLevel4Max_write(const int value)
+{
+    write_int(Mem_I_WaterLevel4Max, value);
+}
+
+int InternalEEPROMClass::WaterLevel4Max_read()
+{
+    return read_int(Mem_I_WaterLevel4Max);
+}
+
+void InternalEEPROMClass::WaterLevel4Min_write(const int value)
+{
+    write_int(Mem_I_WaterLevel4Min, value);
+}
+
+int InternalEEPROMClass::WaterLevel4Min_read()
+{
+    return read_int(Mem_I_WaterLevel4Min);
+}
 
 // Private functions
 uint8_t InternalEEPROMClass::read(int address)
 {
-    return eeprom_read_byte((unsigned char *) address);
+#if not defined __SAM3X8E__
+	return eeprom_read_byte((unsigned char *) address);
+#else
+	return Memory.Read(address);
+#endif
 }
 
 void InternalEEPROMClass::write(int address, const uint8_t value)
 {
-    eeprom_write_byte((unsigned char *) address, value);
+#if not defined __SAM3X8E__
+	eeprom_write_byte((unsigned char *) address, value);
+#else
+	Memory.Write(address,value);
+#endif
 }
 
 int InternalEEPROMClass::read_int(int address)
 {
+#if not defined __SAM3X8E__
     return eeprom_read_word((const uint16_t *) address);
+#else
+	return Memory.Read(address)+(Memory.Read(address+1)<<8);
+#endif
 }
 
 void InternalEEPROMClass::write_int(int address, const int value)
 {
+#if not defined __SAM3X8E__
     eeprom_write_word((uint16_t *) address, (uint16_t) value);
+#else
+	Memory.Write(address,value&0xff);
+	Memory.Write(address+1,(value>>8));
+#endif
 }
 
 uint32_t InternalEEPROMClass::read_dword(int address)
 {
+#if not defined __SAM3X8E__
 	return eeprom_read_dword((const uint32_t *)address);
+#else
+	return Memory.Read(address)+(Memory.Read(address+1)<<8)+(Memory.Read(address+2)<<16)+(Memory.Read(address+3)<<24);
+#endif
 }
 
 void InternalEEPROMClass::write_dword(int address, const uint32_t value)
 {
+#if not defined __SAM3X8E__
 	eeprom_write_dword((uint32_t *) address, (uint32_t) value);
+#else
+	Memory.Write(address,value&0xff);
+	Memory.Write(address+1,(value>>8)&0xff);
+	Memory.Write(address+2,(value>>16)&0xff);
+	Memory.Write(address+3,(value>>24));
+#endif
 }
 
 InternalEEPROMClass InternalMemory;

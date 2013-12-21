@@ -22,7 +22,7 @@
 #include "RA_TempSensor.h"
 #include <Globals.h>
 #include <OneWire.h>
-#include <RA_Wifi.h>
+#include <ReefAngel.h>
 
 OneWire ds(tempPin);
 
@@ -60,11 +60,17 @@ void RA_TempSensorClass::SendRequest(byte addr[8])
 	if(addr[0]==0x28)
 	{
 		ds.reset();
-		pingSerial();
+#if defined wifi || defined RA_STAR
+    ReefAngel.Network.ReceiveData();
+#endif  // wifi || RA_STAR
 		ds.select(addr);
-		pingSerial();
+#if defined wifi || defined RA_STAR
+    ReefAngel.Network.ReceiveData();
+#endif  // wifi || RA_STAR
 		ds.write(0x44,0);
-		pingSerial();
+#if defined wifi || defined RA_STAR
+		ReefAngel.Network.ReceiveData();
+#endif  // wifi || RA_STAR
 	}	
 }
 
@@ -82,11 +88,17 @@ int RA_TempSensorClass::ReadTemperature(byte addr[8])
 		{
 	//		count+=1;
 			ds.reset();
-			pingSerial();
+#if defined wifi || defined RA_STAR
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi || RA_STAR
 			ds.select(addr);
-			pingSerial();
+#if defined wifi || defined RA_STAR
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi || RA_STAR
 			ds.write(0xBE);
-			pingSerial();
+#if defined wifi || defined RA_STAR
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi || RA_STAR
 			for (byte i = 0; i < 2; i++)
 			{	     // we need 9 bytes
 				data[i] = ds.read();
