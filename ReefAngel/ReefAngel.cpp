@@ -693,7 +693,6 @@ void ReefAngelClass::Init()
 	EM1 = HUMbit + DCPumpbit;
 #ifdef wifi
 	portalusername="";
-	portalkey="";
 #endif // wifi
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
