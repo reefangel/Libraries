@@ -1701,11 +1701,11 @@ void receiveEvent(int howMany) {
 			for(int a=0;a<4;a++)
 			{
 				d[a]=Wire.read();
-				Serial.print(d[a]);
-				Serial.print("\t");
+//				Serial.print(d[a]);
+//				Serial.print("\t");
 				crc+=d[a];
 			}
-			Serial.println();
+//			Serial.println();
 			crc-=d[3];
 			if (crc==d[3] && d[0]=='$')
 			{
