@@ -280,15 +280,17 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define highATOPin          12
 #define okPin               13
 #if defined(__SAM3X8E__)
+#define SDPin				29
 #define AlarmPin          	30
+#define BuzzerPin			31
 #define daylight2PWMPin     5
 #define actinic2PWMPin      6
 #else //
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
-#endif //__SAM3X8E__
 #define BuzzerPin			48
 #define SDPin				49
+#endif //__SAM3X8E__
 #define HW_SPI_Pin			53
 
 // I2C Addresses
