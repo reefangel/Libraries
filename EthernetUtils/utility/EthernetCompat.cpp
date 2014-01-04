@@ -20,8 +20,6 @@
 
 #include <utility/EthernetCompat.h>
 
-#if not defined(__SAM3X8E__)
-
 #if defined(__ETHERNET_COMPAT_BONJOUR__)
 
 #if defined(ARDUINO) && ARDUINO > 18   // Arduino 0019 or later
@@ -57,13 +55,21 @@ const uint8_t ECSnMrMulticast    = SnMR::MULTI;
 
 uint16_t ethernet_compat_write_private(uint16_t _addr, uint8_t *_buf, uint16_t _len)
 {
-   for (int i=0; i<_len; i++) {
-      setSS();    
+	for (int i=0; i<_len; i++) {
+      setSS(); 
+#if defined(__SAM3X8E__)
+      SPI.transfer(10, 0xF0, SPI_CONTINUE);
+      SPI.transfer(10, _addr >> 8, SPI_CONTINUE);
+      SPI.transfer(10, _addr & 0xFF, SPI_CONTINUE);
+      SPI.transfer(10, _buf[i]);
+      _addr++;
+#else
       SPI.transfer(0xF0);
       SPI.transfer(_addr >> 8);
       SPI.transfer(_addr & 0xFF);
       _addr++;
       SPI.transfer(_buf[i]);
+#endif //defined(__SAM3X8E__)
       resetSS();
    }
    return _len;
@@ -74,6 +80,7 @@ void ethernet_compat_init(uint8_t* macAddr, uint8_t* ipAddr, uint16_t rxtx_bufsi
    W5100.init();
 	W5100.setMACAddress(macAddr);
 	W5100.setIPAddress(ipAddr);
+
 }
 
 uint8_t ethernet_compat_socket(int s, uint8_t proto, uint16_t port, uint8_t flag)
@@ -97,7 +104,11 @@ void ethernet_compat_write_data(int socket, uint8_t* src, uint8_t* dst, uint16_t
    uint16_t dst_mask;
    uint16_t dst_ptr, dst_ptr_base;
 
+#if defined(__SAM3X8E__)
+   dst_mask = (uint32_t)dst & SMASK;
+#else
    dst_mask = (uint16_t)dst & SMASK;
+#endif //defined(__SAM3X8E__)
    dst_ptr_base = TXBUF_BASE + socket * W5100Class::SSIZE;
    dst_ptr = dst_ptr_base + dst_mask;
 
@@ -124,7 +135,11 @@ uint16_t ethernet_compat_read_SnRX_RD(int socket)
 
 void ethernet_compat_read_data(int socket, uint8_t* src, uint8_t* dst, uint16_t len)
 {
-   W5100.read_data(socket, src, dst, len);
+#if defined(__SAM3X8E__)
+	W5100.read_data(socket, (uint32_t)src, dst, len);
+#else
+	W5100.read_data(socket, src, dst, len);
+#endif //defined(__SAM3X8E__)
 }
 
 uint8_t ethernet_compat_read_SnSr(int socket)
@@ -317,4 +332,3 @@ void ethernet_compat_write_SUBR(uint8_t* subnetMask)
 
 #endif // Arduino 0018 or earlier
 #endif // __ETHERNET_COMPAT_BONJOUR__
-#endif // __SAM3X8E__

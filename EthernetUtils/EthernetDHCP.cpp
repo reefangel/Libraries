@@ -25,8 +25,6 @@
 #include <stdlib.h>
 #include <Arduino.h>
 
-#if not defined(__SAM3X8E__)
-
 extern "C" {
    #include <wiring.h>
    #include <utility/EthernetUtil.h>
@@ -650,5 +648,3 @@ void EthernetDHCPClass::useHostNameAsClientIdentifier(int yesOrNo)
 }
 
 EthernetDHCPClass EthernetDHCP;
-
-#endif // __SAM3X8E__
