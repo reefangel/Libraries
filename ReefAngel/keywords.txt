@@ -96,6 +96,8 @@ CO2Control	KEYWORD2
 PHControl	KEYWORD2
 LightsOn	KEYWORD2
 LightsOff	KEYWORD2
+BuzzerOn	KEYWORD2
+BuzzerOff	KEYWORD2
 
 #LCD
 
@@ -195,6 +197,7 @@ Set	KEYWORD2
 Write	KEYWORD2
 Status	KEYWORD2
 IsRelayPresent	KEYWORD2
+Override	KEYWORD2
 
 #ATO
 

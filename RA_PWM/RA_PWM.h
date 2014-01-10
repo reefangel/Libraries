@@ -50,7 +50,7 @@ public:
 	void StandardActinic(byte MinuteOffset);
 	void StandardDaylight(byte MinuteOffset);
 	void Override(byte Channel, byte Value);
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_TOUCHDISPLAY
 	void inline SetActinic2(byte value) { Actinic2PWMValue = value; };
 	void inline SetDaylight2(byte value) { Daylight2PWMValue = value; };
 	void inline SetActinic2Override(byte value) { if (value>100) value=255; Actinic2PWMOverride = value; };
@@ -116,11 +116,12 @@ public:
 #endif  // PWMEXPANSION
 
 private:
+	byte lastcrc;
 	byte ActinicPWMValue;
 	byte DaylightPWMValue;
 	byte ActinicPWMOverride;
 	byte DaylightPWMOverride;
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_TOUCHDISPLAY
 	byte Actinic2PWMValue;
 	byte Daylight2PWMValue;
 	byte Actinic2PWMOverride;

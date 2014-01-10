@@ -10,6 +10,8 @@ byte RANetData[RANET_SIZE];
 byte RANetStatus[RANET_SIZE];
 unsigned long RANetlastmillis;
 
+bool SDFound;
+
 void ShowInterface();
 void DrawStandardMain();
 void StoreGraphData();
@@ -73,3 +75,6 @@ void SetupDateTime();
 void SetupDosingPump();
 #endif  // DosingPumpSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
+
+void BuzzerOn(byte style=0);
+void BuzzerOff();

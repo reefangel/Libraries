@@ -28,11 +28,13 @@ class WaterLevelClass
 {
 public:
 	WaterLevelClass();
+	int LastLevel[WATERLEVEL_CHANNELS];
 	int Read();
 	int Read(byte channel);
 	void Convert();
 	inline byte GetLevel() { return level[0]; } ;
 	inline byte GetLevel(byte channel) { if (channel>=WATERLEVEL_CHANNELS) return 0; else return level[channel]; } ;
+	inline byte SetLevel(byte channel, int value) { if (channel<=WATERLEVEL_CHANNELS) level[channel]=value; } ;
 private:
 	byte level[WATERLEVEL_CHANNELS];
 };

@@ -71,7 +71,8 @@ class ProgressBarClass
 		void SetCurrent(int value);
 		int inline GetCurrent() { return current; };
 		void inline SetLabel(char *value) { str=value; };
-		void inline SetColor(int value) { color=value; };
+		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); }; 
+ 		void inline SetColor(int value) { color=value; };
 		void inline SetBackColor(int value) { bkcolor=value; };
 		void inline SetTextColor(int value) { textcolor=value; };
 		void Show();
@@ -101,6 +102,7 @@ class SliderClass
 		int inline GetOverrideID() { return overrideid; };
 		void inline SetColor(int value) { color=value; };
 		void inline SetLabel(char *value) { str=value; };
+		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); }; 
 		void DrawMarker();
 		void Show();
 		void Hide();

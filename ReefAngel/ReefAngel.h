@@ -22,7 +22,7 @@
 #ifndef	__REEFANGEL_H__
 #define __REEFANGEL_H__
 
-#define ReefAngel_Version "1.0.9"
+#define ReefAngel_Version "1.1.0"
 
 #include <Globals.h>
 #include <InternalEEPROM.h>  // NOTE read/write internal memory
@@ -80,6 +80,7 @@ class ReefAngelClass
 {
 
 public:
+	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
 	byte Flags,AlertFlags,StatusFlags;
@@ -157,8 +158,8 @@ public:
 	byte SelectedMenuItem;
 	byte DisplayedMenu;
 	bool showmenu;
-#ifdef MAIN_2014
 	boolean Splash;
+#ifdef MAIN_2014
 	byte MenuItem_2014;
 	String CustomLabels[72];
 	void InitCustomLabels();
@@ -244,8 +245,12 @@ public:
 #endif //CUSTOM_VARIABLES
 
 #ifdef I2CMASTER
+#define MASTERARRAYSIZE	100
+	byte olddata[MASTERARRAYSIZE];
 	byte I2CCommand;
 	void UpdateTouchDisplay();
+	void MasterWrite(int value, byte index);
+	unsigned long lastmasterupdate;
 #endif // I2CMASTER
 
 	void inline Use2014Screen() {};
@@ -278,6 +283,9 @@ public:
 	void inline ChangeWifiPort() {};
 
 #ifdef LEAKDETECTOREXPANSION
+#ifdef RA_TOUCHDISPLAY
+	boolean LeakStatus;
+#endif // RA_TOUCHDISPLAY
 	boolean IsLeakDetected();
 	void LeakCheck();
 	void LeakClear();

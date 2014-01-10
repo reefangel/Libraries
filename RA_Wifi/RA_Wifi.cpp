@@ -205,6 +205,8 @@ void RA_Wifi::PushBuffer(byte inStr)
 #ifdef CUSTOM_VARIABLES
             else if (strncmp("GET /cvar", m_pushback, 9)==0) { reqtype = -REQ_M_CVAR; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
 #endif
+            else if (strncmp("GET /cal", m_pushback, 8)==0) { reqtype = -REQ_CALIBRATION; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
+            else if (strncmp("GET /json", m_pushback, 9)==0) reqtype = REQ_JSON;
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
@@ -323,6 +325,14 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.PWM.GetDaylightOverrideValue());
 			s += intlength(ReefAngel.PWM.GetActinicOverrideValue());
 #endif  // DisplayLEDPWM
+#ifdef RA_STAR
+			s += 64;
+			//<PWMA2></PWMA2><PWMD2></PWMD2><PWMA2O></PWMA2O><PWMD2O></PWMD2O>
+			s += intlength(ReefAngel.PWM.GetDaylight2Value());
+			s += intlength(ReefAngel.PWM.GetActinic2Value());
+			s += intlength(ReefAngel.PWM.GetDaylight2OverrideValue());
+			s += intlength(ReefAngel.PWM.GetActinic2OverrideValue());
+#endif  // RA_STAR
 #ifdef RelayExp
 			s += 296;
 			//<R0></R0><RON0></RON0><ROFF0></ROFF0><R1></R1><RON1></RON1><ROFF1></ROFF1><R2></R2><RON2></RON2><ROFF2></ROFF2><R3></R3><RON3></RON3><ROFF3></ROFF3><R4></R4><RON4></RON4><ROFF4></ROFF4><R5></R5><RON5></RON5><ROFF5></ROFF5><R6></R6><RON6></RON6><ROFF6></ROFF6><R7></R7><RON7></RON7><ROFF7></ROFF7>
@@ -397,6 +407,16 @@ void RA_Wifi::ProcessHTTP()
 			//<C0></C0><C1></C1><C2></C2><C3></C3><C4></C4><C5></C5><C6></C6><C7></C7>
 			for ( byte EID = 0; EID < 8; EID++ ) s += intlength(ReefAngel.CustomVar[EID]);
 #endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+			s += 13;
+			//<LEAK></LEAK>
+			s += intlength(ReefAngel.IsLeakDetected());
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+			s += 15;
+			//<ALARM></ALARM>
+			s += intlength(ReefAngel.AlarmInput.IsActive());
+#endif  // RA_STAR
 #ifdef ENABLE_ATO_LOGGING
 			if ( reqtype == REQ_RA_STATUS )
 			{
@@ -547,6 +567,10 @@ void RA_Wifi::ProcessHTTP()
 #ifdef RFEXPANSION
 				if (weboption2>=11 && weboption2<=16) ReefAngel.RF.SetChannelOverride(weboption2-11,weboption);
 #endif // RFEXPANSION
+#ifdef RA_STAR
+				if (weboption2==17) ReefAngel.PWM.SetDaylight2Override(weboption);
+				else if (weboption2==18) ReefAngel.PWM.SetActinic2Override(weboption);
+#endif // RA_STAR
 				s = 9;  // <P>OK</P>
 				// add in the channel, twice
 				s += (intlength(weboption2)*2);
@@ -738,8 +762,14 @@ void RA_Wifi::ProcessHTTP()
 		}
 		case REQ_BTN_PRESS:
 		{
-			// Only accept button press for feeding and water change mode
-			if ( ReefAngel.DisplayedMenu == FEEDING_MODE || ReefAngel.DisplayedMenu==WATERCHANGE_MODE )
+			// Only accept button press for feeding, water change or calibration modes
+			if ( ReefAngel.DisplayedMenu == FEEDING_MODE ||
+				ReefAngel.DisplayedMenu == WATERCHANGE_MODE ||
+				ReefAngel.DisplayedMenu == PH_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == SAL_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == ORP_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == PHE_CALIBRATE_MENU ||
+				ReefAngel.DisplayedMenu == WL_CALIBRATE_MENU )
 			{
 				// Simulate a button press to stop the modes
 				ButtonPress++;
@@ -807,6 +837,155 @@ void RA_Wifi::ProcessHTTP()
 			while(1);
 			break;
 		}
+		case REQ_CALIBRATION:
+		{
+			ModeResponse(true);
+			if (weboption==0)
+				ReefAngel.ChangeMode=PH_CALIBRATE_MENU;
+#ifdef SALINITYEXPANSION
+			if (weboption==1)
+				ReefAngel.ChangeMode=SAL_CALIBRATE_MENU;
+#endif // SALINITYEXPANSION
+#ifdef ORPEXPANSION
+			if (weboption==2)
+				ReefAngel.ChangeMode=ORP_CALIBRATE_MENU;
+#endif // ORPEXPANSION
+#ifdef PHEXPANSION
+			if (weboption==3)
+				ReefAngel.ChangeMode=PHE_CALIBRATE_MENU;
+#endif // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+			if (weboption==4)
+				ReefAngel.ChangeMode=WL_CALIBRATE_MENU;
+#endif // WATERLEVELEXPANSION
+			break;
+		}
+#ifndef RA_STANDARD
+		case REQ_JSON:
+		{
+			char temp[6];
+			int s=143;
+			//{"json":{"ID":"","T1":"","T2":"","T3":"","PH":"","R":"","RON":"","ROFF":"","ATOLOW":"","ATOHIGH":"","EM":"","EM1":"","REM":"","AF":"","SF":""}}
+			s += strlen(portalusername);
+			s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
+			s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
+			s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
+			s += intlength(ReefAngel.Params.PH);
+			s += intlength(ReefAngel.EM);
+			s += intlength(ReefAngel.EM1);
+			s += intlength(ReefAngel.REM);
+			s += intlength(ReefAngel.AlertFlags);
+			s += intlength(ReefAngel.StatusFlags);
+			s += 2;  // one digit for each ATO
+			s += intlength(ReefAngel.Relay.RelayData);
+			s += intlength(ReefAngel.Relay.RelayMaskOn);
+			s += intlength(ReefAngel.Relay.RelayMaskOff);
+#ifdef DisplayLEDPWM
+			s += 42;
+			//,"PWMA":"","PWMD":"","PWMAO":"","PWMDO":""
+			s += intlength(ReefAngel.PWM.GetDaylightValue());
+			s += intlength(ReefAngel.PWM.GetActinicValue());
+			s += intlength(ReefAngel.PWM.GetDaylightOverrideValue());
+			s += intlength(ReefAngel.PWM.GetActinicOverrideValue());
+#endif  // DisplayLEDPWM
+#ifdef RA_STAR
+			s += 46;
+			//,"PWMA2":"","PWMD2":"","PWMA2O":"","PWMD2O":""
+			s += intlength(ReefAngel.PWM.GetDaylight2Value());
+			s += intlength(ReefAngel.PWM.GetActinic2Value());
+			s += intlength(ReefAngel.PWM.GetDaylight2OverrideValue());
+			s += intlength(ReefAngel.PWM.GetActinic2OverrideValue());
+#endif  // RA_STAR
+#ifdef RelayExp
+			s += 232;
+			//,"R1":"","RON1":"","ROFF1":"","R2":"","RON2":"","ROFF2":"","R3":"","RON3":"","ROFF3":"","R4":"","RON4":"","ROFF4":"","R5":"","RON5":"","ROFF5":"","R6":"","RON6":"","ROFF6":"","R7":"","RON7":"","ROFF7":"","R8":"","RON8":"","ROFF8":""
+			for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+			{
+				s += intlength(ReefAngel.Relay.RelayDataE[EID]);
+				s += intlength(ReefAngel.Relay.RelayMaskOnE[EID]);
+				s += intlength(ReefAngel.Relay.RelayMaskOffE[EID]);
+			}
+#endif  // RelayExp
+#ifdef PWMEXPANSION
+			s += 138;
+			//,"PWME0":"","PWME1":"","PWME2":"","PWME3":"","PWME4":"","PWME5":"","PWME0O":"","PWME1O":"","PWME2O":"","PWME3O":"","PWME4O":"","PWME5O":""
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannel[EID]);
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannelOverride[EID]);
+#endif  // PWMEXPANSION
+#ifdef RFEXPANSION
+			s += 143;
+			//,"RFM":"","RFS":"","RFD":"","RFW":"","RFRB":"","RFR":"","RFG":"","RFB":"","RFI":"","RFWO":"","RFRBO":"","RFRO":"","RFGO":"","RFBO":"","RFIO":""
+			for ( byte EID = 0; EID < RF_CHANNELS; EID++ ) s += intlength(ReefAngel.RF.GetChannel(EID));
+			for ( byte EID = 0; EID < RF_CHANNELS; EID++ ) s += intlength(ReefAngel.RF.GetOverrideChannel(EID));
+			s += intlength(ReefAngel.RF.Mode);
+			s += intlength(ReefAngel.RF.Speed);
+			s += intlength(ReefAngel.RF.Duration);
+#endif  // RFEXPANSION
+#ifdef AI_LED
+			s += 59;
+			//,"AIW":"","AIB":"","AIRB":"","AIWO":"","AIBO":"","AIRBO":""
+			for ( byte EID = 0; EID < AI_CHANNELS; EID++ ) s += intlength(ReefAngel.AI.GetChannel(EID));
+			for ( byte EID = 0; EID < AI_CHANNELS; EID++ ) s += intlength(ReefAngel.AI.GetOverrideChannel(EID));
+#endif  // AI_LED
+#ifdef SALINITYEXPANSION
+			s += 9;
+			//,"SAL":""
+			s += intlength(ReefAngel.Params.Salinity);
+#endif  // SALINITYEXPANSION
+#ifdef ORPEXPANSION
+			s += 9;
+			//,"ORP":""
+			s += intlength(ReefAngel.Params.ORP);
+#endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+			s += 9;
+			//,"PHE":""
+			s += intlength(ReefAngel.Params.PHExp);
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+			s += 44;
+			//,"WL":"","WL1":"","WL2":"","WL3":"","WL4":""
+			s += intlength(ReefAngel.WaterLevel.GetLevel());
+			for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ ) s += intlength(ReefAngel.WaterLevel.GetLevel(EID));
+#endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+			s += 9;
+			//,"HUM":""
+			s += intlength(ReefAngel.Humidity.GetLevel());
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+			s += 27;
+			//,"DCM":"","DCS":"","DCD":""
+			s += intlength(ReefAngel.DCPump.Mode);
+			s += intlength(ReefAngel.DCPump.Speed);
+			s += intlength(ReefAngel.DCPump.Duration);
+#endif  // DCPUMPCONTROL
+#ifdef IOEXPANSION
+			s += 8;
+			//,"IO":""
+			s += intlength(ReefAngel.IO.GetChannel());
+#endif  // IOEXPANSION
+#ifdef CUSTOM_VARIABLES
+			s += 64;
+			//,"C0":"","C1":"","C2":"","C3":"","C4":"","C5":"","C6":"","C7":""
+			for ( byte EID = 0; EID < 8; EID++ ) s += intlength(ReefAngel.CustomVar[EID]);
+#endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+			s += 10;
+			//,"LEAK":""
+			s += intlength(ReefAngel.IsLeakDetected());
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+			s += 11;
+			//,"ALARM":""
+			s += intlength(ReefAngel.AlarmInput.IsActive());
+#endif  // RA_STAR
+			PrintHeader(s,1);
+			SendJSONData();
+			break;
+		}  // REQ_JSON
+#endif // RA_STANDARD
+
 		default:
 		case REQ_UNKNOWN:
 		{
@@ -952,6 +1131,17 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
 	PROGMEMprint(XML_PWMDO_END);
 #endif  // DisplayLEDPWM
+#ifdef RA_STAR
+	PROGMEMprint(XML_PWMA2);
+	print(ReefAngel.PWM.GetActinic2Value(), DEC);
+	PROGMEMprint(XML_PWMD2);
+	print(ReefAngel.PWM.GetDaylight2Value(), DEC);
+	PROGMEMprint(XML_PWMA2O);
+	print(ReefAngel.PWM.GetActinic2OverrideValue(), DEC);
+	PROGMEMprint(XML_PWMD2O);
+	print(ReefAngel.PWM.GetDaylight2OverrideValue(), DEC);
+	PROGMEMprint(XML_PWMD2O_END);
+#endif  // RA_STAR
 #ifdef SALINITYEXPANSION
 	PROGMEMprint(XML_SAL);
 	print(ReefAngel.Params.Salinity, DEC);
@@ -1015,6 +1205,16 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+	PROGMEMprint(XML_LEAK);
+	print(ReefAngel.IsLeakDetected(), DEC);
+	PROGMEMprint(XML_LEAK_END);
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+	PROGMEMprint(XML_ALARM);
+	print(ReefAngel.AlarmInput.IsActive(), DEC);
+	PROGMEMprint(XML_ALARM_END);
+#endif  // RA_STAR
 #ifdef PWMEXPANSION
 	for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
 	{
@@ -1151,6 +1351,159 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_END);
 }
 
+#ifndef RA_STANDARD
+void RA_Wifi::SendJSONData()
+{
+	// This function is used for sending the JSON data on the wifi interface
+	// It prints the strings from program memory instead of RAM
+	PROGMEMprint(JSON_OPEN);
+	SendSingleJSON(JSON_ID,portalusername);
+	SendSingleJSON(JSON_T1,ReefAngel.Params.Temp[T1_PROBE]);
+	SendSingleJSON(JSON_T2,ReefAngel.Params.Temp[T2_PROBE]);
+	SendSingleJSON(JSON_T3,ReefAngel.Params.Temp[T3_PROBE]);
+	SendSingleJSON(JSON_PH,ReefAngel.Params.PH);
+	SendSingleJSON(JSON_R,ReefAngel.Relay.RelayData);
+	SendSingleJSON(JSON_RON,ReefAngel.Relay.RelayMaskOn);
+	SendSingleJSON(JSON_ROFF,ReefAngel.Relay.RelayMaskOff);
+#ifdef RelayExp
+	for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
+	{
+		// relay data
+		char tid[2];
+		tid[0]='0'+EID;
+		tid[1]=0;
+		SendSingleJSON(JSON_R,ReefAngel.Relay.RelayDataE[EID],tid);
+		SendSingleJSON(JSON_RON,ReefAngel.Relay.RelayMaskOnE[EID],tid);
+		SendSingleJSON(JSON_ROFF,ReefAngel.Relay.RelayMaskOffE[EID],tid);
+	}
+#endif  // RelayExp
+	SendSingleJSON(JSON_ATOLOW,ReefAngel.LowATO.IsActive());
+	SendSingleJSON(JSON_ATOHIGH,ReefAngel.HighATO.IsActive());
+	SendSingleJSON(JSON_EM,ReefAngel.EM);
+	SendSingleJSON(JSON_EM1,ReefAngel.EM1);
+	SendSingleJSON(JSON_REM,ReefAngel.REM);
+	SendSingleJSON(JSON_ALERTFLAG,ReefAngel.AlertFlags);
+	SendSingleJSON(JSON_STATUSFLAG,ReefAngel.StatusFlags);
+#ifdef DisplayLEDPWM
+	SendSingleJSON(JSON_PWMA,ReefAngel.PWM.GetActinicValue());
+	SendSingleJSON(JSON_PWMD,ReefAngel.PWM.GetDaylightValue());
+	SendSingleJSON(JSON_PWMA,ReefAngel.PWM.GetActinicOverrideValue(),"O");
+	SendSingleJSON(JSON_PWMD,ReefAngel.PWM.GetDaylightOverrideValue(),"O");
+#endif  // DisplayLEDPWM
+#ifdef RA_STAR
+	SendSingleJSON(JSON_PWMA2,ReefAngel.PWM.GetActinic2Value());
+	SendSingleJSON(JSON_PWMD2,ReefAngel.PWM.GetDaylight2Value());
+	SendSingleJSON(JSON_PWMA2,ReefAngel.PWM.GetActinic2OverrideValue(),"O");
+	SendSingleJSON(JSON_PWMD2,ReefAngel.PWM.GetDaylight2OverrideValue(),"O");
+#endif  // RA_STAR
+#ifdef SALINITYEXPANSION
+	SendSingleJSON(JSON_SAL,ReefAngel.Params.Salinity);
+#endif  // SALINITYEXPANSION
+#ifdef ORPEXPANSION
+	SendSingleJSON(JSON_ORP,ReefAngel.Params.ORP);
+#endif  // ORPEXPANSION
+#ifdef PHEXPANSION
+	SendSingleJSON(JSON_PHEXP,ReefAngel.Params.PHExp);
+#endif  // PHEXPANSION
+#ifdef WATERLEVELEXPANSION
+	SendSingleJSON(JSON_WL,ReefAngel.WaterLevel.GetLevel());
+	for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
+	{
+		char tid[2];
+		tid[0]='0'+EID;
+		tid[1]=0;
+		SendSingleJSON(JSON_WL,ReefAngel.WaterLevel.GetLevel(EID),tid);
+	}
+#endif  // WATERLEVELEXPANSION
+#ifdef HUMIDITYEXPANSION
+	SendSingleJSON(JSON_HUM,ReefAngel.Humidity.GetLevel());
+#endif  // HUMIDITYEXPANSION
+#ifdef DCPUMPCONTROL
+	SendSingleJSON(JSON_DCM,ReefAngel.DCPump.Mode);
+	SendSingleJSON(JSON_DCS,ReefAngel.DCPump.Speed);
+	SendSingleJSON(JSON_DCD,ReefAngel.DCPump.Duration);
+#endif  // DCPUMPCONTROL
+#ifdef IOEXPANSION
+	SendSingleJSON(JSON_IO,ReefAngel.IO.GetChannel());
+#endif  // IOEXPANSION
+#ifdef CUSTOM_VARIABLES
+	for ( byte EID = 0; EID < 8; EID++ )
+	{
+		char tid[2];
+		tid[0]='0'+EID;
+		tid[1]=0;
+		SendSingleJSON(JSON_C,ReefAngel.CustomVar[EID],tid);
+	}
+#endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+	SendSingleJSON(JSON_LEAK,ReefAngel.IsLeakDetected());
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+	SendSingleJSON(JSON_ALARM,ReefAngel.AlarmInput.IsActive());
+#endif  // RA_STAR
+#ifdef PWMEXPANSION
+	for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
+	{
+		char tid[3];
+		tid[0]='0'+EID;
+		tid[1]=0;
+		SendSingleJSON(JSON_PWME,ReefAngel.PWM.GetChannelValue(EID),tid);
+		tid[0]='0'+EID;
+		tid[1]='O';
+		tid[2]=0;
+		SendSingleJSON(JSON_PWME,ReefAngel.PWM.GetChannelOverrideValue(EID),tid);
+	}
+#endif  // PWMEXPANSION
+#ifdef AI_LED
+	SendSingleJSON(JSON_AIW,ReefAngel.AI.GetChannel(0));
+	SendSingleJSON(JSON_AIB,ReefAngel.AI.GetChannel(0));
+	SendSingleJSON(JSON_AIRB,ReefAngel.AI.GetChannel(0));
+	SendSingleJSON(JSON_AIW,ReefAngel.AI.GetOverrideChannel(0),"O");
+	SendSingleJSON(JSON_AIB,ReefAngel.AI.GetOverrideChannel(0),"O");
+	SendSingleJSON(JSON_AIRB,ReefAngel.AI.GetOverrideChannel(0),"O");
+#endif  // AI_LED
+#ifdef RFEXPANSION
+	SendSingleJSON(JSON_RFM,ReefAngel.RF.Mode);
+	SendSingleJSON(JSON_RFS,ReefAngel.RF.Speed);
+	SendSingleJSON(JSON_RFD,ReefAngel.RF.Duration);
+	SendSingleJSON(JSON_RFW,ReefAngel.RF.GetChannel(0));
+	SendSingleJSON(JSON_RFRB,ReefAngel.RF.GetChannel(1));
+	SendSingleJSON(JSON_RFR,ReefAngel.RF.GetChannel(2));
+	SendSingleJSON(JSON_RFG,ReefAngel.RF.GetChannel(3));
+	SendSingleJSON(JSON_RFB,ReefAngel.RF.GetChannel(4));
+	SendSingleJSON(JSON_RFI,ReefAngel.RF.GetChannel(5));
+	SendSingleJSON(JSON_RFW,ReefAngel.RF.GetOverrideChannel(0),"O");
+	SendSingleJSON(JSON_RFRB,ReefAngel.RF.GetOverrideChannel(1),"O");
+	SendSingleJSON(JSON_RFR,ReefAngel.RF.GetOverrideChannel(2),"O");
+	SendSingleJSON(JSON_RFG,ReefAngel.RF.GetOverrideChannel(3),"O");
+	SendSingleJSON(JSON_RFB,ReefAngel.RF.GetOverrideChannel(4),"O");
+	SendSingleJSON(JSON_RFI,ReefAngel.RF.GetOverrideChannel(5),"O");
+#endif  // RFEXPANSION
+	PROGMEMprint(JSON_CLOSE);
+}
+
+void RA_Wifi::SendSingleJSON(const prog_char str[], int value, char* suffix)
+{
+	print(",\"");
+	PROGMEMprint(str);
+	if (suffix!="")
+		print(suffix);
+	print("\":\"");
+	print(value);
+	print("\"");
+}
+
+void RA_Wifi::SendSingleJSON(const prog_char str[], char* value)
+{
+	print("\"");
+	PROGMEMprint(str);
+	print("\":\"");
+	print(value);
+	print("\"");
+}
+
+#endif // RA_STANDARD
+
 void RA_Wifi::ProcessSerial()
 {
   bIncoming=true;
@@ -1228,23 +1581,41 @@ void RA_Wifi::Portal(char *username)
 #endif  // RelayExp
    */
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
+#ifdef ETH_WIZ5100
+  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,"");
+#endif
   portalusername=username;
 }
 
 void RA_Wifi::Portal(char *username, char *key)
 {
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
+#ifdef ETH_WIZ5100
+  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,key);
+#endif
   portalusername=username;
 }
 
 void RA_Wifi::SendPortal(char *username, char*key)
 {
-#ifdef ETH_WIZ5100
-  ReefAngel.Network.PortalConnection=true;
-  if (NetClient.connect(PortalServer, 80))
-  {
-#endif
   ReefAngel.Timer[PORTAL_TIMER].Start();
+#ifdef ETH_WIZ5100
+  Serial.println("Portal Call");
+  if (!ReefAngel.Network.FoundIP) return;
+  if (!ReefAngel.Network.PortalConnection)
+  {
+	  ReefAngel.Network.PortalConnection=true;
+	  PortalWaiting=false;
+	  ReefAngel.Network.PortalConnect();
+	  Serial.println("Connecting...");
+  }
+  else
+  {
+	if (ReefAngel.Network.IsPortalConnected() && !PortalWaiting) // Check for connection established
+	{
+		PortalWaiting=true;
+		Serial.println("Connected");
+#endif
   PROGMEMprint(BannerGET);
   print(ReefAngel.Params.Temp[T1_PROBE], DEC);
   PROGMEMprint(BannerT2);
@@ -1399,6 +1770,22 @@ void RA_Wifi::SendPortal(char *username, char*key)
     print(ReefAngel.CustomVar[EID], DEC);
   }
 #endif  // CUSTOM_VARIABLES
+#ifdef LEAKDETECTOREXPANSION
+  PROGMEMprint(BannerLeak);
+  print(ReefAngel.IsLeakDetected(), DEC);
+#endif  // LEAKDETECTOREXPANSION
+#ifdef RA_STAR
+  PROGMEMprint(BannerAlarm);
+  print(ReefAngel.AlarmInput.IsActive(), DEC);
+  PROGMEMprint(BannerPWMA2);
+  print(ReefAngel.PWM.GetActinic2Value(), DEC);
+  PROGMEMprint(BannerPWMD2);
+  print(ReefAngel.PWM.GetDaylight2Value(), DEC);
+  PROGMEMprint(BannerPWMA2O);
+  print(ReefAngel.PWM.GetActinic2OverrideValue(), DEC);
+  PROGMEMprint(BannerPWMD2O);
+  print(ReefAngel.PWM.GetDaylight2OverrideValue(), DEC);
+#endif  // RA_STAR
 #ifdef ETH_WIZ5100
   PROGMEMprint(BannerHTTP11);
   PROGMEMprint(BannerHost);
@@ -1407,6 +1794,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif // ETH_WIZ5100
   println("\n\n");
 #ifdef ETH_WIZ5100
+	Serial.println("Data Sent");
+	}
   }
 #endif // ETH_WIZ5100
 }

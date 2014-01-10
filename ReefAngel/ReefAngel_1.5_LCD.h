@@ -96,6 +96,9 @@ const prog_char mainmenu_0_label[] PROGMEM = "Feeding";
 const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
 const prog_char mainmenu_2_label[] PROGMEM = "ATO Clear";
 const prog_char mainmenu_3_label[] PROGMEM = "Overheat Clear";
+#ifdef LEAKDETECTOREXPANSION
+const prog_char mainmenu_11_label[] PROGMEM = "Leak Clear";
+#endif  // LEAKDETECTOREXPANSION
 const prog_char mainmenu_4_label[] PROGMEM = "PH Calibration";
 #ifdef SALINITYEXPANSION
 const prog_char mainmenu_5_label[] PROGMEM = "Sal Calibration";
@@ -120,6 +123,9 @@ PROGMEM const char * const mainmenu_items[] = {
 		mainmenu_1_label,
 		mainmenu_2_label,
 		mainmenu_3_label,
+#ifdef LEAKDETECTOREXPANSION
+		mainmenu_11_label,
+#endif  // LEAKDETECTOREXPANSION
 		mainmenu_4_label,
 #ifdef SALINITYEXPANSION
 		mainmenu_5_label,
@@ -145,6 +151,9 @@ enum MainMenuItem {
 	MainMenu_WaterChangeMode,
 	MainMenu_ATOClear,
 	MainMenu_OverheatClear,
+#ifdef LEAKDETECTOREXPANSION
+	MainMenu_LeakClear,
+#endif  // LEAKDETECTOREXPANSION
 	MainMenu_PHCalibration,
 #ifdef SALINITYEXPANSION
 	MainMenu_SalinityCalibration,
@@ -180,6 +189,9 @@ const prog_char mainmenu_3_label[] PROGMEM = "Temps ->";
 const prog_char mainmenu_4_label[] PROGMEM = "Timeouts ->";
 #endif  // if defined SetupExtras || defined ATOSetup
 const prog_char mainmenu_5_label[] PROGMEM = "Setup ->";
+#ifdef LEAKDETECTOREXPANSION
+const prog_char mainmenu_7_label[] PROGMEM = "Leak Clear";
+#endif  // LEAKDETECTOREXPANSION
 #ifdef VersionMenu
 const prog_char mainmenu_6_label[] PROGMEM = "Version";
 #endif  // VersionMenu
@@ -194,6 +206,9 @@ PROGMEM const char * const mainmenu_items[] = {
 		mainmenu_4_label,
 #endif  // if defined SetupExtras || defined ATOSetup
 		mainmenu_5_label,
+#ifdef LEAKDETECTOREXPANSION
+		mainmenu_7_label,
+#endif  // LEAKDETECTOREXPANSION
 #ifdef VersionMenu
 		mainmenu_6_label
 #endif  // VersionMenu
@@ -209,6 +224,9 @@ enum MainMenuItem {
 	MainMenu_Timeouts,
 #endif  // if defined SetupExtras || defined ATOSetup
 	MainMenu_Setup,
+#ifdef LEAKDETECTOREXPANSION
+	MainMenu_LeakClear,
+#endif  // LEAKDETECTOREXPANSION
 #ifdef VersionMenu
 	MainMenu_Version
 #endif  // VersionMenu
@@ -416,7 +434,7 @@ void ReefAngelClass::ShowInterface()
 		Splash=false;
 		ClearScreen(DefaultBGColor);
 	}
-#endif // RA_STAR
+#endif // MAIN_2014
 	// are we displaying the menu or not??
 	if ( showmenu )
 	{
@@ -497,8 +515,6 @@ void ReefAngelClass::ShowInterface()
 		}  // switch DisplayedMenu
 	}  // if showmenu
 }
-
-#ifdef MAIN_2014
 
 const unsigned PROGMEM char RA_LOGO[] = {
 0xFF, 0xFF, 0x97, 0x4F, 0x73, 0x93, 0x97, 0x97, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0xDB, 0x97, 0x97, 0x97, 0x97,
@@ -688,6 +704,8 @@ const unsigned PROGMEM char RA_LOGO[] = {
 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 0xFF, 0xFF, 0xFF, 0xFF, 0xDB, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+#ifdef MAIN_2014
 
 const unsigned PROGMEM char ARROW_RIGHT[] = {
 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xDB, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -1149,6 +1167,9 @@ enum ScreenItem {
 #ifdef DCPUMPCONTROL
 	DCPUMP_2014,
 #endif // DCPUMPCONTROL
+#ifdef CUSTOM_VARIABLES
+	CUSTOMVAR_2014,
+#endif // CUSTOM_VARIABLES
 	ALERT_FLAGS_2014,
 	STATUS_FLAGS_2014
 };
@@ -1255,8 +1276,8 @@ void ReefAngelClass::Draw2014Main()
 			CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
-			LCD.Clear(COLOR_LIME,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_LIME,x1[x]+12,y+4,"ORP");
+			LCD.Clear(COLOR_SADDLEBROWN,x1[x],y,x2[x],y+13);
+			LCD.DrawLargeText(COLOR_WHITE,COLOR_SADDLEBROWN,x1[x]+12,y+4,"ORP");
 			CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
@@ -1420,6 +1441,19 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Speed");
 			break;
 #endif // DCPUMPCONTROL
+#ifdef CUSTOM_VARIABLES
+		case CUSTOMVAR_2014:
+			x=15;
+			y=5;
+			for (int a=0; a<8; a++)
+			{
+				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Var");
+				ConvertNumToString(text, a, 1);
+				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,48,y,text);
+				y+=12;
+			}
+			break;
+#endif // CUSTOM_VARIABLES
 		case ALERT_FLAGS_2014:
 			x=25;
 			y=5;
@@ -1456,6 +1490,7 @@ void ReefAngelClass::Draw2014Main()
 				}
 			}
 			break;
+
 		case STATUS_FLAGS_2014:
 			x=25;
 			y=5;
@@ -1522,19 +1557,19 @@ void ReefAngelClass::Draw2014Main()
 //		CheckOffset(x,y);
 //#endif // RA_STAR
 #if defined SALINITYEXPANSION
-		LCD.DrawCenterSingleMonitor(Params.Salinity,COLOR_DARKSLATEGREY,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Params.Salinity,COLOR_DARKSLATEGREY,x3[x],y,10,1);
 		CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
-		LCD.DrawCenterSingleMonitor(Params.ORP,COLOR_LIME,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Params.ORP,COLOR_SADDLEBROWN,x3[x],y,1,1);
 		CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
-		LCD.DrawCenterSingleMonitor(Params.PHExp,COLOR_DARKGREEN,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Params.PHExp,COLOR_DARKGREEN,x3[x],y,100,1);
 		CheckOffset(x,y);
 #endif // PHEXPANSION
 #if defined HUMIDITYEXPANSION
-		LCD.DrawCenterSingleMonitor(Humidity.GetLevel(),COLOR_PLUM,x3[x],y,1,1);
+		LCD.DrawCenterSingleMonitor(Humidity.GetLevel(),COLOR_PLUM,x3[x],y,10,1);
 		CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 		break;
@@ -1789,6 +1824,18 @@ void ReefAngelClass::Draw2014Main()
 		y+=17;
 		break;
 #endif // DCPUMPCONTROL
+#ifdef CUSTOM_VARIABLES
+	case CUSTOMVAR_2014:
+		x=90;
+		y=5;
+		for (int a=0; a<8; a++)
+		{
+			ConvertNumToString(text, CustomVar[a], 1);
+			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,text);
+			y+=12;
+		}
+		break;
+#endif // CUSTOM_VARIABLES
 	}
 #ifdef DATETIME24
 	LCD.DrawDateTimeISO8601(6, 107);
@@ -2556,6 +2603,15 @@ void ReefAngelClass::ProcessButtonPressMain()
 	}
 #endif  // SIMPLE_MENU
 
+#ifdef LEAKDETECTOREXPANSION
+	case MainMenu_LeakClear:
+	{
+		LeakClear();
+		DisplayMenuEntry("Clear Leak");
+		showmenu = false;
+		break;
+	}
+#endif // LEAKDETECTOREXPANSION
 
 #ifdef VersionMenu
 	case MainMenu_Version:
@@ -3371,6 +3427,7 @@ void ReefAngelClass::SetupCalibratePH()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=PH_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3386,6 +3443,9 @@ void ReefAngelClass::SetupCalibratePH()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<30;a++)
 			{
@@ -3424,6 +3484,9 @@ void ReefAngelClass::SetupCalibratePH()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save PHMin & PHMax to memory
@@ -3459,6 +3522,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=PH_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3484,6 +3548,9 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iValue[b]=0;
 			for (int a=0;a<30;a++)
 			{
@@ -3619,9 +3686,10 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 			}
 		} while ( ! bDone );
 	}
-
 	ClearScreen(DefaultBGColor);
-
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
@@ -3645,6 +3713,7 @@ void ReefAngelClass::SetupCalibrateSalinity()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=SAL_CALIBRATE_MENU;
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Salinity");
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
 	do
@@ -3652,6 +3721,9 @@ void ReefAngelClass::SetupCalibrateSalinity()
 #if defined WDT || defined WDT_FORCE
 		wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+		ReefAngel.Network.ReceiveData();
+#endif  // wifi
 		iS=0;
 		for (int a=0;a<15;a++)
 		{
@@ -3688,7 +3760,10 @@ void ReefAngelClass::SetupCalibrateSalinity()
 			}
 		}
 	} while ( ! bDone );
-
+	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save SalMax to memory
@@ -3712,6 +3787,7 @@ void ReefAngelClass::SetupCalibrateORP()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=ORP_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3729,6 +3805,9 @@ void ReefAngelClass::SetupCalibrateORP()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<15;a++)
 			{
@@ -3767,6 +3846,9 @@ void ReefAngelClass::SetupCalibrateORP()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save ORPMin & ORPMax to memory
@@ -3790,6 +3872,7 @@ void ReefAngelClass::SetupCalibratePHExp()
 	byte offset = 65;
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=PHE_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3805,6 +3888,9 @@ void ReefAngelClass::SetupCalibratePHExp()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<15;a++)
 			{
@@ -3843,6 +3929,9 @@ void ReefAngelClass::SetupCalibratePHExp()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save PHExpMin & PHExpMax to memory
@@ -3876,6 +3965,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 
 	// draw labels
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=WL_CALIBRATE_MENU;
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3894,10 +3984,13 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 #if defined WDT || defined WDT_FORCE
 			wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+			ReefAngel.Network.ReceiveData();
+#endif  // wifi
 			iO[b]=0;
 			for (int a=0;a<15;a++)
 			{
-				iO[b] += WaterLevel.Read();
+				iO[b] += WaterLevel.Read(wl_channel);
 			}
 			iO[b]/=15;
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
@@ -4013,6 +4106,9 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 		} while ( ! bDone );
 	}
 	ClearScreen(DefaultBGColor);
+	DisplayedMenu=DEFAULT_MENU;
+	redrawmenu = true;
+	showmenu = false;
 	if ( bSave )
 	{
 		// save WaterLevelMin & WaterLevelMax to memory

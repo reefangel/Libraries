@@ -78,6 +78,7 @@ public:
 	
 private:
 	unsigned long lastWrite;
+	byte lastcrc;
 };
 
 #endif  // __RF_H__

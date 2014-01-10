@@ -4,6 +4,7 @@
 #include <RA_Joystick.h>
 #include <RA_Wifi.h>
 #include <RA_Wiznet5100.h>
+#include <SD.h>
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 #define wdtenabled 1

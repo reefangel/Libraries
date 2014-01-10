@@ -352,6 +352,40 @@ void FontClass::DrawText(long n)
    }
 }
 
+void FontClass::DrawText(int iFC, int iBC,int ix, int iy, String str)
+{
+	int TempFC,TempBC;
+	char buff[str.length()+2];
+	str.toCharArray(buff, str.length()+1);
+	
+	TempFC=FC;
+	TempBC=BC;
+	FC=iFC;
+	BC=iBC;
+	x=ix;
+	y=iy;
+	DrawText(buff); 
+	FC=TempFC;
+	BC=TempBC;
+	
+}
+
+void FontClass::DrawText(int ix, int iy, String str)
+{
+	char buff[str.length()+2];
+	str.toCharArray(buff, str.length()+1);
+	x=ix;
+	y=iy;
+	DrawText(buff); 
+}
+
+void FontClass::DrawText(String str)
+{
+	char buff[str.length()+2];
+	str.toCharArray(buff, str.length()+1);
+	DrawText(buff);
+}
+
 void FontClass::DrawTextP(int iFC, int iBC,int ix, int iy, const prog_char *str)
 {
 	int TempFC,TempBC;
@@ -388,6 +422,13 @@ void FontClass::DrawCenterText(int ix, int iy, char *str)
 	DrawText(ix-width,iy,str);
 }
 
+void FontClass::DrawCenterText(int ix, int iy, String str)
+{
+	char buff[str.length()+2];
+	str.toCharArray(buff, str.length()+1);
+	DrawCenterText(ix, iy, buff);
+}
+
 void FontClass::DrawCenterTextP(int ix, int iy, const prog_char *str)
 {
 	int width=TextWidthP(str);
@@ -410,6 +451,7 @@ void FontClass::DrawCenterNumber(int ix, int iy, long n, byte decimal)
 		DrawText(ix-width,iy," ");
 		DrawText(n/decimal);
 		DrawText(".");
+		if (n%decimal<10 && decimal>99) DrawText("0");
 		DrawText(n%decimal);
 		DrawText(" ");
 	}
