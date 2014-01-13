@@ -45,7 +45,9 @@ boolean LightsOverride=true;
 void ReefAngelClass::Init()
 {
 	Serial.begin(57600);
-	
+	while (!Serial) {
+	; // wait for serial port to connect. Needed for Leonardo only
+	}
 #ifdef RA_STANDARD
 #include <Standard/init.h>
 #elif defined RA_PLUS
@@ -199,7 +201,7 @@ void ReefAngelClass::Refresh()
 		WaterChangeModeStart();
 		break;
 	case PH_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibratePH();
 #else
 		SetupCalibratePH();
@@ -207,7 +209,7 @@ void ReefAngelClass::Refresh()
 		break;
 #ifdef SALINITYEXPANSION
 	case SAL_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibrateSal();
 #else
 		SetupCalibrateSalinity();
@@ -216,7 +218,7 @@ void ReefAngelClass::Refresh()
 #endif // SALINITYEXPANSION
 #ifdef ORPEXPANSION
 	case ORP_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibrateORP();
 #else
 		SetupCalibrateORP();
@@ -225,7 +227,7 @@ void ReefAngelClass::Refresh()
 #endif // ORPEXPANSION
 #ifdef PHEXPANSION
 	case PHE_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibratePHExp();
 #else
 		SetupCalibratePHExp();
@@ -234,7 +236,7 @@ void ReefAngelClass::Refresh()
 #endif // PHEXPANSION
 #ifdef WATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibrateWL();
 #else
 		SetupCalibrateWaterLevel();

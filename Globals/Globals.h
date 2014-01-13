@@ -79,9 +79,11 @@ void receiveEventMaster(int howMany);
 
 #if defined(__SAM3X8E__)
 #define DisplayLEDPWM
+#define LEAKDETECTOREXPANSION
 #undef RA_STANDARD
 #undef RA_PLUS
 #define RA_EVOLUTION
+#include <SD.h>
 #include "itoa.h"
 #endif
 
@@ -126,7 +128,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define RAPlus			1
 #define RATouchDisplay	2
 #define RATouch			3
-#define	RAStar			4			
+#define	RAStar			4	
+#define RAEvolution		5
 
 // Outlets on Relay box
 #define Port8   8
@@ -667,7 +670,7 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -1135,7 +1138,7 @@ typedef struct Compensation
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 
 uint16_t read16(File f);
 uint32_t read32(File f);

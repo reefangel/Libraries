@@ -35,16 +35,20 @@ void RA_TS::Init()
 
 void RA_TS::ApplyCalibration()
 {
+#if not defined(__SAM3X8E__)
 	eeprom_read_block((void*)&calibration, (void*)TS_CALIBRATION_ADDRESS, sizeof(CALIBRATION));
 	if (calibration.XMin<TS_CALIBRATION_XMIN - TS_CALIBRATION_DELTA || calibration.XMin>TS_CALIBRATION_XMIN + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.XMax<TS_CALIBRATION_XMAX - TS_CALIBRATION_DELTA || calibration.XMax>TS_CALIBRATION_XMAX + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.YMin<TS_CALIBRATION_YMIN - TS_CALIBRATION_DELTA || calibration.YMin>TS_CALIBRATION_YMIN + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.YMax<TS_CALIBRATION_YMAX - TS_CALIBRATION_DELTA || calibration.YMax>TS_CALIBRATION_YMAX + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
+#endif // defined(__SAM3X8E__)
 }	
 
 void RA_TS::SaveCalibration()
 {
+#if not defined(__SAM3X8E__)
 	eeprom_write_block((void*)&calibration, (void*)TS_CALIBRATION_ADDRESS, sizeof(CALIBRATION));
+#endif // defined(__SAM3X8E__)
 }
 
 boolean RA_TS::GetTouch()
@@ -178,7 +182,11 @@ boolean RA_TS::GetTouch()
 
 boolean RA_TS::IsTouched()
 {
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	boolean t=!(PIND&(1<<5));
+#elif defined(__SAM3X8E__)
+	boolean t=!digitalRead(27);
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	if (t) 
 		t=GetTouch();
 	return t;
