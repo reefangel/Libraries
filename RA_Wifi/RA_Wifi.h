@@ -44,7 +44,8 @@ const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
 const prog_char XML_EM1[] PROGMEM = "</EM><EM1>";
 const prog_char XML_REM[] PROGMEM = "</EM1><REM>";
-const prog_char XML_ALERTFLAG[] PROGMEM = "</REM><AF>";
+const prog_char XML_BOARDID[] PROGMEM = "</REM><BID>";
+const prog_char XML_ALERTFLAG[] PROGMEM = "</BID><AF>";
 const prog_char XML_STATUSFLAG[] PROGMEM = "</AF><SF>";
 const prog_char XML_STATUSFLAG_END[] PROGMEM = "</SF>";
 
@@ -179,6 +180,7 @@ const prog_char JSON_EM1[] PROGMEM = "EM1";
 const prog_char JSON_REM[] PROGMEM = "REM";
 const prog_char JSON_ALERTFLAG[] PROGMEM = "AF";
 const prog_char JSON_STATUSFLAG[] PROGMEM = "SF";
+const prog_char JSON_BOARDID[] PROGMEM = "BID";
 
 #ifdef DisplayLEDPWM
 const prog_char JSON_PWMA[] PROGMEM = "PWMA";
@@ -294,6 +296,7 @@ const prog_char BannerCustom[] PROGMEM = "&c";
 const prog_char BannerKey[] PROGMEM = "&key=";
 const prog_char BannerAlertFlag[] PROGMEM = "&af=";
 const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
+const prog_char BannerBoardID[] PROGMEM = "&bid=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
