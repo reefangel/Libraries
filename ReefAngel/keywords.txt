@@ -243,6 +243,10 @@ Read	KEYWORD2
 #Network
 DirectAccess	KEYWORD2
 
+#WifiAlert
+SetDelay	KEYWORD2
+
+
 #InternalEEPROM
 
 MHOnHour_read	KEYWORD2
@@ -537,6 +541,8 @@ WaterLevel	LITERAL1
 Humidity	LITERAL1
 DCPump	LITERAL1
 Network	LITERAL1
+WiFiAlert	LITERAL1
+
 
 #######################################
 # Constants (LITERAL1)
