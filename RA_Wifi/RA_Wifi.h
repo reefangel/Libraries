@@ -526,6 +526,7 @@ class RA_Wifi: public Print
     inline void CheckWifi(){};
     inline void pingSerial(){};
     char *portalusername;
+    char *portalkey;
 
 #ifndef ETH_WIZ5100
     using Print::write;
