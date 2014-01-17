@@ -198,6 +198,8 @@ Write	KEYWORD2
 Status	KEYWORD2
 IsRelayPresent	KEYWORD2
 Override	KEYWORD2
+isMaskOn	KEYWORD2
+isMaskOff	KEYWORD2
 
 #ATO
 
