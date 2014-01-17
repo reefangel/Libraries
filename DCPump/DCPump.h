@@ -32,6 +32,7 @@ public:
 	 byte Duration;
 	 byte DaylightChannel;
 	 byte ActinicChannel;
+	 byte LowATOChannel;
 	 byte FeedingSpeed;
 	 byte WaterChangeSpeed;
 #ifdef PWMEXPANSION

@@ -275,6 +275,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(DCPump.Speed);
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*DCPump.Speed);
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -300,6 +302,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(ReefCrestMode(DCPump.Speed,10,DCPump.ActinicChannel-1));
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*ReefCrestMode(DCPump.Speed,10,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -325,6 +329,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(ReefCrestMode(DCPump.Speed,20,DCPump.ActinicChannel-1));
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*ReefCrestMode(DCPump.Speed,20,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -350,6 +356,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ActinicChannel-1));
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -375,6 +383,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.ActinicChannel-1));
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -400,6 +410,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.ActinicChannel-1));
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -425,6 +437,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(TidalSwellMode(DCPump.Speed,DCPump.ActinicChannel-1));
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*TidalSwellMode(DCPump.Speed,DCPump.LowATOChannel-1));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -451,6 +465,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(DCPump.FeedingSpeed);
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*DCPump.FeedingSpeed);
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -475,6 +491,8 @@ void ReefAngelClass::Refresh()
 #else
 			PWM.SetActinic(DCPump.WaterChangeSpeed);
 #endif
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*DCPump.WaterChangeSpeed);
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
