@@ -29,6 +29,7 @@ static boolean RelayConnected;
 static boolean PortalWaiting;
 static int RelayIndex;
 #define PORTAL_TIMEOUT  10000
+#define RETRY_COUNT  3
 
 class RA_Wiznet5100 : public RA_Wifi
 {
@@ -41,6 +42,7 @@ public:
 	void Update();
 	void DirectAccess(String uniqueid);
 	boolean PortalConnection;
+	boolean PortalDataReceived;
 	unsigned long PortalTimeOut;
 	boolean FoundIP;
 	void PortalConnect();
@@ -50,6 +52,7 @@ private:
 	boolean bIncomingR;
 	unsigned long timeoutR;
 	String uid;
+	byte ConnectionRetry;
 protected:
 	size_t write(uint8_t c);
 	size_t write(unsigned long n);
