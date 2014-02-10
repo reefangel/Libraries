@@ -1,5 +1,6 @@
 // Evolution
 
+#include <RA_Wifi.h>
 #include <RA_TouchLCD.h>
 #include <RA_TFT.h>
 #include <RA_TS.h>

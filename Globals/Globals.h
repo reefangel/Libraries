@@ -78,8 +78,10 @@ void receiveEventMaster(int howMany);
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
+#define wifi
 #define DisplayLEDPWM
 #define LEAKDETECTOREXPANSION
+#define NOTILT
 #undef RA_STANDARD
 #undef RA_PLUS
 #define RA_EVOLUTION
@@ -271,30 +273,35 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 //#define Piezo               16 
 
 //Digital I/O
-#ifdef REEFANGEL_MINI
-#define ledPin              6
-#else
-#define ledPin              7
-#endif //REEFANGEL_MINI
 #define tempPin             8
 #define actinicPWMPin       9
 #define daylightPWMPin      10
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define HW_SPI_Pin			53
 #if defined(__SAM3X8E__)
 #define SDPin				29
 #define AlarmPin          	30
 #define BuzzerPin			31
 #define daylight2PWMPin     5
 #define actinic2PWMPin      6
+#define ledPin              24
+#define TPINTPin			27
+#define TPCSPin				28
+#define TouchBL				3
 #else //
+#define TouchBL				44
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
+#ifdef REEFANGEL_MINI
+#define ledPin              6
+#else
+#define ledPin              7
+#endif //REEFANGEL_MINI
 #endif //__SAM3X8E__
-#define HW_SPI_Pin			53
 
 // I2C Addresses
 #define I2CPWM				0x08

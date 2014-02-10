@@ -37,10 +37,9 @@ RA_TouchLCD::RA_TouchLCD()
 	DDRL|=(1<<4); //PL4 (Output) - RD
 	PORTL|=(1<<4); //PL4 pull up
 #elif defined(__SAM3X8E__)
-	PIOC->PIO_OER |= 0x001FFFFE;
-	PIOC->PIO_OWER = 0x0001FFFE;
-	PIOC->PIO_OWDR = 0xFFFE0001;
-	PIOD->PIO_OER |= 0x00000008;
+//	PIOC->PIO_OER |= 0x001FFFFE;
+//	PIOC->PIO_OWER = 0x0001FFFE;
+//	PIOC->PIO_OWDR = 0xFFFE0001;
 	
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 }
@@ -53,7 +52,7 @@ void RA_TouchLCD::Init()
 
 void RA_TouchLCD::SetBacklight(byte bl)
 {
-	analogWrite(44,bl*2.55);
+	analogWrite(TouchBL,bl*2.55);
 }
 
 void RA_TouchLCD::SetOrientation(byte O)
@@ -518,7 +517,7 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 			PORTA=sdbuffer[buffidx++];
 			PORTC=sdbuffer[buffidx++];
 #elif defined(__SAM3X8E__)
-			PIOC->PIO_ODSR = sdbuffer[buffidx++]<<9 & sdbuffer[buffidx++]<<1;
+			PIOC->PIO_ODSR = sdbuffer[buffidx++]<<9 | sdbuffer[buffidx++]<<1;
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 			WR0;
 			WR1;

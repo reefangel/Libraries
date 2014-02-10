@@ -31,6 +31,10 @@ void RA_TS::Init()
 	orientation=1;
 	CalibrationNeeded=false;
 	ApplyCalibration();
+#if defined(__SAM3X8E__)
+	pinMode(TPINTPin,INPUT); 
+	pinMode(TPCSPin,OUTPUT);
+#endif // defined(__SAM3X8E__)
 }
 
 void RA_TS::ApplyCalibration()
@@ -59,8 +63,10 @@ boolean RA_TS::GetTouch()
 	double pressure;
 
 //	SPCR=0x53;
+#if defined(__SAM3X8E__)
+	SPI.setClockDivider(255); 
+#endif // defined(__SAM3X8E__)
 	TP0;
-
 	for (int i=0;i<TouchSample;i++)
 	{
 		SPI.transfer(0xb0);
@@ -185,7 +191,7 @@ boolean RA_TS::IsTouched()
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	boolean t=!(PIND&(1<<5));
 #elif defined(__SAM3X8E__)
-	boolean t=!digitalRead(27);
+	boolean t=!digitalRead(TPINTPin);
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	if (t) 
 		t=GetTouch();

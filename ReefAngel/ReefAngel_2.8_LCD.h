@@ -1189,7 +1189,11 @@ void ReefAngelClass::ShowTouchInterface()
 							PB[a].SetPosition(10,j);
 							PB[a].SetColor(COLOR_GREEN);
 							PB[a].SetLabel(CustomLabels[DimmingChannel0Label+a]);
+#if defined(__SAM3X8E__)
+							PB[a].SetCurrent(VariableControl.GetChannelValue(a));
+#else
 							PB[a].SetCurrent(PWM.GetChannelValue(a));
+#endif
 							PB[a].Show();
 						}
 					}
@@ -1632,7 +1636,11 @@ void ReefAngelClass::ShowTouchInterface()
 									NeedsRedraw=true;
 									DisplayedScreen=DIMMING_OVERRIDE;
 									Slider.SetColor(COLOR_GREEN);
+#if defined(__SAM3X8E__)
+									Slider.SetCurrent(VariableControl.GetChannelValue(a));
+#else
 									Slider.SetCurrent(PWM.GetChannelValue(a));
+#endif
 									Slider.SetOverrideID(OVERRIDE_CHANNEL0+a);
 									Slider.SetLabel(CustomLabels[DimmingChannel0Label+a]);
 								}

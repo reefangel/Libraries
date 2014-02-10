@@ -20,7 +20,6 @@
   */
 
 #include <Globals.h>
-#if not defined(__SAM3X8E__)
 
 #if defined wifi || defined ETH_WIZ5100
 #include "RA_Wifi.h"
@@ -324,18 +323,32 @@ void RA_Wifi::ProcessHTTP()
 #ifdef DisplayLEDPWM
 			s += 56;
 			//<PWMA></PWMA><PWMD></PWMD><PWMAO></PWMAO><PWMDO></PWMDO>
+#if defined(__SAM3X8E__)
+			s += intlength(ReefAngel.VariableControl.GetDaylightValue());
+			s += intlength(ReefAngel.VariableControl.GetActinicValue());
+			s += intlength(ReefAngel.VariableControl.GetDaylightOverrideValue());
+			s += intlength(ReefAngel.VariableControl.GetActinicOverrideValue());
+#else
 			s += intlength(ReefAngel.PWM.GetDaylightValue());
 			s += intlength(ReefAngel.PWM.GetActinicValue());
 			s += intlength(ReefAngel.PWM.GetDaylightOverrideValue());
 			s += intlength(ReefAngel.PWM.GetActinicOverrideValue());
+#endif
 #endif  // DisplayLEDPWM
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 			s += 64;
 			//<PWMA2></PWMA2><PWMD2></PWMD2><PWMA2O></PWMA2O><PWMD2O></PWMD2O>
+#if defined(__SAM3X8E__)
+			s += intlength(ReefAngel.VariableControl.GetDaylight2Value());
+			s += intlength(ReefAngel.VariableControl.GetActinic2Value());
+			s += intlength(ReefAngel.VariableControl.GetDaylight2OverrideValue());
+			s += intlength(ReefAngel.VariableControl.GetActinic2OverrideValue());
+#else
 			s += intlength(ReefAngel.PWM.GetDaylight2Value());
 			s += intlength(ReefAngel.PWM.GetActinic2Value());
 			s += intlength(ReefAngel.PWM.GetDaylight2OverrideValue());
 			s += intlength(ReefAngel.PWM.GetActinic2OverrideValue());
+#endif
 #endif  // RA_STAR
 #ifdef RelayExp
 			s += 296;
@@ -350,8 +363,13 @@ void RA_Wifi::ProcessHTTP()
 #ifdef PWMEXPANSION
 			s += 192;
 			//<PWME0></PWME0><PWME1></PWME1><PWME2></PWME2><PWME3></PWME3><PWME4></PWME4><PWME5></PWME5><PWME0O></PWME0O><PWME1O></PWME1O><PWME2O></PWME2O><PWME3O></PWME3O><PWME4O></PWME4O><PWME5O></PWME5O>
+#if defined(__SAM3X8E__)
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannel[EID]);
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannelOverride[EID]);
+#else
 			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannel[EID]);
 			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannelOverride[EID]);
+#endif
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
 			s += 181;
@@ -416,7 +434,7 @@ void RA_Wifi::ProcessHTTP()
 			//<LEAK></LEAK>
 			s += intlength(ReefAngel.IsLeakDetected());
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 			s += 15;
 			//<ALARM></ALARM>
 			s += intlength(ReefAngel.AlarmInput.IsActive());
@@ -559,11 +577,20 @@ void RA_Wifi::ProcessHTTP()
 				// Override channel
 				// if channel is from an expansion module that is not enabled, the command will be accepted, but it will do nothing.
 #ifdef DisplayLEDPWM					
+#if defined(__SAM3X8E__)
+				if (weboption2==0) ReefAngel.VariableControl.SetDaylightOverride(weboption);
+				else if (weboption2==1) ReefAngel.VariableControl.SetActinicOverride(weboption);
+#else
 				if (weboption2==0) ReefAngel.PWM.SetDaylightOverride(weboption);
 				else if (weboption2==1) ReefAngel.PWM.SetActinicOverride(weboption);
+#endif
 #endif // DisplayLEDPWM					
 #ifdef PWMEXPANSION
+#if defined(__SAM3X8E__)
+				if (weboption2>=2 && weboption2<=7) ReefAngel.VariableControl.SetChannelOverride(weboption2-2,weboption);
+#else
 				if (weboption2>=2 && weboption2<=7) ReefAngel.PWM.SetChannelOverride(weboption2-2,weboption);
+#endif
 #endif // PWMEXPANSION
 #ifdef AI_LED
 				if (weboption2>=8 && weboption2<=10) ReefAngel.AI.SetChannelOverride(weboption2-8,weboption);
@@ -571,9 +598,14 @@ void RA_Wifi::ProcessHTTP()
 #ifdef RFEXPANSION
 				if (weboption2>=11 && weboption2<=16) ReefAngel.RF.SetChannelOverride(weboption2-11,weboption);
 #endif // RFEXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
+#if defined(__SAM3X8E__)
+				if (weboption2==17) ReefAngel.VariableControl.SetDaylight2Override(weboption);
+				else if (weboption2==18) ReefAngel.VariableControl.SetActinic2Override(weboption);
+#else
 				if (weboption2==17) ReefAngel.PWM.SetDaylight2Override(weboption);
 				else if (weboption2==18) ReefAngel.PWM.SetActinic2Override(weboption);
+#endif
 #endif // RA_STAR
 				s = 9;  // <P>OK</P>
 				// add in the channel, twice
@@ -718,8 +750,7 @@ void RA_Wifi::ProcessHTTP()
 				setTime(hr, min, 0, mday, mon, weboption);
 #ifdef RA_EVOLUTION
 				now();
-				ReefAngel.RTC_INTERNAL.set_time(hr, min, 0);
-				ReefAngel.RTC_INTERNAL.set_date(mday, mon, weboption+2000);
+				I2CRTC.set(now());
 #else // RA_EVOLUTION
 				now();
 				RTC.set(now());
@@ -888,18 +919,32 @@ void RA_Wifi::ProcessHTTP()
 #ifdef DisplayLEDPWM
 			s += 42;
 			//,"PWMA":"","PWMD":"","PWMAO":"","PWMDO":""
+#if defined(__SAM3X8E__)
+			s += intlength(ReefAngel.VariableControl.GetDaylightValue());
+			s += intlength(ReefAngel.VariableControl.GetActinicValue());
+			s += intlength(ReefAngel.VariableControl.GetDaylightOverrideValue());
+			s += intlength(ReefAngel.VariableControl.GetActinicOverrideValue());
+#else
 			s += intlength(ReefAngel.PWM.GetDaylightValue());
 			s += intlength(ReefAngel.PWM.GetActinicValue());
 			s += intlength(ReefAngel.PWM.GetDaylightOverrideValue());
 			s += intlength(ReefAngel.PWM.GetActinicOverrideValue());
+#endif
 #endif  // DisplayLEDPWM
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 			s += 46;
 			//,"PWMA2":"","PWMD2":"","PWMA2O":"","PWMD2O":""
+#if defined(__SAM3X8E__)
+			s += intlength(ReefAngel.VariableControl.GetDaylight2Value());
+			s += intlength(ReefAngel.VariableControl.GetActinic2Value());
+			s += intlength(ReefAngel.VariableControl.GetDaylight2OverrideValue());
+			s += intlength(ReefAngel.VariableControl.GetActinic2OverrideValue());
+#else
 			s += intlength(ReefAngel.PWM.GetDaylight2Value());
 			s += intlength(ReefAngel.PWM.GetActinic2Value());
 			s += intlength(ReefAngel.PWM.GetDaylight2OverrideValue());
 			s += intlength(ReefAngel.PWM.GetActinic2OverrideValue());
+#endif
 #endif  // RA_STAR
 #ifdef RelayExp
 			s += 232;
@@ -914,8 +959,13 @@ void RA_Wifi::ProcessHTTP()
 #ifdef PWMEXPANSION
 			s += 138;
 			//,"PWME0":"","PWME1":"","PWME2":"","PWME3":"","PWME4":"","PWME5":"","PWME0O":"","PWME1O":"","PWME2O":"","PWME3O":"","PWME4O":"","PWME5O":""
+#if defined(__SAM3X8E__)
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannel[EID]);
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannelOverride[EID]);
+#else
 			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannel[EID]);
 			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannelOverride[EID]);
+#endif
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
 			s += 143;
@@ -980,7 +1030,7 @@ void RA_Wifi::ProcessHTTP()
 			//,"LEAK":""
 			s += intlength(ReefAngel.IsLeakDetected());
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 			s += 11;
 			//,"ALARM":""
 			s += intlength(ReefAngel.AlarmInput.IsActive());
@@ -1128,6 +1178,17 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.StatusFlags, DEC);
 	PROGMEMprint(XML_STATUSFLAG_END);
 #ifdef DisplayLEDPWM
+#if defined(__SAM3X8E__)
+	PROGMEMprint(XML_PWMA);
+	print(ReefAngel.VariableControl.GetActinicValue(), DEC);
+	PROGMEMprint(XML_PWMD);
+	print(ReefAngel.VariableControl.GetDaylightValue(), DEC);
+	PROGMEMprint(XML_PWMAO);
+	print(ReefAngel.VariableControl.GetActinicOverrideValue(), DEC);
+	PROGMEMprint(XML_PWMDO);
+	print(ReefAngel.VariableControl.GetDaylightOverrideValue(), DEC);
+	PROGMEMprint(XML_PWMDO_END);
+#else
 	PROGMEMprint(XML_PWMA);
 	print(ReefAngel.PWM.GetActinicValue(), DEC);
 	PROGMEMprint(XML_PWMD);
@@ -1137,8 +1198,20 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_PWMDO);
 	print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
 	PROGMEMprint(XML_PWMDO_END);
+#endif
 #endif  // DisplayLEDPWM
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
+#if defined(__SAM3X8E__)
+	PROGMEMprint(XML_PWMA2);
+	print(ReefAngel.VariableControl.GetActinic2Value(), DEC);
+	PROGMEMprint(XML_PWMD2);
+	print(ReefAngel.VariableControl.GetDaylight2Value(), DEC);
+	PROGMEMprint(XML_PWMA2O);
+	print(ReefAngel.VariableControl.GetActinic2OverrideValue(), DEC);
+	PROGMEMprint(XML_PWMD2O);
+	print(ReefAngel.VariableControl.GetDaylight2OverrideValue(), DEC);
+	PROGMEMprint(XML_PWMD2O_END);
+#else
 	PROGMEMprint(XML_PWMA2);
 	print(ReefAngel.PWM.GetActinic2Value(), DEC);
 	PROGMEMprint(XML_PWMD2);
@@ -1148,6 +1221,7 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_PWMD2O);
 	print(ReefAngel.PWM.GetDaylight2OverrideValue(), DEC);
 	PROGMEMprint(XML_PWMD2O_END);
+#endif
 #endif  // RA_STAR
 #ifdef SALINITYEXPANSION
 	PROGMEMprint(XML_SAL);
@@ -1217,7 +1291,7 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.IsLeakDetected(), DEC);
 	PROGMEMprint(XML_LEAK_END);
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 	PROGMEMprint(XML_ALARM);
 	print(ReefAngel.AlarmInput.IsActive(), DEC);
 	PROGMEMprint(XML_ALARM_END);
@@ -1228,7 +1302,11 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 		PROGMEMprint(XML_PWME);
 		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
+#if defined(__SAM3X8E__)
+		print(ReefAngel.VariableControl.GetChannelValue(EID), DEC);
+#else
 		print(ReefAngel.PWM.GetChannelValue(EID), DEC);
+#endif
 		PROGMEMprint(XML_PWME_END);
 		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
@@ -1236,7 +1314,11 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 		print(EID, DEC);
 		print("O");
 		PROGMEMprint(XML_CLOSE_TAG);
+#if defined(__SAM3X8E__)
+		print(ReefAngel.VariableControl.GetChannelOverrideValue(EID), DEC);
+#else
 		print(ReefAngel.PWM.GetChannelOverrideValue(EID), DEC);
+#endif
 		PROGMEMprint(XML_PWME_END);
 		print(EID, DEC);
 		print("O");
@@ -1393,16 +1475,30 @@ void RA_Wifi::SendJSONData()
 	SendSingleJSON(JSON_ALERTFLAG,ReefAngel.AlertFlags);
 	SendSingleJSON(JSON_STATUSFLAG,ReefAngel.StatusFlags);
 #ifdef DisplayLEDPWM
+#if defined(__SAM3X8E__)
+	SendSingleJSON(JSON_PWMA,ReefAngel.VariableControl.GetActinicValue());
+	SendSingleJSON(JSON_PWMD,ReefAngel.VariableControl.GetDaylightValue());
+	SendSingleJSON(JSON_PWMA,ReefAngel.VariableControl.GetActinicOverrideValue(),"O");
+	SendSingleJSON(JSON_PWMD,ReefAngel.VariableControl.GetDaylightOverrideValue(),"O");
+#else
 	SendSingleJSON(JSON_PWMA,ReefAngel.PWM.GetActinicValue());
 	SendSingleJSON(JSON_PWMD,ReefAngel.PWM.GetDaylightValue());
 	SendSingleJSON(JSON_PWMA,ReefAngel.PWM.GetActinicOverrideValue(),"O");
 	SendSingleJSON(JSON_PWMD,ReefAngel.PWM.GetDaylightOverrideValue(),"O");
+#endif
 #endif  // DisplayLEDPWM
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
+#if defined(__SAM3X8E__)
+	SendSingleJSON(JSON_PWMA2,ReefAngel.VariableControl.GetActinic2Value());
+	SendSingleJSON(JSON_PWMD2,ReefAngel.VariableControl.GetDaylight2Value());
+	SendSingleJSON(JSON_PWMA2,ReefAngel.VariableControl.GetActinic2OverrideValue(),"O");
+	SendSingleJSON(JSON_PWMD2,ReefAngel.VariableControl.GetDaylight2OverrideValue(),"O");
+#else
 	SendSingleJSON(JSON_PWMA2,ReefAngel.PWM.GetActinic2Value());
 	SendSingleJSON(JSON_PWMD2,ReefAngel.PWM.GetDaylight2Value());
 	SendSingleJSON(JSON_PWMA2,ReefAngel.PWM.GetActinic2OverrideValue(),"O");
 	SendSingleJSON(JSON_PWMD2,ReefAngel.PWM.GetDaylight2OverrideValue(),"O");
+#endif
 #endif  // RA_STAR
 #ifdef SALINITYEXPANSION
 	SendSingleJSON(JSON_SAL,ReefAngel.Params.Salinity);
@@ -1446,7 +1542,7 @@ void RA_Wifi::SendJSONData()
 #ifdef LEAKDETECTOREXPANSION
 	SendSingleJSON(JSON_LEAK,ReefAngel.IsLeakDetected());
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 	SendSingleJSON(JSON_ALARM,ReefAngel.AlarmInput.IsActive());
 #endif  // RA_STAR
 #ifdef PWMEXPANSION
@@ -1455,11 +1551,19 @@ void RA_Wifi::SendJSONData()
 		char tid[3];
 		tid[0]='0'+EID;
 		tid[1]=0;
+#if defined(__SAM3X8E__)
+		SendSingleJSON(JSON_PWME,ReefAngel.VariableControl.GetChannelValue(EID),tid);
+#else
 		SendSingleJSON(JSON_PWME,ReefAngel.PWM.GetChannelValue(EID),tid);
+#endif
 		tid[0]='0'+EID;
 		tid[1]='O';
 		tid[2]=0;
+#if defined(__SAM3X8E__)
+		SendSingleJSON(JSON_PWME,ReefAngel.VariableControl.GetChannelOverrideValue(EID),tid);
+#else
 		SendSingleJSON(JSON_PWME,ReefAngel.PWM.GetChannelOverrideValue(EID),tid);
+#endif
 	}
 #endif  // PWMEXPANSION
 #ifdef AI_LED
@@ -1599,7 +1703,7 @@ void RA_Wifi::Portal(char *username, char *key)
 {
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
 #ifdef ETH_WIZ5100
-  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,key);
+  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,key); // Let's keep checking for Portal connection
 #endif
   portalusername=username;
   portalkey=key;
@@ -1681,6 +1785,16 @@ void RA_Wifi::SendPortal(char *username, char*key)
   }  // for x
 #endif  // RelayExp
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined(__SAM3X8E__)
+  PROGMEMprint(BannerPWMA);
+  print(ReefAngel.VariableControl.GetActinicValue(), DEC);
+  PROGMEMprint(BannerPWMD);
+  print(ReefAngel.VariableControl.GetDaylightValue(), DEC);
+  PROGMEMprint(BannerPWMAO);
+  print(ReefAngel.VariableControl.GetActinicOverrideValue(), DEC);
+  PROGMEMprint(BannerPWMDO);
+  print(ReefAngel.VariableControl.GetDaylightOverrideValue(), DEC);
+#else
   PROGMEMprint(BannerPWMA);
   print(ReefAngel.PWM.GetActinicValue(), DEC);
   PROGMEMprint(BannerPWMD);
@@ -1689,6 +1803,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
   print(ReefAngel.PWM.GetActinicOverrideValue(), DEC);
   PROGMEMprint(BannerPWMDO);
   print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
+#endif
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 #ifdef PWMEXPANSION
   for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
@@ -1696,12 +1811,20 @@ void RA_Wifi::SendPortal(char *username, char*key)
     PROGMEMprint(BannerPWME);
     print(EID, DEC);
     print("=");
+#if defined(__SAM3X8E__)
+    print(ReefAngel.VariableControl.GetChannelValue(EID), DEC);
+#else
     print(ReefAngel.PWM.GetChannelValue(EID), DEC);
+#endif
     PROGMEMprint(BannerPWME);
     print(EID, DEC);
     print("O");
     print("=");
+#if defined(__SAM3X8E__)
+    print(ReefAngel.VariableControl.GetChannelOverrideValue(EID), DEC);
+#else
     print(ReefAngel.PWM.GetChannelOverrideValue(EID), DEC);
+#endif
   }
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
@@ -1785,9 +1908,19 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerLeak);
   print(ReefAngel.IsLeakDetected(), DEC);
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
   PROGMEMprint(BannerAlarm);
   print(ReefAngel.AlarmInput.IsActive(), DEC);
+#if defined(__SAM3X8E__)
+  PROGMEMprint(BannerPWMA2);
+  print(ReefAngel.VariableControl.GetActinic2Value(), DEC);
+  PROGMEMprint(BannerPWMD2);
+  print(ReefAngel.VariableControl.GetDaylight2Value(), DEC);
+  PROGMEMprint(BannerPWMA2O);
+  print(ReefAngel.VariableControl.GetActinic2OverrideValue(), DEC);
+  PROGMEMprint(BannerPWMD2O);
+  print(ReefAngel.VariableControl.GetDaylight2OverrideValue(), DEC);
+#else
   PROGMEMprint(BannerPWMA2);
   print(ReefAngel.PWM.GetActinic2Value(), DEC);
   PROGMEMprint(BannerPWMD2);
@@ -1796,6 +1929,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
   print(ReefAngel.PWM.GetActinic2OverrideValue(), DEC);
   PROGMEMprint(BannerPWMD2O);
   print(ReefAngel.PWM.GetDaylight2OverrideValue(), DEC);
+#endif
 #endif  // RA_STAR
 #ifdef ETH_WIZ5100
   PROGMEMprint(BannerHTTP11);
@@ -1811,5 +1945,3 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif // ETH_WIZ5100
 }
 #endif  // wifi
-
-#endif // __SAM3X8E__

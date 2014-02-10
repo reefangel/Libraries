@@ -1,5 +1,8 @@
 // Evolution
 
+Serial.println("Evolution Reboot");
+Serial1.begin(57600);
+Serial2.begin(57600);
 EM=0;
 EM1=0;
 REM=0;
@@ -42,6 +45,7 @@ menu_button_functions2[5] = &ReefAngelClass::SetupTouchCalibrateWL;
 // output, even if you don't use it:
 #if not defined NOSD
 SDFound=(analogRead(4)<100);
+Serial.println("SD Detected");
 if (SDFound) SD.begin(SDPin);
 #endif // NOSD
 Splash=true;
@@ -84,3 +88,4 @@ Board=RAEvolution;
 Wire.onReceive(NULL);
 Wire.onRequest(NULL);
 Wire.begin();
+WDT_Restart( WDT );
