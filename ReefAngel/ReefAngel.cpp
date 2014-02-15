@@ -166,7 +166,7 @@ void ReefAngelClass::Init()
 
 #if defined wifi || defined I2CMASTER || defined ETH_WIZ5100
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
-	EM1 = HUMbit + DCPumpbit + Leakbit;
+	EM1 = HUMbit + DCPumpbit + Leakbit + PARbit;
 
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
@@ -776,11 +776,17 @@ void ReefAngelClass::Refresh()
 #endif  // defined WATERLEVELEXPANSION
 #if defined HUMIDITYEXPANSION
 	Humidity.Read();
+	RefreshScreen();
 #endif  // defined HUMIDITYEXPANSION
 	OverheatCheck();
 #ifdef LEAKDETECTOREXPANSION
 	LeakCheck();
+	RefreshScreen();
 #endif  // LEAKDETECTOREXPANSION
+#if defined PAREXPANSION
+	PAR.Convert();
+	RefreshScreen();
+#endif  // defined PAREXPANSION
 #ifdef BUSCHECK
 	Wire.beginTransmission(0x68);
 	Wire.write(0);

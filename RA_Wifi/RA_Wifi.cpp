@@ -412,6 +412,11 @@ void RA_Wifi::ProcessHTTP()
 			//<HUM></HUM>
 			s += intlength(ReefAngel.Humidity.GetLevel());
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+			s += 11;
+			//<PAR></PAR>
+			s += intlength(ReefAngel.PAR.GetLevel());
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 			s += 33;
 			//<DCM></DCM><DCS></DCS><DCD></DCD>
@@ -1008,6 +1013,11 @@ void RA_Wifi::ProcessHTTP()
 			//,"HUM":""
 			s += intlength(ReefAngel.Humidity.GetLevel());
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+			s += 9;
+			//,"PAR":""
+			s += intlength(ReefAngel.PAR.GetLevel());
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 			s += 27;
 			//,"DCM":"","DCS":"","DCD":""
@@ -1260,6 +1270,11 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.Humidity.GetLevel(), DEC);
 	PROGMEMprint(XML_HUM_END);
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+	PROGMEMprint(XML_PAR);
+	print(ReefAngel.PAR.GetLevel(), DEC);
+	PROGMEMprint(XML_PAR_END);
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 	PROGMEMprint(XML_DCM);
 	print(ReefAngel.DCPump.Mode, DEC);
@@ -1522,6 +1537,9 @@ void RA_Wifi::SendJSONData()
 #ifdef HUMIDITYEXPANSION
 	SendSingleJSON(JSON_HUM,ReefAngel.Humidity.GetLevel());
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+	SendSingleJSON(JSON_PAR,ReefAngel.PAR.GetLevel());
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 	SendSingleJSON(JSON_DCM,ReefAngel.DCPump.Mode);
 	SendSingleJSON(JSON_DCS,ReefAngel.DCPump.Speed);
@@ -1883,6 +1901,10 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerHumidity);
   print(ReefAngel.Humidity.GetLevel(), DEC);
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+  PROGMEMprint(BannerPAR);
+  print(ReefAngel.PAR.GetLevel(), DEC);
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
   PROGMEMprint(BannerDCM);
   print(ReefAngel.DCPump.Mode, DEC);

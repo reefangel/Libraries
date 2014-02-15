@@ -319,6 +319,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CPWM_PCA9685		0x40
 #define I2CLeak				0X48
 #define I2CMultiWaterLevel	0X49
+#define I2CPAR				0X4a
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
@@ -1390,6 +1391,12 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #else
 	#define Leakbit		0
 #endif  // LEAKDETECTOREXPANSION
+
+#ifdef PAREXPANSION
+	#define PARbit		8
+#else
+	#define PARbit		0
+#endif  // PAREXPANSION
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

@@ -76,6 +76,10 @@ const prog_char XML_WL_END[] PROGMEM = "</WL";
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
 const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+const prog_char XML_PAR[] PROGMEM = "<PAR>";
+const prog_char XML_PAR_END[] PROGMEM = "</PAR>";
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 const prog_char XML_DCM[] PROGMEM = "<DCM>";
 const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
@@ -201,6 +205,9 @@ const prog_char JSON_WL[] PROGMEM = "WL";
 #ifdef HUMIDITYEXPANSION
 const prog_char JSON_HUM[] PROGMEM = "HUM";
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+const prog_char JSON_PAR[] PROGMEM = "PAR";
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 const prog_char JSON_DCM[] PROGMEM = "DCM";
 const prog_char JSON_DCS[] PROGMEM = "DCS";
@@ -350,6 +357,10 @@ const prog_char BannerBoardID[] PROGMEM = "&bid=";
 #ifdef HUMIDITYEXPANSION
 	const prog_char BannerHumidity[] PROGMEM = "&hum=";
 #endif  // HUMIDITYEXPANSION
+
+#ifdef PAREXPANSION
+	const prog_char BannerPAR[] PROGMEM = "&par=";
+#endif  // PAREXPANSION
 
 #ifdef DCPUMPCONTROL
 	const prog_char BannerDCM[] PROGMEM = "&dcm=";
