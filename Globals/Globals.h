@@ -286,7 +286,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define BuzzerPin			31
 #define daylight2PWMPin     5
 #define actinic2PWMPin      6
+#define ExpBusPin           23
 #define ledPin              24
+#define EEPROMPin			26
 #define TPINTPin			27
 #define TPCSPin				28
 #define TouchBL				3
@@ -1134,14 +1136,21 @@ typedef struct Compensation
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
 #define SplashDuration					5000
-#define TouchSample						20
+#define TouchSample						10
 #define TouchSlideDelta					20
 #define TouchPressure					1500
 #define FONT_HEADER 					7
+#if defined RA_EVOLUTION
+#define TS_CALIBRATION_XMIN				4500
+#define TS_CALIBRATION_XMAX				7400
+#define TS_CALIBRATION_YMIN				4500
+#define TS_CALIBRATION_YMAX				7400
+#else
 #define TS_CALIBRATION_XMIN				700
 #define TS_CALIBRATION_XMAX				3200
 #define TS_CALIBRATION_YMIN				700
 #define TS_CALIBRATION_YMAX				3200
+#endif
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 

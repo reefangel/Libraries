@@ -18,6 +18,7 @@ Font.SetFont(f12x12);
 LargeFont.SetFont(ArialBold20);
 setSyncProvider(I2CRTC.get);   // the function to get the time from the RTC
 setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
+SPIEEPROM.Init();
 TS.Init();
 OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Ok",OKBUTTON);
 CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Cancel",CANCELBUTTON);
@@ -88,4 +89,6 @@ Board=RAEvolution;
 Wire.onReceive(NULL);
 Wire.onRequest(NULL);
 Wire.begin();
+pinMode(ExpBusPin,OUTPUT);
+digitalWrite(ExpBusPin,HIGH);
 WDT_Restart( WDT );

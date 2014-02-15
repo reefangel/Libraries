@@ -24,6 +24,7 @@
 
 #include <Globals.h>
 #include <SPI.h>
+#include <InternalEEPROM.h>
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 
 #include <avr/eeprom.h>

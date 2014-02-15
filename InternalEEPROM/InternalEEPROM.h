@@ -21,7 +21,7 @@
 #if not defined __SAM3X8E__
 #include <avr/eeprom.h>
 #else
-#include "Memory.h"
+#include "SPIEEPROM.h"
 #endif // __SAM3X8E__
 /*
 This class reads/writes to the internal EEPROM memory

@@ -41,17 +41,31 @@ void RA_TS::ApplyCalibration()
 {
 #if not defined(__SAM3X8E__)
 	eeprom_read_block((void*)&calibration, (void*)TS_CALIBRATION_ADDRESS, sizeof(CALIBRATION));
+#else
+	calibration.XMin=(InternalMemory.read(TS_CALIBRATION_ADDRESS)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+1);
+	calibration.XMax=(InternalMemory.read(TS_CALIBRATION_ADDRESS+2)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+3);
+	calibration.YMin=(InternalMemory.read(TS_CALIBRATION_ADDRESS+4)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+5);
+	calibration.YMax=(InternalMemory.read(TS_CALIBRATION_ADDRESS+6)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+7);
+#endif // defined(__SAM3X8E__)
 	if (calibration.XMin<TS_CALIBRATION_XMIN - TS_CALIBRATION_DELTA || calibration.XMin>TS_CALIBRATION_XMIN + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.XMax<TS_CALIBRATION_XMAX - TS_CALIBRATION_DELTA || calibration.XMax>TS_CALIBRATION_XMAX + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.YMin<TS_CALIBRATION_YMIN - TS_CALIBRATION_DELTA || calibration.YMin>TS_CALIBRATION_YMIN + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.YMax<TS_CALIBRATION_YMAX - TS_CALIBRATION_DELTA || calibration.YMax>TS_CALIBRATION_YMAX + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
-#endif // defined(__SAM3X8E__)
 }	
 
 void RA_TS::SaveCalibration()
 {
 #if not defined(__SAM3X8E__)
 	eeprom_write_block((void*)&calibration, (void*)TS_CALIBRATION_ADDRESS, sizeof(CALIBRATION));
+#else
+	InternalMemory.write(TS_CALIBRATION_ADDRESS,calibration.XMin>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+1,calibration.XMin&0xff);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+2,calibration.XMax>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+3,calibration.XMax&0xff);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+4,calibration.YMin>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+5,calibration.YMin&0xff);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+6,calibration.YMax>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+7,calibration.YMax&0xff);
 #endif // defined(__SAM3X8E__)
 }
 
@@ -135,6 +149,9 @@ boolean RA_TS::GetTouch()
 	uY=averageY;
 
 	TP1;
+#if defined(__SAM3X8E__)
+	SPI.setClockDivider(21); 
+#endif // defined(__SAM3X8E__)
 //	SPCR=0x50;
 	if (uX==0) uY=0;
 

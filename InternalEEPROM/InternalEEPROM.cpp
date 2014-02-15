@@ -1325,7 +1325,7 @@ uint8_t InternalEEPROMClass::read(int address)
 #if not defined __SAM3X8E__
 	return eeprom_read_byte((unsigned char *) address);
 #else
-	return Memory.Read(address);
+	return SPIEEPROM.Read(address);
 #endif
 }
 
@@ -1334,7 +1334,7 @@ void InternalEEPROMClass::write(int address, const uint8_t value)
 #if not defined __SAM3X8E__
 	eeprom_write_byte((unsigned char *) address, value);
 #else
-	Memory.Write(address,value);
+	SPIEEPROM.Write(address,value);
 #endif
 }
 
@@ -1343,7 +1343,7 @@ int InternalEEPROMClass::read_int(int address)
 #if not defined __SAM3X8E__
     return eeprom_read_word((const uint16_t *) address);
 #else
-	return Memory.Read(address)+(Memory.Read(address+1)<<8);
+	return SPIEEPROM.Read(address)+(SPIEEPROM.Read(address+1)<<8);
 #endif
 }
 
@@ -1352,8 +1352,8 @@ void InternalEEPROMClass::write_int(int address, const int value)
 #if not defined __SAM3X8E__
     eeprom_write_word((uint16_t *) address, (uint16_t) value);
 #else
-	Memory.Write(address,value&0xff);
-	Memory.Write(address+1,(value>>8));
+	SPIEEPROM.Write(address,value&0xff);
+	SPIEEPROM.Write(address+1,(value>>8));
 #endif
 }
 
@@ -1362,7 +1362,7 @@ uint32_t InternalEEPROMClass::read_dword(int address)
 #if not defined __SAM3X8E__
 	return eeprom_read_dword((const uint32_t *)address);
 #else
-	return Memory.Read(address)+(Memory.Read(address+1)<<8)+(Memory.Read(address+2)<<16)+(Memory.Read(address+3)<<24);
+	return SPIEEPROM.Read(address)+(SPIEEPROM.Read(address+1)<<8)+(SPIEEPROM.Read(address+2)<<16)+(SPIEEPROM.Read(address+3)<<24);
 #endif
 }
 
@@ -1371,10 +1371,10 @@ void InternalEEPROMClass::write_dword(int address, const uint32_t value)
 #if not defined __SAM3X8E__
 	eeprom_write_dword((uint32_t *) address, (uint32_t) value);
 #else
-	Memory.Write(address,value&0xff);
-	Memory.Write(address+1,(value>>8)&0xff);
-	Memory.Write(address+2,(value>>16)&0xff);
-	Memory.Write(address+3,(value>>24));
+	SPIEEPROM.Write(address,value&0xff);
+	SPIEEPROM.Write(address+1,(value>>8)&0xff);
+	SPIEEPROM.Write(address+2,(value>>16)&0xff);
+	SPIEEPROM.Write(address+3,(value>>24));
 #endif
 }
 
