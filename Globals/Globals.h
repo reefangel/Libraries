@@ -546,8 +546,39 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_PWMSlopeEndA2	      VarsStart+162
 #define Mem_B_PWMSlopeDurationA2  VarsStart+163
 
-#define VarsEnd					  VarsStart+164
-// Next value starts VarsStart+164
+#define Mem_B_PWMSlopeStart6      VarsStart+164
+#define Mem_B_PWMSlopeEnd6        VarsStart+165
+#define Mem_B_PWMSlopeDuration6   VarsStart+166
+#define Mem_B_PWMSlopeStart7      VarsStart+167
+#define Mem_B_PWMSlopeEnd7        VarsStart+168
+#define Mem_B_PWMSlopeDuration7   VarsStart+169
+#define Mem_B_PWMSlopeStart8      VarsStart+170
+#define Mem_B_PWMSlopeEnd8        VarsStart+171
+#define Mem_B_PWMSlopeDuration8   VarsStart+172
+#define Mem_B_PWMSlopeStart9      VarsStart+173
+#define Mem_B_PWMSlopeEnd9        VarsStart+174
+#define Mem_B_PWMSlopeDuration9   VarsStart+175
+#define Mem_B_PWMSlopeStart10     VarsStart+176
+#define Mem_B_PWMSlopeEnd10       VarsStart+177
+#define Mem_B_PWMSlopeDuration10  VarsStart+178
+#define Mem_B_PWMSlopeStart11     VarsStart+179
+#define Mem_B_PWMSlopeEnd11       VarsStart+180
+#define Mem_B_PWMSlopeDuration11  VarsStart+181
+#define Mem_B_PWMSlopeStart12     VarsStart+182
+#define Mem_B_PWMSlopeEnd12       VarsStart+183
+#define Mem_B_PWMSlopeDuration12  VarsStart+184
+#define Mem_B_PWMSlopeStart13     VarsStart+185
+#define Mem_B_PWMSlopeEnd13       VarsStart+186
+#define Mem_B_PWMSlopeDuration13  VarsStart+187
+#define Mem_B_PWMSlopeStart14     VarsStart+188
+#define Mem_B_PWMSlopeEnd14       VarsStart+189
+#define Mem_B_PWMSlopeDuration14  VarsStart+190
+#define Mem_B_PWMSlopeStart15     VarsStart+191
+#define Mem_B_PWMSlopeEnd15       VarsStart+192
+#define Mem_B_PWMSlopeDuration15  VarsStart+193
+
+#define VarsEnd					  VarsStart+194
+// Next value starts VarsStart+194
 
 
 // EEProm Pointers
@@ -1413,6 +1444,9 @@ char* MoonPhaseLabel();
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
+int get8BitLuminanceValue(byte Percentage);
+int get12BitLuminanceValue(byte Percentage);
+int getLuminanceValue(int PwmMax, int Steps, byte Percentage);
 
 // 16bit CRC Calculation
 unsigned int crc16(int *ptr, byte len);
