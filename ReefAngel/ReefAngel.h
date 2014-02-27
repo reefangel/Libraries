@@ -112,7 +112,11 @@ public:
 	RA_Wiznet5100 Network;
 #endif // ETH_WIZ5100
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined(__SAM3X8E__)
+	RA_PWMClass VariableControl;
+#else // __SAM3X8E__
 	RA_PWMClass PWM;
+#endif // __SAM3X8E__
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 #ifdef DCPUMPCONTROL
 	DCPumpClass DCPump;
@@ -280,6 +284,7 @@ public:
 	void inline NoSD() {};
 	void inline NoTilt() {};
 	void inline Star() {};
+	void inline Evolution() {};
 	void inline ChangeWifiPort() {};
 
 #ifdef LEAKDETECTOREXPANSION

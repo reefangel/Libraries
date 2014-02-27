@@ -198,6 +198,8 @@ Write	KEYWORD2
 Status	KEYWORD2
 IsRelayPresent	KEYWORD2
 Override	KEYWORD2
+isMaskOn	KEYWORD2
+isMaskOff	KEYWORD2
 
 #ATO
 
@@ -240,6 +242,10 @@ Read	KEYWORD2
 
 #Network
 DirectAccess	KEYWORD2
+
+#WifiAlert
+SetDelay	KEYWORD2
+
 
 #InternalEEPROM
 
@@ -517,6 +523,7 @@ write_dword	KEYWORD2
 ReefAngel	KEYWORD1
 LCD	LITERAL1
 PWM	LITERAL1
+VariableControl	LITERAL1
 Relay	LITERAL1
 LowATO	LITERAL1
 HighATO	LITERAL1
@@ -534,6 +541,8 @@ WaterLevel	LITERAL1
 Humidity	LITERAL1
 DCPump	LITERAL1
 Network	LITERAL1
+WiFiAlert	LITERAL1
+
 
 #######################################
 # Constants (LITERAL1)

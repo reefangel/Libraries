@@ -29,6 +29,7 @@ DCPumpClass::DCPumpClass()
 	WaterChangeSpeed=0;
 	DaylightChannel=None;
 	ActinicChannel=None;
+	LowATOChannel=None;
 #ifdef PWMEXPANSION
 	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 		ExpansionChannel[a]=None;

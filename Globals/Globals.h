@@ -30,9 +30,12 @@
 #include <Time.h>
 #include <OneWire.h>
 #include <SPI.h>
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
+#endif
 #include <avr/pgmspace.h>
+
 
 static unsigned long RAStart;
 
@@ -75,11 +78,12 @@ void receiveEventMaster(int howMany);
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
-#define wifi
-#define BUSCHECK
+#define DisplayLEDPWM
+#define LEAKDETECTOREXPANSION
 #undef RA_STANDARD
 #undef RA_PLUS
 #define RA_EVOLUTION
+#include <SD.h>
 #include "itoa.h"
 #endif
 
@@ -124,7 +128,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define RAPlus			1
 #define RATouchDisplay	2
 #define RATouch			3
-#define	RAStar			4			
+#define	RAStar			4	
+#define RAEvolution		5
 
 // Outlets on Relay box
 #define Port8   8
@@ -277,10 +282,18 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#if defined(__SAM3X8E__)
+#define SDPin				29
+#define AlarmPin          	30
+#define BuzzerPin			31
+#define daylight2PWMPin     5
+#define actinic2PWMPin      6
+#else //
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
+#endif //__SAM3X8E__
 #define HW_SPI_Pin			53
 
 // I2C Addresses
@@ -425,7 +438,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_HeaterTempOff       VarsStart+24
 #define Mem_I_ChillerTempOn       VarsStart+26
 #define Mem_I_ChillerTempOff      VarsStart+28
-#define Mem_B_ATOTimeout          VarsStart+30
+#define Mem_B_ATOTimeout          VarsStart+30 // DEPRECATED, use Mem_I_ATOExtendedTimeout instead
 #define Mem_I_PHMax               VarsStart+31
 #define Mem_I_PHMin               VarsStart+33
 #define Mem_B_MHDelay             VarsStart+35
@@ -435,7 +448,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DP2OnMinute         VarsStart+39
 #define Mem_B_ATOHourInterval     VarsStart+40
 #define Mem_B_ATOHighHourInterval VarsStart+41
-#define Mem_B_ATOHighTimeout      VarsStart+42
+#define Mem_B_ATOHighTimeout      VarsStart+42 // DEPRECATED, use Mem_I_ATOExtendedTimeout instead
 #define Mem_I_DP1RepeatInterval	  VarsStart+43
 #define Mem_I_DP2RepeatInterval	  VarsStart+45
 #define Mem_I_SalMax			  VarsStart+47
@@ -467,7 +480,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_PWMSlopeEnd5	      VarsStart+74
 #define Mem_B_PWMSlopeDuration5   VarsStart+75
 #define Mem_I_ATOExtendedTimeout  VarsStart+76
-#define Mem_I_ATOHighExtendedTimeout  VarsStart+78
+#define Mem_I_ATOHighExtendedTimeout  VarsStart+78 // DEPRECATED, use Mem_I_ATOExtendedTimeout instead
 #define Mem_I_ORPMin			  VarsStart+80
 #define Mem_I_ORPMax			  VarsStart+82
 #define Mem_B_ActinicOffset		  VarsStart+84
@@ -688,7 +701,7 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -1156,7 +1169,7 @@ typedef struct Compensation
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 
 uint16_t read16(File f);
 uint32_t read32(File f);

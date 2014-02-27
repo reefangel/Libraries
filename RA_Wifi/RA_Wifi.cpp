@@ -20,6 +20,8 @@
   */
 
 #include <Globals.h>
+#if not defined(__SAM3X8E__)
+
 #if defined wifi || defined ETH_WIZ5100
 #include "RA_Wifi.h"
 #include <DS1307RTC.h>
@@ -44,6 +46,7 @@ RA_Wifi::RA_Wifi()
   bCommaCount = 0;
   webnegoption=false;
   portalusername="";
+  portalkey="";
 }
 
 void RA_Wifi::WebResponse (const prog_char *response, long strsize)
@@ -301,8 +304,8 @@ void RA_Wifi::ProcessHTTP()
 		case REQ_R_STATUS:
 		{
 			char temp[6];
-			int s=170;
-			//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM><AF></AF><SF></SF></RA>
+			int s=181;
+			//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM><BID></BID><AF></AF><SF></SF></RA>
 			s += strlen(portalusername);
 			s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
@@ -317,6 +320,7 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.Relay.RelayData);
 			s += intlength(ReefAngel.Relay.RelayMaskOn);
 			s += intlength(ReefAngel.Relay.RelayMaskOff);
+			s += intlength(ReefAngel.Board);
 #ifdef DisplayLEDPWM
 			s += 56;
 			//<PWMA></PWMA><PWMD></PWMD><PWMAO></PWMAO><PWMDO></PWMDO>
@@ -864,8 +868,8 @@ void RA_Wifi::ProcessHTTP()
 		case REQ_JSON:
 		{
 			char temp[6];
-			int s=143;
-			//{"json":{"ID":"","T1":"","T2":"","T3":"","PH":"","R":"","RON":"","ROFF":"","ATOLOW":"","ATOHIGH":"","EM":"","EM1":"","REM":"","AF":"","SF":""}}
+			int s=152;
+			//{"json":{"ID":"","T1":"","T2":"","T3":"","PH":"","R":"","RON":"","ROFF":"","ATOLOW":"","ATOHIGH":"","EM":"","EM1":"","REM":"","BID":"","AF":"","SF":""}}
 			s += strlen(portalusername);
 			s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
@@ -880,6 +884,7 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.Relay.RelayData);
 			s += intlength(ReefAngel.Relay.RelayMaskOn);
 			s += intlength(ReefAngel.Relay.RelayMaskOff);
+			s += intlength(ReefAngel.Board);
 #ifdef DisplayLEDPWM
 			s += 42;
 			//,"PWMA":"","PWMD":"","PWMAO":"","PWMDO":""
@@ -995,7 +1000,7 @@ void RA_Wifi::ProcessHTTP()
 		}
 	}  // switch reqtype
 #if defined WDT || defined WDT_FORCE
-      wdt_reset();
+	ReefAngel.WDTReset();
 #endif  // defined WDT || defined WDT_FORCE
 
 	m_pushbackindex=0;
@@ -1115,6 +1120,8 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.EM1, DEC);
 	PROGMEMprint(XML_REM);
 	print(ReefAngel.REM, DEC);
+	PROGMEMprint(XML_BOARDID);
+	print(ReefAngel.Board, DEC);
 	PROGMEMprint(XML_ALERTFLAG);
 	print(ReefAngel.AlertFlags, DEC);
 	PROGMEMprint(XML_STATUSFLAG);
@@ -1382,6 +1389,7 @@ void RA_Wifi::SendJSONData()
 	SendSingleJSON(JSON_EM,ReefAngel.EM);
 	SendSingleJSON(JSON_EM1,ReefAngel.EM1);
 	SendSingleJSON(JSON_REM,ReefAngel.REM);
+	SendSingleJSON(JSON_BOARDID,ReefAngel.Board);
 	SendSingleJSON(JSON_ALERTFLAG,ReefAngel.AlertFlags);
 	SendSingleJSON(JSON_STATUSFLAG,ReefAngel.StatusFlags);
 #ifdef DisplayLEDPWM
@@ -1520,7 +1528,7 @@ void RA_Wifi::ProcessSerial()
       PushBuffer(_wifiSerial->read());
       timeout=millis();
 #if defined WDT || defined WDT_FORCE
-      wdt_reset();
+      ReefAngel.WDTReset();
 #endif  // defined WDT || defined WDT_FORCE
     }
   }
@@ -1594,6 +1602,7 @@ void RA_Wifi::Portal(char *username, char *key)
   if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,key);
 #endif
   portalusername=username;
+  portalkey=key;
 }
 
 void RA_Wifi::SendPortal(char *username, char*key)
@@ -1632,6 +1641,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
   print(ReefAngel.EM1, DEC);
   PROGMEMprint(BannerREM);
   print(ReefAngel.REM, DEC);
+  PROGMEMprint(BannerBoardID);
+  print(ReefAngel.Board, DEC);
   PROGMEMprint(BannerKey);
   print(key);
   PROGMEMprint(BannerAlertFlag);
@@ -1800,3 +1811,5 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif // ETH_WIZ5100
 }
 #endif  // wifi
+
+#endif // __SAM3X8E__

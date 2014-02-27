@@ -23,7 +23,6 @@
 #define __RA_TILT_H__
 
 #include <Globals.h>
-#include <avr/eeprom.h>
 #include <Wire.h>
 
 class RA_Tilt

@@ -15,7 +15,11 @@ void ReefAngelClass::CalibrateTouchScreen()
 	SetOrientation(1);
 	while (!calibrated)
 	{
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		TouchLCD.FullClear(COLOR_WHITE);
 		LargeFont.SetColor(COLOR_GOLD,COLOR_WHITE,true);
 		LargeFont.DrawCenterTextP(120,45,CALI1);
@@ -26,7 +30,11 @@ void ReefAngelClass::CalibrateTouchScreen()
 		for(byte a = 0; a<2; a++)
 		{
 			TouchLCD.DrawCircle(COLOR_RED,CalibrationPoints[a*2], CalibrationPoints[(a*2)+1], 5, false);
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 			do wdt_reset(); while (!TS.IsTouched());
+#elif defined(__SAM3X8E__)
+			do WDT_Restart( WDT ); while (!TS.IsTouched());
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 			delay(100);
 			TS.GetTouch();
 			delay(100);
@@ -67,7 +75,11 @@ void ReefAngelClass::CalibrateTouchScreen()
 	OkButton.Show();
 	do
 	{
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		TS.GetTouch();
 	}
 	while(!OkButton.IsPressed());
@@ -1041,13 +1053,21 @@ void ReefAngelClass::ShowTouchInterface()
 						PB[0].SetPosition(10,j);
 						PB[0].SetColor(COLOR_ORANGE);
 						PB[0].SetLabel(CustomLabels[DaylightLabel]);
+#if defined(__SAM3X8E__)
+						PB[0].SetCurrent(VariableControl.GetDaylightValue());
+#else
 						PB[0].SetCurrent(PWM.GetDaylightValue());
+#endif
 						PB[0].Show();
 						j+=30+i;
 						PB[1].SetPosition(10,j);
 						PB[1].SetColor(COLOR_ROYALBLUE);
 						PB[1].SetLabel(CustomLabels[ActinicLabel]);
+#if defined(__SAM3X8E__)
+						PB[1].SetCurrent(VariableControl.GetActinicValue());
+#else
 						PB[1].SetCurrent(PWM.GetActinicValue());
+#endif
 						PB[1].Show();
 						j+=30+i;
 						if (Board==RAStar)
@@ -1055,13 +1075,21 @@ void ReefAngelClass::ShowTouchInterface()
 							PB[2].SetPosition(10,j);
 							PB[2].SetColor(COLOR_ORANGE);
 							PB[2].SetLabel(CustomLabels[Daylight2Label]);
+#if defined(__SAM3X8E__)
+							PB[2].SetCurrent(VariableControl.GetDaylight2Value());
+#else
 							PB[2].SetCurrent(PWM.GetDaylight2Value());
+#endif
 							PB[2].Show();
 							j+=30+i;
 							PB[3].SetPosition(10,j);
 							PB[3].SetColor(COLOR_ROYALBLUE);
 							PB[3].SetLabel(CustomLabels[Actinic2Label]);
+#if defined(__SAM3X8E__)
+							PB[3].SetCurrent(VariableControl.GetActinic2Value());
+#else
 							PB[3].SetCurrent(PWM.GetActinic2Value());
+#endif
 							PB[3].Show();
 						}
 					}
@@ -1437,7 +1465,11 @@ void ReefAngelClass::ShowTouchInterface()
 								DisplayedScreen=DIMMING_OVERRIDE;
 								NeedsRedraw=true;
 								Slider.SetColor(COLOR_ORANGE);
+#if defined(__SAM3X8E__)
+								Slider.SetCurrent(VariableControl.GetDaylightValue());
+#else
 								Slider.SetCurrent(PWM.GetDaylightValue());
+#endif
 								Slider.SetOverrideID(OVERRIDE_DAYLIGHT);
 								Slider.SetLabel(CustomLabels[DaylightLabel]);
 							}
@@ -1448,7 +1480,11 @@ void ReefAngelClass::ShowTouchInterface()
 								NeedsRedraw=true;
 								DisplayedScreen=DIMMING_OVERRIDE;
 								Slider.SetColor(COLOR_ROYALBLUE);
+#if defined(__SAM3X8E__)
+								Slider.SetCurrent(VariableControl.GetActinicValue());
+#else
 								Slider.SetCurrent(PWM.GetActinicValue());
+#endif
 								Slider.SetOverrideID(OVERRIDE_ACTINIC);
 								Slider.SetLabel(CustomLabels[ActinicLabel]);
 							}
@@ -1459,7 +1495,11 @@ void ReefAngelClass::ShowTouchInterface()
 								DisplayedScreen=DIMMING_OVERRIDE;
 								NeedsRedraw=true;
 								Slider.SetColor(COLOR_ORANGE);
+#if defined(__SAM3X8E__)
+								Slider.SetCurrent(VariableControl.GetDaylight2Value());
+#else
 								Slider.SetCurrent(PWM.GetDaylight2Value());
+#endif
 								Slider.SetOverrideID(OVERRIDE_DAYLIGHT2);
 								Slider.SetLabel(CustomLabels[Daylight2Label]);
 							}
@@ -1470,7 +1510,11 @@ void ReefAngelClass::ShowTouchInterface()
 								NeedsRedraw=true;
 								DisplayedScreen=DIMMING_OVERRIDE;
 								Slider.SetColor(COLOR_ROYALBLUE);
+#if defined(__SAM3X8E__)
+								Slider.SetCurrent(VariableControl.GetActinic2Value());
+#else
 								Slider.SetCurrent(PWM.GetActinic2Value());
+#endif
 								Slider.SetOverrideID(OVERRIDE_ACTINIC2);
 								Slider.SetLabel(CustomLabels[ActinicLabel]);
 							}
@@ -1691,7 +1735,11 @@ void ReefAngelClass::ShowTouchInterface()
 									SendMaster(MESSAGE_CHANNEL_OVERRIDE,oid,ovalue); 	// Send Override Request
 #endif // RA_TOUCHDISPLAY
 									if (oid<=OVERRIDE_CHANNEL5)
+#if defined(__SAM3X8E__)
+										ReefAngel.VariableControl.Override(oid,ovalue);
+#else
 										ReefAngel.PWM.Override(oid,ovalue);
+#endif
 #ifdef AI_LED
 									if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
 										ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,ovalue);
@@ -1708,7 +1756,11 @@ void ReefAngelClass::ShowTouchInterface()
 									SendMaster(MESSAGE_CHANNEL_OVERRIDE,oid,255); 	// Send Cancel Override Request
 #endif // RA_TOUCHDISPLAY
 									if (oid<=OVERRIDE_CHANNEL5)
+#if defined(__SAM3X8E__)
+										ReefAngel.VariableControl.Override(oid,255);
+#else
 										ReefAngel.PWM.Override(oid,255);
+#endif
 #ifdef AI_LED
 									if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
 										ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,255);
@@ -1733,7 +1785,11 @@ void ReefAngelClass::ShowTouchInterface()
 		}
 #endif //  CUSTOM_MAIN
 
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		if (TS.IsTouched()) ResetScreenSaver();
 		break;
 	}  // DEFAULT_MENU
@@ -1746,7 +1802,11 @@ void ReefAngelClass::ShowTouchInterface()
 		if ( (t >= 0) && ! Timer[FEEDING_TIMER].IsTriggered() )
 		{
 			if (orientation%2==0) y=0; else y=40;
-			wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 			if (NeedsRedraw)
 			{
 				delay(50);
@@ -1815,7 +1875,11 @@ void ReefAngelClass::ShowTouchInterface()
 		byte y;
 		bool bDone = false;
 		if (orientation%2==0) y=0; else y=40;
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		if (NeedsRedraw)
 		{
 			TouchLCD.FullClear(BKCOLOR);
@@ -1881,7 +1945,11 @@ void ReefAngelClass::ShowTouchInterface()
 			ch=48;
 			border=2;
 		}
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 		if (!TS.IsTouched())
 		{
 			TouchEnabled=true;
@@ -2057,7 +2125,11 @@ void ReefAngelClass::ShowTouchInterface()
 			{
 				setTime(newnow);
 				now();
+#if defined(__SAM3X8E__)
+				I2CRTC.set(now());
+#else
 				RTC.set(now());
+#endif
 				ShowTouchMenu();
 			}
 		}
@@ -2103,7 +2175,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=analogRead(PHPin);
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal1=p;
@@ -2179,7 +2255,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=analogRead(PHPin);
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal2=p;
@@ -2286,7 +2366,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=Salinity.Read();
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal1=p;
@@ -2389,7 +2473,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=ORP.Read();
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal1=p;
@@ -2465,7 +2553,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=ORP.Read();
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal2=p;
@@ -2574,7 +2666,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=PH.Read();
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal1=p;
@@ -2650,7 +2746,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=PH.Read();
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal2=p;
@@ -2758,7 +2858,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=WaterLevel.Read();
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal1=p;
@@ -2818,7 +2922,11 @@ void ReefAngelClass::ShowTouchInterface()
 				{
 					p+=WaterLevel.Read();
 					delay(50);
-					wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				}
 				p/=60;
 				CalVal2=p;
@@ -2939,7 +3047,7 @@ void ReefAngelClass::DisplayVersion()
 
 void ReefAngelClass::ClearScreen(byte Color)
 {
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 	TouchLCD.FullClear(BKCOLOR);
 #else  // RA_TOUCH
 	// clears the entire screen
@@ -3131,7 +3239,11 @@ void SliderClass::Hide()
 
 boolean SliderClass::Refresh()
 {
-	wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		wdt_reset();
+#elif defined(__SAM3X8E__)
+		WDT_Restart( WDT );
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	if (IsPlusPressed())
 	{
 		current++;

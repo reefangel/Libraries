@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifdef ADK_INTERNAL
 #ifndef __USB_USBH_H
 #define __USB_USBH_H

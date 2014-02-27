@@ -273,8 +273,12 @@ void RA_TFT::SendData(byte H,byte L)
 void RA_TFT::WriteBus(byte H,byte L)
 {
 	CS0;
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	PORTA=H;
 	PORTC=L;
+#elif defined(__SAM3X8E__)
+	PIOC->PIO_ODSR = H<<9 & L<<1;
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	WR0;
 	WR1;
 	CS1;
