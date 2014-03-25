@@ -1133,7 +1133,9 @@ const unsigned PROGMEM char BAR_I_RIGHT[] = {
 
 enum ScreenItem {
 	PARAMS_2014,
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	DIMMING_2014,
+#endif // DisplayLEDPWM
 	INPUT_2014,
 	RELAY_2014,
 #ifdef RelayExp
@@ -1291,6 +1293,7 @@ void ReefAngelClass::Draw2014Main()
 			CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 			break;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 		case DIMMING_2014:
 			x=5;
 			y=5;
@@ -1307,6 +1310,7 @@ void ReefAngelClass::Draw2014Main()
 			y+=20;
 #endif // RA_STAR
 			break;
+#endif // DisplayLEDPWM
 		case INPUT_2014:
 			x=25;
 			y=5;
@@ -1573,17 +1577,13 @@ void ReefAngelClass::Draw2014Main()
 		CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 		break;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	case DIMMING_2014:
 		x=5;
 		y=31;
 		byte d1,a1;
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 		d1=PWM.GetDaylightValue();
 		a1=PWM.GetActinicValue();
-#else // DisplayLEDPWM
-		d1=0;
-		a1=0;
-#endif // DisplayLEDPWM
 		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
 		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,d1);
 		for(int b=0; b<d1; b++)
@@ -1621,9 +1621,8 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
 		y+=20;
 #endif // RA_STAR
-
-
 		break;
+#endif // DisplayLEDPWM
 	case INPUT_2014:
 		x=8;
 		y=25;
@@ -3193,20 +3192,23 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 	char msg[20];
 	byte offset_hr = 45;
 	byte offset_min = offset_hr+20;
-#ifdef MetalHalideSetup
-	strcpy(msg, "Metal Halide Setup");
-	h1 = InternalMemory.MHOnHour_read();
-	m1 = InternalMemory.MHOnMinute_read();
-	h2 = InternalMemory.MHOffHour_read();
-	m2 = InternalMemory.MHOffMinute_read();
-#endif // MetalHalideSetup
-#ifdef StandardLightSetup
-	strcpy(msg, "Std Lights Setup");
-	h1 = InternalMemory.StdLightsOnHour_read();
-	m1 = InternalMemory.StdLightsOnMinute_read();
-	h2 = InternalMemory.StdLightsOffHour_read();
-	m2 = InternalMemory.StdLightsOffMinute_read();
-#endif // StandardLightSetup
+
+	if(bMetalHalide)
+	{
+    strcpy(msg, "Metal Halide Setup");
+    h1 = InternalMemory.MHOnHour_read();
+    m1 = InternalMemory.MHOnMinute_read();
+    h2 = InternalMemory.MHOffHour_read();
+    m2 = InternalMemory.MHOffMinute_read();
+	}
+	else
+	{
+    strcpy(msg, "Std Lights Setup");
+    h1 = InternalMemory.StdLightsOnHour_read();
+    m1 = InternalMemory.StdLightsOnMinute_read();
+    h2 = InternalMemory.StdLightsOffHour_read();
+    m2 = InternalMemory.StdLightsOffMinute_read();
+	}
 	ClearScreen(DefaultBGColor);
 	// header / title
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, msg);
@@ -3395,21 +3397,17 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 	{
 		if ( bMetalHalide )
 		{
-#ifdef MetalHalideSetup
 			InternalMemory.MHOnHour_write(h1);
 			InternalMemory.MHOnMinute_write(m1);
 			InternalMemory.MHOffHour_write(h2);
 			InternalMemory.MHOffMinute_write(m2);
-#endif MetalHalideSetup
 		}
 		else
 		{
-#ifdef StandardLightSetup
 			InternalMemory.StdLightsOnHour_write(h1);
 			InternalMemory.StdLightsOnMinute_write(m1);
 			InternalMemory.StdLightsOffHour_write(h2);
 			InternalMemory.StdLightsOffMinute_write(m2);
-#endif // StandardLightSetup
 		}
 	}
 }

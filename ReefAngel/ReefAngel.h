@@ -111,13 +111,15 @@ public:
 #ifdef ETH_WIZ5100
 	RA_Wiznet5100 Network;
 #endif // ETH_WIZ5100
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
+
+#if defined DisplayLEDPWM && ! defined RemoveAllLights || defined DCPUMPCONTROL
 #if defined(__SAM3X8E__)
 	RA_PWMClass VariableControl;
 #else // __SAM3X8E__
 	RA_PWMClass PWM;
 #endif // __SAM3X8E__
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+
 #ifdef DCPUMPCONTROL
 	DCPumpClass DCPump;
 #endif  // DCPUMPCONTROL
@@ -324,6 +326,7 @@ public:
 	void DelayedStartLights(byte Relay);
 	void MoonLights(byte Relay);
 	void MHLights(byte Relay);
+	void MHLights(byte Relay, byte MinuteOffset);
 	void StandardHeater(byte Relay);
 	void StandardFan(byte Relay);
 	void StandardATO(byte Relay);
