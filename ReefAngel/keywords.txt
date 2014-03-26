@@ -40,6 +40,7 @@ AddPHExpansion	KEYWORD2
 AddWaterLevelExpansion	KEYWORD2
 AddMultiChannelWaterLevelExpansion	KEYWORD2
 AddHumidityExpansion	KEYWORD2
+AddPARExpansion	KEYWORD2
 AddStandardMenu	KEYWORD2
 AddWifi	KEYWORD2
 AddRANet	KEYWORD2
@@ -542,6 +543,7 @@ Humidity	LITERAL1
 DCPump	LITERAL1
 Network	LITERAL1
 WiFiAlert	LITERAL1
+PAR	LITERAL1
 
 
 #######################################

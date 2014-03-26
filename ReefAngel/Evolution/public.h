@@ -37,6 +37,11 @@ time_t newnow;
 int CalVal1, CalVal2;
 byte CalStep;
 
+byte RANetSeq, RANetCRC;
+byte RANetData[RANET_SIZE];
+byte RANetStatus[RANET_SIZE];
+unsigned long RANetlastmillis;
+
 void SetOrientation(byte o);
 void CalibrateTouchScreen();
 void InitCustomLabels();
@@ -53,3 +58,6 @@ void ApplySalinityCompensation();
 void CheckMenuTimeout();
 void ShowTouchMenu();
 void ShowTouchInterface();	
+
+void BuzzerOn(byte style=0);
+void BuzzerOff();

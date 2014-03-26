@@ -119,7 +119,6 @@ void ReefAngelClass::Init()
 	Params.Salinity=0;
 	Params.ORP=0;
 	Params.PHExp=0;
-
 	if ((taddr>120) || (taddr<0))
 	{
 		InternalMemory.T1Pointer_write(0);
@@ -167,7 +166,7 @@ void ReefAngelClass::Init()
 
 #if defined wifi || defined I2CMASTER || defined ETH_WIZ5100
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
-	EM1 = HUMbit + DCPumpbit + Leakbit;
+	EM1 = HUMbit + DCPumpbit + Leakbit + PARbit;
 
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
@@ -548,7 +547,7 @@ void ReefAngelClass::Refresh()
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 
 	
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 	if (!Splash)
 	{
 #if not defined NOTILT
@@ -564,16 +563,16 @@ void ReefAngelClass::Refresh()
 		Splash=false;
 		if (TS.IsCalibrationNeeded())
 		{
-			BL1;
 			CalibrateTouchScreen();
 		}
 		if(SDFound)	TouchLCD.FullClear(BKCOLOR);
 	}
+#if defined (__AVR_ATmega2560__)
 	if (PINJ&(1<<7)) // Check for bus lock
 		bitClear(AlertFlags,BusLockFlag);
 	else
 		bitSet(AlertFlags,BusLockFlag);
-
+#endif // (__AVR_ATmega2560__)
 #endif //  RA_TOUCH
 
 #if not defined RA_TOUCHDISPLAY
@@ -612,7 +611,11 @@ void ReefAngelClass::Refresh()
 	}
 #endif  // AI_LED
 #if defined PWMEXPANSION && defined DisplayLEDPWM
+#if defined(__SAM3X8E__)
+	VariableControl.ExpansionWrite();
+#else
 	PWM.ExpansionWrite();
+#endif
 #endif  // PWMEXPANSION
 #ifdef IOEXPANSION
 	IO.GetChannel();
@@ -663,7 +666,11 @@ void ReefAngelClass::Refresh()
 		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 		{
 #ifdef PWMEXPANSION
+#if defined(__SAM3X8E__)
+			RANetData[18+a]=VariableControl.GetChannelValue(a);
+#else
 			RANetData[18+a]=PWM.GetChannelValue(a);
+#endif
 #else
 			RANetData[18+a]=0;
 #endif // PWMEXPANSION
@@ -683,7 +690,10 @@ void ReefAngelClass::Refresh()
 		RANetSeq++;
 	}
 #endif // RANET
-
+#if defined wifi || defined RA_STAR
+    ReefAngel.Network.ReceiveData();
+#endif  // wifi || RA_STAR
+	
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
 #ifdef DirectTempSensor
@@ -767,11 +777,17 @@ void ReefAngelClass::Refresh()
 #endif  // defined WATERLEVELEXPANSION
 #if defined HUMIDITYEXPANSION
 	Humidity.Read();
+	RefreshScreen();
 #endif  // defined HUMIDITYEXPANSION
 	OverheatCheck();
 #ifdef LEAKDETECTOREXPANSION
 	LeakCheck();
+	RefreshScreen();
 #endif  // LEAKDETECTOREXPANSION
+#if defined PAREXPANSION
+	PAR.Convert();
+	RefreshScreen();
+#endif  // defined PAREXPANSION
 #ifdef BUSCHECK
 	Wire.beginTransmission(0x68);
 	Wire.write(0);
@@ -1597,7 +1613,7 @@ void ReefAngelClass::ATOClear()
 void ReefAngelClass::OverheatCheck()
 {
 	// if overheat probe exceeds the temp
-	if ( Params.Temp[OverheatProbe] < InternalMemory.OverheatTemp_read() )
+	if ( Params.Temp[OverheatProbe] <= InternalMemory.OverheatTemp_read() )
 		Overheatmillis=millis();
 	if (millis()-Overheatmillis>3000) // Only flag overheat if we have overheat for 3 seconds
 	{

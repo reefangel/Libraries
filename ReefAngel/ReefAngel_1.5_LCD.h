@@ -1292,6 +1292,11 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawLargeText(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,"HUM");
 			CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
+#if defined PAREXPANSION
+			LCD.Clear(COLOR_DODGERBLUE,x1[x],y,x2[x],y+13);
+			LCD.DrawLargeText(COLOR_WHITE,COLOR_DODGERBLUE,x1[x]+12,y+4,"PAR");
+			CheckOffset(x,y);
+#endif // PAREXPANSION
 			break;
 #if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 		case DIMMING_2014:
@@ -1583,6 +1588,10 @@ void ReefAngelClass::Draw2014Main()
 		LCD.DrawCenterSingleMonitor(Humidity.GetLevel(),COLOR_PLUM,x3[x],y,10,1);
 		CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
+#if defined PAREXPANSION
+		LCD.DrawCenterSingleMonitor(PAR.GetLevel(),COLOR_DODGERBLUE,x3[x],y,1,1);
+		CheckOffset(x,y);
+#endif // PAREXPANSION
 		break;
 #if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	case DIMMING_2014:

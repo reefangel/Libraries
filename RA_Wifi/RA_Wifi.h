@@ -76,6 +76,10 @@ const prog_char XML_WL_END[] PROGMEM = "</WL";
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
 const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+const prog_char XML_PAR[] PROGMEM = "<PAR>";
+const prog_char XML_PAR_END[] PROGMEM = "</PAR>";
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 const prog_char XML_DCM[] PROGMEM = "<DCM>";
 const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
@@ -125,7 +129,7 @@ const prog_char XML_C_END[] PROGMEM = "</C";
 const prog_char XML_LEAK[] PROGMEM = "<LEAK>";
 const prog_char XML_LEAK_END[] PROGMEM = "</LEAK>";
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 const prog_char XML_ALARM[] PROGMEM = "<ALARM>";
 const prog_char XML_ALARM_END[] PROGMEM = "</ALARM>";
 const prog_char XML_PWMA2[] PROGMEM = "<PWMA2>";
@@ -201,6 +205,9 @@ const prog_char JSON_WL[] PROGMEM = "WL";
 #ifdef HUMIDITYEXPANSION
 const prog_char JSON_HUM[] PROGMEM = "HUM";
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+const prog_char JSON_PAR[] PROGMEM = "PAR";
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 const prog_char JSON_DCM[] PROGMEM = "DCM";
 const prog_char JSON_DCS[] PROGMEM = "DCS";
@@ -234,7 +241,7 @@ const prog_char JSON_C[] PROGMEM = "C";
 #ifdef LEAKDETECTOREXPANSION
 const prog_char JSON_LEAK[] PROGMEM = "LEAK";
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 const prog_char JSON_ALARM[] PROGMEM = "ALARM";
 const prog_char JSON_PWMA2[] PROGMEM = "PWMA2";
 const prog_char JSON_PWMD2[] PROGMEM = "PWMD2";
@@ -351,6 +358,10 @@ const prog_char BannerBoardID[] PROGMEM = "&bid=";
 	const prog_char BannerHumidity[] PROGMEM = "&hum=";
 #endif  // HUMIDITYEXPANSION
 
+#ifdef PAREXPANSION
+	const prog_char BannerPAR[] PROGMEM = "&par=";
+#endif  // PAREXPANSION
+
 #ifdef DCPUMPCONTROL
 	const prog_char BannerDCM[] PROGMEM = "&dcm=";
 	const prog_char BannerDCS[] PROGMEM = "&dcs=";
@@ -365,7 +376,7 @@ const prog_char BannerBoardID[] PROGMEM = "&bid=";
 	const prog_char BannerLeak[] PROGMEM = "&leak=";
 #endif  // LEAKDETECTOREXPANSION
 
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 	const prog_char BannerAlarm[] PROGMEM = "&alarm=";
 	const prog_char BannerPWMA2[] PROGMEM = "&pwma2=";
 	const prog_char BannerPWMD2[] PROGMEM = "&pwmd2=";
@@ -554,7 +565,12 @@ class RA_Wifi: public Print
     boolean webnegoption;
 
   private:
+#if defined(__SAM3X8E__)
+    UARTClass *_wifiSerial;
+#else
     HardwareSerial* _wifiSerial;
+#endif
+    
 };
 
 #endif  // __RA_WIFI_H__

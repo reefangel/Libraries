@@ -23,6 +23,10 @@
 
 void RA_TFT::Init()
 {
+#if defined(__SAM3X8E__)
+	PIOC->PIO_OER |= 0x001FFFFE;
+	PIOC->PIO_OWDR = 0xFFFE0001;
+#endif
 	CS0;
 	RST1;
 	delay(5); 
@@ -277,7 +281,7 @@ void RA_TFT::WriteBus(byte H,byte L)
 	PORTA=H;
 	PORTC=L;
 #elif defined(__SAM3X8E__)
-	PIOC->PIO_ODSR = H<<9 & L<<1;
+	PIOC->PIO_ODSR = H<<9 | L<<1;
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	WR0;
 	WR1;

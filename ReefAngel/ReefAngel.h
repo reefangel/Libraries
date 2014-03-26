@@ -68,6 +68,9 @@
 #if defined HUMIDITYEXPANSION
 #include <Humidity.h>
 #endif  // defined HUMIDITYEXPANSION
+#if defined PAREXPANSION
+#include <PAR.h>
+#endif  // defined PAREXPANSION
 
 #ifdef RA_STANDARD
 #include <Standard/includes.h>
@@ -160,6 +163,9 @@ public:
 #if defined HUMIDITYEXPANSION
 	HumidityClass Humidity;
 #endif  // defined HUMIDITYEXPANSION
+#if defined PAREXPANSION
+	PARClass PAR;
+#endif  // defined PAREXPANSION
 	/*
 	Timers:
 	0 - Feeding Mode timer
@@ -275,6 +281,7 @@ public:
 	void inline AddWaterLevelExpansion() {};
 	void inline AddMultiChannelWaterLevelExpansion() {};
 	void inline AddHumidityExpansion() {};
+	void inline AddPARExpansion() {};
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
 	void inline AddRANet() {};
