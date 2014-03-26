@@ -1077,9 +1077,15 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	}
 }
 
-#ifdef WATERLEVELEXPANSION	
+#ifdef WATERLEVELEXPANSION
+#ifdef MULTIWATERLEVELEXPANSION
+void ReefAngelClass::WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
+{
+#else
 void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
 {
+  byte Channel = 0;
+#endif  // MULTIWATERLEVELEXPANSION
 	// Input:  Relay port and timeout value (max number of seconds that ATO pump is allowed to run)
 	// Input:  Low and High Water Level to start and stop ATO pump
 	unsigned long TempTimeout = ATOTimeout;
@@ -1089,7 +1095,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	Is the low level is reached (meaning we need to top off) and are we not currently topping off
 	Then we set the timer to be now and start the topping pump
 	 */
-	if ( WaterLevel.GetLevel()<LowLevel && ( !WLATO.IsTopping()) )
+	if ( WaterLevel.GetLevel(Channel) < LowLevel && ( !WLATO.IsTopping()) )
 	{
 		WLATO.Timer = millis();
 		WLATO.StartTopping();
@@ -1097,7 +1103,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	}
 
 	// If the high level is reached, this is a safeguard to prevent over running of the top off pump
-	if ( WaterLevel.GetLevel()>HighLevel )
+	if ( WaterLevel.GetLevel(Channel) > HighLevel )
 	{
 		WLATO.StopTopping();  // stop the low ato timer
 		Relay.Off(ATORelay);
@@ -1459,12 +1465,17 @@ void ReefAngelClass::SingleATOHighExtended(byte Relay)
 	SingleATOHigh(Relay);
 }
 
-#ifdef WATERLEVELEXPANSION
+#ifdef MULTIWATERLEVELEXPANSION
+void ReefAngelClass::WaterLevelATO(byte Channel, byte Relay)
+{
+  WaterLevelATO(Channel, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.WaterLevelLow_read(), InternalMemory.WaterLevelHigh_read());
+}
+#else
 void ReefAngelClass::WaterLevelATO(byte Relay)
 {
 	WaterLevelATO(Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.WaterLevelLow_read(), InternalMemory.WaterLevelHigh_read());
 }
-#endif  // WATERLEVELEXPANSION
+#endif  // MULTIWATERLEVELEXPANSION
 
 void ReefAngelClass::DosingPump1(byte Relay)
 {

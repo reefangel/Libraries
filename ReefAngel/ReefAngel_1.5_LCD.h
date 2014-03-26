@@ -1352,9 +1352,15 @@ void ReefAngelClass::Draw2014Main()
 			break;
 #ifdef WATERLEVELEXPANSION
 		case WL_2014:
+		{
 			x=5;
 			y=5;
-			for (int a=0; a<WATERLEVEL_CHANNELS; a++)
+#ifdef MULTIWATERLEVELEXPANSION
+      int a=1;
+#else
+      int a=0;
+#endif
+			for (a; a < WATERLEVEL_CHANNELS; a++)
 			{
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"WL Ch");
 				ConvertNumToString(text, a, 1);
@@ -1362,6 +1368,7 @@ void ReefAngelClass::Draw2014Main()
 				y+=19;
 			}
 			break;
+		}
 #endif // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 		case DIMMING_E_2014:
@@ -1661,23 +1668,33 @@ void ReefAngelClass::Draw2014Main()
 		}
 		break;
 #ifdef WATERLEVELEXPANSION
-	case WL_2014:
+	case WL_2014: {
 		x=5;
 		y=13;
-		for (int a=0; a<WATERLEVEL_CHANNELS; a++)
+#ifdef MULTIWATERLEVELEXPANSION
+		int a=1;
+#else
+		int a=0;
+#endif
+		for (a; a < WATERLEVEL_CHANNELS; a++)
 		{
-			byte w=WaterLevel.GetLevel(a);
-			LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
-			LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,w);
-			for(int b=0; b<w; b++)
-				LCD.DrawImage(1,6,b+5,y+2,BAR_RB_LEFT);
-			LCD.DrawImage(2,6,w+5,y+2,BAR_CENTER);
-			for(int b=w; b<100; b++)
-				LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
-
+			byte w = WaterLevel.GetLevel(a);
+			LCD.DrawText(COLOR_BLACK, DefaultBGColor, 110, y, "   ");
+			LCD.DrawText(COLOR_BLACK, DefaultBGColor, 110, y, w);
+			if(w > 100) w = 100;
+			for(int b=0; b < w; b++)
+			{
+				LCD.DrawImage(1, 6, b + 5, y + 2, BAR_RB_LEFT);
+			}
+			LCD.DrawImage(2, 6, w + 5, y + 2, BAR_CENTER);
+			for(int b = w; b < 100; b++)
+			{
+				LCD.DrawImage(1, 6, b + 7, y + 2, BAR_RB_RIGHT);
+			}
 			y+=19;
 		}
 		break;
+	}
 #endif // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 	case DIMMING_E_2014:
@@ -3959,7 +3976,11 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 	unsigned int iO[2] = {0,0};
 	unsigned int iCal[2] = {0,100};
 	byte offset = 65;
-	int wl_channel = 0;
+#ifdef MULTIWATERLEVELEXPANSION
+  int wl_channel=1;
+#else
+  int wl_channel=0;
+#endif
 
 	// draw labels
 	ClearScreen(DefaultBGColor);
@@ -4051,9 +4072,15 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 				if (sel == WLCHANNEL)
 				{
 					wl_channel--;
+#ifdef MULTIWATERLEVELEXPANSION
+          if ( wl_channel < 1 )
+          {
+            wl_channel = 1;
+#else
 					if ( wl_channel < 0 )
 					{
 						wl_channel = 0;
+#endif
 					}
 					else
 					{
