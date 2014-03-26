@@ -1452,9 +1452,6 @@ char* MoonPhaseLabel();
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
-int get8BitLuminanceValue(byte Percentage);
-int get12BitLuminanceValue(byte Percentage);
-int getLuminanceValue(int PwmMax, int Steps, byte Percentage);
 
 // 16bit CRC Calculation
 unsigned int crc16(int *ptr, byte len);
