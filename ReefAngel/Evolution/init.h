@@ -1,5 +1,8 @@
 // Evolution
 
+Serial.println("Evolution Reboot");
+Serial1.begin(57600);
+Serial2.begin(57600);
 EM=0;
 EM1=0;
 REM=0;
@@ -15,6 +18,7 @@ Font.SetFont(f12x12);
 LargeFont.SetFont(ArialBold20);
 setSyncProvider(I2CRTC.get);   // the function to get the time from the RTC
 setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
+SPIEEPROM.Init();
 TS.Init();
 OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Ok",OKBUTTON);
 CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Cancel",CANCELBUTTON);
@@ -42,6 +46,7 @@ menu_button_functions2[5] = &ReefAngelClass::SetupTouchCalibrateWL;
 // output, even if you don't use it:
 #if not defined NOSD
 SDFound=(analogRead(4)<100);
+Serial.println("SD Detected");
 if (SDFound) SD.begin(SDPin);
 #endif // NOSD
 Splash=true;
@@ -84,3 +89,6 @@ Board=RAEvolution;
 Wire.onReceive(NULL);
 Wire.onRequest(NULL);
 Wire.begin();
+pinMode(ExpBusPin,OUTPUT);
+digitalWrite(ExpBusPin,HIGH);
+WDT_Restart( WDT );

@@ -77,7 +77,9 @@ void receiveEventMaster(int howMany);
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
+#define wifi
 #define LEAKDETECTOREXPANSION
+#define NOTILT
 #undef RA_STANDARD
 #undef RA_PLUS
 #define RA_EVOLUTION
@@ -280,30 +282,37 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 //#define Piezo               16 
 
 //Digital I/O
-#ifdef REEFANGEL_MINI
-#define ledPin              6
-#else
-#define ledPin              7
-#endif //REEFANGEL_MINI
 #define tempPin             8
 #define actinicPWMPin       9
 #define daylightPWMPin      10
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define HW_SPI_Pin			53
 #if defined(__SAM3X8E__)
 #define SDPin				29
 #define AlarmPin          	30
 #define BuzzerPin			31
 #define daylight2PWMPin     5
 #define actinic2PWMPin      6
+#define ExpBusPin           23
+#define ledPin              24
+#define EEPROMPin			26
+#define TPINTPin			27
+#define TPCSPin				28
+#define TouchBL				3
 #else //
+#define TouchBL				44
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
+#ifdef REEFANGEL_MINI
+#define ledPin              6
+#else
+#define ledPin              7
+#endif //REEFANGEL_MINI
 #endif //__SAM3X8E__
-#define HW_SPI_Pin			53
 
 // I2C Addresses
 #define I2CPWM				0x08
@@ -319,6 +328,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CPWM_PCA9685		0x40
 #define I2CLeak				0X48
 #define I2CMultiWaterLevel	0X49
+#define I2CPAR				0X4a
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
@@ -327,6 +337,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CEEPROM2          0x54
 #define I2CHumidity			0x5c
 #define I2CClock            0x68
+
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
@@ -554,39 +565,8 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_PWMSlopeEndA2	      VarsStart+162
 #define Mem_B_PWMSlopeDurationA2  VarsStart+163
 
-#define Mem_B_PWMSlopeStart6      VarsStart+164
-#define Mem_B_PWMSlopeEnd6        VarsStart+165
-#define Mem_B_PWMSlopeDuration6   VarsStart+166
-#define Mem_B_PWMSlopeStart7      VarsStart+167
-#define Mem_B_PWMSlopeEnd7        VarsStart+168
-#define Mem_B_PWMSlopeDuration7   VarsStart+169
-#define Mem_B_PWMSlopeStart8      VarsStart+170
-#define Mem_B_PWMSlopeEnd8        VarsStart+171
-#define Mem_B_PWMSlopeDuration8   VarsStart+172
-#define Mem_B_PWMSlopeStart9      VarsStart+173
-#define Mem_B_PWMSlopeEnd9        VarsStart+174
-#define Mem_B_PWMSlopeDuration9   VarsStart+175
-#define Mem_B_PWMSlopeStart10     VarsStart+176
-#define Mem_B_PWMSlopeEnd10       VarsStart+177
-#define Mem_B_PWMSlopeDuration10  VarsStart+178
-#define Mem_B_PWMSlopeStart11     VarsStart+179
-#define Mem_B_PWMSlopeEnd11       VarsStart+180
-#define Mem_B_PWMSlopeDuration11  VarsStart+181
-#define Mem_B_PWMSlopeStart12     VarsStart+182
-#define Mem_B_PWMSlopeEnd12       VarsStart+183
-#define Mem_B_PWMSlopeDuration12  VarsStart+184
-#define Mem_B_PWMSlopeStart13     VarsStart+185
-#define Mem_B_PWMSlopeEnd13       VarsStart+186
-#define Mem_B_PWMSlopeDuration13  VarsStart+187
-#define Mem_B_PWMSlopeStart14     VarsStart+188
-#define Mem_B_PWMSlopeEnd14       VarsStart+189
-#define Mem_B_PWMSlopeDuration14  VarsStart+190
-#define Mem_B_PWMSlopeStart15     VarsStart+191
-#define Mem_B_PWMSlopeEnd15       VarsStart+192
-#define Mem_B_PWMSlopeDuration15  VarsStart+193
-
-#define VarsEnd					  VarsStart+194
-// Next value starts VarsStart+194
+#define VarsEnd					  VarsStart+164
+// Next value starts VarsStart+164
 
 
 // EEProm Pointers
@@ -1166,14 +1146,21 @@ typedef struct Compensation
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
 #define SplashDuration					5000
-#define TouchSample						20
+#define TouchSample						10
 #define TouchSlideDelta					20
 #define TouchPressure					1500
 #define FONT_HEADER 					7
+#if defined RA_EVOLUTION
+#define TS_CALIBRATION_XMIN				4500
+#define TS_CALIBRATION_XMAX				7400
+#define TS_CALIBRATION_YMIN				4500
+#define TS_CALIBRATION_YMAX				7400
+#else
 #define TS_CALIBRATION_XMIN				700
 #define TS_CALIBRATION_XMAX				3200
 #define TS_CALIBRATION_YMIN				700
 #define TS_CALIBRATION_YMAX				3200
+#endif
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
@@ -1413,6 +1400,12 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #else
 	#define Leakbit		0
 #endif  // LEAKDETECTOREXPANSION
+
+#ifdef PAREXPANSION
+	#define PARbit		8
+#else
+	#define PARbit		0
+#endif  // PAREXPANSION
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

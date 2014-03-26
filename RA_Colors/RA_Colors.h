@@ -17,7 +17,7 @@
 #ifndef __RA_COLORS_H__
 #define __RA_COLORS_H__
 
-#ifdef RA_TOUCH
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)

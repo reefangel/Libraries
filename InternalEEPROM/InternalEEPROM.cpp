@@ -508,306 +508,6 @@ void InternalEEPROMClass::PWMSlopeDuration5_write(const uint8_t value)
     write(Mem_B_PWMSlopeDuration5, value);
 }
 
-uint8_t InternalEEPROMClass::PWMSlopeStart6_read()
-{
-  return read(Mem_B_PWMSlopeStart6);
-}
-
-void InternalEEPROMClass::PWMSlopeStart6_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart6, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd6_read()
-{
-  return read(Mem_B_PWMSlopeEnd6);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd6_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd6, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration6_read()
-{
-  return read(Mem_B_PWMSlopeDuration6);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration6_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration6, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart7_read()
-{
-  return read(Mem_B_PWMSlopeStart7);
-}
-
-void InternalEEPROMClass::PWMSlopeStart7_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart7, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd7_read()
-{
-  return read(Mem_B_PWMSlopeEnd7);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd7_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd7, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration7_read()
-{
-  return read(Mem_B_PWMSlopeDuration7);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration7_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration7, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart8_read()
-{
-  return read(Mem_B_PWMSlopeStart8);
-}
-
-void InternalEEPROMClass::PWMSlopeStart8_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart8, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd8_read()
-{
-  return read(Mem_B_PWMSlopeEnd8);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd8_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd8, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration8_read()
-{
-  return read(Mem_B_PWMSlopeDuration8);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration8_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration8, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart9_read()
-{
-  return read(Mem_B_PWMSlopeStart9);
-}
-
-void InternalEEPROMClass::PWMSlopeStart9_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart9, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd9_read()
-{
-  return read(Mem_B_PWMSlopeEnd9);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd9_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd9, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration9_read()
-{
-  return read(Mem_B_PWMSlopeDuration9);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration9_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration9, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart10_read()
-{
-  return read(Mem_B_PWMSlopeStart10);
-}
-
-void InternalEEPROMClass::PWMSlopeStart10_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart10, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd10_read()
-{
-  return read(Mem_B_PWMSlopeEnd10);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd10_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd10, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration10_read()
-{
-  return read(Mem_B_PWMSlopeDuration10);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration10_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration10, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart11_read()
-{
-  return read(Mem_B_PWMSlopeStart11);
-}
-
-void InternalEEPROMClass::PWMSlopeStart11_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart11, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd11_read()
-{
-  return read(Mem_B_PWMSlopeEnd11);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd11_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd11, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration11_read()
-{
-  return read(Mem_B_PWMSlopeDuration11);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration11_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration11, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart12_read()
-{
-  return read(Mem_B_PWMSlopeStart12);
-}
-
-void InternalEEPROMClass::PWMSlopeStart12_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart12, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd12_read()
-{
-  return read(Mem_B_PWMSlopeEnd12);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd12_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd12, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration12_read()
-{
-  return read(Mem_B_PWMSlopeDuration12);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration12_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration12, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart13_read()
-{
-  return read(Mem_B_PWMSlopeStart13);
-}
-
-void InternalEEPROMClass::PWMSlopeStart13_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart13, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd13_read()
-{
-  return read(Mem_B_PWMSlopeEnd13);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd13_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd13, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration13_read()
-{
-  return read(Mem_B_PWMSlopeDuration13);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration13_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration13, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart14_read()
-{
-  return read(Mem_B_PWMSlopeStart14);
-}
-
-void InternalEEPROMClass::PWMSlopeStart14_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart14, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd14_read()
-{
-  return read(Mem_B_PWMSlopeEnd14);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd14_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd14, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration14_read()
-{
-  return read(Mem_B_PWMSlopeDuration14);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration14_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration14, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeStart15_read()
-{
-  return read(Mem_B_PWMSlopeStart15);
-}
-
-void InternalEEPROMClass::PWMSlopeStart15_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeStart15, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeEnd15_read()
-{
-  return read(Mem_B_PWMSlopeEnd15);
-}
-
-void InternalEEPROMClass::PWMSlopeEnd15_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeEnd15, value);
-}
-
-uint8_t InternalEEPROMClass::PWMSlopeDuration15_read()
-{
-  return read(Mem_B_PWMSlopeDuration15);
-}
-
-void InternalEEPROMClass::PWMSlopeDuration15_write(const uint8_t value)
-{
-  write(Mem_B_PWMSlopeDuration15, value);
-}
-
 uint8_t InternalEEPROMClass::ActinicOffset_read()
 {
     return read(Mem_B_ActinicOffset);
@@ -1625,7 +1325,7 @@ uint8_t InternalEEPROMClass::read(int address)
 #if not defined __SAM3X8E__
 	return eeprom_read_byte((unsigned char *) address);
 #else
-	return Memory.Read(address);
+	return SPIEEPROM.Read(address);
 #endif
 }
 
@@ -1634,7 +1334,7 @@ void InternalEEPROMClass::write(int address, const uint8_t value)
 #if not defined __SAM3X8E__
 	eeprom_write_byte((unsigned char *) address, value);
 #else
-	Memory.Write(address,value);
+	SPIEEPROM.Write(address,value);
 #endif
 }
 
@@ -1643,7 +1343,7 @@ int InternalEEPROMClass::read_int(int address)
 #if not defined __SAM3X8E__
     return eeprom_read_word((const uint16_t *) address);
 #else
-	return Memory.Read(address)+(Memory.Read(address+1)<<8);
+	return SPIEEPROM.Read(address)+(SPIEEPROM.Read(address+1)<<8);
 #endif
 }
 
@@ -1652,8 +1352,8 @@ void InternalEEPROMClass::write_int(int address, const int value)
 #if not defined __SAM3X8E__
     eeprom_write_word((uint16_t *) address, (uint16_t) value);
 #else
-	Memory.Write(address,value&0xff);
-	Memory.Write(address+1,(value>>8));
+	SPIEEPROM.Write(address,value&0xff);
+	SPIEEPROM.Write(address+1,(value>>8));
 #endif
 }
 
@@ -1662,7 +1362,7 @@ uint32_t InternalEEPROMClass::read_dword(int address)
 #if not defined __SAM3X8E__
 	return eeprom_read_dword((const uint32_t *)address);
 #else
-	return Memory.Read(address)+(Memory.Read(address+1)<<8)+(Memory.Read(address+2)<<16)+(Memory.Read(address+3)<<24);
+	return SPIEEPROM.Read(address)+(SPIEEPROM.Read(address+1)<<8)+(SPIEEPROM.Read(address+2)<<16)+(SPIEEPROM.Read(address+3)<<24);
 #endif
 }
 
@@ -1671,10 +1371,10 @@ void InternalEEPROMClass::write_dword(int address, const uint32_t value)
 #if not defined __SAM3X8E__
 	eeprom_write_dword((uint32_t *) address, (uint32_t) value);
 #else
-	Memory.Write(address,value&0xff);
-	Memory.Write(address+1,(value>>8)&0xff);
-	Memory.Write(address+2,(value>>16)&0xff);
-	Memory.Write(address+3,(value>>24));
+	SPIEEPROM.Write(address,value&0xff);
+	SPIEEPROM.Write(address+1,(value>>8)&0xff);
+	SPIEEPROM.Write(address+2,(value>>16)&0xff);
+	SPIEEPROM.Write(address+3,(value>>24));
 #endif
 }
 
