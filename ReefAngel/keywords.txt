@@ -99,6 +99,7 @@ LightsOn	KEYWORD2
 LightsOff	KEYWORD2
 BuzzerOn	KEYWORD2
 BuzzerOff	KEYWORD2
+UseFlexiblePhCalibration	KEYWORD2
 
 #LCD
 
