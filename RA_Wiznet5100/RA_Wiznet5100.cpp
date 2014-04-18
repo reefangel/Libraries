@@ -217,11 +217,12 @@ void RA_Wiznet5100::ProcessRelayEthernet()
 		{
 			if (RelayIndex++==5)
 			{
-				for (int a=0;a<uid.length();a++)
-				{
-					RelayClient.read(); // Consume the unique id
-				}
-				if (RelayClient.peek()=='/') RelayClient.read(); // Consume the slash, we already have one
+				// Commented to allow for direct access subdomain instead of folder
+//				for (int a=0;a<uid.length();a++)
+//				{
+//					RelayClient.read(); // Consume the unique id
+//				}
+//				if (RelayClient.peek()=='/') RelayClient.read(); // Consume the slash, we already have one
 			}
 			char c=RelayClient.read();
 //			Serial1.write(c);
