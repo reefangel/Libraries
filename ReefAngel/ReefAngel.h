@@ -30,7 +30,12 @@
 #include <RA_ATO.h>
 #include <LED.h>
 #include <RA_TempSensor.h>
+#ifndef SC16IS750
 #include <Relay.h>
+#else
+#include <RA_SC16IS750.h>
+#include <Relay.h>
+#endif // SC16IS750
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
@@ -107,20 +112,26 @@ public:
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
-	RelayClass Relay;
+#ifndef SC16IS750
+  RelayClass Relay;
+#else
+  RA_SC16IS750 Relay;
+#endif // SC16IS750
 #ifdef wifi
 	RA_Wifi Network;
 #endif  // wifi
 #ifdef ETH_WIZ5100
 	RA_Wiznet5100 Network;
 #endif // ETH_WIZ5100
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
+
+#if defined DisplayLEDPWM && ! defined RemoveAllLights || defined DCPUMPCONTROL
 #if defined(__SAM3X8E__)
 	RA_PWMClass VariableControl;
 #else // __SAM3X8E__
 	RA_PWMClass PWM;
 #endif // __SAM3X8E__
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+
 #ifdef DCPUMPCONTROL
 	DCPumpClass DCPump;
 #endif  // DCPUMPCONTROL
@@ -310,9 +321,11 @@ public:
 	void CO2Control(byte CO2Relay, int LowPH, int HighPH);
 	void PHControl(byte PHControlRelay, int LowPH, int HighPH);
 	void StandardATO(byte ATORelay, int ATOTimeout);
-#ifdef WATERLEVELEXPANSION	
-	void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
-#endif  // WATERLEVELEXPANSION	
+#ifdef MULTIWATERLEVELEXPANSION
+	void WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+#else
+  void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+#endif  // MULTIWATERLEVELEXPANSION
 	void SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
 	void DosingPump(byte DPRelay, byte OnHour, byte OnMinute, int RunTime);
@@ -331,6 +344,7 @@ public:
 	void DelayedStartLights(byte Relay);
 	void MoonLights(byte Relay);
 	void MHLights(byte Relay);
+	void MHLights(byte Relay, byte MinuteOffset);
 	void StandardHeater(byte Relay);
 	void StandardFan(byte Relay);
 	void StandardATO(byte Relay);
@@ -341,9 +355,11 @@ public:
 	void StandardATOExtended(byte Relay);
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
-#ifdef WATERLEVELEXPANSION
+#ifdef MULTIWATERLEVELEXPANSION
+	void WaterLevelATO(byte Channel, byte Relay);
+#else
 	void WaterLevelATO(byte Relay);
-#endif  // WATERLEVELEXPANSION
+#endif  // MULTIWATERLEVELEXPANSION
 	void DosingPump1(byte Relay);
 	void DosingPump2(byte Relay);
 	void DosingPumpRepeat1(byte Relay);

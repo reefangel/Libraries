@@ -334,7 +334,6 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.PWM.GetDaylightOverrideValue());
 			s += intlength(ReefAngel.PWM.GetActinicOverrideValue());
 #endif
-#endif  // DisplayLEDPWM
 #if defined RA_STAR || defined RA_EVOLUTION
 			s += 64;
 			//<PWMA2></PWMA2><PWMD2></PWMD2><PWMA2O></PWMA2O><PWMD2O></PWMD2O>
@@ -350,6 +349,7 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.PWM.GetActinic2OverrideValue());
 #endif
 #endif  // RA_STAR
+#endif  // DisplayLEDPWM
 #ifdef RelayExp
 			s += 296;
 			//<R0></R0><RON0></RON0><ROFF0></ROFF0><R1></R1><RON1></RON1><ROFF1></ROFF1><R2></R2><RON2></RON2><ROFF2></ROFF2><R3></R3><RON3></RON3><ROFF3></ROFF3><R4></R4><RON4></RON4><ROFF4></ROFF4><R5></R5><RON5></RON5><ROFF5></ROFF5><R6></R6><RON6></RON6><ROFF6></ROFF6><R7></R7><RON7></RON7><ROFF7></ROFF7>
@@ -589,7 +589,6 @@ void RA_Wifi::ProcessHTTP()
 				if (weboption2==0) ReefAngel.PWM.SetDaylightOverride(weboption);
 				else if (weboption2==1) ReefAngel.PWM.SetActinicOverride(weboption);
 #endif
-#endif // DisplayLEDPWM					
 #ifdef PWMEXPANSION
 #if defined(__SAM3X8E__)
 				if (weboption2>=2 && weboption2<=7) ReefAngel.VariableControl.SetChannelOverride(weboption2-2,weboption);
@@ -612,6 +611,7 @@ void RA_Wifi::ProcessHTTP()
 				else if (weboption2==18) ReefAngel.PWM.SetActinic2Override(weboption);
 #endif
 #endif // RA_STAR
+#endif // DisplayLEDPWM
 				s = 9;  // <P>OK</P>
 				// add in the channel, twice
 				s += (intlength(weboption2)*2);
@@ -935,7 +935,6 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.PWM.GetDaylightOverrideValue());
 			s += intlength(ReefAngel.PWM.GetActinicOverrideValue());
 #endif
-#endif  // DisplayLEDPWM
 #if defined RA_STAR || defined RA_EVOLUTION
 			s += 46;
 			//,"PWMA2":"","PWMD2":"","PWMA2O":"","PWMD2O":""
@@ -951,6 +950,7 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.PWM.GetActinic2OverrideValue());
 #endif
 #endif  // RA_STAR
+#endif  // DisplayLEDPWM
 #ifdef RelayExp
 			s += 232;
 			//,"R1":"","RON1":"","ROFF1":"","R2":"","RON2":"","ROFF2":"","R3":"","RON3":"","ROFF3":"","R4":"","RON4":"","ROFF4":"","R5":"","RON5":"","ROFF5":"","R6":"","RON6":"","ROFF6":"","R7":"","RON7":"","ROFF7":"","R8":"","RON8":"","ROFF8":""
@@ -1209,7 +1209,6 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.PWM.GetDaylightOverrideValue(), DEC);
 	PROGMEMprint(XML_PWMDO_END);
 #endif
-#endif  // DisplayLEDPWM
 #if defined RA_STAR || defined RA_EVOLUTION
 #if defined(__SAM3X8E__)
 	PROGMEMprint(XML_PWMA2);
@@ -1233,6 +1232,7 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_PWMD2O_END);
 #endif
 #endif  // RA_STAR
+#endif  // DisplayLEDPWM
 #ifdef SALINITYEXPANSION
 	PROGMEMprint(XML_SAL);
 	print(ReefAngel.Params.Salinity, DEC);
@@ -1501,7 +1501,6 @@ void RA_Wifi::SendJSONData()
 	SendSingleJSON(JSON_PWMA,ReefAngel.PWM.GetActinicOverrideValue(),"O");
 	SendSingleJSON(JSON_PWMD,ReefAngel.PWM.GetDaylightOverrideValue(),"O");
 #endif
-#endif  // DisplayLEDPWM
 #if defined RA_STAR || defined RA_EVOLUTION
 #if defined(__SAM3X8E__)
 	SendSingleJSON(JSON_PWMA2,ReefAngel.VariableControl.GetActinic2Value());
@@ -1515,6 +1514,7 @@ void RA_Wifi::SendJSONData()
 	SendSingleJSON(JSON_PWMD2,ReefAngel.PWM.GetDaylight2OverrideValue(),"O");
 #endif
 #endif  // RA_STAR
+#endif  // DisplayLEDPWM
 #ifdef SALINITYEXPANSION
 	SendSingleJSON(JSON_SAL,ReefAngel.Params.Salinity);
 #endif  // SALINITYEXPANSION
@@ -1933,6 +1933,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #if defined RA_STAR || defined RA_EVOLUTION
   PROGMEMprint(BannerAlarm);
   print(ReefAngel.AlarmInput.IsActive(), DEC);
+#if defined DisplayLEDPWM && ! defined RemoveAllLights
 #if defined(__SAM3X8E__)
   PROGMEMprint(BannerPWMA2);
   print(ReefAngel.VariableControl.GetActinic2Value(), DEC);
@@ -1951,7 +1952,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
   print(ReefAngel.PWM.GetActinic2OverrideValue(), DEC);
   PROGMEMprint(BannerPWMD2O);
   print(ReefAngel.PWM.GetDaylight2OverrideValue(), DEC);
-#endif
+#endif  
+#endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 #endif  // RA_STAR
 #ifdef ETH_WIZ5100
   PROGMEMprint(BannerHTTP11);

@@ -26,7 +26,7 @@
 
 byte ButtonPress = 0;
 
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
+#if defined DisplayLEDPWM && ! defined RemoveAllLights || defined DCPUMPCONTROL
 boolean LightsOverride=true;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 
@@ -497,10 +497,10 @@ void ReefAngelClass::Refresh()
 			if (DCPump.ExpansionChannel[a]!=None)
 #if defined(__SAM3X8E__)
 				VariableControl.SetChannel(a,DCPump.WaterChangeSpeed);
-#else
+#else  // __SAM3X8E__
 				PWM.SetChannel(a,DCPump.WaterChangeSpeed);
-#endif
-#endif // PWMEXPANSION
+#endif  // __SAM3X8E__
+#endif  // PWMEXPANSION
 	}
 #endif  // DCPUMPCONTROL
 
@@ -510,41 +510,42 @@ void ReefAngelClass::Refresh()
 #if defined(__SAM3X8E__)
 		VariableControl.SetActinic(InternalMemory.LEDPWMActinic_read());
 		VariableControl.SetDaylight(InternalMemory.LEDPWMDaylight_read());
-#else
+#else  // __SAM3X8E__
 		PWM.SetActinic(InternalMemory.LEDPWMActinic_read());
 		PWM.SetDaylight(InternalMemory.LEDPWMDaylight_read());
-#endif
+#endif  // __SAM3X8E__
 #if defined RA_STAR
 #if defined(__SAM3X8E__)
 		VariableControl.SetActinic2(InternalMemory.LEDPWMActinic2_read());
 		VariableControl.SetDaylight2(InternalMemory.LEDPWMDaylight2_read());
-#else
+#else  // __SAM3X8E__
 		PWM.SetActinic2(InternalMemory.LEDPWMActinic2_read());
 		PWM.SetDaylight2(InternalMemory.LEDPWMDaylight2_read());
-#endif
-#endif // RA_STAR
+#endif  // __SAM3X8E__
+#endif  // RA_STAR
 	}
 	// issue #3: Redundant code
 	// issue #12: Revert back
 #if defined(__SAM3X8E__)
 	analogWrite(actinicPWMPin, VariableControl.GetActinicValue()*2.55);
 	analogWrite(daylightPWMPin, VariableControl.GetDaylightValue()*2.55);
-#else
+#else  // __SAM3X8E__
 	analogWrite(actinicPWMPin, PWM.GetActinicValue()*2.55);
 	analogWrite(daylightPWMPin, PWM.GetDaylightValue()*2.55);
-#endif
-#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
+#endif  // __SAM3X8E__
 
 #if defined RA_STAR
 	analogWrite(actinic2PWMPin, PWM.GetActinic2Value()*2.55);
 	analogWrite(daylight2PWMPin, PWM.GetDaylight2Value()*2.55);
 	SDFound=(PINJ & (1<<PJ3))==0;
-#endif // RA_STAR
+#endif  // RA_STAR
 
 #if defined(__SAM3X8E__)
 	analogWrite(actinic2PWMPin, VariableControl.GetActinic2Value()*2.55);
 	analogWrite(daylight2PWMPin, VariableControl.GetDaylight2Value()*2.55);
-#endif // __SAM3X8E__
+#endif  // __SAM3X8E__
+#endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
+
 	
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 	if (!Splash)
@@ -1092,9 +1093,15 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	}
 }
 
-#ifdef WATERLEVELEXPANSION	
+#ifdef WATERLEVELEXPANSION
+#ifdef MULTIWATERLEVELEXPANSION
+void ReefAngelClass::WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
+{
+#else
 void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
 {
+  byte Channel = 0;
+#endif  // MULTIWATERLEVELEXPANSION
 	// Input:  Relay port and timeout value (max number of seconds that ATO pump is allowed to run)
 	// Input:  Low and High Water Level to start and stop ATO pump
 	unsigned long TempTimeout = ATOTimeout;
@@ -1104,7 +1111,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	Is the low level is reached (meaning we need to top off) and are we not currently topping off
 	Then we set the timer to be now and start the topping pump
 	 */
-	if ( WaterLevel.GetLevel()<LowLevel && ( !WLATO.IsTopping()) )
+	if ( WaterLevel.GetLevel(Channel) < LowLevel && ( !WLATO.IsTopping()) )
 	{
 		WLATO.Timer = millis();
 		WLATO.StartTopping();
@@ -1112,7 +1119,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	}
 
 	// If the high level is reached, this is a safeguard to prevent over running of the top off pump
-	if ( WaterLevel.GetLevel()>HighLevel )
+	if ( WaterLevel.GetLevel(Channel) > HighLevel )
 	{
 		WLATO.StopTopping();  // stop the low ato timer
 		Relay.Off(ATORelay);
@@ -1403,6 +1410,19 @@ void ReefAngelClass::MHLights(byte Relay)
 			InternalMemory.MHDelay_read());
 }
 
+void ReefAngelClass::MHLights(byte Relay, byte MinuteOffset)
+{
+  int onTime=NumMins(InternalMemory.MHOnHour_read(),InternalMemory.MHOnMinute_read())-MinuteOffset;
+  int offTime=NumMins(InternalMemory.MHOffHour_read(),InternalMemory.MHOffMinute_read())+MinuteOffset;
+  MHLights(Relay,
+      onTime/60,
+      onTime%60,
+      offTime/60,
+      offTime%60,
+      InternalMemory.MHDelay_read()
+  );
+}
+
 void ReefAngelClass::StandardHeater(byte Relay)
 {
 	StandardHeater(Relay,
@@ -1461,12 +1481,17 @@ void ReefAngelClass::SingleATOHighExtended(byte Relay)
 	SingleATOHigh(Relay);
 }
 
-#ifdef WATERLEVELEXPANSION
+#ifdef MULTIWATERLEVELEXPANSION
+void ReefAngelClass::WaterLevelATO(byte Channel, byte Relay)
+{
+  WaterLevelATO(Channel, Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.WaterLevelLow_read(), InternalMemory.WaterLevelHigh_read());
+}
+#else
 void ReefAngelClass::WaterLevelATO(byte Relay)
 {
 	WaterLevelATO(Relay, InternalMemory.ATOExtendedTimeout_read(), InternalMemory.WaterLevelLow_read(), InternalMemory.WaterLevelHigh_read());
 }
-#endif  // WATERLEVELEXPANSION
+#endif  // MULTIWATERLEVELEXPANSION
 
 void ReefAngelClass::DosingPump1(byte Relay)
 {
