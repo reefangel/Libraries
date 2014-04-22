@@ -147,6 +147,13 @@ int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute
 }
 
 
+byte PumpThreshold(byte value, byte threshold)
+{
+	if (value < threshold/2) return 0;
+	if ((value >= threshold/2) && (value < threshold)) return threshold;
+	return value;
+}
+
 byte MoonPhase()
 {
 	int m,d,y;

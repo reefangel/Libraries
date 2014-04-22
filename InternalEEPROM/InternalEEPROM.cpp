@@ -868,6 +868,16 @@ void InternalEEPROMClass::DCPumpDuration_write(const uint8_t value)
     write(Mem_B_DCPumpDuration, value);
 }
 
+uint8_t InternalEEPROMClass::DCPumpThreshold_read()
+{
+    return read(Mem_B_DCPumpThreshold);
+}
+
+void InternalEEPROMClass::DCPumpThreshold_write(const uint8_t value)
+{
+    write(Mem_B_DCPumpThreshold, value);
+}
+
 uint8_t InternalEEPROMClass::LEDPWMDaylight2_read()
 {
     return read(Mem_B_LEDPWMDaylight2);

@@ -555,9 +555,10 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_PWMSlopeStartA2     VarsStart+161
 #define Mem_B_PWMSlopeEndA2	      VarsStart+162
 #define Mem_B_PWMSlopeDurationA2  VarsStart+163
+#define Mem_B_DCPumpThreshold     VarsStart+164
 
-#define VarsEnd					  VarsStart+164
-// Next value starts VarsStart+164
+#define VarsEnd					  VarsStart+165
+// Next value starts VarsStart+165
 
 
 // EEProm Pointers
@@ -1428,6 +1429,7 @@ bool IsLeapYear(int year);
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue);
 byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue);
 int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, int startPWM, int endPWM, byte slopeLength, byte oldValue);
+byte PumpThreshold(byte value, byte threshold);
 byte MoonPhase();
 void ConvertNumToString(char* string, int num, byte decimal);
 #ifdef MOONPHASELABEL
