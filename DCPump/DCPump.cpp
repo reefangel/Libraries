@@ -41,4 +41,13 @@ void DCPumpClass::SetMode(byte mode, byte speed, byte duration)
 	 Mode=mode;
 	 Speed=speed;
 	 Duration=duration;
+         Threshold=0;
+}
+
+void DCPumpClass::SetMode(byte mode, byte speed, byte duration, byte threshold)
+{
+	 Mode=mode;
+	 Speed=speed;
+	 Duration=duration;
+         Threshold=threshold;
 }
