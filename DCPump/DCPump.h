@@ -30,6 +30,7 @@ public:
 	 byte Mode;
 	 byte Speed;
 	 byte Duration;
+	 byte Threshold;
 	 byte DaylightChannel;
 	 byte ActinicChannel;
 	 byte LowATOChannel;
@@ -39,6 +40,7 @@ public:
 	 byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
 #endif // PWMEXPANSION
 	 void SetMode(byte mode, byte speed, byte duration);
+	 void SetMode(byte mode, byte speed, byte duration, byte threshold);
 private:
 };
 
