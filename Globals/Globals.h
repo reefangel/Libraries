@@ -55,7 +55,6 @@ void receiveEventMaster(int howMany);
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
-#define DisplayLEDPWM
 #undef RA_STANDARD
 #define RA_PLUS
 #endif //__AVR_ATmega2560__
@@ -79,7 +78,6 @@ void receiveEventMaster(int howMany);
 
 #if defined(__SAM3X8E__)
 #define wifi
-#define DisplayLEDPWM
 #define LEAKDETECTOREXPANSION
 #define NOTILT
 #undef RA_STANDARD
@@ -91,9 +89,7 @@ void receiveEventMaster(int howMany);
 
 
 #if defined RA_TOUCHDISPLAY
-#define DisplayLEDPWM
 #define PWMEXPANSION
-#define DisplayLEDPWM
 #define IOEXPANSION
 #define RFEXPANSION
 #define SALINITYEXPANSION
@@ -109,7 +105,6 @@ void receiveEventMaster(int howMany);
 #endif // RA_TOUCHDISPLAY
 
 #if defined RA_TOUCH || defined DCPUMPCONTROL
-#define DisplayLEDPWM
 #endif // RA_TOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
@@ -157,7 +152,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define ATOTimeOutFlag	0
 #define OverheatFlag   	1
 #define BusLockFlag   	2
-#define LeakFlag		3
+#define LeakFlag		    3
 
 // Status Flag Bits
 #define LightsOnFlag   	0
@@ -171,7 +166,21 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
-#define WATERLEVEL_CHANNELS				5
+
+#if defined WATERLEVELEXPANSION
+
+#if defined MULTIWATERLEVELEXPANSION
+#define WATERLEVEL_CHANNELS				6
+#else  // MULTIWATERLEVELEXPANSION
+#define WATERLEVEL_CHANNELS       1
+#endif  // MULTIWATERLEVELEXPANSION
+
+#else if defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
+
+#define WATERLEVEL_CHANNELS       5
+#define WATERLEVELEXPANSION
+
+#endif  // defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
 
 // 8 Exp. Boxes, 1 Dimming
 // Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes

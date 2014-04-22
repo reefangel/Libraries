@@ -1133,7 +1133,9 @@ const unsigned PROGMEM char BAR_I_RIGHT[] = {
 
 enum ScreenItem {
 	PARAMS_2014,
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	DIMMING_2014,
+#endif // DisplayLEDPWM
 	INPUT_2014,
 	RELAY_2014,
 #ifdef RelayExp
@@ -1296,6 +1298,7 @@ void ReefAngelClass::Draw2014Main()
 			CheckOffset(x,y);
 #endif // PAREXPANSION
 			break;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 		case DIMMING_2014:
 			x=5;
 			y=5;
@@ -1312,6 +1315,7 @@ void ReefAngelClass::Draw2014Main()
 			y+=20;
 #endif // RA_STAR
 			break;
+#endif // DisplayLEDPWM
 		case INPUT_2014:
 			x=25;
 			y=5;
@@ -1353,9 +1357,15 @@ void ReefAngelClass::Draw2014Main()
 			break;
 #ifdef WATERLEVELEXPANSION
 		case WL_2014:
+		{
 			x=5;
 			y=5;
-			for (int a=0; a<WATERLEVEL_CHANNELS; a++)
+#ifdef MULTIWATERLEVELEXPANSION
+      int a=1;
+#else
+      int a=0;
+#endif
+			for (a; a < WATERLEVEL_CHANNELS; a++)
 			{
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"WL Ch");
 				ConvertNumToString(text, a, 1);
@@ -1363,6 +1373,7 @@ void ReefAngelClass::Draw2014Main()
 				y+=19;
 			}
 			break;
+		}
 #endif // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 		case DIMMING_E_2014:
@@ -1582,17 +1593,13 @@ void ReefAngelClass::Draw2014Main()
 		CheckOffset(x,y);
 #endif // PAREXPANSION
 		break;
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	case DIMMING_2014:
 		x=5;
 		y=31;
 		byte d1,a1;
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
 		d1=PWM.GetDaylightValue();
 		a1=PWM.GetActinicValue();
-#else // DisplayLEDPWM
-		d1=0;
-		a1=0;
-#endif // DisplayLEDPWM
 		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
 		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,d1);
 		for(int b=0; b<d1; b++)
@@ -1630,9 +1637,8 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
 		y+=20;
 #endif // RA_STAR
-
-
 		break;
+#endif // DisplayLEDPWM
 	case INPUT_2014:
 		x=8;
 		y=25;
@@ -1671,23 +1677,33 @@ void ReefAngelClass::Draw2014Main()
 		}
 		break;
 #ifdef WATERLEVELEXPANSION
-	case WL_2014:
+	case WL_2014: {
 		x=5;
 		y=13;
-		for (int a=0; a<WATERLEVEL_CHANNELS; a++)
+#ifdef MULTIWATERLEVELEXPANSION
+		int a=1;
+#else
+		int a=0;
+#endif
+		for (a; a < WATERLEVEL_CHANNELS; a++)
 		{
-			byte w=WaterLevel.GetLevel(a);
-			LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
-			LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,w);
-			for(int b=0; b<w; b++)
-				LCD.DrawImage(1,6,b+5,y+2,BAR_RB_LEFT);
-			LCD.DrawImage(2,6,w+5,y+2,BAR_CENTER);
-			for(int b=w; b<100; b++)
-				LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
-
+			byte w = WaterLevel.GetLevel(a);
+			LCD.DrawText(COLOR_BLACK, DefaultBGColor, 110, y, "   ");
+			LCD.DrawText(COLOR_BLACK, DefaultBGColor, 110, y, w);
+			if(w > 100) w = 100;
+			for(int b=0; b < w; b++)
+			{
+				LCD.DrawImage(1, 6, b + 5, y + 2, BAR_RB_LEFT);
+			}
+			LCD.DrawImage(2, 6, w + 5, y + 2, BAR_CENTER);
+			for(int b = w; b < 100; b++)
+			{
+				LCD.DrawImage(1, 6, b + 7, y + 2, BAR_RB_RIGHT);
+			}
 			y+=19;
 		}
 		break;
+	}
 #endif // WATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 	case DIMMING_E_2014:
@@ -3202,20 +3218,23 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 	char msg[20];
 	byte offset_hr = 45;
 	byte offset_min = offset_hr+20;
-#ifdef MetalHalideSetup
-	strcpy(msg, "Metal Halide Setup");
-	h1 = InternalMemory.MHOnHour_read();
-	m1 = InternalMemory.MHOnMinute_read();
-	h2 = InternalMemory.MHOffHour_read();
-	m2 = InternalMemory.MHOffMinute_read();
-#endif // MetalHalideSetup
-#ifdef StandardLightSetup
-	strcpy(msg, "Std Lights Setup");
-	h1 = InternalMemory.StdLightsOnHour_read();
-	m1 = InternalMemory.StdLightsOnMinute_read();
-	h2 = InternalMemory.StdLightsOffHour_read();
-	m2 = InternalMemory.StdLightsOffMinute_read();
-#endif // StandardLightSetup
+
+	if(bMetalHalide)
+	{
+    strcpy(msg, "Metal Halide Setup");
+    h1 = InternalMemory.MHOnHour_read();
+    m1 = InternalMemory.MHOnMinute_read();
+    h2 = InternalMemory.MHOffHour_read();
+    m2 = InternalMemory.MHOffMinute_read();
+	}
+	else
+	{
+    strcpy(msg, "Std Lights Setup");
+    h1 = InternalMemory.StdLightsOnHour_read();
+    m1 = InternalMemory.StdLightsOnMinute_read();
+    h2 = InternalMemory.StdLightsOffHour_read();
+    m2 = InternalMemory.StdLightsOffMinute_read();
+	}
 	ClearScreen(DefaultBGColor);
 	// header / title
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, msg);
@@ -3404,21 +3423,17 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 	{
 		if ( bMetalHalide )
 		{
-#ifdef MetalHalideSetup
 			InternalMemory.MHOnHour_write(h1);
 			InternalMemory.MHOnMinute_write(m1);
 			InternalMemory.MHOffHour_write(h2);
 			InternalMemory.MHOffMinute_write(m2);
-#endif MetalHalideSetup
 		}
 		else
 		{
-#ifdef StandardLightSetup
 			InternalMemory.StdLightsOnHour_write(h1);
 			InternalMemory.StdLightsOnMinute_write(m1);
 			InternalMemory.StdLightsOffHour_write(h2);
 			InternalMemory.StdLightsOffMinute_write(m2);
-#endif // StandardLightSetup
 		}
 	}
 }
@@ -3970,7 +3985,11 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 	unsigned int iO[2] = {0,0};
 	unsigned int iCal[2] = {0,100};
 	byte offset = 65;
-	int wl_channel = 0;
+#ifdef MULTIWATERLEVELEXPANSION
+  int wl_channel=1;
+#else
+  int wl_channel=0;
+#endif
 
 	// draw labels
 	ClearScreen(DefaultBGColor);
@@ -4062,9 +4081,15 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 				if (sel == WLCHANNEL)
 				{
 					wl_channel--;
+#ifdef MULTIWATERLEVELEXPANSION
+          if ( wl_channel < 1 )
+          {
+            wl_channel = 1;
+#else
 					if ( wl_channel < 0 )
 					{
 						wl_channel = 0;
+#endif
 					}
 					else
 					{
