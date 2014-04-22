@@ -28,7 +28,7 @@ ReefCrestMode	KEYWORD2
 NutrientTransportMode	KEYWORD2
 TidalSwellMode	KEYWORD2
 TideMode	KEYWORD2
-ELSEMode	KEYWORD2
+ElseMode	KEYWORD2
 
 # ReefAngel
 
