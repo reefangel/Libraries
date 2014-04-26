@@ -1045,7 +1045,7 @@ void RA_Wifi::ProcessHTTP()
 			//,"ALARM":""
 			s += intlength(ReefAngel.AlarmInput.IsActive());
 #endif  // RA_STAR
-			PrintHeader(s,1);
+			PrintHeader(s,2);
 			SendJSONData();
 			break;
 		}  // REQ_JSON
@@ -1072,10 +1072,19 @@ void RA_Wifi::ProcessHTTP()
 void RA_Wifi::PrintHeader(int s, byte type)
 {
 	PROGMEMprint(SERVER_HEADER1);
-	if (type)
-		print("xml");
-	else
-		print("html");
+	switch(type)
+	{
+	  case 0:
+	    print("html");
+	    break;
+	  case 1:
+	    print("xml");
+	    break;
+	  case 2:
+	    print("json");
+	    break;
+	}
+
 	PROGMEMprint(SERVER_HEADER2);
 	print(s, DEC);
 	print("\r\n\r\n");
