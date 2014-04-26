@@ -48,26 +48,26 @@ void PMC_EnablePeripheral( uint32_t dwId )
     }
 }
 
-void SPI_Configure( Spi* spi, uint32_t dwId, uint32_t dwConfiguration )
-{
-    PMC_EnablePeripheral( dwId ) ;
-    spi->SPI_CR = SPI_CR_SPIDIS ;
-
-    /* Execute a software reset of the SPI twice */
-    spi->SPI_CR = SPI_CR_SWRST ;
-    spi->SPI_CR = SPI_CR_SWRST ;
-    spi->SPI_MR = dwConfiguration ;
-}
-
-void SPI_ConfigureNPCS( Spi* spi, uint32_t dwNpcs, uint32_t dwConfiguration )
-{
-    spi->SPI_CSR[dwNpcs] = dwConfiguration ;
-}
-
-void SPI_Enable( Spi* spi )
-{
-    spi->SPI_CR = SPI_CR_SPIEN;
-}
+//void SPI_Configure( Spi* spi, uint32_t dwId, uint32_t dwConfiguration )
+//{
+//    PMC_EnablePeripheral( dwId ) ;
+//    spi->SPI_CR = SPI_CR_SPIDIS ;
+//
+//    /* Execute a software reset of the SPI twice */
+//    spi->SPI_CR = SPI_CR_SWRST ;
+//    spi->SPI_CR = SPI_CR_SWRST ;
+//    spi->SPI_MR = dwConfiguration ;
+//}
+//
+//void SPI_ConfigureNPCS( Spi* spi, uint32_t dwNpcs, uint32_t dwConfiguration )
+//{
+//    spi->SPI_CSR[dwNpcs] = dwConfiguration ;
+//}
+//
+//void SPI_Enable( Spi* spi )
+//{
+//    spi->SPI_CR = SPI_CR_SPIEN;
+//}
 
 void DACC_Initialize( Dacc* pDACC,
                              uint8_t idDACC,

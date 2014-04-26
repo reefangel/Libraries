@@ -24,9 +24,9 @@
 	#define sam3x8
 	#include "SAM3XA.h"
 	void PMC_EnablePeripheral( uint32_t dwId );
-	void SPI_Configure( Spi* spi, uint32_t dwId, uint32_t dwConfiguration );
-	void SPI_ConfigureNPCS( Spi* spi, uint32_t dwNpcs, uint32_t dwConfiguration );
-	void SPI_Enable( Spi* spi );
+//	void SPI_Configure( Spi* spi, uint32_t dwId, uint32_t dwConfiguration );
+//	void SPI_ConfigureNPCS( Spi* spi, uint32_t dwNpcs, uint32_t dwConfiguration );
+//	void SPI_Enable( Spi* spi );
 	void DACC_Initialize( Dacc* pDACC,uint8_t idDACC,uint8_t trgEn,uint8_t trgSel,uint8_t word,uint8_t sleepMode,uint32_t mck,uint8_t refresh,uint8_t user_sel, uint32_t tag_mode,uint32_t startup);
 	uint32_t DACC_WriteBuffer( Dacc* pDACC, uint16_t *pwBuffer, uint32_t dwSize );
 	#define DACC_EnableChannel(pDACC, channel)	(pDACC)->DACC_CHER = (1 << (channel));

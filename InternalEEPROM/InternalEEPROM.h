@@ -200,6 +200,8 @@ class InternalEEPROMClass {
         void DCPumpSpeed_write(const uint8_t value);
         uint8_t DCPumpDuration_read();
         void DCPumpDuration_write(const uint8_t value);
+        uint8_t DCPumpThreshold_read();
+        void DCPumpThreshold_write(const uint8_t value);
         uint8_t LEDPWMDaylight2_read();
         void LEDPWMDaylight2_write(const uint8_t value);
         uint8_t LEDPWMActinic2_read();

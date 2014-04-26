@@ -30,6 +30,7 @@ DCPumpClass::DCPumpClass()
 	DaylightChannel=None;
 	ActinicChannel=None;
 	LowATOChannel=None;
+	Threshold=30;
 #ifdef PWMEXPANSION
 	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 		ExpansionChannel[a]=None;
@@ -41,4 +42,13 @@ void DCPumpClass::SetMode(byte mode, byte speed, byte duration)
 	 Mode=mode;
 	 Speed=speed;
 	 Duration=duration;
+         Threshold=30;
+}
+
+void DCPumpClass::SetMode(byte mode, byte speed, byte duration, byte threshold)
+{
+	 Mode=mode;
+	 Speed=speed;
+	 Duration=duration;
+         Threshold=threshold;
 }

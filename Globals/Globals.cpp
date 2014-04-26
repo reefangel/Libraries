@@ -113,6 +113,47 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	}
 }
 
+int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, int startPWM, int endPWM, byte slopeLength, int oldValue)
+{
+  LightsOverride=true;
+  int current_hour = hour();
+  int start = NumMins(startHour, startMinute);
+  int end = NumMins(endHour, endMinute);
+  if (start > end) // Start is greater than End so it is over midnight
+  {
+    if (current_hour < endHour) start -= 1440; // past midnight
+    if (current_hour >= startHour) end += 1440; // before midnight
+  }
+  int current = NumMins(current_hour, minute());
+  if (slopeLength > ((end-start)/2) ) slopeLength = (end-start)/2; // don't allow a slope length greater than half the total period
+  if (current <= start || current >= end) 
+    return oldValue; // it's before the start or after the end, return the default
+  else
+  { // do the slope calculation
+    int pwmDelta = endPWM - startPWM;
+    byte smoothPhase;
+    if ((current > (start + slopeLength)) && (current < (end - slopeLength))) 
+      return endPWM; // if it's in the middle of the slope, return the high level
+    else if ((current - start) < slopeLength) 
+    {  // it's in the beginning slope up
+      smoothPhase = constrain(map(current, start, start+slopeLength, 180, 360), 180, 360);
+    }
+    else if ((end - current) < slopeLength)
+    { // it's in the end slope down
+      smoothPhase = constrain(map(current, end-slopeLength, end, 0, 180), 0, 180);
+    }
+    return startPWM + (int)(pwmDelta*(1.0+(cos(radians(smoothPhase)))/2.0));
+  }
+}
+
+
+byte PumpThreshold(byte value, byte threshold)
+{
+	if (value < threshold/2) return 0;
+	if ((value >= threshold/2) && (value < threshold)) return threshold;
+	return value;
+}
+
 byte MoonPhase()
 {
 	int m,d,y;
@@ -575,6 +616,39 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset)
 
 	// Adjust the calculate speed to be in our adjusted range
 	return constrain(WaveSpeed+amplitude,0,100);
+}
+
+byte ElseMode( byte midPoint, byte offset, boolean waveSync )
+{
+  // Static's only initialize the first time they are called
+  static unsigned long lastChange=millis(); // Set the inital time that the last change occurred
+  static int delay = random( 500, 3000); // Set the initial delay
+  static int newSpeed = midPoint; // Set the initial speed
+  static int antiSpeed = midPoint; // Set the initial anti sync speed
+  if ((millis()-lastChange) > delay) // Check if the delay has elapsed
+  {
+    delay=random(500,5000); // If so, come up with a new delay
+    int changeUp = random(offset); // Amount to go up or down
+    if (random(100)<50) // 50/50 chance of speed going up or going down
+    {
+      newSpeed = midPoint - changeUp;
+      antiSpeed = midPoint + changeUp;
+    }
+    else
+    {
+      newSpeed = midPoint + changeUp;
+      antiSpeed = midPoint - changeUp;
+    }
+    lastChange=millis(); // Reset the time of the last change
+  }
+  if (waveSync)
+  {
+    return newSpeed;
+  }
+  else
+  {
+    return antiSpeed;
+  }
 }
 
 // for pure virtual functions
