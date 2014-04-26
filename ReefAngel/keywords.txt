@@ -15,6 +15,8 @@
 NumMins	KEYWORD2
 PWMSlope	KEYWORD2
 PWMParabola	KEYWORD2
+PWMSmoothRamp	KEYWORD2
+PumpThreshold	KEYWORD2
 MoonPhase	KEYWORD2
 ConvertNumToString	KEYWORD2
 pingSerial	KEYWORD2
@@ -26,6 +28,7 @@ ReefCrestMode	KEYWORD2
 NutrientTransportMode	KEYWORD2
 TidalSwellMode	KEYWORD2
 TideMode	KEYWORD2
+ElseMode	KEYWORD2
 
 # ReefAngel
 
@@ -99,6 +102,7 @@ LightsOn	KEYWORD2
 LightsOff	KEYWORD2
 BuzzerOn	KEYWORD2
 BuzzerOff	KEYWORD2
+UseFlexiblePhCalibration	KEYWORD2
 
 #LCD
 
