@@ -401,12 +401,12 @@ void RA_Wifi::ProcessHTTP()
 			//<PHE></PHE>
 			s += intlength(ReefAngel.Params.PHExp);
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 			s += 53;
 			//<WL></WL><WL1></WL1><WL2></WL2><WL3></WL3><WL4></WL4>
 			s += intlength(ReefAngel.WaterLevel.GetLevel());
 			for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ ) s += intlength(ReefAngel.WaterLevel.GetLevel(EID));
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 			s += 11;
 			//<HUM></HUM>
@@ -894,10 +894,10 @@ void RA_Wifi::ProcessHTTP()
 			if (weboption==3)
 				ReefAngel.ChangeMode=PHE_CALIBRATE_MENU;
 #endif // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 			if (weboption==4)
 				ReefAngel.ChangeMode=WL_CALIBRATE_MENU;
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 			break;
 		}
 #ifndef RA_STANDARD
@@ -1002,12 +1002,12 @@ void RA_Wifi::ProcessHTTP()
 			//,"PHE":""
 			s += intlength(ReefAngel.Params.PHExp);
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 			s += 44;
 			//,"WL":"","WL1":"","WL2":"","WL3":"","WL4":""
 			s += intlength(ReefAngel.WaterLevel.GetLevel());
 			for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ ) s += intlength(ReefAngel.WaterLevel.GetLevel(EID));
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 			s += 9;
 			//,"HUM":""
@@ -1257,7 +1257,7 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.Params.PHExp, DEC);
 	PROGMEMprint(XML_PHEXP_END);
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	PROGMEMprint(XML_WL);
 	PROGMEMprint(XML_CLOSE_TAG);
 	print(ReefAngel.WaterLevel.GetLevel(), DEC);
@@ -1273,7 +1273,7 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 		print(EID, DEC);
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 	PROGMEMprint(XML_HUM);
 	print(ReefAngel.Humidity.GetLevel(), DEC);
@@ -1533,7 +1533,7 @@ void RA_Wifi::SendJSONData()
 #ifdef PHEXPANSION
 	SendSingleJSON(JSON_PHEXP,ReefAngel.Params.PHExp);
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	SendSingleJSON(JSON_WL,ReefAngel.WaterLevel.GetLevel());
 	for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
 	{
@@ -1542,7 +1542,7 @@ void RA_Wifi::SendJSONData()
 		tid[1]=0;
 		SendSingleJSON(JSON_WL,ReefAngel.WaterLevel.GetLevel(EID),tid);
 	}
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 	SendSingleJSON(JSON_HUM,ReefAngel.Humidity.GetLevel());
 #endif  // HUMIDITYEXPANSION
@@ -1894,7 +1894,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerPHE);
   print(ReefAngel.Params.PHExp, DEC);
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
   PROGMEMprint(BannerWL);
   print("=");
   print(ReefAngel.WaterLevel.GetLevel(), DEC);
@@ -1905,7 +1905,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
     print("=");
     print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
   }
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
   PROGMEMprint(BannerHumidity);
   print(ReefAngel.Humidity.GetLevel(), DEC);

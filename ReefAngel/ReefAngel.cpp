@@ -233,7 +233,7 @@ void ReefAngelClass::Refresh()
 #endif // RA_TOUCH
 		break;
 #endif // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibrateWL();
@@ -241,7 +241,7 @@ void ReefAngelClass::Refresh()
 		SetupCalibrateWaterLevel();
 #endif // RA_TOUCH
 		break;
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 	}
 	ChangeMode=0;
 	boolean LightRelayOn=false;
@@ -772,10 +772,10 @@ void ReefAngelClass::Refresh()
 	}
 	RefreshScreen();
 #endif  // defined PHEXPANSION
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WaterLevel.Convert();
 	RefreshScreen();
-#endif  // defined WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined HUMIDITYEXPANSION
 	Humidity.Read();
 	RefreshScreen();
@@ -1647,9 +1647,9 @@ void ReefAngelClass::ATOClear()
 #endif  // ENABLE_EXCEED_FLAGS
 	LowATO.StopTopping();
 	HighATO.StopTopping();
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WLATO.StopTopping();
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);

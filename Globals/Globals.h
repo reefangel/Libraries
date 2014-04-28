@@ -1368,11 +1368,11 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 	#define PHbit		0
 #endif  // PHEXPANSION
 
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	#define WLbit		128
 #else
 	#define WLbit		0
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
 // EM1 Bits
 #ifdef HUMIDITYEXPANSION
