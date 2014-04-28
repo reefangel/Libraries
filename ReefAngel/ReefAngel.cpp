@@ -1094,7 +1094,7 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	}
 }
 
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 #ifdef MULTIWATERLEVELEXPANSION
 void ReefAngelClass::WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
 {
@@ -1148,7 +1148,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 #endif  // ENABLE_ATO_LOGGING
 	}
 }
-#endif  // WATERLEVELEXPANSION	
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
 void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval)
 {
@@ -1220,6 +1220,55 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
 		if ( AtoEventCount >= MAX_ATO_LOG_EVENTS ) { AtoEventCount = 0; }
 #endif  // ENABLE_ATO_LOGGING
 	}
+}
+
+void ReefAngelClass::KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHrInterval)
+{
+  /*
+    If the pH is lower of equal to LowPh
+    Check if we are not currently pumping, if we are not check if we can run
+    If we have an hour interval, check if we can run
+    If we can run, activate the pump because we need kalk
+    Otherwise the pH is greater than LowPh, we need to see if we are currently topping
+    If we are topping, then we need to stop the pump because we have enough kalk
+   */
+  bool bCanRun = true;
+  static int iLastTop = -1;
+
+  if ( byteHrInterval )
+  {
+    int iSafeTop = NumMins(hour(), minute()) - iLastTop;
+    if ( iSafeTop < 0 )
+    {
+      iSafeTop += 1440;
+    }
+    if ( (iSafeTop < (byteHrInterval * 60)) && (iLastTop >= 0) )
+    {
+      bCanRun = false;
+    }
+  }
+
+  unsigned long t = intTimeout;
+  t *= 1000;
+  if (Params.PH <= LowPH)
+  {
+    if ( (! KWDoser.IsTopping()) && bCanRun )
+    {
+      KWDoser.Timer = millis();
+      KWDoser.StartTopping();
+      Relay.On(KalkRelay);
+    }
+  }
+  else
+  {
+    // not active
+    if ( KWDoser.IsTopping() )
+    {
+      iLastTop = NumMins(hour(), minute());
+      KWDoser.StopTopping();
+      Relay.Off(KalkRelay);
+    }
+  }
 }
 
 void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime)

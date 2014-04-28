@@ -109,9 +109,9 @@ const prog_char mainmenu_6_label[] PROGMEM = "ORP Calibration";
 #ifdef PHEXPANSION
 const prog_char mainmenu_7_label[] PROGMEM = "PH Exp Calibration";
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char mainmenu_8_label[] PROGMEM = "Water Calibration";
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
 const prog_char mainmenu_9_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
@@ -136,9 +136,9 @@ PROGMEM const char * const mainmenu_items[] = {
 #ifdef PHEXPANSION
 		mainmenu_7_label,
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		mainmenu_8_label,
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
 		mainmenu_9_label,
 #endif  // DateTimeSetup
@@ -164,9 +164,9 @@ enum MainMenuItem {
 #ifdef PHEXPANSION
 	MainMenu_PHExpCalibration,
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	MainMenu_WaterCalibration,
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
 	MainMenu_DateTime,
 #endif  // DateTimeSetup
@@ -253,9 +253,9 @@ const prog_char setupmenu_5_label[] PROGMEM = "Calibrate ORP";
 #ifdef PHEXPANSION
 const prog_char setupmenu_6_label[] PROGMEM = "Calibrate PH Exp";
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char setupmenu_7_label[] PROGMEM = "Calibrate Water";
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
 const prog_char setupmenu_8_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
@@ -279,9 +279,9 @@ PROGMEM const char * const setupmenu_items[] = {
 #ifdef PHEXPANSION
 		setupmenu_6_label,
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		setupmenu_7_label,
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
 		setupmenu_8_label
 #endif  // DateTimeSetup
@@ -306,9 +306,9 @@ enum SetupMenuItem {
 #ifdef PHEXPANSION
 	SetupMenu_PHExpCalibration,
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	SetupMenu_WaterCalibration,
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
 	SetupMenu_DateTime
 #endif  // DateTimeSetup
@@ -1148,9 +1148,9 @@ enum ScreenItem {
 	RELAY7_2014,
 	RELAY8_2014,
 #endif // RelayExp
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WL_2014,
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 	DIMMING_E_2014,
 #endif // PWMEXPANSION
@@ -1355,12 +1355,12 @@ void ReefAngelClass::Draw2014Main()
 				y+=12;
 			}
 			break;
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		case WL_2014:
 		{
 			x=5;
 			y=5;
-#ifdef MULTIWATERLEVELEXPANSION
+#if defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
       int a=1;
 #else
       int a=0;
@@ -1374,7 +1374,7 @@ void ReefAngelClass::Draw2014Main()
 			}
 			break;
 		}
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 		case DIMMING_E_2014:
 			x=5;
@@ -1676,11 +1676,11 @@ void ReefAngelClass::Draw2014Main()
 			y+=12;
 		}
 		break;
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case WL_2014: {
 		x=5;
 		y=13;
-#ifdef MULTIWATERLEVELEXPANSION
+#if defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
 		int a=1;
 #else
 		int a=0;
@@ -1704,7 +1704,7 @@ void ReefAngelClass::Draw2014Main()
 		}
 		break;
 	}
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef PWMEXPANSION
 	case DIMMING_E_2014:
 		x=5;
@@ -2572,13 +2572,13 @@ void ReefAngelClass::ProcessButtonPressMain()
 		break;
 	}
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case MainMenu_WaterCalibration:
 	{
 		SetupCalibrateWaterLevel();
 		break;
 	}
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined DateTimeSetup
 	case MainMenu_DateTime:
 	{
@@ -2740,13 +2740,13 @@ void ReefAngelClass::ProcessButtonPressSetup()
 		break;
 	}
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case SetupMenu_WaterCalibration:
 	{
 		SetupCalibrateWaterLevel();
 		break;
 	}
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined DateTimeSetup
 	case SetupMenu_DateTime:
 	{
@@ -3967,7 +3967,7 @@ void ReefAngelClass::SetupCalibratePHExp()
 }
 #endif  // PHEXPANSION
 
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void ReefAngelClass::SetupCalibrateWaterLevel()
 {
 	enum choices {
@@ -3985,11 +3985,11 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 	unsigned int iO[2] = {0,0};
 	unsigned int iCal[2] = {0,100};
 	byte offset = 65;
-#ifdef MULTIWATERLEVELEXPANSION
+#if defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
   int wl_channel=1;
 #else
   int wl_channel=0;
-#endif
+#endif //  defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
 
 	// draw labels
 	ClearScreen(DefaultBGColor);
@@ -4081,7 +4081,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 				if (sel == WLCHANNEL)
 				{
 					wl_channel--;
-#ifdef MULTIWATERLEVELEXPANSION
+#if defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
           if ( wl_channel < 1 )
           {
             wl_channel = 1;
@@ -4089,7 +4089,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 					if ( wl_channel < 0 )
 					{
 						wl_channel = 0;
-#endif
+#endif //  defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
 					}
 					else
 					{
@@ -4171,7 +4171,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 		}
 	}
 }
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
 #if defined DateTimeSetup && !defined DATETIME24
 void ReefAngelClass::SetupDateTime()

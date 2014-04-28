@@ -167,20 +167,11 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
 
-#if defined WATERLEVELEXPANSION
-
 #if defined MULTIWATERLEVELEXPANSION
-#define WATERLEVEL_CHANNELS				6
+#define WATERLEVEL_CHANNELS       5
 #else  // MULTIWATERLEVELEXPANSION
 #define WATERLEVEL_CHANNELS       1
 #endif  // MULTIWATERLEVELEXPANSION
-
-#if !defined WATERLEVELEXPANSION
-#define WATERLEVEL_CHANNELS       5
-#define WATERLEVELEXPANSION
-#endif  // !defined WATERLEVELEXPANSION
-
-#endif  // defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
 
 // 8 Exp. Boxes, 1 Dimming
 // Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes

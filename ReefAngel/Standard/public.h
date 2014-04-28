@@ -51,9 +51,9 @@ void SetupCalibrateSalinity();
 #if defined PHEXPANSION
 void SetupCalibratePHExp();
 #endif  // defined PHEXPANSION
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();
-#endif  // defined WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined DateTimeSetup
 #ifdef DATETIME24
 void SetupDateTime24();
