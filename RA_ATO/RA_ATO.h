@@ -119,11 +119,13 @@ public:
 };
 #endif // RA_STAR
 
+#ifdef KALKDOSER
 class RA_KalkDoserClass : public RA_ATOClass
 {
 public:
     inline bool IsActive() { return true; }
 };
+#endif //  KALKDOSER
 
 #endif  // __RA_ATO_H__
 
