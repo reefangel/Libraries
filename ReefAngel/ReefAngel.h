@@ -111,7 +111,9 @@ public:
 	LEDClass LED;
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
+#ifdef KALKDOSER
 	RA_KalkDoserClass KWDoser;
+#endif //  KALKDOSER
 	RA_TempSensorClass TempSensor;
 #ifndef SC16IS750
   RelayClass Relay;
@@ -356,7 +358,9 @@ public:
 	void StandardATOExtended(byte Relay);
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
+#ifdef KALKDOSER
 	void KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHrInterval);
+#endif //  KALKDOSER
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte Relay);
 #else

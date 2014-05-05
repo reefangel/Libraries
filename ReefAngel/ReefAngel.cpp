@@ -1221,8 +1221,8 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
 #endif  // ENABLE_ATO_LOGGING
 	}
 }
-
-void ReefAngelClass::KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHrInterval)
+#ifdef KALKDOSER
+void ReefAngelClass::KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHMinInterval)
 {
   /*
     If the pH is lower of equal to LowPh
@@ -1235,41 +1235,46 @@ void ReefAngelClass::KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte b
   bool bCanRun = true;
   static int iLastTop = -1;
 
-  if ( byteHrInterval )
+  if ( byteHMinInterval )
   {
     int iSafeTop = NumMins(hour(), minute()) - iLastTop;
     if ( iSafeTop < 0 )
     {
       iSafeTop += 1440;
     }
-    if ( (iSafeTop < (byteHrInterval * 60)) && (iLastTop >= 0) )
+    if ( (iSafeTop < (byteHMinInterval)) && (iLastTop >= 0) )
     {
       bCanRun = false;
     }
   }
 
-  unsigned long t = intTimeout;
-  t *= 1000;
-  if (Params.PH <= LowPH)
+  if(Params.PH <= LowPH)
   {
-    if ( (! KWDoser.IsTopping()) && bCanRun )
+    if((!KWDoser.IsTopping()) && bCanRun)
     {
       KWDoser.Timer = millis();
       KWDoser.StartTopping();
       Relay.On(KalkRelay);
     }
   }
-  else
+  else if(Params.PH > LowPH)
   {
-    // not active
-    if ( KWDoser.IsTopping() )
+    if(KWDoser.IsTopping())
     {
       iLastTop = NumMins(hour(), minute());
       KWDoser.StopTopping();
       Relay.Off(KalkRelay);
     }
   }
+
+  unsigned long t = intTimeout;
+  t *= 1000;
+  if ( ((millis() - KWDoser.Timer) > t) && KWDoser.IsTopping() )
+  {
+    Relay.Off(KalkRelay);
+  }
 }
+#endif //  KALKDOSER
 
 void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime)
 {
