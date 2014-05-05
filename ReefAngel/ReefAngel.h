@@ -53,9 +53,9 @@
 #if defined PHEXPANSION
 #include <PH.h>
 #endif  // defined PHEXPANSION
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 #include <WaterLevel.h>
-#endif  // defined WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined RFEXPANSION
 #include <RF.h>
 #endif  // defined RFEXPANSION
@@ -111,6 +111,9 @@ public:
 	LEDClass LED;
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
+#ifdef KALKDOSER
+	RA_KalkDoserClass KWDoser;
+#endif //  KALKDOSER
 	RA_TempSensorClass TempSensor;
 #ifndef SC16IS750
   RelayClass Relay;
@@ -147,10 +150,10 @@ public:
 	int PHExpMin, PHExpMax;
 	PHClass PH;
 #endif  // PHEXPANSION	
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WaterLevelClass WaterLevel;
 	RA_ATOWLClass WLATO;
-#endif  // WATERLEVELEXPANSION	
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined RFEXPANSION
 	RFClass RF;
 #endif  // defined RFEXPANSION
@@ -355,6 +358,9 @@ public:
 	void StandardATOExtended(byte Relay);
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
+#ifdef KALKDOSER
+	void KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHrInterval);
+#endif //  KALKDOSER
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte Relay);
 #else

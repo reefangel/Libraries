@@ -415,7 +415,7 @@ void ReefAngelClass::SetupTouchCalibrateWL()
 	LargeFont.DrawCenterTextP(twidth/2, 35, MENU_BUTTON_CALIBRATION);
 
 	Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	Font.DrawCenterTextP(twidth/2,theight/3,WL_CALI1);
 	Font.DrawCenterTextP(twidth/2,theight*5/12,WL_CALI2);
 	Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI3);
@@ -429,7 +429,7 @@ void ReefAngelClass::SetupTouchCalibrateWL()
 #else
 	Font.DrawCenterTextP(twidth/2,theight/3,NO_WL1);
 	Font.DrawCenterTextP(twidth/2,theight*5/12,NO_SAL2);
-#endif
+#endif //  WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
 	CancelButton.Show();
 	TouchEnabled=true;
@@ -557,10 +557,10 @@ void ReefAngelClass::ShowTouchInterface()
 #ifdef HUMIDITYEXPANSION
 							Humidity.LastLevel=-1;
 #endif // HUMIDITYEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 							for (int a=0; a<WATERLEVEL_CHANNELS; a++)
 								WaterLevel.LastLevel[a]=-1;
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
 							TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
 							if (i==12 || i==4) // Orientation is portrait
@@ -623,7 +623,7 @@ void ReefAngelClass::ShowTouchInterface()
 									x+=twidth*5/16;
 								}
 #endif // HUMIDITYEXPANSION								
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 								//Water Level
 								if ((EM&(1<<7))!=0)
 								{
@@ -638,7 +638,7 @@ void ReefAngelClass::ShowTouchInterface()
 										x+=twidth*5/16;
 									}
 								}
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 							}
 							else // Orientation is landscape
 							{
@@ -708,7 +708,7 @@ void ReefAngelClass::ShowTouchInterface()
 									x+=twidth*5/21;
 								}
 #endif // HUMIDITYEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 								//Water Level
 								if ((EM&(1<<7))!=0)
 								{
@@ -723,7 +723,7 @@ void ReefAngelClass::ShowTouchInterface()
 										x+=twidth*5/21;
 									}
 								}
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 							}
 						}
 
@@ -820,7 +820,7 @@ void ReefAngelClass::ShowTouchInterface()
 								x+=twidth*5/16;
 							}
 #endif // HUMIDITYEXPANSION							
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 							//Water Level
 							if ((EM&(1<<7))!=0)
 							{
@@ -839,7 +839,7 @@ void ReefAngelClass::ShowTouchInterface()
 									x+=twidth*5/16;
 								}
 							}
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 						}
 						else // Orientation is landscape
 						{
@@ -941,7 +941,7 @@ void ReefAngelClass::ShowTouchInterface()
 								x+=twidth*5/21;
 							}
 #endif // HUMIDITYEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 							//Water Level
 							if ((EM&(1<<7))!=0)
 							{
@@ -960,7 +960,7 @@ void ReefAngelClass::ShowTouchInterface()
 									x+=twidth*5/21;
 								}
 							}
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 						}
 
 						if (i==4) i=12;
@@ -2922,7 +2922,7 @@ void ReefAngelClass::ShowTouchInterface()
 			if (CancelButton.IsPressed())
 				ShowTouchMenu();
 		}
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		switch(CalStep)
 		{
 		case 0:
@@ -3082,7 +3082,7 @@ void ReefAngelClass::ShowTouchInterface()
 			}
 			break;
 		}
-#endif
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 		break;
 	}
 #ifdef CUSTOM_MENU

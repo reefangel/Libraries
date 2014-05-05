@@ -68,10 +68,10 @@ const prog_char XML_SAL_END[] PROGMEM = "</SAL>";
 const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
 const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char XML_WL[] PROGMEM = "<WL";
 const prog_char XML_WL_END[] PROGMEM = "</WL";
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
 const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
@@ -199,9 +199,9 @@ const prog_char JSON_SAL[] PROGMEM = "SAL";
 #ifdef PHEXPANSION
 const prog_char JSON_PHEXP[] PROGMEM = "PHE";
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char JSON_WL[] PROGMEM = "WL";
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char JSON_HUM[] PROGMEM = "HUM";
 #endif  // HUMIDITYEXPANSION
@@ -350,9 +350,9 @@ const prog_char BannerBoardID[] PROGMEM = "&bid=";
 	const prog_char BannerPHE[] PROGMEM = "&phe=";
 #endif  // PHEXPANSION
 
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	const prog_char BannerWL[] PROGMEM = "&wl";
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 	
 #ifdef HUMIDITYEXPANSION
 	const prog_char BannerHumidity[] PROGMEM = "&hum=";

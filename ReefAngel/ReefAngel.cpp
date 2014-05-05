@@ -233,7 +233,7 @@ void ReefAngelClass::Refresh()
 #endif // RA_TOUCH
 		break;
 #endif // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibrateWL();
@@ -241,7 +241,7 @@ void ReefAngelClass::Refresh()
 		SetupCalibrateWaterLevel();
 #endif // RA_TOUCH
 		break;
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 	}
 	ChangeMode=0;
 	boolean LightRelayOn=false;
@@ -772,10 +772,10 @@ void ReefAngelClass::Refresh()
 	}
 	RefreshScreen();
 #endif  // defined PHEXPANSION
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WaterLevel.Convert();
 	RefreshScreen();
-#endif  // defined WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined HUMIDITYEXPANSION
 	Humidity.Read();
 	RefreshScreen();
@@ -1094,7 +1094,7 @@ void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)
 	}
 }
 
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 #ifdef MULTIWATERLEVELEXPANSION
 void ReefAngelClass::WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel)
 {
@@ -1148,7 +1148,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 #endif  // ENABLE_ATO_LOGGING
 	}
 }
-#endif  // WATERLEVELEXPANSION	
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
 void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval)
 {
@@ -1221,6 +1221,60 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
 #endif  // ENABLE_ATO_LOGGING
 	}
 }
+#ifdef KALKDOSER
+void ReefAngelClass::KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHMinInterval)
+{
+  /*
+    If the pH is lower of equal to LowPh
+    Check if we are not currently pumping, if we are not check if we can run
+    If we have an hour interval, check if we can run
+    If we can run, activate the pump because we need kalk
+    Otherwise the pH is greater than LowPh, we need to see if we are currently topping
+    If we are topping, then we need to stop the pump because we have enough kalk
+   */
+  bool bCanRun = true;
+  static int iLastTop = -1;
+
+  if ( byteHMinInterval )
+  {
+    int iSafeTop = NumMins(hour(), minute()) - iLastTop;
+    if ( iSafeTop < 0 )
+    {
+      iSafeTop += 1440;
+    }
+    if ( (iSafeTop < (byteHMinInterval)) && (iLastTop >= 0) )
+    {
+      bCanRun = false;
+    }
+  }
+
+  if(Params.PH <= LowPH)
+  {
+    if((!KWDoser.IsTopping()) && bCanRun)
+    {
+      KWDoser.Timer = millis();
+      KWDoser.StartTopping();
+      Relay.On(KalkRelay);
+    }
+  }
+  else if(Params.PH > LowPH)
+  {
+    if(KWDoser.IsTopping())
+    {
+      iLastTop = NumMins(hour(), minute());
+      KWDoser.StopTopping();
+      Relay.Off(KalkRelay);
+    }
+  }
+
+  unsigned long t = intTimeout;
+  t *= 1000;
+  if ( ((millis() - KWDoser.Timer) > t) && KWDoser.IsTopping() )
+  {
+    Relay.Off(KalkRelay);
+  }
+}
+#endif //  KALKDOSER
 
 void ReefAngelClass::DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime)
 {
@@ -1598,9 +1652,9 @@ void ReefAngelClass::ATOClear()
 #endif  // ENABLE_EXCEED_FLAGS
 	LowATO.StopTopping();
 	HighATO.StopTopping();
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WLATO.StopTopping();
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
