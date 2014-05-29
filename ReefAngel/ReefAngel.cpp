@@ -705,6 +705,14 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 	Params.Temp[T3_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT3);
 	RefreshScreen();
+#ifdef EXTRA_TEMP_PROBES
+	Params.Temp[T4_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT4);
+	RefreshScreen();
+	Params.Temp[T5_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT5);
+	RefreshScreen();
+	Params.Temp[T6_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT6);
+	RefreshScreen();
+#endif // EXTRA_TEMP_PROBES	
 #else  // DirectTempSensor
 	int x = TempSensor.ReadTemperature(TempSensor.addrT1);
 	RefreshScreen();
@@ -720,6 +728,20 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 	y = x - Params.Temp[T3_PROBE];
 	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T3_PROBE] == 0 || ~x) Params.Temp[T3_PROBE] = x;
+#ifdef EXTRA_TEMP_PROBES
+	x = TempSensor.ReadTemperature(TempSensor.addrT4);
+	RefreshScreen();
+	y = x - Params.Temp[T4_PROBE];
+	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T4_PROBE] == 0 || ~x) Params.Temp[T4_PROBE] = x;
+	x = TempSensor.ReadTemperature(TempSensor.addrT5);
+	RefreshScreen();
+	y = x - Params.Temp[T5_PROBE];
+	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T5_PROBE] == 0 || ~x) Params.Temp[T5_PROBE] = x;
+	x = TempSensor.ReadTemperature(TempSensor.addrT6);
+	RefreshScreen();
+	y = x - Params.Temp[T6_PROBE];
+	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T6_PROBE] == 0 || ~x) Params.Temp[T6_PROBE] = x;
+#endif // EXTRA_TEMP_PROBES	
 #endif  // DirectTempSensor
 	Params.PH=0;
 	for (int a=0;a<20;a++)

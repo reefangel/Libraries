@@ -294,6 +294,7 @@ public:
 	void inline AddBusCheck() {};
 	void inline AddPortOverrides() {};
 	void inline AddSPILCD() {};
+	void inline AddExtraTempProbes() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
 	void inline ReverseATOLow() {};

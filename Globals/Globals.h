@@ -166,6 +166,11 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
+#ifndef EXTRA_TEMP_PROBES 
+#define TEMP_PROBES						3
+#else
+#define TEMP_PROBES						6
+#endif
 
 #if defined MULTIWATERLEVELEXPANSION
 #define WATERLEVEL_CHANNELS       5
@@ -345,6 +350,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define T1_PROBE		1
 #define T2_PROBE		2
 #define T3_PROBE		3
+#define T4_PROBE		4
+#define T5_PROBE		5
+#define T6_PROBE		6
 
 // PWM Override IDs
 #define OVERRIDE_DAYLIGHT		0
@@ -944,7 +952,7 @@ const byte RawChannel[]={67,65,66};
 
 // Parameters structure, moved from RA_NokiaLCD.h to a more central location
 typedef struct  {
-  int Temp[4];
+  int Temp[TEMP_PROBES+1];
   int PH;
   int Salinity;
   int ORP;
