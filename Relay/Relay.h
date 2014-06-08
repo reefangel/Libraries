@@ -34,6 +34,7 @@ class RelayClass
 {
 public:
 	RelayClass();
+	void Auto(byte ID);
 	void On(byte ID);
 	void DelayedOn(byte ID, byte MinuteDelay);
 	void DelayedOn(byte ID);
