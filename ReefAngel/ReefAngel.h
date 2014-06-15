@@ -30,16 +30,18 @@
 #include <RA_ATO.h>
 #include <LED.h>
 #include <RA_TempSensor.h>
-#ifndef SC16IS750
 #include <Relay.h>
-#else
+#ifdef SC16IS750
 #include <RA_SC16IS750.h>
-#include <Relay.h>
 #endif // SC16IS750
+#ifdef DisplayLEDPWM
 #include <RA_PWM.h>
+#endif  // DisplayLEDPWM
 #include <Timer.h>
 #include <Memory.h>
+#ifdef DCPUMPCONTROL
 #include <DCPump.h>
+#endif  // DCPUMPCONTROL
 #include <DS1307RTC.h>
 #if defined wifi || defined RA_STAR
 #include <RA_Wifi.h>
@@ -91,7 +93,7 @@ public:
 	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
-	byte Flags,AlertFlags,StatusFlags;
+  byte AlertFlags,StatusFlags;
 	bool BusLocked;
 
 	ReefAngelClass();
@@ -120,11 +122,10 @@ public:
 #else
   RA_SC16IS750 Relay;
 #endif // SC16IS750
-#ifdef wifi
-	RA_Wifi Network;
-#endif  // wifi
 #ifdef ETH_WIZ5100
 	RA_Wiznet5100 Network;
+#elif defined wifi
+  RA_Wifi Network;
 #endif // ETH_WIZ5100
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights || defined DCPUMPCONTROL
@@ -359,7 +360,7 @@ public:
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
 #ifdef KALKDOSER
-	void KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHrInterval);
+  void KalkDoser(byte KalkRelay, int LowPH, int TimeoutSeconds, byte MinuteInterval = 0);
 #endif //  KALKDOSER
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte Relay);
