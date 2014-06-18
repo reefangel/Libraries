@@ -41,6 +41,7 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
+#define COLOR_MIDNIGHTBLUE          RGB565(0x00, 0x33, 0x66)
 #define COLOR_ROYALBLUE             RGB565(0x45, 0x71, 0xda)
 #define COLOR_LIGHTBLUE             RGB565(0xad, 0xd8, 0xe6)
 #define COLOR_RED                   RGB565(0xFF, 0x00, 0x00)
@@ -58,16 +59,18 @@ on the ReefAngel Google Groups page is a Color Chart image that will show you th
 #define TOPBAR_FC					COLOR_BLACK
 #define BOTTOMBAR_BC				COLOR_WHITE
 #define BOTTOMBAR_FC				COLOR_BLACK
-#define BKCOLOR						COLOR_WHITE
+#define BKCOLOR						COLOR_BLACK
 #define WARNING_TEXT				COLOR_GOLD
 #define DIVISION					RGB565(0x40, 0x40, 0x40)
 #define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
 #define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
-#define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
+#define RFLABELBAR					RGB565(0x27, 0xA0, 0x78)
 #define RFLABELBAR1					RGB565(0x46, 0xd1, 0xFF)
 #define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
-#define IOLABELBAR					RGB565(0x89, 0x21, 0xaa)
+#define IOLABELBAR					RGB565(0x89, 0x21, 0x3a)
 #define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
+#define DCLABELBAR					RGB565(0xA1, 0xC5, 0x59)
+#define CVARLABELBAR				RGB565(0xF6, 0x03, 0xFF)
 #define PWMWHITE					COLOR_ORANGE
 #define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
 #define PWMRED						COLOR_RED
