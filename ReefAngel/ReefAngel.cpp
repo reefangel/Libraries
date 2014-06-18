@@ -954,6 +954,14 @@ void ReefAngelClass::ApplySalinityCompensation()
 	}
 }
 #endif  // SALINITYEXPANSION
+
+#ifdef BUSCHECK 
+boolean ReefAngelClass::isBusLock()
+{
+	return bitRead(AlertFlags, BusLockFlag);
+}
+#endif //BUSCHECK
+
 #ifdef LEAKDETECTOREXPANSION
 boolean ReefAngelClass::IsLeakDetected()
 {
@@ -1016,6 +1024,11 @@ void ReefAngelClass::LeakClear()
 #ifdef RA_TOUCHDISPLAY
 	SendMaster(MESSAGE_COMMAND,COMMAND_CLEAR_LEAK,0);
 #endif // RA_TOUCHDISPLAY
+}
+
+boolean ReefAngelClass::isLeak()
+{
+	return bitRead(AlertFlags, LeakFlag);
 }
 
 #endif  // LEAKDETECTOREXPANSION
@@ -1243,6 +1256,12 @@ void ReefAngelClass::SingleATO(bool bLow, byte ATORelay, int intTimeout, byte by
 #endif  // ENABLE_ATO_LOGGING
 	}
 }
+
+boolean ReefAngelClass::isATOTimeOut()
+{
+	return bitRead(AlertFlags, ATOTimeOutFlag);
+}
+
 #ifdef KALKDOSER
 void ReefAngelClass::KalkDoser(byte KalkRelay, int LowPH, int intTimeout, byte byteHMinInterval)
 {
@@ -1732,6 +1751,11 @@ void ReefAngelClass::OverheatClear()
 #ifdef RA_TOUCHDISPLAY
 	SendMaster(MESSAGE_COMMAND,COMMAND_CLEAR_OVERHEAT,0);
 #endif // RA_TOUCHDISPLAY
+}
+
+boolean ReefAngelClass::isOverheat()
+{
+	return bitRead(AlertFlags, OverheatFlag);
 }
 
 void ReefAngelClass::LightsOn()

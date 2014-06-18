@@ -1480,30 +1480,34 @@ void ReefAngelClass::Draw2014Main()
 			}
 			else
 			{
-				if (bitRead(AlertFlags,ATOTimeOutFlag))
+				if (isATOTimeOut())
 				{
 					LCD.DrawImage(10,10,10,y,ATO_TIMEOUT_ICON);
 					LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y+1,"ATO Timeout");
 					y+=12;
 				}
-				if (bitRead(AlertFlags,OverheatFlag))
+				if (isOverheat())
 				{
 					LCD.DrawImage(10,10,10,y,OVERHEAT_ICON);
 					LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y+1,"Overheat");
 					y+=12;
 				}
-				if (bitRead(AlertFlags,BusLockFlag))
+				#ifdef BUSCHECK
+				if (isBusLock())
 				{
 					LCD.DrawImage(10,10,10,y,BUSLOCK_ICON);
 					LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y+1,"Bus Lock");
 					y+=12;
 				}
-				if (bitRead(AlertFlags,LeakFlag))
+				#endif // BUSCHECK
+				#ifdef LEAKDETECTOREXPANSION
+				if (isLeak())
 				{
 					LCD.DrawImage(10,10,10,y,LEAK_ICON);
 					LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y+1,"Leak");
 					y+=12;
 				}
+				#endif // LEAKDETECTOREXPANSION
 			}
 			break;
 
