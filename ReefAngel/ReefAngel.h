@@ -310,7 +310,7 @@ public:
 	void inline ChangeWifiPort() {};
 	
 #ifdef BUSCHECK
-	void isBusLock();
+	boolean isBusLock();
 #endif //BUSCHECK
 
 #ifdef LEAKDETECTOREXPANSION
@@ -320,11 +320,11 @@ public:
 	boolean IsLeakDetected();
 	void LeakCheck();
 	void LeakClear();
-	void isLeak();
+	boolean isLeak();
 #endif  // LEAKDETECTOREXPANSION
 
-	void isATOTimeOut();
-	void isOverheat();
+	boolean isATOTimeOut();
+	boolean isOverheat();
 	
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
