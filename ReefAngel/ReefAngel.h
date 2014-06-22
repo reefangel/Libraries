@@ -295,6 +295,7 @@ public:
 	void inline AddBusCheck() {};
 	void inline AddPortOverrides() {};
 	void inline AddSPILCD() {};
+	void inline AddExtraTempProbes() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
 	void inline ReverseATOLow() {};
@@ -308,6 +309,10 @@ public:
 	void inline Star() {};
 	void inline Evolution() {};
 	void inline ChangeWifiPort() {};
+	
+#ifdef BUSCHECK
+	boolean isBusLock();
+#endif //BUSCHECK
 
 #ifdef LEAKDETECTOREXPANSION
 #ifdef RA_TOUCHDISPLAY
@@ -316,8 +321,12 @@ public:
 	boolean IsLeakDetected();
 	void LeakCheck();
 	void LeakClear();
+	boolean isLeak();
 #endif  // LEAKDETECTOREXPANSION
 
+	boolean isATOTimeOut();
+	boolean isOverheat();
+	
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);

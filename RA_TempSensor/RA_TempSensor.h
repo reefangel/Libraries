@@ -36,6 +36,11 @@ public:
 	byte addrT1[8];
 	byte addrT2[8];
 	byte addrT3[8];
+#ifdef EXTRA_TEMP_PROBES
+	byte addrT4[8];
+	byte addrT5[8];
+	byte addrT6[8];
+#endif	
 	byte unit;
 };
 

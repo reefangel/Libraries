@@ -54,16 +54,31 @@ RelayClass::RelayClass()
 #endif  // RelayExp
 }
 
+void RelayClass::Auto(byte ID)
+{
+	if ( ID < 9 )
+	{
+		bitClear(RelayMaskOn,ID-1);
+		bitSet(RelayMaskOff,ID-1);
+	}
+ #ifdef RelayExp
+	if ( (ID > 10) && (ID < 89) )
+	{
+		byte EID = byte(ID/10);
+		bitClear(RelayMaskOnE[EID-1],(ID%10)-1);
+		bitSet(RelayMaskOffE[EID-1],(ID%10)-1);
+	}
+#endif//RelayExp
+}
+
 void RelayClass::On(byte ID)
 {
-//    if ( ID < 9 ) bitSet(RelayData, ID-1);
-    if ( ID < 9 ) RelayData |= 1<<(ID-1);
+    if ( ID < 9 ) bitSet(RelayData, ID-1);
 #ifdef RelayExp
 	if ( (ID > 10) && (ID < 89) )
 	{
 		byte EID = byte(ID/10);
-//		bitSet(RelayDataE[EID-1],(ID%10)-1);
-		RelayDataE[EID-1] |= 1<<((ID%10)-1);
+		bitSet(RelayDataE[EID-1],(ID%10)-1);
 	}
 #endif  // RelayExp
 }
@@ -222,51 +237,15 @@ void RelayClass::Override(byte ID, byte type)
 {
 	if (type==0)  // Turn port off
 	{
-		if ( ID < 9 )
-		{
-			bitClear(RelayMaskOn,ID-1);
-			bitClear(RelayMaskOff,ID-1);
-		}
-#ifdef RelayExp
-		if ( (ID > 10) && (ID < 89) )
-		{
-			byte EID = byte(ID/10);
-			bitClear(RelayMaskOnE[EID-1],(ID%10)-1);
-			bitClear(RelayMaskOffE[EID-1],(ID%10)-1);
-		}
-#endif  // RelayExp
+		Off(ID);
 	}
 	else if (type==1)  // Turn port on
 	{
-		if ( ID < 9 )
-		{
-			bitSet(RelayMaskOn,ID-1);
-			bitSet(RelayMaskOff,ID-1);
-		}
-#ifdef RelayExp
-		if ( (ID > 10) && (ID < 89) )
-		{
-			byte EID = byte(ID/10);
-			bitSet(RelayMaskOnE[EID-1],(ID%10)-1);
-			bitSet(RelayMaskOffE[EID-1],(ID%10)-1);
-		}
-#endif  // RelayExp
+		On(ID);
 	}
 	else if (type==2)  // Set port back to Auto
 	{
-		if ( ID < 9 )
-		{
-			bitClear(RelayMaskOn,ID-1);
-			bitSet(RelayMaskOff,ID-1);
-		}
-#ifdef RelayExp
-		if ( (ID > 10) && (ID < 89) )
-		{
-			byte EID = byte(ID/10);
-			bitClear(RelayMaskOnE[EID-1],(ID%10)-1);
-			bitSet(RelayMaskOffE[EID-1],(ID%10)-1);
-		}
-#endif  // RelayExp
+		Auto(ID);
 	}
 }
 

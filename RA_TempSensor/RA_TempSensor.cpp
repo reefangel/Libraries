@@ -43,6 +43,11 @@ void RA_TempSensorClass::Init()
 			if (count==1) memcpy(addrT1,addr,8);
 			if (count==2) memcpy(addrT2,addr,8);
 			if (count==3) memcpy(addrT3,addr,8);
+#ifdef EXTRA_TEMP_PROBES
+			if (count==4) memcpy(addrT4,addr,8);
+			if (count==5) memcpy(addrT5,addr,8);
+			if (count==6) memcpy(addrT6,addr,8);
+#endif			
 		}
 	}
 	ds.reset_search();
@@ -53,6 +58,11 @@ void RA_TempSensorClass::RequestConversion()
 	SendRequest(addrT1);
 	SendRequest(addrT2);
 	SendRequest(addrT3);
+#ifdef EXTRA_TEMP_PROBES
+	SendRequest(addrT4);
+	SendRequest(addrT5);
+	SendRequest(addrT6);
+#endif
 }
 
 void RA_TempSensorClass::SendRequest(byte addr[8])
