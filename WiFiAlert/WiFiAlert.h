@@ -22,5 +22,5 @@ private:
   void WiFiSendAlert(char *message);
 };
 
-#endif __WIFIALERT_H__
+#endif  // __WIFIALERT_H__
 #endif  // wifi || ETH_WIZ5100

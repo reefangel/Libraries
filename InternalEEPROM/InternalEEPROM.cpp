@@ -1341,17 +1341,20 @@ uint8_t InternalEEPROMClass::read(int address)
 
 void InternalEEPROMClass::write(int address, const uint8_t value)
 {
+  if(read(address) != value)
+  {
 #if not defined __SAM3X8E__
-	eeprom_write_byte((unsigned char *) address, value);
+    eeprom_write_byte((unsigned char *) address, value);
 #else
-	SPIEEPROM.Write(address,value);
+    SPIEEPROM.Write(address,value);
 #endif
+  }
 }
 
 int InternalEEPROMClass::read_int(int address)
 {
 #if not defined __SAM3X8E__
-    return eeprom_read_word((const uint16_t *) address);
+  return eeprom_read_word((const uint16_t *) address);
 #else
 	return SPIEEPROM.Read(address)+(SPIEEPROM.Read(address+1)<<8);
 #endif
@@ -1359,12 +1362,15 @@ int InternalEEPROMClass::read_int(int address)
 
 void InternalEEPROMClass::write_int(int address, const int value)
 {
+  if(read_int(address) != value)
+  {
 #if not defined __SAM3X8E__
     eeprom_write_word((uint16_t *) address, (uint16_t) value);
 #else
-	SPIEEPROM.Write(address,value&0xff);
-	SPIEEPROM.Write(address+1,(value>>8));
+    SPIEEPROM.Write(address,value&0xff);
+    SPIEEPROM.Write(address+1,(value>>8));
 #endif
+  }
 }
 
 uint32_t InternalEEPROMClass::read_dword(int address)
@@ -1378,14 +1384,17 @@ uint32_t InternalEEPROMClass::read_dword(int address)
 
 void InternalEEPROMClass::write_dword(int address, const uint32_t value)
 {
+  if(read_dword(address) != value)
+  {
 #if not defined __SAM3X8E__
-	eeprom_write_dword((uint32_t *) address, (uint32_t) value);
+    eeprom_write_dword((uint32_t *) address, (uint32_t) value);
 #else
-	SPIEEPROM.Write(address,value&0xff);
-	SPIEEPROM.Write(address+1,(value>>8)&0xff);
-	SPIEEPROM.Write(address+2,(value>>16)&0xff);
-	SPIEEPROM.Write(address+3,(value>>24));
+    SPIEEPROM.Write(address,value&0xff);
+    SPIEEPROM.Write(address+1,(value>>8)&0xff);
+    SPIEEPROM.Write(address+2,(value>>16)&0xff);
+    SPIEEPROM.Write(address+3,(value>>24));
 #endif
+  }
 }
 
 InternalEEPROMClass InternalMemory;
