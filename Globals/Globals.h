@@ -36,13 +36,28 @@
 #endif
 #include <avr/pgmspace.h>
 
+#ifdef __GNUC__
+#ifndef GCC_VERSION
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#endif
+#if GCC_VERSION < 40602 // Test for GCC < 4.6.2
+#ifdef PROGMEM
+#undef PROGMEM
+#define PROGMEM __attribute__((section(".progmem.data"))) // Workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34734#c4
+#ifdef PSTR
+#undef PSTR
+#define PSTR(s) (__extension__({static const char __c[] PROGMEM = (s); &__c[0];})) // Copied from pgmspace.h in avr-libc source
+#endif
+#endif
+#endif
+#endif
 
 static unsigned long RAStart;
 
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany);
 void SendMaster(byte ID, byte data1, byte data2);
-#endif RA_TOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 
 #ifdef I2CMASTER
 void receiveEventMaster(int howMany);
@@ -125,7 +140,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define RAPlus			1
 #define RATouchDisplay	2
 #define RATouch			3
-#define	RAStar			4	
+#define	RAStar			4
 #define RAEvolution		5
 
 // Outlets on Relay box
@@ -166,7 +181,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
-#ifndef EXTRA_TEMP_PROBES 
+#ifndef EXTRA_TEMP_PROBES
 #define TEMP_PROBES						3
 #else
 #define TEMP_PROBES						6
@@ -275,7 +290,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define LeakPin             5
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
-//#define Piezo               16 
+//#define Piezo               16
 
 //Digital I/O
 #define tempPin             8
@@ -980,8 +995,8 @@ typedef struct Compensation
 } COMPENSATION ;
 
 // Used by the DCPump class
-#define None		0
-#define Sync		1
+#define NON		    0
+#define Sync		  1
 #define AntiSync	2
 
 // Internal EEPROM
