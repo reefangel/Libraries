@@ -254,8 +254,8 @@ public:
 	void LightsOn();
 	void LightsOff();
 	void RefreshScreen();
-	void SetupCalibratePH();
-	void SetupCalibrateChoicePH();
+	void StartSetupCalibrateChoicePH();
+        void DisplaySetupCalibrateChoicePH();
 	void ClearScreen(byte Color);
 	void ExitMenu();
 	void SetDisplayedMenu(byte value);
@@ -310,7 +310,7 @@ public:
 	void inline ChangeWifiPort() {};
 	
 #ifdef BUSCHECK
-	void isBusLock();
+	boolean isBusLock();
 #endif //BUSCHECK
 
 #ifdef LEAKDETECTOREXPANSION
@@ -320,11 +320,11 @@ public:
 	boolean IsLeakDetected();
 	void LeakCheck();
 	void LeakClear();
-	void isLeak();
+	boolean isLeak();
 #endif  // LEAKDETECTOREXPANSION
 
-	void isATOTimeOut();
-	void isOverheat();
+	boolean isATOTimeOut();
+	boolean isOverheat();
 	
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
@@ -401,7 +401,25 @@ private:
 	byte PreviousMenu;
 	bool redrawmenu;
 	void CheckOffset(byte &x, byte &y);
-
+        
+        /* Constants defined in ReefAngel.cpp */
+        static const byte PH_MAXIMUM_RANGE[2];
+        static const byte PH_DEFAULT_RANGE[2];
+        static const char PH_SETUP_MENU_LABEL[2][19];
+        static const char PH_SETUP_MENU_STEP[2][13];
+        
+        enum {SETUP_PH, SETUP_CANCEL, SETUP_OK};
+        
+	unsigned int ph_target_range[2];
+	unsigned int ph_read_range[2];
+        
+	byte setup_option;
+	byte setup_step;
+	
+	bool setup_input_select;
+	bool setup_input_render;
+	bool setup_screen_refresh;
+	bool setup_save;
 };
 
 extern ReefAngelClass ReefAngel;  // make an instance for the user
