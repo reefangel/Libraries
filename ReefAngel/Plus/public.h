@@ -49,7 +49,8 @@ void ApplySalinityCompensation();
 void SetupCalibrateSalinity();
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
-void SetupCalibratePHExp();
+void StartSetupCalibrateChoicePHExp();
+void DisplaySetupCalibrateChoicePHExp();
 #endif  // defined PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();
