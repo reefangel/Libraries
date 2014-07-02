@@ -3623,9 +3623,9 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
 {
     if(setup_screen_refresh)
     {
-        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, (char*)PH_SETUP_MENU_LABEL[0]);
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, (char*)PH_SETUP_MENU_LABEL[1]);
         LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
-        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, (char*)PH_SETUP_MENU[setup_step]);
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, (char*)PH_SETUP_MENU_STEP[setup_step]);
         ph_target_range[setup_step]=PH_DEFAULT_RANGE[setup_step];
         if(setup_step==1&&ph_target_range[0]==ph_target_range[setup_step])
         {
