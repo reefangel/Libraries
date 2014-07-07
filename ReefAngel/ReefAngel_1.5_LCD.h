@@ -3609,7 +3609,7 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePH()
 void ReefAngelClass::StartSetupCalibrateChoicePHExp()
 {
     ClearScreen(DefaultBGColor);
-    DisplayedMenu=PH_CALIBRATE_MENU;
+    DisplayedMenu=PHE_CALIBRATE_MENU;
     showmenu=false;
     setup_option=SETUP_CANCEL;
     setup_step=0;
