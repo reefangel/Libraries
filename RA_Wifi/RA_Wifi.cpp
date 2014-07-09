@@ -31,6 +31,7 @@ RA_Wifi::RA_Wifi()
 #if !defined ETH_WIZ5100
   _wifiSerial = &WIFI_SERIAL;
   _wifiSerial->begin(57600);
+  _wifiSerial->setTimeout(100);
 #endif  // ETH_WIZ5100
 
   m_pushbackindex=0;
@@ -46,6 +47,7 @@ RA_Wifi::RA_Wifi()
   webnegoption=false;
   portalusername="";
   portalkey="";
+  usingAuth=false;
 }
 
 void RA_Wifi::WebResponse (const prog_char *response, long strsize)
@@ -78,10 +80,15 @@ void RA_Wifi::PushBuffer(byte inStr)
 	m_pushback[m_pushbackindex+1]=0;
 	if (reqtype>0 && reqtype<128)
 	{
-		if (authStr[m_pushbackindex]==inStr) m_pushbackindex++; else m_pushbackindex=0;
-		if (authStr[m_pushbackindex]==0) auth=true;
+//		if (authStr[m_pushbackindex]==inStr) m_pushbackindex++; else m_pushbackindex=0;
+//		if (authStr[m_pushbackindex]==0) auth=true;
 		//if (m_pushbackindex>0) Serial.println(m_pushbackindex,DEC);
 		//if (m_pushbackindex>0) Serial.println(test,DEC);
+		if (usingAuth && !auth)
+		{
+			auth=_wifiSerial->find(encodeduserpass);
+			_wifiSerial->flush();
+		}
 	}
 	else
 	{
@@ -216,6 +223,11 @@ void RA_Wifi::PushBuffer(byte inStr)
 
 void RA_Wifi::ProcessHTTP()
 {
+  if (usingAuth && !auth)
+  {
+	  PROGMEMprint(SERVER_DENY);
+	  return;
+  }
   if (webnegoption) weboption*=-1;
 	switch ( reqtype )
 	{
@@ -1122,9 +1134,9 @@ void RA_Wifi::WifiAuthentication(char* userpass)
 		len -= 3;
 	}
 	*(authPtr + authPtrSize) = 0;
-	strcpy(authStr,authPtr);
+	strcpy(encodeduserpass,authPtr);
 	free(authPtr);
-	println(authStr);
+	usingAuth=true;
 }
 
 void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
@@ -1674,6 +1686,7 @@ void RA_Wifi::ProcessSerial()
 
   _wifiSerial->flush();
   m_pushbackindex=0;
+  auth=false;
 }
 
 void RA_Wifi::ReceiveData()

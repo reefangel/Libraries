@@ -538,6 +538,7 @@ class RA_Wifi: public Print
     inline void pingSerial(){};
     char *portalusername;
     char *portalkey;
+    char encodeduserpass[50];
 
 #ifndef ETH_WIZ5100
     using Print::write;
@@ -555,7 +556,7 @@ class RA_Wifi: public Print
     unsigned long timeout;
     boolean bIncoming;
     boolean auth;
-    char authStr[32];
+    boolean usingAuth;
     int weboption;
     int weboption2;
     int weboption3;

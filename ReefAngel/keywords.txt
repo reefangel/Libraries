@@ -726,4 +726,6 @@ ActinicChannel	LITERAL2
 FeedingSpeed	LITERAL2
 WaterChangeSpeed	LITERAL2
 
-IsLeakDetected	KEYWORD2	
+IsLeakDetected	KEYWORD2
+
+WifiAuthentication	KEYWORD2
