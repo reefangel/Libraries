@@ -46,7 +46,8 @@ void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
 void ApplySalinityCompensation();
-void SetupCalibrateSalinity();
+void StartSetupCalibrateSalinity();
+void DisplaySetupCalibrateSalinity();
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
 void StartSetupCalibrateChoicePHExp();
