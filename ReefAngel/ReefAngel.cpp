@@ -218,7 +218,7 @@ void ReefAngelClass::Refresh()
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibrateSal();
 #else
-		SetupCalibrateSalinity();
+		StartSetupCalibrateSalinity();
 #endif // RA_TOUCH
 		break;
 #endif // SALINITYEXPANSION
