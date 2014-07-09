@@ -451,7 +451,11 @@ void ReefAngelClass::ShowInterface()
 		case PH_CALIBRATE_MENU:
                     DisplaySetupCalibrateChoicePH();
                     break;
+                #if defined SALINITYEXPANSION
 		case SAL_CALIBRATE_MENU:
+                    DisplaySetupCalibrateSalinity();
+                    break;
+                #endif SALINITYEXPANSION
 		case ORP_CALIBRATE_MENU:
                 #ifdef PHEXPANSION
 		case PHE_CALIBRATE_MENU:
@@ -2560,7 +2564,7 @@ void ReefAngelClass::ProcessButtonPressMain()
 #ifdef SALINITYEXPANSION
 	case MainMenu_SalinityCalibration:
 	{
-		SetupCalibrateSalinity();
+		StartSetupCalibrateSalinity();
 		break;
 	}
 #endif  // SALINITYEXPANSION
@@ -2724,7 +2728,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
 #ifdef SALINITYEXPANSION
 	case SetupMenu_CalibrateSalinity:
 	{
-		SetupCalibrateSalinity();
+		StartSetupCalibrateSalinity();
 		break;
 	}
 #endif  // SALINITYEXPANSION
@@ -3771,77 +3775,61 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
 #endif  // PHEXPANSION
 
 #ifdef SALINITYEXPANSION
-void ReefAngelClass::SetupCalibrateSalinity()
+void ReefAngelClass::StartSetupCalibrateSalinity()
 {
-	bool bOKSel = false;
-	bool bSave = false;
-	bool bDone = false;
-	bool bDrawButtons = true;
-	unsigned int iS = 0;
-	byte offset = 65;
-	// draw labels
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=SAL_CALIBRATE_MENU;
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Salinity");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
-	do
-	{
-#if defined WDT || defined WDT_FORCE
-		wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-#if defined wifi || defined ETH_WIZ5100
-		ReefAngel.Network.ReceiveData();
-#endif  // wifi
-		iS=0;
-		for (int a=0;a<15;a++)
-		{
-			iS += Salinity.Read();
-		}
-		iS/=15;
-		LCD.DrawCalibrate(iS, MENU_START_COL + offset, MENU_START_ROW*5);
-		if (  bDrawButtons )
-		{
-			if ( bOKSel )
-			{
-				LCD.DrawOK(true);
-				LCD.DrawCancel(false);
-			}
-			else
-			{
-				LCD.DrawOK(false);
-				LCD.DrawCancel(true);
-			}
-			bDrawButtons = false;
-		}
-		if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
-		{
-			// toggle the selection
-			bOKSel = !bOKSel;
-			bDrawButtons = true;
-		}
-		if ( Joystick.IsButtonPressed() )
-		{
-			bDone = true;
-			if ( bOKSel )
-			{
-				bSave = true;
-			}
-		}
-	} while ( ! bDone );
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=DEFAULT_MENU;
-	redrawmenu = true;
-	showmenu = false;
-	if ( bSave )
-	{
-		// save SalMax to memory
-		InternalMemory.SalMax_write(iS);
-		InternalMemory.SalTempComp_write(Params.Temp[TempProbe]);
-		SalMax = iS;
-	}
+    ClearScreen(DefaultBGColor);
+    DisplayedMenu=SAL_CALIBRATE_MENU;
+    showmenu=false;
+    setup_input_select=true;
+    setup_input_render=true;
+    setup_screen_refresh=true;
 }
 
-#endif  // SALINITYEXPANSION
+void ReefAngelClass::DisplaySetupCalibrateSalinity()
+{
+    if(setup_screen_refresh)
+    {
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Salinity");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
+        setup_screen_refresh=!setup_screen_refresh;
+    }
+    #if defined WDT||defined WDT_FORCE
+    wdt_reset();
+    #endif//WDT||defined WDT_FORCE
+    #if defined wifi||defined ETH_WIZ5100
+    ReefAngel.Network.ReceiveData();
+    #endif//wifi||defined ETH_WIZ5100
+    salinity_read=0;
+    for(int a=0; a<15; a++)
+    {
+        salinity_read+=Salinity.Read();
+    }
+    salinity_read/=15;
+    LCD.DrawCalibrate(salinity_read, MENU_START_COL+65, MENU_START_ROW*5);
+    if(setup_input_render)
+    {
+        LCD.DrawOK(setup_input_select);
+        LCD.DrawCancel(!setup_input_select);
+        setup_input_render=false;
+    }
+    if(Joystick.IsUp()||Joystick.IsDown()||Joystick.IsRight()||Joystick.IsLeft())
+    {
+        setup_input_select=!setup_input_select;
+        setup_input_render=true;
+    }
+    if(Joystick.IsButtonPressed())
+    {
+        if(setup_input_select)
+        {
+            InternalMemory.SalMax_write(salinity_read);
+            InternalMemory.SalTempComp_write(Params.Temp[TempProbe]);
+            SalMax=salinity_read;
+        }
+        ClearScreen(DefaultBGColor);
+        DisplayedMenu=DEFAULT_MENU;
+    }
+}
+#endif//SALINITYEXPANSION
 
 #ifdef ORPEXPANSION
 void ReefAngelClass::SetupCalibrateORP()
