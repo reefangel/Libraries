@@ -389,6 +389,7 @@ public:
 #if defined wifi || defined RA_STAR
 	void Portal(char *username);
 	void Portal(char *username, char *key);
+	void DDNS(char *subdomain);
 #endif
 
 private:

@@ -304,6 +304,7 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 const prog_char BannerAlertFlag[] PROGMEM = "&af=";
 const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 const prog_char BannerBoardID[] PROGMEM = "&bid=";
+const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
@@ -533,13 +534,15 @@ class RA_Wifi: public Print
     void LoadWebBanner(int pointer, byte qty);
     void Portal(char* username);
     void Portal(char* username, char* key);
+    void DDNS(char* subdomain);
     void SendPortal(char* username, char* key);
     inline void CheckWifi(){};
     inline void pingSerial(){};
     char *portalusername;
     char *portalkey;
     char encodeduserpass[50];
-
+    char *portalsubdomain;
+    
 #ifndef ETH_WIZ5100
     using Print::write;
     inline size_t write(uint8_t c) { return _wifiSerial->write((uint8_t)c); }

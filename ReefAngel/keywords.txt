@@ -729,3 +729,4 @@ WaterChangeSpeed	LITERAL2
 IsLeakDetected	KEYWORD2
 
 WifiAuthentication	KEYWORD2
+DDNS	KEYWORD2

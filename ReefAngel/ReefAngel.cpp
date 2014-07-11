@@ -1845,6 +1845,11 @@ void ReefAngelClass::Portal(char *username, char *key)
 {
 	Network.Portal(username,key);
 }
+
+void ReefAngelClass::DDNS(char *subdomain)
+{
+	Network.DDNS(subdomain);
+}
 #endif
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany) {

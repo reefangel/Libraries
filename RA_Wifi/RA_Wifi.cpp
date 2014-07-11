@@ -47,6 +47,7 @@ RA_Wifi::RA_Wifi()
   webnegoption=false;
   portalusername="";
   portalkey="";
+  portalsubdomain="";
   usingAuth=false;
 }
 
@@ -1755,6 +1756,11 @@ void RA_Wifi::Portal(char *username, char *key)
   portalkey=key;
 }
 
+void RA_Wifi::DDNS(char *subdomain)
+{
+	portalsubdomain=subdomain;
+}
+
 void RA_Wifi::SendPortal(char *username, char*key)
 {
   ReefAngel.Timer[PORTAL_TIMER].Start();
@@ -1795,6 +1801,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
   print(ReefAngel.Board, DEC);
   PROGMEMprint(BannerKey);
   print(key);
+  PROGMEMprint(BannerSubdomain);
+  print(portalsubdomain);
   PROGMEMprint(BannerAlertFlag);
   print(ReefAngel.AlertFlags);
   PROGMEMprint(BannerStatusFlag);
