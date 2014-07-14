@@ -449,9 +449,19 @@ void ReefAngelClass::ShowInterface()
 		case TOUCH_MENU:
 		case DATE_TIME_MENU:
 		case PH_CALIBRATE_MENU:
+                    DisplaySetupCalibrateChoicePH();
+                    break;
+                #if defined SALINITYEXPANSION
 		case SAL_CALIBRATE_MENU:
+                    DisplaySetupCalibrateSalinity();
+                    break;
+                #endif SALINITYEXPANSION
 		case ORP_CALIBRATE_MENU:
+                #ifdef PHEXPANSION
 		case PHE_CALIBRATE_MENU:
+                    DisplaySetupCalibrateChoicePHExp();
+                    break;
+                #endif //PHEXPANSION
 		case WL_CALIBRATE_MENU:
 		case DEFAULT_MENU:  // This is the home screen
 		{
@@ -2548,17 +2558,13 @@ void ReefAngelClass::ProcessButtonPressMain()
 	}
 	case MainMenu_PHCalibration:
 	{
-#if defined SETUP_CALIBRATEPH_CHOICE
-		SetupCalibrateChoicePH();
-#else
-		SetupCalibratePH();
-#endif
-		break;
+            StartSetupCalibrateChoicePH();
+            break;
 	}
 #ifdef SALINITYEXPANSION
 	case MainMenu_SalinityCalibration:
 	{
-		SetupCalibrateSalinity();
+		StartSetupCalibrateSalinity();
 		break;
 	}
 #endif  // SALINITYEXPANSION
@@ -2572,7 +2578,7 @@ void ReefAngelClass::ProcessButtonPressMain()
 #ifdef PHEXPANSION
 	case MainMenu_PHExpCalibration:
 	{
-		SetupCalibratePHExp();
+		StartSetupCalibrateChoicePHExp();
 		break;
 	}
 #endif  // PHEXPANSION
@@ -2716,17 +2722,13 @@ void ReefAngelClass::ProcessButtonPressSetup()
 #endif  // DosingPumpIntervalSetup
 	case SetupMenu_CalibratePH:
 	{
-#if defined SETUP_CALIBRATEPH_CHOICE
-		SetupCalibrateChoicePH();
-#else
-		SetupCalibratePH();
-#endif
-		break;
+            StartSetupCalibrateChoicePH();
+            break;
 	}
 #ifdef SALINITYEXPANSION
 	case SetupMenu_CalibrateSalinity:
 	{
-		SetupCalibrateSalinity();
+		StartSetupCalibrateSalinity();
 		break;
 	}
 #endif  // SALINITYEXPANSION
@@ -2740,7 +2742,7 @@ void ReefAngelClass::ProcessButtonPressSetup()
 #ifdef PHEXPANSION
 	case SetupMenu_PHExpCalibration:
 	{
-		SetupCalibratePHExp();
+		StartSetupCalibrateChoicePHExp();
 		break;
 	}
 #endif  // PHEXPANSION
@@ -3444,364 +3446,390 @@ void ReefAngelClass::SetupLightsOptionDisplay(bool bMetalHalide)
 #endif  // SIMPLE_MENU
 #endif  // CUSTOM_MENU
 
-void ReefAngelClass::SetupCalibratePH()
+void ReefAngelClass::StartSetupCalibrateChoicePH()
 {
-	bool bOKSel = false;
-	bool bSave = false;
-	bool bDone = false;
-	bool bDrawButtons = true;
-	unsigned int iO[2] = {0,0};
-	unsigned int iCal[2] = {7,10};
-	byte offset = 65;
-	// draw labels
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=PH_CALIBRATE_MENU;
-	for (int b=0;b<2;b++)
-	{
-		if (b==1 && !bSave) break;
-		bOKSel=false;
-		bSave=false;
-		bDone = false;
-		bDrawButtons = true;
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "pH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL + 18, MENU_START_ROW*5, (int)iCal[b]);
-		do
-		{
-#if defined WDT || defined WDT_FORCE
-			wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-#if defined wifi || defined ETH_WIZ5100
-			ReefAngel.Network.ReceiveData();
-#endif  // wifi
-			iO[b]=0;
-			for (int a=0;a<30;a++)
-			{
-				iO[b] += analogRead(PHPin);
-			}
-			iO[b]/=30;
-			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
-			if (  bDrawButtons )
-			{
-				if ( bOKSel )
-				{
-					LCD.DrawOK(true);
-					LCD.DrawCancel(false);
-				}
-				else
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(true);
-				}
-				bDrawButtons = false;
-			}
-			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
-			{
-				// toggle the selection
-				bOKSel = !bOKSel;
-				bDrawButtons = true;
-			}
-			if ( Joystick.IsButtonPressed() )
-			{
-				bDone = true;
-				if ( bOKSel )
-				{
-					bSave = true;
-				}
-			}
-		} while ( ! bDone );
-	}
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=DEFAULT_MENU;
-	redrawmenu = true;
-	showmenu = false;
-	if ( bSave )
-	{
-		// save PHMin & PHMax to memory
-		InternalMemory.PHMin_write(iO[0]);
-		PHMin = iO[0];
-		InternalMemory.PHMax_write(iO[1]);
-		PHMax = iO[1];
-	}
+    ClearScreen(DefaultBGColor);
+    DisplayedMenu=PH_CALIBRATE_MENU;
+    showmenu=false;
+    setup_option=SETUP_CANCEL;
+    setup_step=0;
+    setup_input_select=true;
+    setup_input_render=true;
+    setup_screen_refresh=true;
+    setup_save=false;
 }
 
-#ifdef SETUP_CALIBRATEPH_CHOICE
-void ReefAngelClass::SetupCalibrateChoicePH()
+void ReefAngelClass::DisplaySetupCalibrateChoicePH()
 {
-	enum choices {
-		TARGETPH,
-		CANCEL,
-		OK
-	};
-	byte sel = CANCEL;
-
-	bool bOKSel = false;
-	bool bSave = false;
-	bool bDone = false;
-	bool bRedraw = true;
-	bool bDrawButtons = true;
-	unsigned int iStart[2] = {7,10};
-	unsigned int iTarget[2] = {0,0};
-	unsigned int iValue[2] = {0,0};
-	char msg[15];
-	unsigned int maxPh = 10;
-	unsigned int minPh = 4;
-	byte offset = 65;
-
-	// draw labels
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=PH_CALIBRATE_MENU;
-	for (int b=0;b<2;b++)
-	{
-		if (b==1 && !bSave) break;
-		bOKSel=false;
-		bSave=false;
-		bDone = false;
-		bRedraw = true;
-		bDrawButtons = true;
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");		
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
-
-		strcpy(msg, b==0 ? "First value\0" : "Second value\0");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, msg);
-
-		iTarget[b] = iStart[b];
-		if(b==1 && iTarget[0]==iTarget[b])
-		{
-			iTarget[b]--;
-		}
-
-		do
-		{
-#if defined WDT || defined WDT_FORCE
-			wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-#if defined wifi || defined ETH_WIZ5100
-			ReefAngel.Network.ReceiveData();
-#endif  // wifi
-			iValue[b]=0;
-			for (int a=0;a<30;a++)
-			{
-				iValue[b] += analogRead(PHPin);
-			}
-			iValue[b]/=30;
-			LCD.DrawCalibrate(iValue[b], MENU_START_COL + offset, MENU_START_ROW*6);
-
-
-			if ( bRedraw )
-			{
-				switch ( sel )
-				{
-				case TARGETPH:
-				{
-					LCD.DrawOption(iTarget[b], 1, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
-					if ( bDrawButtons )
-					{
-						LCD.DrawOK(false);
-						LCD.DrawCancel(false);
-					}
-					break;
-				}
-				case OK:
-				{
-					if ( bDrawButtons )
-					{
-						LCD.DrawOption(iTarget[b], 0, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
-						LCD.DrawOK(true);
-						LCD.DrawCancel(false);
-					}
-					break;
-				}
-				case CANCEL:
-				{
-					if ( bDrawButtons )
-					{
-						LCD.DrawOption(iTarget[b], 0, MENU_START_COL + 18, MENU_START_ROW*6, "", "", 2);
-						LCD.DrawOK(false);
-						LCD.DrawCancel(true);
-					}
-					break;
-				}
-				}
-				bRedraw = false;
-				bDrawButtons = false;
-			}
-
-			if ( Joystick.IsUp() )
-			{
-				if (sel == TARGETPH)
-				{
-					iTarget[b]++;
-					if(b==1 && iTarget[0]==iTarget[b])
-					{
-						if((iTarget[b] + 1) <= maxPh)
-						{
-							iTarget[b]++;
-						} else {
-							iTarget[b]--;
-						}
-					}
-
-					if ( iTarget[b] > maxPh )
-					{
-						iTarget[b] = maxPh;
-					}
-					else 
-					{
-						bRedraw = true;
-					}
-				}
-			}
-			if ( Joystick.IsDown() )
-			{
-				if (sel == TARGETPH)
-				{
-					iTarget[b]--;
-					if(b==1 && iTarget[0]==iTarget[b])
-					{
-						if((iTarget[b] - 1) >= minPh)
-						{
-							iTarget[b]--;
-						} else {
-							iTarget[b]++;
-						}
-					}
-
-					if ( iTarget[b] < minPh )
-					{
-						iTarget[b] = minPh;
-					}
-					else 
-					{
-						bRedraw = true;
-					}
-				}
-			}
-
-			if ( Joystick.IsLeft() )
-			{
-				bRedraw = true;
-				bDrawButtons = true;
-				sel--;
-				if ( sel > OK )
-				{
-					sel = OK;
-				}
-			}
-
-			if ( Joystick.IsRight() )
-			{
-				bRedraw = true;
-				bDrawButtons = true;
-				sel++;
-				if ( sel > OK )
-				{
-					sel = TARGETPH;
-				}
-			}
-
-			if ( Joystick.IsButtonPressed() )
-			{
-				if ( sel == OK || sel == TARGETPH)
-				{
-					bDone = true;
-					bSave = true;
-				}
-				else if ( sel == CANCEL )
-				{
-					bDone = true;
-				}
-			}
-		} while ( ! bDone );
-	}
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=DEFAULT_MENU;
-	redrawmenu = true;
-	showmenu = false;
-	if ( bSave )
-	{
-		PHMin = map(7.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
-		PHMax = map(10.0, iTarget[0], iTarget[1], iValue[0], iValue[1]);
-
-		// save PHMin & PHMax to memory
-		InternalMemory.PHMin_write(PHMin);
-		InternalMemory.PHMax_write(PHMax);
-	}
+    if(setup_screen_refresh)
+    {
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, (char*)PH_SETUP_MENU_LABEL[0]);
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, (char*)PH_SETUP_MENU_STEP[setup_step]);
+        ph_target_range[setup_step]=PH_DEFAULT_RANGE[setup_step];
+        if(setup_step==1&&ph_target_range[0]==ph_target_range[setup_step])
+        {
+            ph_target_range[setup_step]--;
+        }
+        setup_screen_refresh=!setup_screen_refresh;
+    }
+    #if defined WDT||defined WDT_FORCE
+    wdt_reset();
+    #endif//WDT||defined WDT_FORCE
+    #if defined wifi||defined ETH_WIZ5100
+    ReefAngel.Network.ReceiveData();
+    #endif//wifi||defined ETH_WIZ5100
+    ph_read_range[setup_step]=0;
+    for (int a=0;a<30;a++)
+    {
+        ph_read_range[setup_step]+=analogRead(PHPin);
+    }
+    ph_read_range[setup_step]/=30;
+    LCD.DrawCalibrate(ph_read_range[setup_step], MENU_START_COL+65, MENU_START_ROW*6);
+    if(setup_input_render)
+    {
+        switch(setup_option)
+        {
+            case SETUP_PH:
+            {
+                LCD.DrawOK(false);
+                LCD.DrawCancel(false);
+                break;
+            }
+            case SETUP_OK:
+            {
+                LCD.DrawOK(true);
+                LCD.DrawCancel(false);
+                break;
+            }
+            case SETUP_CANCEL:
+            {
+                LCD.DrawOK(false);
+                LCD.DrawCancel(true);
+                break;
+            }
+        }
+        LCD.DrawOption(ph_target_range[setup_step], setup_option==SETUP_PH?1:0, MENU_START_COL+18, MENU_START_ROW*6, "", "", 2);
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsUp())
+    {
+        if(setup_option==SETUP_PH)
+        {
+            ph_target_range[setup_step]++;
+            if((setup_step==1)&&(ph_target_range[LOW]==ph_target_range[setup_step]))
+            {
+                if((ph_target_range[setup_step]+1)<=PH_MAXIMUM_RANGE[HIGH])
+                {
+                    ph_target_range[setup_step]++;
+                } else {
+                    ph_target_range[setup_step]--;
+                }
+            }
+            if(ph_target_range[setup_step]>PH_MAXIMUM_RANGE[HIGH])
+            {
+                ph_target_range[setup_step]=PH_MAXIMUM_RANGE[HIGH];
+            }
+            else 
+            {
+                setup_input_render=true;
+            }
+        }
+    }
+    if(Joystick.IsDown())
+    {
+        if(setup_option==SETUP_PH)
+        {
+            ph_target_range[setup_step]--;
+            if((setup_step==1)&&(ph_target_range[LOW]==ph_target_range[setup_step]))
+            {
+                if((ph_target_range[setup_step]-1)>=PH_MAXIMUM_RANGE[LOW])
+                {
+                    ph_target_range[setup_step]--;
+                }
+                else
+                {
+                    ph_target_range[setup_step]++;
+                }
+            }
+            if(ph_target_range[setup_step]<PH_MAXIMUM_RANGE[LOW])
+            {
+                ph_target_range[setup_step]=PH_MAXIMUM_RANGE[LOW];
+            }
+            else 
+            {
+                setup_input_render=true;
+            }
+        }
+    }
+    if(Joystick.IsLeft())
+    {
+        setup_input_render=true;
+        setup_option--;
+        if(setup_option>SETUP_OK)
+        {
+            setup_option=SETUP_OK;
+        }
+    }
+    if(Joystick.IsRight())
+    {
+        setup_input_render=true;
+        setup_option++;
+        if(setup_option>SETUP_OK)
+        {
+            setup_option=SETUP_PH;
+        }
+    }
+    if(Joystick.IsButtonPressed())
+    {
+        if(setup_option==SETUP_OK||setup_option==SETUP_PH)
+        {
+            setup_input_render=true;
+            setup_save=true;
+            setup_screen_refresh=true;
+            setup_option=SETUP_CANCEL;
+        }
+        else
+        {
+            setup_save=false;
+        }
+        setup_step+=1;
+    }
+    if(((!setup_save)&&(setup_step==1))||(setup_step>1))
+    {
+        ClearScreen(DefaultBGColor);
+        DisplayedMenu=DEFAULT_MENU;
+    }
+    if((setup_save)&&(setup_step>1))
+    {
+        PHMin=map(PH_DEFAULT_RANGE[LOW], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
+        PHMax=map(PH_DEFAULT_RANGE[HIGH], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
+        InternalMemory.PHMin_write(PHMin);
+        InternalMemory.PHMax_write(PHMax);
+    }
 }
-#endif // SETUP_CALIBRATEPH_CHOICE
+
+#ifdef PHEXPANSION
+void ReefAngelClass::StartSetupCalibrateChoicePHExp()
+{
+    ClearScreen(DefaultBGColor);
+    DisplayedMenu=PHE_CALIBRATE_MENU;
+    showmenu=false;
+    setup_option=SETUP_CANCEL;
+    setup_step=0;
+    setup_input_select=true;
+    setup_input_render=true;
+    setup_screen_refresh=true;
+    setup_save=false;
+}
+
+void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
+{
+    if(setup_screen_refresh)
+    {
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, (char*)PH_SETUP_MENU_LABEL[1]);
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, (char*)PH_SETUP_MENU_STEP[setup_step]);
+        ph_target_range[setup_step]=PH_DEFAULT_RANGE[setup_step];
+        if(setup_step==1&&ph_target_range[0]==ph_target_range[setup_step])
+        {
+            ph_target_range[setup_step]--;
+        }
+        setup_screen_refresh=!setup_screen_refresh;
+    }
+    #if defined WDT||defined WDT_FORCE
+    wdt_reset();
+    #endif//WDT||defined WDT_FORCE
+    #if defined wifi||defined ETH_WIZ5100
+    ReefAngel.Network.ReceiveData();
+    #endif//wifi||defined ETH_WIZ5100
+    ph_read_range[setup_step]=0;
+    for (int a=0;a<30;a++)
+    {
+        ph_read_range[setup_step]+=PH.Read();
+    }
+    ph_read_range[setup_step]/=30;
+    LCD.DrawCalibrate(ph_read_range[setup_step], MENU_START_COL+65, MENU_START_ROW*6);
+    if(setup_input_render)
+    {
+        switch(setup_option)
+        {
+            case SETUP_PH:
+            {
+                LCD.DrawOK(false);
+                LCD.DrawCancel(false);
+                break;
+            }
+            case SETUP_OK:
+            {
+                LCD.DrawOK(true);
+                LCD.DrawCancel(false);
+                break;
+            }
+            case SETUP_CANCEL:
+            {
+                LCD.DrawOK(false);
+                LCD.DrawCancel(true);
+                break;
+            }
+        }
+        LCD.DrawOption(ph_target_range[setup_step], setup_option==SETUP_PH?1:0, MENU_START_COL+18, MENU_START_ROW*6, "", "", 2);
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsUp())
+    {
+        if(setup_option==SETUP_PH)
+        {
+            ph_target_range[setup_step]++;
+            if((setup_step==1)&&(ph_target_range[LOW]==ph_target_range[setup_step]))
+            {
+                if((ph_target_range[setup_step]+1)<=PH_MAXIMUM_RANGE[HIGH])
+                {
+                    ph_target_range[setup_step]++;
+                } else {
+                    ph_target_range[setup_step]--;
+                }
+            }
+            if(ph_target_range[setup_step]>PH_MAXIMUM_RANGE[HIGH])
+            {
+                ph_target_range[setup_step]=PH_MAXIMUM_RANGE[HIGH];
+            }
+            else 
+            {
+                setup_input_render=true;
+            }
+        }
+    }
+    if(Joystick.IsDown())
+    {
+        if(setup_option==SETUP_PH)
+        {
+            ph_target_range[setup_step]--;
+            if((setup_step==1)&&(ph_target_range[LOW]==ph_target_range[setup_step]))
+            {
+                if((ph_target_range[setup_step]-1)>=PH_MAXIMUM_RANGE[LOW])
+                {
+                    ph_target_range[setup_step]--;
+                }
+                else
+                {
+                    ph_target_range[setup_step]++;
+                }
+            }
+            if(ph_target_range[setup_step]<PH_MAXIMUM_RANGE[LOW])
+            {
+                ph_target_range[setup_step]=PH_MAXIMUM_RANGE[LOW];
+            }
+            else 
+            {
+                setup_input_render=true;
+            }
+        }
+    }
+    if(Joystick.IsLeft())
+    {
+        setup_input_render=true;
+        setup_option--;
+        if(setup_option>SETUP_OK)
+        {
+            setup_option=SETUP_OK;
+        }
+    }
+    if(Joystick.IsRight())
+    {
+        setup_input_render=true;
+        setup_option++;
+        if(setup_option>SETUP_OK)
+        {
+            setup_option=SETUP_PH;
+        }
+    }
+    if(Joystick.IsButtonPressed())
+    {
+        if(setup_option==SETUP_OK||setup_option==SETUP_PH)
+        {
+            setup_input_render=true;
+            setup_save=true;
+            setup_screen_refresh=true;
+            setup_option=SETUP_CANCEL;
+        }
+        else
+        {
+            setup_save=false;
+        }
+        setup_step+=1;
+    }
+    if(((!setup_save)&&(setup_step==1))||(setup_step>1))
+    {
+        ClearScreen(DefaultBGColor);
+        DisplayedMenu=DEFAULT_MENU;
+    }
+    if((setup_save)&&(setup_step>1))
+    {
+        PHExpMin=map(PH_DEFAULT_RANGE[LOW], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
+        PHExpMax=map(PH_DEFAULT_RANGE[HIGH], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
+        InternalMemory.PHMin_write(PHExpMin);
+        InternalMemory.PHMax_write(PHExpMax);
+    }
+}
+#endif  // PHEXPANSION
 
 #ifdef SALINITYEXPANSION
-void ReefAngelClass::SetupCalibrateSalinity()
+void ReefAngelClass::StartSetupCalibrateSalinity()
 {
-	bool bOKSel = false;
-	bool bSave = false;
-	bool bDone = false;
-	bool bDrawButtons = true;
-	unsigned int iS = 0;
-	byte offset = 65;
-	// draw labels
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=SAL_CALIBRATE_MENU;
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Salinity");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
-	do
-	{
-#if defined WDT || defined WDT_FORCE
-		wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-#if defined wifi || defined ETH_WIZ5100
-		ReefAngel.Network.ReceiveData();
-#endif  // wifi
-		iS=0;
-		for (int a=0;a<15;a++)
-		{
-			iS += Salinity.Read();
-		}
-		iS/=15;
-		LCD.DrawCalibrate(iS, MENU_START_COL + offset, MENU_START_ROW*5);
-		if (  bDrawButtons )
-		{
-			if ( bOKSel )
-			{
-				LCD.DrawOK(true);
-				LCD.DrawCancel(false);
-			}
-			else
-			{
-				LCD.DrawOK(false);
-				LCD.DrawCancel(true);
-			}
-			bDrawButtons = false;
-		}
-		if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
-		{
-			// toggle the selection
-			bOKSel = !bOKSel;
-			bDrawButtons = true;
-		}
-		if ( Joystick.IsButtonPressed() )
-		{
-			bDone = true;
-			if ( bOKSel )
-			{
-				bSave = true;
-			}
-		}
-	} while ( ! bDone );
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=DEFAULT_MENU;
-	redrawmenu = true;
-	showmenu = false;
-	if ( bSave )
-	{
-		// save SalMax to memory
-		InternalMemory.SalMax_write(iS);
-		InternalMemory.SalTempComp_write(Params.Temp[TempProbe]);
-		SalMax = iS;
-	}
+    ClearScreen(DefaultBGColor);
+    DisplayedMenu=SAL_CALIBRATE_MENU;
+    showmenu=false;
+    setup_input_select=true;
+    setup_input_render=true;
+    setup_screen_refresh=true;
 }
 
-#endif  // SALINITYEXPANSION
+void ReefAngelClass::DisplaySetupCalibrateSalinity()
+{
+    if(setup_screen_refresh)
+    {
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate Salinity");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
+        setup_screen_refresh=!setup_screen_refresh;
+    }
+    #if defined WDT||defined WDT_FORCE
+    wdt_reset();
+    #endif//WDT||defined WDT_FORCE
+    #if defined wifi||defined ETH_WIZ5100
+    ReefAngel.Network.ReceiveData();
+    #endif//wifi||defined ETH_WIZ5100
+    salinity_read=0;
+    for(int a=0; a<15; a++)
+    {
+        salinity_read+=Salinity.Read();
+    }
+    salinity_read/=15;
+    LCD.DrawCalibrate(salinity_read, MENU_START_COL+65, MENU_START_ROW*5);
+    if(setup_input_render)
+    {
+        LCD.DrawOK(setup_input_select);
+        LCD.DrawCancel(!setup_input_select);
+        setup_input_render=false;
+    }
+    if(Joystick.IsUp()||Joystick.IsDown()||Joystick.IsRight()||Joystick.IsLeft())
+    {
+        setup_input_select=!setup_input_select;
+        setup_input_render=true;
+    }
+    if(Joystick.IsButtonPressed())
+    {
+        if(setup_input_select)
+        {
+            InternalMemory.SalMax_write(salinity_read);
+            InternalMemory.SalTempComp_write(Params.Temp[TempProbe]);
+            SalMax=salinity_read;
+        }
+        ClearScreen(DefaultBGColor);
+        DisplayedMenu=DEFAULT_MENU;
+    }
+}
+#endif//SALINITYEXPANSION
 
 #ifdef ORPEXPANSION
 void ReefAngelClass::SetupCalibrateORP()
@@ -3887,89 +3915,6 @@ void ReefAngelClass::SetupCalibrateORP()
 	}
 }
 #endif  // ORPEXPANSION
-
-#ifdef PHEXPANSION
-void ReefAngelClass::SetupCalibratePHExp()
-{
-	bool bOKSel = false;
-	bool bSave = false;
-	bool bDone = false;
-	bool bDrawButtons = true;
-	unsigned int iO[2] = {0,0};
-	unsigned int iCal[2] = {7,10};
-	byte offset = 65;
-	// draw labels
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=PHE_CALIBRATE_MENU;
-	for (int b=0;b<2;b++)
-	{
-		if (b==1 && !bSave) break;
-		bOKSel=false;
-		bSave=false;
-		bDone = false;
-		bDrawButtons = true;
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate PH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "pH");
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL + 18, MENU_START_ROW*5, (int)iCal[b]);
-		do
-		{
-#if defined WDT || defined WDT_FORCE
-			wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-#if defined wifi || defined ETH_WIZ5100
-			ReefAngel.Network.ReceiveData();
-#endif  // wifi
-			iO[b]=0;
-			for (int a=0;a<15;a++)
-			{
-				iO[b] += PH.Read();
-			}
-			iO[b]/=15;
-			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
-			if (  bDrawButtons )
-			{
-				if ( bOKSel )
-				{
-					LCD.DrawOK(true);
-					LCD.DrawCancel(false);
-				}
-				else
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(true);
-				}
-				bDrawButtons = false;
-			}
-			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
-			{
-				// toggle the selection
-				bOKSel = !bOKSel;
-				bDrawButtons = true;
-			}
-			if ( Joystick.IsButtonPressed() )
-			{
-				bDone = true;
-				if ( bOKSel )
-				{
-					bSave = true;
-				}
-			}
-		} while ( ! bDone );
-	}
-	ClearScreen(DefaultBGColor);
-	DisplayedMenu=DEFAULT_MENU;
-	redrawmenu = true;
-	showmenu = false;
-	if ( bSave )
-	{
-		// save PHExpMin & PHExpMax to memory
-		InternalMemory.PHExpMin_write(iO[0]);
-		PHExpMin = iO[0];
-		InternalMemory.PHExpMax_write(iO[1]);
-		PHExpMax = iO[1];
-	}
-}
-#endif  // PHEXPANSION
 
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void ReefAngelClass::SetupCalibrateWaterLevel()

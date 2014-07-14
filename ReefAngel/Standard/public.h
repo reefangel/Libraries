@@ -46,10 +46,12 @@ void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
 void ApplySalinityCompensation();
-void SetupCalibrateSalinity();
+void StartSetupCalibrateSalinity();
+void DisplaySetupCalibrateSalinity();
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
-void SetupCalibratePHExp();
+void StartSetupCalibrateChoicePHExp();
+void DisplaySetupCalibrateChoicePHExp();
 #endif  // defined PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();

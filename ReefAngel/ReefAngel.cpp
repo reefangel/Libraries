@@ -42,6 +42,13 @@ boolean LightsOverride=true;
 #include <Evolution/instance.h>
 #endif //  RA_STANDARD
 
+/* Constants declare in ReefAngel.h */
+const byte ReefAngelClass::PH_MAXIMUM_RANGE[2]={4, 10};
+const byte ReefAngelClass::PH_DEFAULT_RANGE[2]={7, 10};
+const char ReefAngelClass::PH_SETUP_MENU_LABEL[2][19]={"Calibrate pH", "Calibrate pH(Exp.)"};
+const char ReefAngelClass::PH_SETUP_MENU_STEP[2][13]={"First value", "Second value"};
+
+
 void ReefAngelClass::Init()
 {
 	Serial.begin(57600);
@@ -204,7 +211,7 @@ void ReefAngelClass::Refresh()
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibratePH();
 #else
-		SetupCalibratePH();
+		StartSetupCalibrateChoicePH();
 #endif // RA_TOUCH
 		break;
 #ifdef SALINITYEXPANSION
@@ -212,7 +219,7 @@ void ReefAngelClass::Refresh()
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibrateSal();
 #else
-		SetupCalibrateSalinity();
+		StartSetupCalibrateSalinity();
 #endif // RA_TOUCH
 		break;
 #endif // SALINITYEXPANSION
@@ -230,7 +237,7 @@ void ReefAngelClass::Refresh()
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibratePHExp();
 #else
-		SetupCalibratePHExp();
+		StartSetupCalibrateChoicePHExp();
 #endif // RA_TOUCH
 		break;
 #endif // PHEXPANSION
