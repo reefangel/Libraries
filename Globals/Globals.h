@@ -33,9 +33,9 @@
 #if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
+#include <SoftwareSerial.h>
 #endif
 #include <avr/pgmspace.h>
-
 
 static unsigned long RAStart;
 
@@ -110,16 +110,6 @@ void receiveEventMaster(int howMany);
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
 
-#ifdef __PLUS_SPECIAL_WIFI__
-#define WIFI_SERIAL Serial1
-#elif defined RA_STAR
-#define WIFI_SERIAL NetClient
-#else
-#define WIFI_SERIAL Serial
-#endif // __PLUS_SPECIAL_WIFI__
-
-#define RANET_SERIAL	Serial2
-
 // Board ids
 #define RA				0
 #define RAPlus			1
@@ -177,10 +167,6 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #else  // MULTIWATERLEVELEXPANSION
 #define WATERLEVEL_CHANNELS       1
 #endif  // MULTIWATERLEVELEXPANSION
-
-// 8 Exp. Boxes, 1 Dimming
-// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
-#define RANET_SIZE						26
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -303,6 +289,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
+#define RaNetRXPin			50
+#define RaNetTXPin			52
 #ifdef REEFANGEL_MINI
 #define ledPin              6
 #else
@@ -334,6 +322,31 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CHumidity			0x5c
 #define I2CClock            0x68
 
+
+#ifdef __PLUS_SPECIAL_WIFI__
+#define WIFI_SERIAL Serial1
+#elif defined RA_STAR
+#define WIFI_SERIAL NetClient
+#else
+#define WIFI_SERIAL Serial
+#endif // __PLUS_SPECIAL_WIFI__
+
+#ifdef RANET
+#define RANET_SIZE						26
+static SoftwareSerial RaNetSerial(RaNetRXPin,RaNetTXPin);
+// 8 Exp. Boxes, 1 Dimming
+// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
+static byte RANetSeq, RANetCRC;
+static byte RANetData[RANET_SIZE];
+static byte RANetStatus[RANET_SIZE];
+static unsigned long RANetlastmillis;
+#endif // RANET
+
+#ifdef RA_STAR
+#define RANET_SERIAL	Serial2
+#elif defined RA_PLUS
+#define RANET_SERIAL	RaNetSerial
+#endif // RA_STAR
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999

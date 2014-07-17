@@ -5,11 +5,6 @@ RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
 RA_ATOALARMClass AlarmInput;
 
-byte RANetSeq, RANetCRC;
-byte RANetData[RANET_SIZE];
-byte RANetStatus[RANET_SIZE];
-unsigned long RANetlastmillis;
-
 bool SDFound;
 
 void ShowInterface();

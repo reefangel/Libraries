@@ -18,6 +18,10 @@ setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 Joystick.Init();
 LCD.LCDID=InternalMemory.LCDID_read();
 LCD.Init();
+#ifdef RANET
+RANET_SERIAL.begin(57600);
+#endif // RANET
+
 #ifdef MAIN_2014
 LCD.DrawImage(98,38,15,50,RA_LOGO);
 #endif // MAIN_2014
