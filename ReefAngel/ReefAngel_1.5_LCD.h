@@ -447,7 +447,15 @@ void ReefAngelClass::ShowInterface()
 		switch ( DisplayedMenu )
 		{
 		case TOUCH_MENU:
-		case DATE_TIME_MENU:
+		#ifdef DateTimeSetup
+	        case DATE_TIME_MENU:
+	            #ifdef DATETIME24
+	            DisplaySetupDateTime24();
+	            #else
+	            DisplaySetupDateTime();
+	            #endif
+	            break;
+	        #endif // DateTimeSetup
 		case PH_CALIBRATE_MENU:
                     DisplaySetupCalibrateChoicePH();
                     break;
@@ -2593,9 +2601,9 @@ void ReefAngelClass::ProcessButtonPressMain()
 	case MainMenu_DateTime:
 	{
 #ifdef DATETIME24
-		SetupDateTime24();
+		StartSetupDateTime24();
 #else
-		SetupDateTime();
+		StartSetupDateTime();
 #endif //DATETIME24
 		break;
 	}
@@ -2757,9 +2765,9 @@ void ReefAngelClass::ProcessButtonPressSetup()
 	case SetupMenu_DateTime:
 	{
 #ifdef DATETIME24
-		SetupDateTime24();
+		StartSetupDateTime24();
 #else
-		SetupDateTime();
+		StartSetupDateTime();
 #endif
 		break;
 	}
@@ -4122,692 +4130,457 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 }
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
+#define AM "AM"
+#define PM "PM"
+
 #if defined DateTimeSetup && !defined DATETIME24
-void ReefAngelClass::SetupDateTime()
+void ReefAngelClass::StartSetupDateTime()
 {
-	enum choices {
-		MONTH,
-		DAY,
-		YEAR,
-		HOUR,
-		MINUTE,
-		OK,
-		CANCEL
-	};
-	byte sel = MONTH;
-	bool bSave = false;
-	bool bDone = false;
-	bool bRedraw = true;
-	bool bDrawButtons = true;
-	byte Year, Month, Day, Hour, Minute;
-	byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-	byte DateRow = 45, TimeRow = 75;
+    ClearScreen(DefaultBGColor);
+    DisplayedMenu=DATE_TIME_MENU;
+    showmenu=false;
+    setup_option=SETUP_DATETIME_MONTH;
+    setup_input_render=true;
+    setup_screen_refresh=true;
+    currentDateTime.year=year();
+    currentDateTime.month=month();
+    currentDateTime.day=day();
+    byte hour_temp=hour();
+    if(hour_temp>12){
+        currentDateTime.hour=hour_temp-12;
+        currentDateTime.period=PM;
+    }else{
+        currentDateTime.hour=hour_temp;
+        currentDateTime.period=AM;
+    }
+    currentDateTime.minute=minute();
+    lastDayOfEachMonth[0]=31;
+    lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+    lastDayOfEachMonth[2]=31;
+    lastDayOfEachMonth[3]=30;
+    lastDayOfEachMonth[4]=31;
+    lastDayOfEachMonth[5]=30;
+    lastDayOfEachMonth[6]=31;
+    lastDayOfEachMonth[7]=31;
+    lastDayOfEachMonth[8]=30;
+    lastDayOfEachMonth[9]=31;
+    lastDayOfEachMonth[10]=30;
+    lastDayOfEachMonth[11]=31;
+}
 
-	Year = year() - 2000;
-	Month = month();
-	Day = day();
-	Hour = hour();
-	Minute = minute();
-
-	ClearScreen(DefaultBGColor);
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, DateRow,"Date:");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, TimeRow,"Time:");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, DateRow, "/");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, DateRow, "/");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, TimeRow, ":");
-
-	do
-	{
-#if defined WDT || defined WDT_FORCE
-		wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-		if ( bRedraw )
-		{
-			switch ( sel )
-			{
-			case MONTH:
-			{
-				LCD.DrawOption(Month, 1, 49, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case DAY:
-			{
-				LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 1, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case YEAR:
-			{
-				LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 1, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case HOUR:
-			{
-				LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 1, 49, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case MINUTE:
-			{
-				LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 1, 69, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case OK:
-			{
-				if ( bDrawButtons )
-				{
-					LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
-					LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
-					LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-					LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-					LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOK(true);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case CANCEL:
-			{
-				if ( bDrawButtons )
-				{
-					LCD.DrawOption(Month, 0, 49, DateRow, "", "", 2);
-					LCD.DrawOption(Day, 0, 69, DateRow, "", "", 2);
-					LCD.DrawOption(Year, 0, 89, DateRow, "", "", 2);
-					LCD.DrawOption(Hour, 0, 49, TimeRow, "", "", 2);
-					LCD.DrawOption(Minute, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOK(false);
-					LCD.DrawCancel(true);
-				}
-				break;
-			}
-			}
-
-			bRedraw = false;
-			bDrawButtons = false;
-		}
-		if ( Joystick.IsUp() )
-		{
-			switch ( sel )
-			{
-			case MONTH:
-			{
-				Month++;
-				if ( Month > 12 )
-				{
-					Month = 1;
-				}
-				break;
-			}
-			case DAY:
-			{
-				Day++;
-				// lookup days in a month table
-				if ( ! IsLeapYear(2000+Year) )
-				{
-					// not leap year
-					if ( Day > MonthDays[Month] )
-					{
-						Day = 1;
-					}
-				}
-				else
-				{
-					// leap year, only special case is February
-					if ( Month == 2 )
-					{
-						if ( Day > 29 )
-						{
-							Day = 1;
-						}
-					}
-					else
-					{
-						if ( Day > MonthDays[Month] )
-						{
-							Day = 1;
-						}
-					}
-				}
-				break;
-			}
-			case YEAR:
-			{
-				Year++;
-				if ( Year > 99 )
-				{
-					Year = 0;
-				}
-				break;
-			}
-			case HOUR:
-			{
-				Hour++;
-				if ( Hour > 23 )
-				{
-					Hour = 0;
-				}
-				break;
-			}
-			case MINUTE:
-			{
-				Minute++;
-				if ( Minute > 59 )
-				{
-					Minute = 0;
-				}
-				break;
-			}
-			}
-			bRedraw = true;
-		}
-		if ( Joystick.IsDown() )
-		{
-			switch ( sel )
-			{
-			case MONTH:
-			{
-				Month--;
-				if ( Month < 1 || Month > 12 )
-				{
-					Month = 12;
-				}
-				break;
-			}
-			case DAY:
-			{
-				Day--;
-				// lookup days in a month table
-				if ( ! IsLeapYear(2000+Year) )
-				{
-					// not leap year
-					if ( Day < 1 || Day > MonthDays[Month] )
-					{
-						Day = MonthDays[Month];
-					}
-				}
-				else
-				{
-					// leap year, only special case is February
-					if ( Month == 2 )
-					{
-						if ( Day < 1 || Day > MonthDays[Month] )
-						{
-							Day = 29;
-						}
-					}
-					else
-					{
-						if ( Day < 1 || Day > MonthDays[Month] )
-						{
-							Day = MonthDays[Month];
-						}
-					}
-				}
-				break;
-			}
-			case YEAR:
-			{
-				Year--;
-				if ( Year > 99 )
-				{
-					Year = 99;
-				}
-				break;
-			}
-			case HOUR:
-			{
-				Hour--;
-				if ( Hour > 23 )
-				{
-					Hour = 23;
-				}
-				break;
-			}
-			case MINUTE:
-			{
-				Minute--;
-				if ( Minute > 59 )
-				{
-					Minute = 59;
-				}
-				break;
-			}
-			}
-			bRedraw = true;
-		}
-		if ( Joystick.IsLeft() )
-		{
-			bRedraw = true;
-			bDrawButtons = true;
-			sel--;
-			if ( sel > CANCEL )
-			{
-				sel = CANCEL;
-			}
-		}
-		if ( Joystick.IsRight() )
-		{
-			bRedraw = true;
-			bDrawButtons = true;
-			sel++;
-			if ( sel > CANCEL )
-			{
-				sel = MONTH;
-			}
-		}
-		if ( Joystick.IsButtonPressed() )
-		{
-			if ( sel == OK )
-			{
-				bDone = true;
-				bSave = true;
-			}
-			else if ( sel == CANCEL )
-			{
-				bDone = true;
-			}
-		}
-	} while ( ! bDone );
-
-	if ( bSave )
-	{
-		// Set Date & Time
-		setTime(Hour, Minute, 0, Day, Month, Year);
-		now();
-		RTC.set(now());
-	}
-
+void ReefAngelClass::DisplaySetupDateTime()
+{
+    if(setup_screen_refresh)
+    {
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, 45,"Date:");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, 75,"Time:");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, 45, "/");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, 45, "/");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, 75, ":");
+        setup_screen_refresh=!setup_screen_refresh;
+        
+    }
+    #if defined WDT||defined WDT_FORCE
+    wdt_reset();
+    #endif//WDT||defined WDT_FORCE
+    #if defined wifi||defined ETH_WIZ5100
+    ReefAngel.Network.ReceiveData();
+    #endif//wifi||defined ETH_WIZ5100
+    if(setup_input_render)
+    {
+        LCD.DrawOption(currentDateTime.month, setup_option==SETUP_DATETIME_MONTH?1:0, 49, 45, "", "", 2);
+        LCD.DrawOption(currentDateTime.day, setup_option==SETUP_DATETIME_DAY?1:0, 69, 45, "", "", 2);
+        LCD.DrawOption(currentDateTime.year-2000, setup_option==SETUP_DATETIME_YEAR?1:0, 89, 45, "", "", 2);
+        LCD.DrawOption(currentDateTime.hour, setup_option==SETUP_DATETIME_HOUR?1:0, 49, 75, "", "", 2);
+        LCD.DrawOption(currentDateTime.minute, setup_option==SETUP_DATETIME_MINUTE?1:0, 69, 75, "", "", 2);
+        LCD.DrawSelect(currentDateTime.period, setup_option==SETUP_DATETIME_PERIOD?1:0, 89, 75, 2);
+        LCD.DrawOK(setup_option==SETUP_DATETIME_OK?1:0);
+        LCD.DrawCancel(setup_option==SETUP_DATETIME_CANCEL?1:0);
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsUp())
+    {
+        switch(setup_option)
+        {
+            case SETUP_DATETIME_MONTH:
+            {
+                currentDateTime.month++;
+                if(currentDateTime.month>12)
+                {
+                    currentDateTime.month=1;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_DAY:
+            {
+                currentDateTime.day++;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1])
+                {
+                    currentDateTime.day=1;
+                }
+                break;
+            }
+            case SETUP_DATETIME_YEAR:
+            {
+                currentDateTime.year++;
+                if(currentDateTime.year>2099)
+                {
+                    currentDateTime.year=2000;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_HOUR:
+            {
+                currentDateTime.hour++;
+                if(currentDateTime.hour>12)
+                {
+                    currentDateTime.hour=0;
+                }
+                break;
+            }
+            case SETUP_DATETIME_MINUTE:
+            {
+                currentDateTime.minute++;
+                if(currentDateTime.minute>59)
+                {
+                    currentDateTime.minute=0;
+                }
+                break;
+            }
+            case SETUP_DATETIME_PERIOD:
+            {
+                if(currentDateTime.period==AM){
+                    currentDateTime.period=PM;
+                }else{
+                    currentDateTime.period=AM;
+                }
+                break;
+            }
+        }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsDown())
+    {
+        switch (setup_option)
+        {
+            case SETUP_DATETIME_MONTH:
+            {
+                currentDateTime.month--;
+                if(currentDateTime.month<1||currentDateTime.month>12)
+                {
+                    currentDateTime.month=12;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_DAY:
+            {
+                currentDateTime.day--;
+                if(currentDateTime.day<1||currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1])
+                {
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_YEAR:
+            {
+                currentDateTime.year--;
+                if(currentDateTime.year<2000||currentDateTime.year>2049)
+                {
+                    currentDateTime.year=2099;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_HOUR:
+            {
+                currentDateTime.hour--;
+                if(currentDateTime.hour>12)
+                {
+                    currentDateTime.hour=12;
+                }
+                break;
+            }
+            case SETUP_DATETIME_MINUTE:
+            {
+                currentDateTime.minute--;
+                if(currentDateTime.minute>59)
+                {
+                    currentDateTime.minute=59;
+                }
+                break;
+            }
+            case SETUP_DATETIME_PERIOD:
+            {
+                if(currentDateTime.period==AM){
+                    currentDateTime.period=PM;
+                }else{
+                    currentDateTime.period=AM;
+                }
+                break;
+            }
+        }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsLeft())
+    {
+        setup_option--;
+        if (setup_option>SETUP_DATETIME_OK)
+        {
+            setup_option=SETUP_DATETIME_OK;
+        }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsRight())
+    {
+        setup_option++;
+         if (setup_option>SETUP_DATETIME_OK)
+        {
+             setup_option=SETUP_DATETIME_MONTH;
+         }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsButtonPressed())
+    {
+        if(setup_option==SETUP_DATETIME_OK||setup_option==SETUP_DATETIME_CANCEL)
+        {
+            ClearScreen(DefaultBGColor);
+            DisplayedMenu=DEFAULT_MENU;
+            if(setup_option==SETUP_DATETIME_OK)
+            {
+                setTime(currentDateTime.period==PM? currentDateTime.hour+12: currentDateTime.hour, currentDateTime.minute, 0, currentDateTime.day, currentDateTime.month, currentDateTime.year);
+                RTC.set(now());
+            }
+        }
+    }
 }
 #endif  // DateTimeSetup
 
-
 #if defined DateTimeSetup && defined DATETIME24
-void ReefAngelClass::SetupDateTime24()
+void ReefAngelClass::StartSetupDateTime24()
 {
-	enum choices {
-		YEAR,
-		MONTH,
-		DAY,
-		HOUR,
-		MINUTE,
-		OK,
-		CANCEL
-	};
-	byte sel = YEAR;
-	bool bSave = false;
-	bool bDone = false;
-	bool bRedraw = true;
-	bool bDrawButtons = true;
-	byte Year, Month, Day, Hour, Minute;
-	byte MonthDays[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
-	uint8_t iTimeformat;
-	byte DateRow = 35, TimeRow = 60, FormatRow = 85;
-
-	Year = year() - 2000;
-	Month = month();
-	Day = day();
-	Hour = hour();
-	Minute = minute();
-
-	ClearScreen(DefaultBGColor);
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, DateRow,"Date:");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, TimeRow,"Time:");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 57, DateRow, "20");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, DateRow, "-");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 102, DateRow, "-");
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, TimeRow, ":");
-
-	do
-	{
-#if defined WDT || defined WDT_FORCE
-		wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
-		if ( bRedraw )
-		{
-			switch ( sel )
-			{
-			case YEAR:
-			{
-				LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 1, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case MONTH:
-			{
-				LCD.DrawOption(Month, 1, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case DAY:
-			{
-				LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 1, 109, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case HOUR:
-			{
-				LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 1, 69, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case MINUTE:
-			{
-				LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
-				LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
-				LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
-				LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
-				LCD.DrawOption(Minute, 1, 89, TimeRow, "", "", 2);
-				if ( bDrawButtons )
-				{
-					LCD.DrawOK(false);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-
-			case OK:
-			{
-				if ( bDrawButtons )
-				{
-					LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
-					LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
-					LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
-					LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
-					LCD.DrawOK(true);
-					LCD.DrawCancel(false);
-				}
-				break;
-			}
-			case CANCEL:
-			{
-				if ( bDrawButtons )
-				{
-					LCD.DrawOption(Month, 0, 89, DateRow, "", "", 2);
-					LCD.DrawOption(Day, 0, 109, DateRow, "", "", 2);
-					LCD.DrawOption(Year, 0, 69, DateRow, "", "", 2);
-					LCD.DrawOption(Hour, 0, 69, TimeRow, "", "", 2);
-					LCD.DrawOption(Minute, 0, 89, TimeRow, "", "", 2);
-					LCD.DrawOK(false);
-					LCD.DrawCancel(true);
-				}
-				break;
-			}
-			}
-
-			bRedraw = false;
-			bDrawButtons = false;
-		}
-		if ( Joystick.IsUp() )
-		{
-			switch ( sel )
-			{
-			case MONTH:
-			{
-				Month++;
-				if ( Month > 12 )
-				{
-					Month = 1;
-				}
-				break;
-			}
-			case DAY:
-			{
-				Day++;
-				// lookup days in a month table
-				if ( ! IsLeapYear(2000+Year) )
-				{
-					// not leap year
-					if ( Day > MonthDays[Month] )
-					{
-						Day = 1;
-					}
-				}
-				else
-				{
-					// leap year, only special case is February
-					if ( Month == 2 )
-					{
-						if ( Day > 29 )
-						{
-							Day = 1;
-						}
-					}
-					else
-					{
-						if ( Day > MonthDays[Month] )
-						{
-							Day = 1;
-						}
-					}
-				}
-				break;
-			}
-			case YEAR:
-			{
-				Year++;
-				if ( Year > 99 )
-				{
-					Year = 0;
-				}
-				break;
-			}
-			case HOUR:
-			{
-				Hour++;
-				if ( Hour > 23 )
-				{
-					Hour = 0;
-				}
-				break;
-			}
-			case MINUTE:
-			{
-				Minute++;
-				if ( Minute > 59 )
-				{
-					Minute = 0;
-				}
-				break;
-			}
-			}
-			bRedraw = true;
-		}
-		if ( Joystick.IsDown() )
-		{
-			switch ( sel )
-			{
-			case MONTH:
-			{
-				Month--;
-				if ( Month < 1 || Month > 12 )
-				{
-					Month = 12;
-				}
-				break;
-			}
-			case DAY:
-			{
-				Day--;
-				// lookup days in a month table
-				if ( ! IsLeapYear(2000+Year) )
-				{
-					// not leap year
-					if ( Day < 1 || Day > MonthDays[Month] )
-					{
-						Day = MonthDays[Month];
-					}
-				}
-				else
-				{
-					// leap year, only special case is February
-					if ( Month == 2 )
-					{
-						if ( Day < 1 || Day > MonthDays[Month] )
-						{
-							Day = 29;
-						}
-					}
-					else
-					{
-						if ( Day < 1 || Day > MonthDays[Month] )
-						{
-							Day = MonthDays[Month];
-						}
-					}
-				}
-				break;
-			}
-			case YEAR:
-			{
-				Year--;
-				if ( Year > 99 )
-				{
-					Year = 99;
-				}
-				break;
-			}
-			case HOUR:
-			{
-				Hour--;
-				if ( Hour > 23 )
-				{
-					Hour = 23;
-				}
-				break;
-			}
-			case MINUTE:
-			{
-				Minute--;
-				if ( Minute > 59 )
-				{
-					Minute = 59;
-				}
-				break;
-			}
-			}
-			bRedraw = true;
-		}
-		if ( Joystick.IsLeft() )
-		{
-			bRedraw = true;
-			bDrawButtons = true;
-			sel--;
-			if ( sel > CANCEL )
-			{
-				sel = CANCEL;
-			}
-		}
-		if ( Joystick.IsRight() )
-		{
-			bRedraw = true;
-			bDrawButtons = true;
-			sel++;
-			if ( sel > CANCEL )
-			{
-				sel = YEAR;
-			}
-		}
-		if ( Joystick.IsButtonPressed() )
-		{
-			if ( sel == OK )
-			{
-				bDone = true;
-				bSave = true;
-			}
-			else if ( sel == CANCEL )
-			{
-				bDone = true;
-			}
-		}
-	} while ( ! bDone );
-
-	if ( bSave )
-	{
-		// Set Date & Time
-		setTime(Hour, Minute, 0, Day, Month, Year);
-		now();
-		RTC.set(now());
-	}
+    ClearScreen(DefaultBGColor);
+    DisplayedMenu=DATE_TIME_MENU;
+    showmenu=false;
+    setup_option=SETUP_DATETIME_MONTH;
+    setup_input_render=true;
+    setup_screen_refresh=true;
+    currentDateTime.year=year();
+    currentDateTime.month=month();
+    currentDateTime.day=day();
+    currentDateTime.hour=hour();
+    currentDateTime.minute=minute();
+    lastDayOfEachMonth[0]=31;
+    lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+    lastDayOfEachMonth[2]=31;
+    lastDayOfEachMonth[3]=30;
+    lastDayOfEachMonth[4]=31;
+    lastDayOfEachMonth[5]=30;
+    lastDayOfEachMonth[6]=31;
+    lastDayOfEachMonth[7]=31;
+    lastDayOfEachMonth[8]=30;
+    lastDayOfEachMonth[9]=31;
+    lastDayOfEachMonth[10]=30;
+    lastDayOfEachMonth[11]=31;
 }
 
+void ReefAngelClass::DisplaySetupDateTime24()
+{
+    if(setup_screen_refresh)
+    {
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Set Date & Time(24h)");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, 45,"Date:");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 10, 75,"Time:");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, 45, "/");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 82, 45, "/");
+        LCD.DrawText(DefaultFGColor, DefaultBGColor, 62, 75, ":");
+        setup_screen_refresh=!setup_screen_refresh;
+        
+    }
+    #if defined WDT||defined WDT_FORCE
+    wdt_reset();
+    #endif//WDT||defined WDT_FORCE
+    #if defined wifi||defined ETH_WIZ5100
+    ReefAngel.Network.ReceiveData();
+    #endif//wifi||defined ETH_WIZ5100
+    if(setup_input_render)
+    {
+        LCD.DrawOption(currentDateTime.day, setup_option==SETUP_DATETIME_MONTH?1:0, 49, 45, "", "", 2);
+        LCD.DrawOption(currentDateTime.month, setup_option==SETUP_DATETIME_DAY?1:0, 69, 45, "", "", 2);
+        LCD.DrawOption(currentDateTime.year-2000, setup_option==SETUP_DATETIME_YEAR?1:0, 89, 45, "", "", 2);
+        LCD.DrawOption(currentDateTime.hour, setup_option==SETUP_DATETIME_HOUR?1:0, 49, 75, "", "", 2);
+        LCD.DrawOption(currentDateTime.minute, setup_option==SETUP_DATETIME_MINUTE?1:0, 69, 75, "", "", 2);
+        LCD.DrawOK(setup_option==SETUP_DATETIME_OK?1:0);
+        LCD.DrawCancel(setup_option==SETUP_DATETIME_CANCEL?1:0);
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsUp())
+    {
+        switch(setup_option)
+        {
+            case SETUP_DATETIME_MONTH:
+            {
+                currentDateTime.month++;
+                if(currentDateTime.month>12)
+                {
+                    currentDateTime.month=1;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_DAY:
+            {
+                currentDateTime.day++;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1])
+                {
+                    currentDateTime.day=1;
+                }
+                break;
+            }
+            case SETUP_DATETIME_YEAR:
+            {
+                currentDateTime.year++;
+                if(currentDateTime.year>2099)
+                {
+                    currentDateTime.year=2000;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_HOUR:
+            {
+                currentDateTime.hour++;
+                if(currentDateTime.hour>24)
+                {
+                    currentDateTime.hour=0;
+                }
+                break;
+            }
+            case SETUP_DATETIME_MINUTE:
+            {
+                currentDateTime.minute++;
+                if(currentDateTime.minute>59)
+                {
+                    currentDateTime.minute=0;
+                }
+                break;
+            }
+        }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsDown())
+    {
+        switch (setup_option)
+        {
+            case SETUP_DATETIME_MONTH:
+            {
+                currentDateTime.month--;
+                if(currentDateTime.month<1||currentDateTime.month>12)
+                {
+                    currentDateTime.month=12;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_DAY:
+            {
+                currentDateTime.day--;
+                if(currentDateTime.day<1||currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1])
+                {
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_YEAR:
+            {
+                currentDateTime.year--;
+                if(currentDateTime.year<2000||currentDateTime.year>2049)
+                {
+                    currentDateTime.year=2099;
+                }
+                lastDayOfEachMonth[1]=IsLeapYear(currentDateTime.year)?29:28;
+                if(currentDateTime.day>lastDayOfEachMonth[currentDateTime.month-1]){
+                    currentDateTime.day=lastDayOfEachMonth[currentDateTime.month-1];
+                }
+                break;
+            }
+            case SETUP_DATETIME_HOUR:
+            {
+                currentDateTime.hour--;
+                if(currentDateTime.hour>24)
+                {
+                    currentDateTime.hour=24;
+                }
+                break;
+            }
+            case SETUP_DATETIME_MINUTE:
+            {
+                currentDateTime.minute--;
+                if(currentDateTime.minute>59)
+                {
+                    currentDateTime.minute=59;
+                }
+                break;
+            }
+        }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsLeft())
+    {
+        setup_option--;
+        if (setup_option>SETUP_DATETIME_OK)
+        {
+            setup_option=SETUP_DATETIME_OK;
+        }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsRight())
+    {
+        setup_option++;
+         if (setup_option>SETUP_DATETIME_OK)
+        {
+             setup_option=SETUP_DATETIME_MONTH;
+         }
+        setup_input_render=!setup_input_render;
+    }
+    if(Joystick.IsButtonPressed())
+    {
+        if(setup_option==SETUP_DATETIME_OK||setup_option==SETUP_DATETIME_CANCEL)
+        {
+            ClearScreen(DefaultBGColor);
+            DisplayedMenu=DEFAULT_MENU;
+            if(setup_option==SETUP_DATETIME_OK)
+            {
+                setTime(currentDateTime.hour, currentDateTime.minute, 0, currentDateTime.day, currentDateTime.month, currentDateTime.year);
+                RTC.set(now());
+            }
+        }
+    }
+}
 #endif  // DATETIME24
 
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
