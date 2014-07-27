@@ -56,11 +56,14 @@ void DisplaySetupCalibrateChoicePHExp();
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+
 #if defined DateTimeSetup
 #ifdef DATETIME24
-void SetupDateTime24();
+void StartSetupDateTime24();
+void DisplaySetupDateTime24();
 #else
-void SetupDateTime();
+void StartSetupDateTime();
+void DisplaySetupDateTime();
 #endif  // DATETIME24
 #endif  // DateTimeSetup
 
