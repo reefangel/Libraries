@@ -641,9 +641,9 @@ void RA_Wifi::ProcessHTTP()
 #endif // RA_STAR
 #ifdef SIXTEENCHPWMEXPANSION
 #if defined(__SAM3X8E__)
-				if (weboption2>=19 && weboption2<=34) ReefAngel.VariableControl.Set16ChannelOverride(weboption2-2,weboption);
+				if (weboption2>=19 && weboption2<=34) ReefAngel.VariableControl.Set16ChannelOverride(weboption2-19,weboption);
 #else
-				if (weboption2>=19 && weboption2<=34) ReefAngel.PWM.Set16ChannelOverride(weboption2-2,weboption);
+				if (weboption2>=19 && weboption2<=34) ReefAngel.PWM.Set16ChannelOverride(weboption2-19,weboption);
 #endif
 #endif // SIXTEENCHPWMEXPANSION
 #endif // DisplayLEDPWM
