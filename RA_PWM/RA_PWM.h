@@ -29,12 +29,14 @@ class RA_PWMClass
 {
 public:
 	RA_PWMClass();
-	void inline SetActinic(byte value) { ActinicPWMValue = value; };
-	void inline SetDaylight(byte value) { DaylightPWMValue = value; };
+	void inline SetActinic(byte value) { ActinicPWMValue = (int)value*40.95; };
+	void inline SetActinic(int value) { ActinicPWMValue = value; };
+	void inline SetDaylight(byte value) { DaylightPWMValue = (int)value*40.95; };
+	void inline SetDaylight(int value) { DaylightPWMValue = value; };
 	void inline SetActinicOverride(byte value) { if (value>100) value=255; ActinicPWMOverride = value; };
 	void inline SetDaylightOverride(byte value) { if (value>100) value=255; DaylightPWMOverride = value; };
-	byte GetActinicValue();
-	byte GetDaylightValue();
+	int GetActinicValue();
+	int GetDaylightValue();
 	byte inline GetActinicOverrideValue() { return ActinicPWMOverride; };
 	byte inline GetDaylightOverrideValue() { return DaylightPWMOverride; };
 	void ActinicPWMSlope(byte MinuteOffset);
@@ -74,14 +76,17 @@ public:
 #endif
 	
 #ifdef PWMEXPANSION
-	byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
+        boolean NewExpansion;
+	int ExpansionChannel[PWM_EXPANSION_CHANNELS];
 	byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
-	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
+	void inline SetChannel(byte Channel, int Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
+	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=(int)Value*40.95; };
 	void inline SetChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannelOverride[Channel]=Value; };
+	void Expansion(byte cmd, int data);
 	void Expansion(byte cmd, byte data);
 	void ExpansionSetPercent(byte p);
 	void ExpansionWrite();
-	byte GetChannelValue(byte Channel);
+	int GetChannelValue(byte Channel);
 	byte inline GetChannelOverrideValue(byte Channel) { return ExpansionChannelOverride[Channel]; };
 	void Channel0PWMSlope();
 	void Channel1PWMSlope();
@@ -111,19 +116,44 @@ public:
 	void Channel5PWMParabola(byte MinuteOffset);
 	void ChannelPWMParabola(byte Channel, byte Start, byte End);
 	void ChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);	
+	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength);	
+	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, byte MinuteOffset);	
 	boolean inline IsPresent() { return Present; }
 	boolean Present;
 #endif  // PWMEXPANSION
 
+#ifdef SIXTEENCHPWMEXPANSION
+	int SIXTEENChExpansionChannel[SIXTEENCH_PWM_EXPANSION_CHANNELS];
+	byte SIXTEENChExpansionChannelOverride[SIXTEENCH_PWM_EXPANSION_CHANNELS];
+	void inline Set16Channel(byte Channel, int Value) { if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannel[Channel]=Value; };
+	void inline Set16Channel(byte Channel, byte Value) { if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannel[Channel]=(int)Value*40.95; };
+	void inline Set16ChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannelOverride[Channel]=Value; };
+	void SIXTEENChExpansion(byte cmd, int data);
+	void SIXTEENChExpansion(byte cmd, byte data);
+	void SIXTEENChExpansionSetPercent(byte p);
+	void SIXTEENChExpansionWrite();
+	int Get16ChannelValue(byte Channel);
+	byte inline Get16ChannelOverrideValue(byte Channel) { return SIXTEENChExpansionChannelOverride[Channel]; };
+	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration);
+	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration, byte MinuteOffset);
+	void SIXTEENChannelPWMParabola(byte Channel, int Start, int End);	
+	void SIXTEENChannelPWMParabola(byte Channel, int Start, int End, byte MinuteOffset);	
+	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength);	
+	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, byte MinuteOffset);	
+	boolean inline SIXTEENChIsPresent() { return SIXTEENChPresent; }
+	boolean SIXTEENChPresent;
+
+#endif  // SIXTEENCHPWMEXPANSION
+
 private:
 	byte lastcrc;
-	byte ActinicPWMValue;
-	byte DaylightPWMValue;
+	int ActinicPWMValue;
+	int DaylightPWMValue;
 	byte ActinicPWMOverride;
 	byte DaylightPWMOverride;
 #if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
-	byte Actinic2PWMValue;
-	byte Daylight2PWMValue;
+	int Actinic2PWMValue;
+	int Daylight2PWMValue;
 	byte Actinic2PWMOverride;
 	byte Daylight2PWMOverride;
 #endif

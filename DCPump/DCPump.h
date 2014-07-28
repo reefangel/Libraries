@@ -34,11 +34,15 @@ public:
 	 byte DaylightChannel;
 	 byte ActinicChannel;
 	 byte LowATOChannel;
+	 byte HighATOChannel;
 	 byte FeedingSpeed;
 	 byte WaterChangeSpeed;
 #ifdef PWMEXPANSION
 	 byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
 #endif // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	 byte SIXTEENChExpansionChannel[SIXTEENCH_PWM_EXPANSION_CHANNELS];
+#endif // SIXTEENCHPWMEXPANSION
 	 void SetMode(byte mode, byte speed, byte duration);
 	 void SetMode(byte mode, byte speed, byte duration, byte threshold);
 private:

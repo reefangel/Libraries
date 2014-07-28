@@ -54,7 +54,7 @@ bool IsLeapYear(int year)
     return true;
 }
 
-byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue)
+int PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, int oldValue)
 {
 	// Contribution of thekameleon
 	// http://forum.reefangel.com/viewtopic.php?p=23893#p23893
@@ -62,6 +62,15 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	int current_hour = hour();
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
+
+        // convert PWM inputs from percents to 12-bit int values.
+        if (startPWM > 100)
+           startPWM = 100;
+        if (endPWM > 100)
+           endPWM = 100;
+        int startPWMint = map(startPWM, 0, 100, 0, 4095);
+        int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
 	if (start > end) //Start is greater than End so its over midnight
 	{
 		//Example: 2300hrs to 0200hrs
@@ -73,20 +82,20 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	int stopD = end - Duration;
 
 	if ( current >= start && current <= startD )
-		return constrain(map(current, start, startD, startPWM, endPWM),startPWM, endPWM);
+		return constrain(map(current, start, startD, startPWMint, endPWMint),startPWMint, endPWMint);
 	else if ( current >= stopD && current <= end )
 	{
-		byte v = constrain(map(current, stopD, end, startPWM, endPWM),startPWM, endPWM);
-		return endPWM - v + startPWM;
+		int v = constrain(map(current, stopD, end, startPWMint, endPWMint),startPWMint, endPWMint);
+		return endPWMint - v + startPWMint;
 	}
 	else if ( current > startD && current < stopD )
-		return endPWM;
+		return endPWMint;
 
 	// lastly return the existing value
 	return oldValue;
 }
 
-byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue)
+int PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue)
 {
 	// Contribution of thekameleon
 	// http://forum.reefangel.com/viewtopic.php?p=23813#p23813
@@ -94,6 +103,15 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	int current_hour = hour();
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
+
+        // convert PWM inputs from percents to 12-bit int values.
+        if (startPWM > 100)
+           startPWM = 100;
+        if (endPWM > 100)
+           endPWM = 100;
+        int startPWMint = map(startPWM, 0, 100, 0, 4095);
+        int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
 	if (start > end) //Start is greater than End so its over midnight
 	{
 		//Example: 2300hrs to 0200hrs
@@ -107,18 +125,27 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 		return oldValue;
 	else
 	{
-		byte pwmDelta = endPWM - startPWM;
+		byte pwmDelta = endPWMint - startPWMint;
 		byte parabolaPhase = constrain(map(current, start, end, 0, 180), 0, 180);
-		return startPWM + (pwmDelta * sin(radians(parabolaPhase)));
+		return startPWMint + (pwmDelta * sin(radians(parabolaPhase)));
 	}
 }
 
-int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, int startPWM, int endPWM, byte slopeLength, int oldValue)
+int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, int oldValue)
 {
   LightsOverride=true;
   int current_hour = hour();
   int start = NumMins(startHour, startMinute);
   int end = NumMins(endHour, endMinute);
+
+  // convert PWM inputs from percents to 12-bit int values.
+  if (startPWM > 100)
+     startPWM = 100;
+  if (endPWM > 100)
+     endPWM = 100;
+  int startPWMint = map(startPWM, 0, 100, 0, 4095);
+  int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
   if (start > end) // Start is greater than End so it is over midnight
   {
     if (current_hour < endHour) start -= 1440; // past midnight
@@ -130,10 +157,10 @@ int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute
     return oldValue; // it's before the start or after the end, return the default
   else
   { // do the slope calculation
-    int pwmDelta = endPWM - startPWM;
+    int pwmDelta = endPWMint - startPWMint;
     byte smoothPhase;
     if ((current > (start + slopeLength)) && (current < (end - slopeLength))) 
-      return endPWM; // if it's in the middle of the slope, return the high level
+      return endPWMint; // if it's in the middle of the slope, return the high level
     else if ((current - start) < slopeLength) 
     {  // it's in the beginning slope up
       smoothPhase = constrain(map(current, start, start+slopeLength, 180, 360), 180, 360);
@@ -142,7 +169,7 @@ int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute
     { // it's in the end slope down
       smoothPhase = constrain(map(current, end-slopeLength, end, 0, 180), 0, 180);
     }
-    return startPWM + (int)(pwmDelta*(1.0+(cos(radians(smoothPhase)))/2.0));
+    return startPWMint + (int)(pwmDelta*(1.0+(cos(radians(smoothPhase)))/2.0));
   }
 }
 
@@ -366,7 +393,8 @@ byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean
 	y+=0.5; // for proper rounding
 
 	// y is now between PulseMinSpeed and PulseMaxSpeed, constrain for safety  
-	return constrain(byte(y),30,100); 
+	// 7/24/14, shouldn't need to constrain for safety anymore because of DCPump Threshold function
+	return constrain(byte(y),0,100); 
 }
 
 byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync)
