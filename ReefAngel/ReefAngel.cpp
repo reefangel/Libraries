@@ -865,6 +865,18 @@ void ReefAngelClass::Refresh()
 			RANetData[18+a]=0;
 #endif // PWMEXPANSION
 		}
+		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
+		{
+#ifdef SIXTEENCHPWMEXPANSION
+#if defined(__SAM3X8E__)
+			RANetData[24+a]=VariableControl.GetChannelValue(a);
+#else
+			RANetData[24+a]=PWM.Get16ChannelValue(a);
+#endif
+#else
+			RANetData[24+a]=0;
+#endif // SIXTEENCHPWMEXPANSION
+		}
 //		char buf[3];
 		for (int a=0;a<RANET_SIZE-2;a++)
 		{
