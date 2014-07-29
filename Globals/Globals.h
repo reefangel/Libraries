@@ -965,8 +965,8 @@ Used by the RF Expansion Module
 /*
  * Non-Vortech DC Pump modes added, using unused integers
  */
-#define Sine 		22
-#define Else		23
+#define Else		12
+#define Sine 		13
 
 // Radion Channels
 #define Radion_White      0

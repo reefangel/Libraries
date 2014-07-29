@@ -84,7 +84,8 @@ const prog_char XML_PAR_END[] PROGMEM = "</PAR>";
 const prog_char XML_DCM[] PROGMEM = "<DCM>";
 const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
 const prog_char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
-const prog_char XML_DCD_END[] PROGMEM = "</DCD>";
+const prog_char XML_DCD_END[] PROGMEM = "</DCD><DCT>";
+const prog_char XML_DCT_END[] PROGMEM = "</DCT>";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
@@ -216,6 +217,7 @@ const prog_char JSON_PAR[] PROGMEM = "PAR";
 const prog_char JSON_DCM[] PROGMEM = "DCM";
 const prog_char JSON_DCS[] PROGMEM = "DCS";
 const prog_char JSON_DCD[] PROGMEM = "DCD";
+const prog_char JSON_DCT[] PROGMEM = "DCT";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char JSON_PWME[] PROGMEM = "PWME";
@@ -377,6 +379,7 @@ const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 	const prog_char BannerDCM[] PROGMEM = "&dcm=";
 	const prog_char BannerDCS[] PROGMEM = "&dcs=";
 	const prog_char BannerDCD[] PROGMEM = "&dcd=";
+	const prog_char BannerDCT[] PROGMEM = "&dct=";
 #endif  // DCPUMPCONTROL
 
 #ifdef CUSTOM_VARIABLES

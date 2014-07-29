@@ -446,11 +446,12 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.PAR.GetLevel());
 #endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
-			s += 33;
-			//<DCM></DCM><DCS></DCS><DCD></DCD>
+			s += 44;
+			//<DCM></DCM><DCS></DCS><DCD></DCD><DCT></DCT>
 			s += intlength(ReefAngel.DCPump.Mode);
 			s += intlength(ReefAngel.DCPump.Speed);
 			s += intlength(ReefAngel.DCPump.Duration);
+			s += intlength(ReefAngel.DCPump.Threshold);
 #endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 			s += 9;
@@ -1065,11 +1066,12 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.PAR.GetLevel());
 #endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
-			s += 27;
-			//,"DCM":"","DCS":"","DCD":""
+			s += 36;
+			//,"DCM":"","DCS":"","DCD":"","DCT":""
 			s += intlength(ReefAngel.DCPump.Mode);
 			s += intlength(ReefAngel.DCPump.Speed);
 			s += intlength(ReefAngel.DCPump.Duration);
+			s += intlength(ReefAngel.DCPump.Threshold);
 #endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 			s += 8;
@@ -1340,6 +1342,8 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	PROGMEMprint(XML_DCS_END);
 	print(ReefAngel.DCPump.Duration, DEC);
 	PROGMEMprint(XML_DCD_END);
+	print(ReefAngel.DCPump.Threshold, DEC);
+	PROGMEMprint(XML_DCT_END);
 #endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 	PROGMEMprint(XML_IO);
@@ -1630,6 +1634,7 @@ void RA_Wifi::SendJSONData()
 	SendSingleJSON(JSON_DCM,ReefAngel.DCPump.Mode);
 	SendSingleJSON(JSON_DCS,ReefAngel.DCPump.Speed);
 	SendSingleJSON(JSON_DCD,ReefAngel.DCPump.Duration);
+	SendSingleJSON(JSON_DCT,ReefAngel.DCPump.Threshold);
 #endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
 	SendSingleJSON(JSON_IO,ReefAngel.IO.GetChannel());
@@ -2049,6 +2054,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
   print(ReefAngel.DCPump.Speed, DEC);
   PROGMEMprint(BannerDCD);
   print(ReefAngel.DCPump.Duration, DEC);
+  PROGMEMprint(BannerDCT);
+  print(ReefAngel.DCPump.Threshold, DEC);
 #endif  // DCPUMPCONTROL
 #ifdef IOEXPANSION
   PROGMEMprint(BannerIO);
