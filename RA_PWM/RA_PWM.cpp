@@ -771,8 +771,6 @@ int RA_PWMClass::GetChannelValue(byte Channel)
 		return ExpansionChannel[Channel];
 }
 
-
-
 void RA_PWMClass::Channel0PWMSlope()
 {
 	ChannelPWMSlope(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(),InternalMemory.PWMSlopeDuration0_read());
@@ -954,62 +952,62 @@ void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, byte Mi
 
 void RA_PWMClass::Channel0PWMSmoothRamp()
 {
-	ChannelPWMSmoothRamp(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read());
+	ChannelPWMSmoothRamp(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(),InternalMemory.PWMSlopeDuration0_read());
 }
 
 void RA_PWMClass::Channel1PWMSmoothRamp()
 {
-	ChannelPWMSmoothRamp(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read());
+	ChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(),InternalMemory.PWMSlopeDuration1_read());
 }
 
 void RA_PWMClass::Channel2PWMSmoothRamp()
 {
-	ChannelPWMSmoothRamp(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read());
+	ChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(),InternalMemory.PWMSlopeDuration2_read());
 }
 
 void RA_PWMClass::Channel3PWMSmoothRamp()
 {
-	ChannelPWMSmoothRamp(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read());
+	ChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(),InternalMemory.PWMSlopeDuration3_read());
 }
 
 void RA_PWMClass::Channel4PWMSmoothRamp()
 {
-	ChannelPWMSmoothRamp(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read());
+	ChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(),InternalMemory.PWMSlopeDuration4_read());
 }
 
 void RA_PWMClass::Channel5PWMSmoothRamp()
 {
-	ChannelPWMSmoothRamp(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
+	ChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(),InternalMemory.PWMSlopeDuration5_read());
 }
 
 void RA_PWMClass::Channel0PWMSmoothRamp(byte MinuteOffset)
 {
-	ChannelPWMSmoothRamp(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(), MinuteOffset);
+	ChannelPWMSlope(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(),InternalMemory.PWMSlopeDuration0_read(), MinuteOffset);
 }
 
 void RA_PWMClass::Channel1PWMSmoothRamp(byte MinuteOffset)
 {
-	ChannelPWMSmoothRamp(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(), MinuteOffset);
+	ChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(),InternalMemory.PWMSlopeDuration1_read(), MinuteOffset);
 }
 
 void RA_PWMClass::Channel2PWMSmoothRamp(byte MinuteOffset)
 {
-	ChannelPWMSmoothRamp(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(), MinuteOffset);
+	ChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(),InternalMemory.PWMSlopeDuration2_read(), MinuteOffset);
 }
 
 void RA_PWMClass::Channel3PWMSmoothRamp(byte MinuteOffset)
 {
-	ChannelPWMSmoothRamp(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(), MinuteOffset);
+	ChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(),InternalMemory.PWMSlopeDuration3_read(), MinuteOffset);
 }
 
 void RA_PWMClass::Channel4PWMSmoothRamp(byte MinuteOffset)
 {
-	ChannelPWMSmoothRamp(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(), MinuteOffset);
+	ChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(),InternalMemory.PWMSlopeDuration4_read(), MinuteOffset);
 }
 
 void RA_PWMClass::Channel5PWMSmoothRamp(byte MinuteOffset)
 {
-	ChannelPWMSmoothRamp(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(), MinuteOffset);
+	ChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(),InternalMemory.PWMSlopeDuration5_read(), MinuteOffset);
 }
 
 
