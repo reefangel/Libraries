@@ -22,6 +22,8 @@
 #ifndef __DCPump_H__
 #define __DCPump_H__
 
+#include <InternalEEPROM.h>
+
 class DCPumpClass
 {
 public:
