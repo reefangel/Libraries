@@ -40,6 +40,9 @@ DCPumpClass::DCPumpClass()
 	for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
 		SIXTEENChExpansionChannel[a]=None;
 #endif // SIXTEENCHPWMEXPANSION
+  if (InternalMemory.DCPumpThreshold_read() > 100) InternalMemory.DCPumpThreshold_write(30); // if it has never been initialized, 
+                                                                                             // it will be at 255 and will need to be set to something sensible
+                                                                                             // like a default of 30 percent
 }
 
 void DCPumpClass::SetMode(byte mode, byte speed, byte duration)
