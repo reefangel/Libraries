@@ -180,6 +180,57 @@ void RA_PWMClass::DaylightPWMParabola()
 			));
 }
 
+void RA_PWMClass::ActinicPWMSmoothRamp(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetActinic(PWMSmoothRamp(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartA_read(),
+			InternalMemory.PWMSlopeEndA_read(),
+			InternalMemory.PWMSlopeDurationA_read(),
+			ActinicPWMValue
+			));
+}
+
+void RA_PWMClass::DaylightPWMSmoothRamp(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetDaylight(PWMSmoothRamp(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartD_read(),
+			InternalMemory.PWMSlopeEndD_read(),
+			InternalMemory.PWMSlopeDurationD_read(),
+			DaylightPWMValue
+			));
+}
+
+void RA_PWMClass::ActinicPWMSmoothRamp()
+{
+	ActinicPWMSmoothRamp(InternalMemory.ActinicOffset_read());
+}
+
+void RA_PWMClass::DaylightPWMSmoothRamp()
+{
+	SetDaylight(PWMSmoothRamp(
+			InternalMemory.StdLightsOnHour_read(),
+			InternalMemory.StdLightsOnMinute_read(),
+			InternalMemory.StdLightsOffHour_read(),
+			InternalMemory.StdLightsOffMinute_read(),
+			InternalMemory.PWMSlopeStartD_read(),
+			InternalMemory.PWMSlopeEndD_read(),
+			InternalMemory.PWMSlopeDurationD_read(),
+			DaylightPWMValue
+			));
+}
+
 void RA_PWMClass::StandardActinic()
 {
 	SetDaylight(PWMParabola(
@@ -366,6 +417,57 @@ void RA_PWMClass::Daylight2PWMParabola()
 			InternalMemory.StdLightsOffMinute_read(),
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
+			Daylight2PWMValue
+			));
+}
+
+void RA_PWMClass::Actinic2PWMSmoothRamp(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetActinic2(PWMSmoothRamp(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartA2_read(),
+			InternalMemory.PWMSlopeEndA2_read(),
+			InternalMemory.PWMSlopeDurationA2_read(),
+			Actinic2PWMValue
+			));
+}
+
+void RA_PWMClass::Daylight2PWMSmoothRamp(byte MinuteOffset)
+{
+	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-MinuteOffset;
+	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+MinuteOffset;
+	SetDaylight2(PWMSmoothRamp(
+			onTime/60,
+			onTime%60,
+			offTime/60,
+			offTime%60,
+			InternalMemory.PWMSlopeStartD2_read(),
+			InternalMemory.PWMSlopeEndD2_read(),
+			InternalMemory.PWMSlopeDurationD2_read(),
+			Daylight2PWMValue
+			));
+}
+
+void RA_PWMClass::Actinic2PWMSmoothRamp()
+{
+	Actinic2PWMSmoothRamp(InternalMemory.ActinicOffset_read());
+}
+
+void RA_PWMClass::Daylight2PWMSmoothRamp()
+{
+	SetDaylight2(PWMSmoothRamp(
+			InternalMemory.StdLightsOnHour_read(),
+			InternalMemory.StdLightsOnMinute_read(),
+			InternalMemory.StdLightsOffHour_read(),
+			InternalMemory.StdLightsOffMinute_read(),
+			InternalMemory.PWMSlopeStartD2_read(),
+			InternalMemory.PWMSlopeEndD2_read(),
+			InternalMemory.PWMSlopeDurationD2_read(),
 			Daylight2PWMValue
 			));
 }
@@ -849,6 +951,67 @@ void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, byte Mi
 		ExpansionChannel[Channel] 
 	));	
 }
+
+void RA_PWMClass::Channel0PWMSmoothRamp()
+{
+	ChannelPWMSmoothRamp(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read());
+}
+
+void RA_PWMClass::Channel1PWMSmoothRamp()
+{
+	ChannelPWMSmoothRamp(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read());
+}
+
+void RA_PWMClass::Channel2PWMSmoothRamp()
+{
+	ChannelPWMSmoothRamp(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read());
+}
+
+void RA_PWMClass::Channel3PWMSmoothRamp()
+{
+	ChannelPWMSmoothRamp(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read());
+}
+
+void RA_PWMClass::Channel4PWMSmoothRamp()
+{
+	ChannelPWMSmoothRamp(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read());
+}
+
+void RA_PWMClass::Channel5PWMSmoothRamp()
+{
+	ChannelPWMSmoothRamp(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
+}
+
+void RA_PWMClass::Channel0PWMSmoothRamp(byte MinuteOffset)
+{
+	ChannelPWMSmoothRamp(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(), MinuteOffset);
+}
+
+void RA_PWMClass::Channel1PWMSmoothRamp(byte MinuteOffset)
+{
+	ChannelPWMSmoothRamp(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(), MinuteOffset);
+}
+
+void RA_PWMClass::Channel2PWMSmoothRamp(byte MinuteOffset)
+{
+	ChannelPWMSmoothRamp(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(), MinuteOffset);
+}
+
+void RA_PWMClass::Channel3PWMSmoothRamp(byte MinuteOffset)
+{
+	ChannelPWMSmoothRamp(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(), MinuteOffset);
+}
+
+void RA_PWMClass::Channel4PWMSmoothRamp(byte MinuteOffset)
+{
+	ChannelPWMSmoothRamp(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(), MinuteOffset);
+}
+
+void RA_PWMClass::Channel5PWMSmoothRamp(byte MinuteOffset)
+{
+	ChannelPWMSmoothRamp(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(), MinuteOffset);
+}
+
 
 void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength)
 {

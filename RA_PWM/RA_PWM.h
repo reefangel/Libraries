@@ -47,6 +47,10 @@ public:
 	void DaylightPWMParabola(byte MinuteOffset);
 	void ActinicPWMParabola();
 	void DaylightPWMParabola();
+	void ActinicPWMSmoothRamp(byte MinuteOffset);
+	void DaylightPWMSmoothRamp(byte MinuteOffset);
+	void ActinicPWMSmoothRamp();
+	void DaylightPWMSmoothRamp();
 	void StandardActinic();
 	void StandardDaylight();
 	void StandardActinic(byte MinuteOffset);
@@ -69,6 +73,10 @@ public:
 	void Daylight2PWMParabola(byte MinuteOffset);
 	void Actinic2PWMParabola();
 	void Daylight2PWMParabola();
+	void Actinic2PWMSmoothRamp(byte MinuteOffset);
+	void Daylight2PWMSmoothRamp(byte MinuteOffset);
+	void Actinic2PWMSmoothRamp();
+	void Daylight2PWMSmoothRamp();
 	void StandardActinic2();
 	void StandardDaylight2();
 	void StandardActinic2(byte MinuteOffset);
@@ -114,8 +122,19 @@ public:
 	void Channel3PWMParabola(byte MinuteOffset);
 	void Channel4PWMParabola(byte MinuteOffset);
 	void Channel5PWMParabola(byte MinuteOffset);
-	void ChannelPWMParabola(byte Channel, byte Start, byte End);
-	void ChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);	
+	void Channel0PWMSmoothRamp();
+	void Channel1PWMSmoothRamp();
+	void Channel2PWMSmoothRamp();
+	void Channel3PWMSmoothRamp();
+	void Channel4PWMSmoothRamp();
+	void Channel5PWMSmoothRamp();
+	void Channel0PWMSmoothRamp(byte MinuteOffset);
+	void Channel1PWMSmoothRamp(byte MinuteOffset);
+	void Channel2PWMSmoothRamp(byte MinuteOffset);
+	void Channel3PWMSmoothRamp(byte MinuteOffset);
+	void Channel4PWMSmoothRamp(byte MinuteOffset);
+	void Channel5PWMSmoothRamp(byte MinuteOffset);
+	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End);
 	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength);	
 	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, byte MinuteOffset);	
 	boolean inline IsPresent() { return Present; }
