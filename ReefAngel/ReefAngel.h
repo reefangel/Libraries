@@ -413,6 +413,7 @@ private:
         
 	unsigned int ph_target_range[2];
 	unsigned int ph_read_range[2];
+	unsigned int salinity_read;
         
 	byte setup_option;
 	byte setup_step;
