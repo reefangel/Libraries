@@ -122,6 +122,8 @@ public:
 	void Channel3PWMParabola(byte MinuteOffset);
 	void Channel4PWMParabola(byte MinuteOffset);
 	void Channel5PWMParabola(byte MinuteOffset);
+	void ChannelPWMParabola(byte Channel, byte Start, byte End);
+	void ChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);
 	void Channel0PWMSmoothRamp();
 	void Channel1PWMSmoothRamp();
 	void Channel2PWMSmoothRamp();
