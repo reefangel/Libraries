@@ -35,8 +35,10 @@ public:
 	void inline SetDaylight(int value) { DaylightPWMValue = value; };
 	void inline SetActinicOverride(byte value) { if (value>100) value=255; ActinicPWMOverride = value; };
 	void inline SetDaylightOverride(byte value) { if (value>100) value=255; DaylightPWMOverride = value; };
-	int GetActinicValue();
-	int GetDaylightValue();
+	byte GetActinicValue();
+	int GetActinicValueRaw();
+	byte GetDaylightValue();
+	int GetDaylightValueRaw();
 	byte inline GetActinicOverrideValue() { return ActinicPWMOverride; };
 	byte inline GetDaylightOverrideValue() { return DaylightPWMOverride; };
 	void ActinicPWMSlope(byte MinuteOffset);
@@ -62,7 +64,9 @@ public:
 	void inline SetActinic2Override(byte value) { if (value>100) value=255; Actinic2PWMOverride = value; };
 	void inline SetDaylight2Override(byte value) { if (value>100) value=255; Daylight2PWMOverride = value; };
 	byte GetActinic2Value();
+	int GetActinic2ValueRaw();
 	byte GetDaylight2Value();
+	int GetDaylight2ValueRaw();
 	byte inline GetActinic2OverrideValue() { return Actinic2PWMOverride; };
 	byte inline GetDaylight2OverrideValue() { return Daylight2PWMOverride; };
 	void Actinic2PWMSlope(byte MinuteOffset);
@@ -94,7 +98,8 @@ public:
 	void Expansion(byte cmd, byte data);
 	void ExpansionSetPercent(byte p);
 	void ExpansionWrite();
-	int GetChannelValue(byte Channel);
+	byte GetChannelValue(byte Channel);
+	int GetChannelValueRaw(byte Channel);
 	byte inline GetChannelOverrideValue(byte Channel) { return ExpansionChannelOverride[Channel]; };
 	void Channel0PWMSlope();
 	void Channel1PWMSlope();
@@ -153,7 +158,8 @@ public:
 	void SIXTEENChExpansion(byte cmd, byte data);
 	void SIXTEENChExpansionSetPercent(byte p);
 	void SIXTEENChExpansionWrite();
-	int Get16ChannelValue(byte Channel);
+	byte Get16ChannelValue(byte Channel);
+	int Get16ChannelValueRaw(byte Channel);
 	byte inline Get16ChannelOverrideValue(byte Channel) { return SIXTEENChExpansionChannelOverride[Channel]; };
 	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration);
 	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration, byte MinuteOffset);

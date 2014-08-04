@@ -65,7 +65,15 @@ RA_PWMClass::RA_PWMClass()
 #endif  // SIXTEENCHPWMEXPANSION
 }
 
-int RA_PWMClass::GetActinicValue()
+byte RA_PWMClass::GetActinicValue()
+{
+	if (ActinicPWMOverride<=100)
+		return ActinicPWMOverride;
+	else
+		return (byte)(ActinicPWMValue/40.95);
+}
+
+int RA_PWMClass::GetActinicValueRaw()
 {
 	if (ActinicPWMOverride<=100)
 		return (int)ActinicPWMOverride*40.95;
@@ -73,7 +81,15 @@ int RA_PWMClass::GetActinicValue()
 		return ActinicPWMValue;
 }
 
-int RA_PWMClass::GetDaylightValue()
+byte RA_PWMClass::GetDaylightValue()
+{
+	if (DaylightPWMOverride<=100)
+		return DaylightPWMOverride;
+	else
+		return (byte)(DaylightPWMValue/40.95);
+}
+
+int RA_PWMClass::GetDaylightValueRaw()
 {
 	if (DaylightPWMOverride<=100)
 		return (int)DaylightPWMOverride*40.95;
@@ -309,12 +325,28 @@ void RA_PWMClass::Override(byte Channel, byte Value)
 byte RA_PWMClass::GetActinic2Value()
 {
 	if (Actinic2PWMOverride<=100)
+		return Actinic2PWMOverride;
+	else
+		return (byte)(Actinic2PWMValue/40.95);
+}
+
+int RA_PWMClass::GetActinic2ValueRaw()
+{
+	if (Actinic2PWMOverride<=100)
 		return (int)Actinic2PWMOverride*40.95;
 	else
 		return Actinic2PWMValue;
 }
 
 byte RA_PWMClass::GetDaylight2Value()
+{
+	if (Daylight2PWMOverride<=100)
+		return Daylight2PWMOverride;
+	else
+		return (byte)(Daylight2PWMValue/40.95);
+}
+
+int RA_PWMClass::GetDaylight2ValueRaw()
 {
 	if (Daylight2PWMOverride<=100)
 		return (int)Daylight2PWMOverride*40.95;
@@ -575,7 +607,7 @@ void RA_PWMClass::SIXTEENChExpansionWrite()
 {
 	byte thiscrc=0;
 	for ( byte a = 0; a < SIXTEENCH_PWM_EXPANSION_CHANNELS; a++ )
-		thiscrc+=Get16ChannelValue(a)*(a+1);
+		thiscrc+=Get16ChannelValueRaw(a)*(a+1);
 	if (millis()%60000<200) lastcrc=-1;
 	if (lastcrc!=thiscrc || millis()<5000)
 	{
@@ -588,12 +620,20 @@ void RA_PWMClass::SIXTEENChExpansionWrite()
 		Wire.endTransmission();
 		for ( byte a = 0; a < SIXTEENCH_PWM_EXPANSION_CHANNELS; a++ )
 		{
-			SIXTEENChExpansion(a,Get16ChannelValue(a));
+			SIXTEENChExpansion(a,Get16ChannelValueRaw(a));
 		}
 	}
 }
 
-int RA_PWMClass::Get16ChannelValue(byte Channel)
+byte RA_PWMClass::Get16ChannelValue(byte Channel)
+{
+	if (SIXTEENChExpansionChannelOverride[Channel]<=100)
+		return SIXTEENChExpansionChannelOverride[Channel];
+	else
+		return (byte)(SIXTEENChExpansionChannel[Channel]/40.95);
+}
+
+int RA_PWMClass::Get16ChannelValueRaw(byte Channel)
 {
 	if (SIXTEENChExpansionChannelOverride[Channel]<=100)
 		return (int)SIXTEENChExpansionChannelOverride[Channel]*40.95;
@@ -745,7 +785,7 @@ void RA_PWMClass::ExpansionWrite()
 {
 	byte thiscrc=0;
 	for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
-		thiscrc+=GetChannelValue(a)*(a+1);
+		thiscrc+=GetChannelValueRaw(a)*(a+1);
 	if (millis()%60000<200) lastcrc=-1;
 	if (lastcrc!=thiscrc || millis()<5000)
 	{
@@ -758,12 +798,20 @@ void RA_PWMClass::ExpansionWrite()
 		Wire.endTransmission();
 		for ( byte a = 0; a < PWM_EXPANSION_CHANNELS; a++ )
 		{
-			Expansion(a,GetChannelValue(a));
+			Expansion(a,GetChannelValueRaw(a));
 		}
 	}
 }
 
-int RA_PWMClass::GetChannelValue(byte Channel)
+byte RA_PWMClass::GetChannelValue(byte Channel)
+{
+	if (ExpansionChannelOverride[Channel]<=100)
+		return ExpansionChannelOverride[Channel];
+	else
+		return (byte)(ExpansionChannel[Channel]/40.95);
+}
+
+int RA_PWMClass::GetChannelValueRaw(byte Channel)
 {
 	if (ExpansionChannelOverride[Channel]<=100)
 		return (int)ExpansionChannelOverride[Channel]*40.95;

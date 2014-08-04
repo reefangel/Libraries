@@ -713,22 +713,22 @@ void ReefAngelClass::Refresh()
 	// issue #3: Redundant code
 	// issue #12: Revert back
 #if defined(__SAM3X8E__)
-	analogWrite(actinicPWMPin, map(VariableControl.GetActinicValue(),0,4095,0,255));
-	analogWrite(daylightPWMPin, map(VariableControl.GetDaylightValue());
+	analogWrite(actinicPWMPin, map(VariableControl.GetActinicValueRaw(),0,4095,0,255));
+	analogWrite(daylightPWMPin, map(VariableControl.GetDaylightValueRaw(),0,4095,0,255));
 #else  // __SAM3X8E__
-	analogWrite(actinicPWMPin, map(PWM.GetActinicValue(),0,4095,0,255));
-	analogWrite(daylightPWMPin, map(PWM.GetDaylightValue(),0,4095,0,255));
+	analogWrite(actinicPWMPin, map(PWM.GetActinicValueRaw(),0,4095,0,255));
+	analogWrite(daylightPWMPin, map(PWM.GetDaylightValueRaw(),0,4095,0,255));
 #endif  // __SAM3X8E__
 
 #if defined RA_STAR
-	analogWrite(actinic2PWMPin, map(PWM.GetActinic2Value(),0,4095,0,255));
-	analogWrite(daylight2PWMPin, map(PWM.GetDaylight2Value(),0,4095,0,255));
+	analogWrite(actinic2PWMPin, map(PWM.GetActinic2ValueRaw(),0,4095,0,255));
+	analogWrite(daylight2PWMPin, map(PWM.GetDaylight2ValueRaw(),0,4095,0,255));
 	SDFound=(PINJ & (1<<PJ3))==0;
 #endif  // RA_STAR
 
 #if defined(__SAM3X8E__)
-	analogWrite(actinic2PWMPin, map(VariableControl.GetActinic2Value(),0,4095,0,255));
-	analogWrite(daylight2PWMPin, map(VariableControl.GetDaylight2Value(),0,4095,0,255));
+	analogWrite(actinic2PWMPin, map(VariableControl.GetActinic2ValueRaw(),0,4095,0,255));
+	analogWrite(daylight2PWMPin, map(VariableControl.GetDaylight2ValueRaw(),0,4095,0,255));
 #endif  // __SAM3X8E__
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	
@@ -869,7 +869,7 @@ void ReefAngelClass::Refresh()
 		{
 #ifdef SIXTEENCHPWMEXPANSION
 #if defined(__SAM3X8E__)
-			RANetData[24+a]=VariableControl.GetChannelValue(a);
+			RANetData[24+a]=VariableControl.Get16ChannelValue(a);
 #else
 			RANetData[24+a]=PWM.Get16ChannelValue(a);
 #endif
@@ -2425,15 +2425,15 @@ void ReefAngelClass::UpdateTouchDisplay()
 		MasterWrite(Params.Temp[T3_PROBE],8);
 		MasterWrite(Params.PH,10);
 		MasterWrite(atostatus,12);
-		MasterWrite(PWM.GetDaylightValue()/40.95,13);
-		MasterWrite(PWM.GetActinicValue()/40.95,14);
-		MasterWrite(PWM.GetDaylight2Value()/40.95,15);
-		MasterWrite(PWM.GetActinic2Value()/40.95,16);
+		MasterWrite(PWM.GetDaylightValue(),13);
+		MasterWrite(PWM.GetActinicValue(),14);
+		MasterWrite(PWM.GetDaylight2Value(),15);
+		MasterWrite(PWM.GetActinic2Value(),16);
 		MasterWrite(Relay.RelayData,17);
 		MasterWrite(Relay.RelayMaskOn,18);
 		MasterWrite(Relay.RelayMaskOff,19);
 		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-			MasterWrite(PWM.GetChannelValue(a)/40.95,20+a);
+			MasterWrite(PWM.GetChannelValue(a),20+a);
 		MasterWrite(RF.Mode,26);
 		MasterWrite(RF.Speed,27);
 		MasterWrite(RF.Duration,28);
