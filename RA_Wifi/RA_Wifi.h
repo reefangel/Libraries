@@ -84,12 +84,17 @@ const prog_char XML_PAR_END[] PROGMEM = "</PAR>";
 const prog_char XML_DCM[] PROGMEM = "<DCM>";
 const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
 const prog_char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
-const prog_char XML_DCD_END[] PROGMEM = "</DCD>";
+const prog_char XML_DCD_END[] PROGMEM = "</DCD><DCT>";
+const prog_char XML_DCT_END[] PROGMEM = "</DCT>";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char XML_SCPWME[] PROGMEM = "<SCPWME";
+const prog_char XML_SCPWME_END[] PROGMEM = "</SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char XML_AIW[] PROGMEM = "<AIW>";
 const prog_char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
@@ -212,10 +217,14 @@ const prog_char JSON_PAR[] PROGMEM = "PAR";
 const prog_char JSON_DCM[] PROGMEM = "DCM";
 const prog_char JSON_DCS[] PROGMEM = "DCS";
 const prog_char JSON_DCD[] PROGMEM = "DCD";
+const prog_char JSON_DCT[] PROGMEM = "DCT";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char JSON_PWME[] PROGMEM = "PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char JSON_SCPWME[] PROGMEM = "SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char JSON_AIW[] PROGMEM = "AIW";
 const prog_char JSON_AIB[] PROGMEM = "AIB";
@@ -316,6 +325,9 @@ const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 #ifdef PWMEXPANSION
 	const prog_char BannerPWME[] PROGMEM = "&pwme";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	const prog_char BannerSCPWME[] PROGMEM = "&scpwme";
+#endif  // SIXTEENCHPWMEXPANSION
 
 #ifdef RFEXPANSION
 	const prog_char BannerRFM[] PROGMEM = "&rfm=";
@@ -367,6 +379,7 @@ const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 	const prog_char BannerDCM[] PROGMEM = "&dcm=";
 	const prog_char BannerDCS[] PROGMEM = "&dcs=";
 	const prog_char BannerDCD[] PROGMEM = "&dcd=";
+	const prog_char BannerDCT[] PROGMEM = "&dct=";
 #endif  // DCPUMPCONTROL
 
 #ifdef CUSTOM_VARIABLES
