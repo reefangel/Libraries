@@ -285,6 +285,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(DCPump.Speed,DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(DCPump.Speed,DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -312,6 +314,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(ReefCrestMode(DCPump.Speed,10,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(ReefCrestMode(DCPump.Speed,10,DCPump.HighATOChannel-1),DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -339,6 +343,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(ReefCrestMode(DCPump.Speed,20,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(ReefCrestMode(DCPump.Speed,20,DCPump.HighATOChannel-1),DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -366,6 +372,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(ShortPulseMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.HighATOChannel-1),DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -393,6 +401,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(LongPulseMode(0,DCPump.Speed,DCPump.Duration,DCPump.HighATOChannel-1),DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -420,6 +430,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,DCPump.HighATOChannel-1),DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -447,6 +459,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(TidalSwellMode(DCPump.Speed,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(TidalSwellMode(DCPump.Speed,DCPump.HighATOChannel-1),DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -455,6 +469,66 @@ void ReefAngelClass::Refresh()
 #else
 				PWM.SetChannel(a,PumpThreshold(TidalSwellMode(DCPump.Speed,DCPump.ExpansionChannel[a]-1),DCPump.Threshold));
 #endif
+#endif // PWMEXPANSION
+		break;
+	}
+	case Sine:
+	{
+		if (DCPump.DaylightChannel!=None)
+#if defined(__SAM3X8E__)
+			VariableControl.SetDaylight(PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.DaylightChannel-1),DCPump.Threshold));
+#else // __SAM3X8E__
+			PWM.SetDaylight(PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.DaylightChannel-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+		if (DCPump.ActinicChannel!=None)
+#if defined(__SAM3X8E__)
+			VariableControl.SetActinic(PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.ActinicChannel-1),DCPump.Threshold));
+#else // __SAM3X8E__
+			PWM.SetActinic(PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.ActinicChannel-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.HighATOChannel-1),DCPump.Threshold));
+#ifdef PWMEXPANSION
+		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+			if (DCPump.ExpansionChannel[a]!=None)
+#if defined(__SAM3X8E__)
+				VariableControl.SetChannel(a,PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.ExpansionChannel[a]-1),DCPump.Threshold));
+#else // __SAM3X8E__
+				PWM.SetChannel(a,PumpThreshold(SineMode(0,DCPump.Speed,DCPump.Duration,DCPump.ExpansionChannel[a]-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+#endif // PWMEXPANSION
+		break;
+	}
+	case Else:
+	{
+		int offset = DCPump.Speed;
+		if (DCPump.Speed > 50) offset = 100 - DCPump.Speed;
+		if (DCPump.DaylightChannel!=None)
+#if defined(__SAM3X8E__)
+			VariableControl.SetDaylight(PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.DaylightChannel-1),DCPump.Threshold));
+#else // __SAM3X8E__
+			PWM.SetDaylight(PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.DaylightChannel-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+		if (DCPump.ActinicChannel!=None)
+#if defined(__SAM3X8E__)
+			VariableControl.SetActinic(PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.ActinicChannel-1),DCPump.Threshold));
+#else // __SAM3X8E__
+			PWM.SetActinic(PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.ActinicChannel-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+		if (DCPump.LowATOChannel!=None)
+			analogWrite(lowATOPin, 2.55*PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.HighATOChannel-1),DCPump.Threshold));
+#ifdef PWMEXPANSION
+		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+			if (DCPump.ExpansionChannel[a]!=None)
+#if defined(__SAM3X8E__)
+				VariableControl.SetChannel(a,PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.ExpansionChannel[a]-1),DCPump.Threshold));
+#else // __SAM3X8E__
+				PWM.SetChannel(a,PumpThreshold(ElseMode(DCPump.Speed,offset,DCPump.ExpansionChannel[a]-1),DCPump.Threshold));
+#endif // __SAM3X8E__
 #endif // PWMEXPANSION
 		break;
 	}
@@ -475,6 +549,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(DCPump.FeedingSpeed,DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(DCPump.FeedingSpeed,DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)
@@ -501,6 +577,8 @@ void ReefAngelClass::Refresh()
 #endif
 		if (DCPump.LowATOChannel!=None)
 			analogWrite(lowATOPin, 2.55*PumpThreshold(DCPump.WaterChangeSpeed,DCPump.Threshold));
+		if (DCPump.HighATOChannel!=None)
+			analogWrite(highATOPin, 2.55*PumpThreshold(DCPump.WaterChangeSpeed,DCPump.Threshold));
 #ifdef PWMEXPANSION
 		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 			if (DCPump.ExpansionChannel[a]!=None)

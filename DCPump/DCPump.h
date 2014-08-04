@@ -22,6 +22,8 @@
 #ifndef __DCPump_H__
 #define __DCPump_H__
 
+#include <InternalEEPROM.h>
+
 class DCPumpClass
 {
 public:
@@ -34,6 +36,7 @@ public:
 	 byte DaylightChannel;
 	 byte ActinicChannel;
 	 byte LowATOChannel;
+	 byte HighATOChannel;
 	 byte FeedingSpeed;
 	 byte WaterChangeSpeed;
 #ifdef PWMEXPANSION
