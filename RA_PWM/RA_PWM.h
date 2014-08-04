@@ -35,6 +35,8 @@ public:
 	void inline SetDaylightOverride(byte value) { if (value>100) value=255; DaylightPWMOverride = value; };
 	byte GetActinicValue();
 	byte GetDaylightValue();
+	int GetActinicValueRaw();
+	int GetDaylightValueRaw();
 	byte inline GetActinicOverrideValue() { return ActinicPWMOverride; };
 	byte inline GetDaylightOverrideValue() { return DaylightPWMOverride; };
 	void ActinicPWMSlope(byte MinuteOffset);
@@ -45,6 +47,10 @@ public:
 	void DaylightPWMParabola(byte MinuteOffset);
 	void ActinicPWMParabola();
 	void DaylightPWMParabola();
+	void ActinicPWMSmoothRamp(byte MinuteOffset);
+	void DaylightPWMSmoothRamp(byte MinuteOffset);
+	void ActinicPWMSmoothRamp();
+	void DaylightPWMSmoothRamp();
 	void StandardActinic();
 	void StandardDaylight();
 	void StandardActinic(byte MinuteOffset);
@@ -57,6 +63,8 @@ public:
 	void inline SetDaylight2Override(byte value) { if (value>100) value=255; Daylight2PWMOverride = value; };
 	byte GetActinic2Value();
 	byte GetDaylight2Value();
+	int GetActinic2ValueRaw();
+	int GetDaylight2ValueRaw();
 	byte inline GetActinic2OverrideValue() { return Actinic2PWMOverride; };
 	byte inline GetDaylight2OverrideValue() { return Daylight2PWMOverride; };
 	void Actinic2PWMSlope(byte MinuteOffset);
@@ -67,6 +75,10 @@ public:
 	void Daylight2PWMParabola(byte MinuteOffset);
 	void Actinic2PWMParabola();
 	void Daylight2PWMParabola();
+	void Actinic2PWMSmoothRamp(byte MinuteOffset);
+	void Daylight2PWMSmoothRamp(byte MinuteOffset);
+	void Actinic2PWMSmoothRamp();
+	void Daylight2PWMSmoothRamp();
 	void StandardActinic2();
 	void StandardDaylight2();
 	void StandardActinic2(byte MinuteOffset);
@@ -74,14 +86,18 @@ public:
 #endif
 	
 #ifdef PWMEXPANSION
-	byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
+        boolean NewExpansion;
+	int ExpansionChannel[PWM_EXPANSION_CHANNELS];
 	byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
-	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
+	void inline SetChannel(byte Channel, int Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
+	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=(int)Value*40.95; };
 	void inline SetChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannelOverride[Channel]=Value; };
 	void Expansion(byte cmd, byte data);
+	void Expansion(byte cmd, int data);
 	void ExpansionSetPercent(byte p);
 	void ExpansionWrite();
 	byte GetChannelValue(byte Channel);
+	int GetChannelValueRaw(byte Channel);
 	byte inline GetChannelOverrideValue(byte Channel) { return ExpansionChannelOverride[Channel]; };
 	void Channel0PWMSlope();
 	void Channel1PWMSlope();
@@ -111,19 +127,34 @@ public:
 	void Channel5PWMParabola(byte MinuteOffset);
 	void ChannelPWMParabola(byte Channel, byte Start, byte End);
 	void ChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);	
+	void Channel0PWMSmoothRamp();
+	void Channel1PWMSmoothRamp();
+	void Channel2PWMSmoothRamp();
+	void Channel3PWMSmoothRamp();
+	void Channel4PWMSmoothRamp();
+	void Channel5PWMSmoothRamp();
+	void Channel0PWMSmoothRamp(byte MinuteOffset);
+	void Channel1PWMSmoothRamp(byte MinuteOffset);
+	void Channel2PWMSmoothRamp(byte MinuteOffset);
+	void Channel3PWMSmoothRamp(byte MinuteOffset);
+	void Channel4PWMSmoothRamp(byte MinuteOffset);
+	void Channel5PWMSmoothRamp(byte MinuteOffset);
+	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End);
+	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength);	
+	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, byte MinuteOffset);	
 	boolean inline IsPresent() { return Present; }
 	boolean Present;
 #endif  // PWMEXPANSION
 
 private:
 	byte lastcrc;
-	byte ActinicPWMValue;
-	byte DaylightPWMValue;
+	int ActinicPWMValue;
+	int DaylightPWMValue;
 	byte ActinicPWMOverride;
 	byte DaylightPWMOverride;
 #if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
-	byte Actinic2PWMValue;
-	byte Daylight2PWMValue;
+	int Actinic2PWMValue;
+	int Daylight2PWMValue;
 	byte Actinic2PWMOverride;
 	byte Daylight2PWMOverride;
 #endif
