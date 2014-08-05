@@ -196,8 +196,8 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	if (start > end) //Start is greater than End so its over midnight
 	{
 		//Example: 2300hrs to 0200hrs
-		if (current_hour < endHour) start -= 1440L; //past midnight
-		if (current_hour >= startHour) end += 1440L; //before midnight
+		if (current_hour < endHour) start -= 1440; //past midnight
+		if (current_hour >= startHour) end += 1440; //before midnight
 	}
 	int current = NumMins(current_hour, minute());
 	int startD = start + Duration;
@@ -235,8 +235,8 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	if (start > end) //Start is greater than End so its over midnight
 	{
 		//Example: 2300hrs to 0200hrs
-		if (current_hour < endHour) start -= 1440L; //past midnight
-		if (current_hour >= startHour) end += 1440L; //before midnight
+		if (current_hour < endHour) start -= 1440; //past midnight
+		if (current_hour >= startHour) end += 1440; //before midnight
 	}
 
 	int current = NumMins(current_hour, minute());
