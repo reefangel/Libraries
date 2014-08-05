@@ -29,8 +29,10 @@ class RA_PWMClass
 {
 public:
 	RA_PWMClass();
-	void inline SetActinic(byte value) { ActinicPWMValue = value; };
-	void inline SetDaylight(byte value) { DaylightPWMValue = value; };
+	void inline SetActinic(int value) { ActinicPWMValue = value; };
+	void inline SetDaylight(int value) { DaylightPWMValue = value; };
+	void inline SetActinic(byte value) { ActinicPWMValue = (int)value*40.95; };
+	void inline SetDaylight(byte value) { DaylightPWMValue = (int)value*40.95; };
 	void inline SetActinicOverride(byte value) { if (value>100) value=255; ActinicPWMOverride = value; };
 	void inline SetDaylightOverride(byte value) { if (value>100) value=255; DaylightPWMOverride = value; };
 	byte GetActinicValue();
@@ -57,8 +59,10 @@ public:
 	void StandardDaylight(byte MinuteOffset);
 	void Override(byte Channel, byte Value);
 #if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
-	void inline SetActinic2(byte value) { Actinic2PWMValue = value; };
-	void inline SetDaylight2(byte value) { Daylight2PWMValue = value; };
+	void inline SetActinic2(int value) { Actinic2PWMValue = value; };
+	void inline SetDaylight2(int value) { Daylight2PWMValue = value; };
+	void inline SetActinic2(byte value) { Actinic2PWMValue = (int)value*40.95; };
+	void inline SetDaylight2(byte value) { Daylight2PWMValue = (int)value*40.95; };
 	void inline SetActinic2Override(byte value) { if (value>100) value=255; Actinic2PWMOverride = value; };
 	void inline SetDaylight2Override(byte value) { if (value>100) value=255; Daylight2PWMOverride = value; };
 	byte GetActinic2Value();
