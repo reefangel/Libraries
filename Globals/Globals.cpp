@@ -187,7 +187,6 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
 
-        // convert PWM inputs from percents to 12-bit int values.
         if (startPWM > 100)
            startPWM = 100;
         if (endPWM > 100)
@@ -226,7 +225,6 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
 
-        // convert PWM inputs from percents to 12-bit int values.
         if (startPWM > 100)
            startPWM = 100;
         if (endPWM > 100)
