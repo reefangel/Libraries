@@ -100,7 +100,8 @@ void RA_PWMClass::ActinicPWMSlope(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartA_read(),
 			InternalMemory.PWMSlopeEndA_read(),
 			InternalMemory.PWMSlopeDurationA_read(),
-			ActinicPWMValue
+			ActinicPWMValue,
+			true
 			));
 }
 
@@ -116,7 +117,8 @@ void RA_PWMClass::DaylightPWMSlope(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
 			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
+			DaylightPWMValue,
+			true
 			));
 }
 
@@ -135,7 +137,8 @@ void RA_PWMClass::DaylightPWMSlope()
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
 			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
+			DaylightPWMValue,
+			true
 			));
 }
 
@@ -150,7 +153,8 @@ void RA_PWMClass::ActinicPWMParabola(byte MinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartA_read(),
 			InternalMemory.PWMSlopeEndA_read(),
-			ActinicPWMValue
+			ActinicPWMValue,
+			true
 			));
 }
 
@@ -165,7 +169,8 @@ void RA_PWMClass::DaylightPWMParabola(byte MinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
-			DaylightPWMValue
+			DaylightPWMValue,
+			true
 			));
 }
 
@@ -183,7 +188,8 @@ void RA_PWMClass::DaylightPWMParabola()
 			InternalMemory.StdLightsOffMinute_read(),
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
-			DaylightPWMValue
+			DaylightPWMValue,
+			true
 			));
 }
 
@@ -199,7 +205,8 @@ void RA_PWMClass::ActinicPWMSmoothRamp(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartA_read(),
 			InternalMemory.PWMSlopeEndA_read(),
 			InternalMemory.PWMSlopeDurationA_read(),
-			ActinicPWMValue
+			ActinicPWMValue,
+			true
 			));
 }
 
@@ -215,7 +222,8 @@ void RA_PWMClass::DaylightPWMSmoothRamp(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
 			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
+			DaylightPWMValue,
+			true
 			));
 }
 
@@ -234,7 +242,8 @@ void RA_PWMClass::DaylightPWMSmoothRamp()
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
 			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
+			DaylightPWMValue,
+			true
 			));
 }
 
@@ -247,7 +256,8 @@ void RA_PWMClass::StandardActinic()
 			InternalMemory.StdLightsOffMinute_read(),
 			0,
 			InternalMemory.LEDPWMActinic_read(),
-			0
+			0,
+			true
 			));
 }
 
@@ -260,7 +270,8 @@ void RA_PWMClass::StandardDaylight()
 			InternalMemory.StdLightsOffMinute_read(),
 			0,
 			InternalMemory.LEDPWMDaylight_read(),
-			0
+			0,
+			true
 			));
 }
 
@@ -275,7 +286,8 @@ void RA_PWMClass::StandardActinic(byte MinuteOffset)
 			offTime%60,
 			0,
 			InternalMemory.LEDPWMActinic_read(),
-			0
+			0,
+			true
 			));
 }
 
@@ -290,7 +302,8 @@ void RA_PWMClass::StandardDaylight(byte MinuteOffset)
 			offTime%60,
 			0,
 			InternalMemory.LEDPWMDaylight_read(),
-			0
+			0,
+			true
 			));
 }
 
@@ -357,7 +370,8 @@ void RA_PWMClass::Actinic2PWMSlope(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartA2_read(),
 			InternalMemory.PWMSlopeEndA2_read(),
 			InternalMemory.PWMSlopeDurationA2_read(),
-			Actinic2PWMValue
+			Actinic2PWMValue,
+			true
 			));
 }
 
@@ -373,7 +387,8 @@ void RA_PWMClass::Daylight2PWMSlope(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
 			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
+			Daylight2PWMValue,
+			true
 			));
 }
 
@@ -392,7 +407,8 @@ void RA_PWMClass::Daylight2PWMSlope()
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
 			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
+			Daylight2PWMValue,
+			true
 			));
 }
 
@@ -407,7 +423,8 @@ void RA_PWMClass::Actinic2PWMParabola(byte MinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartA2_read(),
 			InternalMemory.PWMSlopeEndA2_read(),
-			Actinic2PWMValue
+			Actinic2PWMValue,
+			true
 			));
 }
 
@@ -422,7 +439,8 @@ void RA_PWMClass::Daylight2PWMParabola(byte MinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
-			Daylight2PWMValue
+			Daylight2PWMValue,
+			true
 			));
 }
 
@@ -440,7 +458,8 @@ void RA_PWMClass::Daylight2PWMParabola()
 			InternalMemory.StdLightsOffMinute_read(),
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
-			Daylight2PWMValue
+			Daylight2PWMValue,
+			true
 			));
 }
 
@@ -456,7 +475,8 @@ void RA_PWMClass::Actinic2PWMSmoothRamp(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartA2_read(),
 			InternalMemory.PWMSlopeEndA2_read(),
 			InternalMemory.PWMSlopeDurationA2_read(),
-			Actinic2PWMValue
+			Actinic2PWMValue,
+			true
 			));
 }
 
@@ -472,7 +492,8 @@ void RA_PWMClass::Daylight2PWMSmoothRamp(byte MinuteOffset)
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
 			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
+			Daylight2PWMValue,
+			true
 			));
 }
 
@@ -491,7 +512,8 @@ void RA_PWMClass::Daylight2PWMSmoothRamp()
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
 			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
+			Daylight2PWMValue,
+			true
 			));
 }
 
@@ -504,7 +526,8 @@ void RA_PWMClass::StandardActinic2()
 			InternalMemory.StdLightsOffMinute_read(),
 			0,
 			InternalMemory.LEDPWMActinic2_read(),
-			0
+			0,
+			true
 			));
 }
 
@@ -517,7 +540,8 @@ void RA_PWMClass::StandardDaylight2()
 			InternalMemory.StdLightsOffMinute_read(),
 			0,
 			InternalMemory.LEDPWMDaylight2_read(),
-			0
+			0,
+			true
 			));
 }
 
@@ -532,7 +556,8 @@ void RA_PWMClass::StandardActinic2(byte MinuteOffset)
 			offTime%60,
 			0,
 			InternalMemory.LEDPWMActinic2_read(),
-			0
+			0,
+			true
 			));
 }
 
@@ -547,7 +572,8 @@ void RA_PWMClass::StandardDaylight2(byte MinuteOffset)
 			offTime%60,
 			0,
 			InternalMemory.LEDPWMDaylight2_read(),
-			0
+			0,
+			true
 			));
 }
 #endif //defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
@@ -710,7 +736,8 @@ void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Durat
 		Start,
 		End, 
 		Duration,  
-		ExpansionChannel[Channel] 
+		ExpansionChannel[Channel] ,
+		true
 	));	
 }
 
@@ -727,7 +754,8 @@ void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Durat
 		Start,
 		End, 
 		Duration,  
-		ExpansionChannel[Channel] 
+		ExpansionChannel[Channel] ,
+		true
 	));	
 }
 
@@ -800,7 +828,8 @@ void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End)
 		InternalMemory.StdLightsOffMinute_read(),
 		Start,
 		End, 
-		ExpansionChannel[Channel] 
+		ExpansionChannel[Channel] ,
+		true
 	));	
 }
 
@@ -815,7 +844,8 @@ void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, byte Mi
 		offTime%60,
 		Start,
 		End, 
-		ExpansionChannel[Channel] 
+		ExpansionChannel[Channel] ,
+		true
 	));	
 }
 
@@ -890,7 +920,8 @@ void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte 
 		Start,
 		End, 
 		SlopeLength, 
-		ExpansionChannel[Channel] 
+		ExpansionChannel[Channel] ,
+		true
 	));	
 }
 
@@ -906,7 +937,8 @@ void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte 
 		Start,
 		End, 
                 SlopeLength,
-		ExpansionChannel[Channel] 
+		ExpansionChannel[Channel] ,
+		true
 	));	
 }
 
