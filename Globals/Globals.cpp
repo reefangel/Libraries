@@ -243,7 +243,7 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 		return oldValue;
 	else
 	{
-		int pwmDelta = endPWM - startPWM;
+		byte pwmDelta = endPWM - startPWM;
 		byte parabolaPhase = constrain(map(current, start, end, 0, 180), 0, 180);
 		return startPWM + (pwmDelta * sin(radians(parabolaPhase)));
 	}
