@@ -377,11 +377,11 @@ void RA_Wifi::ProcessHTTP()
 			s += 192;
 			//<PWME0></PWME0><PWME1></PWME1><PWME2></PWME2><PWME3></PWME3><PWME4></PWME4><PWME5></PWME5><PWME0O></PWME0O><PWME1O></PWME1O><PWME2O></PWME2O><PWME3O></PWME3O><PWME4O></PWME4O><PWME5O></PWME5O>
 #if defined(__SAM3X8E__)
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannel[EID]);
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannelOverride[EID]);
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.GetChannelValue(EID));
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.GetChannelOverrideValue(EID));
 #else
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannel[EID]);
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannelOverride[EID]);
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.GetChannelValue(EID));
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.GetChannelOverrideValue(EID));
 #endif
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
@@ -982,11 +982,11 @@ void RA_Wifi::ProcessHTTP()
 			s += 138;
 			//,"PWME0":"","PWME1":"","PWME2":"","PWME3":"","PWME4":"","PWME5":"","PWME0O":"","PWME1O":"","PWME2O":"","PWME3O":"","PWME4O":"","PWME5O":""
 #if defined(__SAM3X8E__)
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannel[EID]);
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.ExpansionChannelOverride[EID]);
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.GetChannelValue(EID));
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.GetChannelOverrideValue(EID));
 #else
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannel[EID]);
-			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.ExpansionChannelOverride[EID]);
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.GetChannelValue(EID));
+			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.GetChannelOverrideValue(EID));
 #endif
 #endif  // PWMEXPANSION
 #ifdef RFEXPANSION
