@@ -536,22 +536,22 @@ void ReefAngelClass::Refresh()
 	// issue #3: Redundant code
 	// issue #12: Revert back
 #if defined(__SAM3X8E__)
-	analogWrite(actinicPWMPin, VariableControl.GetActinicValue()*2.55);
-	analogWrite(daylightPWMPin, VariableControl.GetDaylightValue()*2.55);
+	analogWrite(actinicPWMPin, map(VariableControl.GetActinicValueRaw(),0,4095,0,255));
+	analogWrite(daylightPWMPin, map(VariableControl.GetDaylightValueRaw(),0,4095,0,255));
 #else  // __SAM3X8E__
-	analogWrite(actinicPWMPin, PWM.GetActinicValue()*2.55);
-	analogWrite(daylightPWMPin, PWM.GetDaylightValue()*2.55);
+	analogWrite(actinicPWMPin, map(PWM.GetActinicValueRaw(),0,4095,0,255));
+	analogWrite(daylightPWMPin, map(PWM.GetDaylightValueRaw(),0,4095,0,255));
 #endif  // __SAM3X8E__
 
 #if defined RA_STAR
-	analogWrite(actinic2PWMPin, PWM.GetActinic2Value()*2.55);
-	analogWrite(daylight2PWMPin, PWM.GetDaylight2Value()*2.55);
+	analogWrite(actinic2PWMPin, map(PWM.GetActinic2ValueRaw(),0,4095,0,255));
+	analogWrite(daylight2PWMPin, map(PWM.GetDaylight2ValueRaw(),0,4095,0,255));
 	SDFound=(PINJ & (1<<PJ3))==0;
 #endif  // RA_STAR
 
 #if defined(__SAM3X8E__)
-	analogWrite(actinic2PWMPin, VariableControl.GetActinic2Value()*2.55);
-	analogWrite(daylight2PWMPin, VariableControl.GetDaylight2Value()*2.55);
+	analogWrite(actinic2PWMPin, map(VariableControl.GetActinic2ValueRaw(),0,4095,0,255));
+	analogWrite(daylight2PWMPin, map(VariableControl.GetDaylight2ValueRaw(),0,4095,0,255));
 #endif  // __SAM3X8E__
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 
