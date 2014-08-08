@@ -339,7 +339,6 @@ static byte RANetSeq, RANetCRC;
 static byte RANetData[RANET_SIZE];
 static byte RANetStatus[RANET_SIZE];
 static unsigned long RANetlastmillis;
-#endif // RANET
 
 #ifdef RA_STAR
 #define RANET_SERIAL	Serial2
@@ -347,6 +346,8 @@ static unsigned long RANetlastmillis;
 static SoftwareSerial RaNetSerial(RaNetRXPin,RaNetTXPin);
 #define RANET_SERIAL	RaNetSerial
 #endif // RA_STAR
+
+#endif // RANET
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
