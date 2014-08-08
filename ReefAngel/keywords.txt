@@ -16,6 +16,9 @@ NumMins	KEYWORD2
 PWMSlope	KEYWORD2
 PWMParabola	KEYWORD2
 PWMSmoothRamp	KEYWORD2
+PWMSlopeHighRes	KEYWORD2
+PWMParabolaHighRes	KEYWORD2
+PWMSmoothRampHighRes	KEYWORD2
 PumpThreshold	KEYWORD2
 MoonPhase	KEYWORD2
 ConvertNumToString	KEYWORD2
