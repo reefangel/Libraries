@@ -1,4 +1,7 @@
-#include <WiFiAlert.h>
+#include <Globals.h>
+
+#if defined wifi || defined ETH_WIZ5100
+#include "WiFiAlert.h"
 
 WiFiAlert::WiFiAlert()
 {
@@ -8,7 +11,7 @@ WiFiAlert::WiFiAlert()
 
 boolean WiFiAlert::IsAlert()
 {
-  if (now()-LastAlert >= AlertDelay) 
+  if (now()-LastAlert >= AlertDelay)
   {
     return true;
   }
@@ -34,3 +37,4 @@ void WiFiAlert::WiFiSendAlert(char *message)
   Serial.println(message);
   Serial.println("\n\n");
 }
+#endif  // wifi || ETH_WIZ5100

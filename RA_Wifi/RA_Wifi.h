@@ -27,6 +27,7 @@
 #if defined wifi || defined ETH_WIZ5100
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
+
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";
 const prog_char XML_T1[] PROGMEM = "</ID><T1>";
 const prog_char XML_T2[] PROGMEM = "</T1><T2>";
@@ -356,7 +357,7 @@ const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	const prog_char BannerWL[] PROGMEM = "&wl";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-	
+
 #ifdef HUMIDITYEXPANSION
 	const prog_char BannerHumidity[] PROGMEM = "&hum=";
 #endif  // HUMIDITYEXPANSION
@@ -577,7 +578,7 @@ class RA_Wifi: public Print
 #else
     HardwareSerial* _wifiSerial;
 #endif
-    
+
 };
 
 #endif  // __RA_WIFI_H__
