@@ -3644,11 +3644,11 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
     ReefAngel.Network.ReceiveData();
     #endif//wifi||defined ETH_WIZ5100
     ph_read_range[setup_step]=0;
-    for (int a=0;a<30;a++)
+    for (int a=0;a<5;a++)
     {
         ph_read_range[setup_step]+=PH.Read();
     }
-    ph_read_range[setup_step]/=30;
+    ph_read_range[setup_step]/=5;
     LCD.DrawCalibrate(ph_read_range[setup_step], MENU_START_COL+65, MENU_START_ROW*6);
     if(setup_input_render)
     {

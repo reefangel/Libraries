@@ -790,11 +790,11 @@ void ReefAngelClass::Refresh()
 #endif  // defined ORPEXPANSION
 #if defined PHEXPANSION
 	unsigned long tempph=0;
-	for (int a=0;a<20;a++)
+	for (int a=0;a<5;a++)
 	{
 		tempph+=PH.Read();
 	}
-	Params.PHExp=tempph/20;
+	Params.PHExp=tempph/5;
 	if (Params.PHExp!=0)
 	{
 		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
