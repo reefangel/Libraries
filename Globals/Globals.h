@@ -333,7 +333,6 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 
 #ifdef RANET
 #define RANET_SIZE						26
-static SoftwareSerial RaNetSerial(RaNetRXPin,RaNetTXPin);
 // 8 Exp. Boxes, 1 Dimming
 // Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
 static byte RANetSeq, RANetCRC;
@@ -345,6 +344,7 @@ static unsigned long RANetlastmillis;
 #ifdef RA_STAR
 #define RANET_SERIAL	Serial2
 #elif defined RA_PLUS
+static SoftwareSerial RaNetSerial(RaNetRXPin,RaNetTXPin);
 #define RANET_SERIAL	RaNetSerial
 #endif // RA_STAR
 
