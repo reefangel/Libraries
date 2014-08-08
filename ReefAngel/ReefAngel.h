@@ -422,6 +422,35 @@ private:
 	bool setup_input_render;
 	bool setup_screen_refresh;
 	bool setup_save;
+	
+    #if defined DateTimeSetup
+    enum{
+        SETUP_DATETIME_MONTH, 
+        SETUP_DATETIME_DAY, 
+        SETUP_DATETIME_YEAR, 
+        SETUP_DATETIME_HOUR, 
+        SETUP_DATETIME_MINUTE, 
+        #if !defined DATETIME24
+        SETUP_DATETIME_PERIOD, 
+        #endif//DATETIME24
+        SETUP_DATETIME_CANCEL,
+        SETUP_DATETIME_OK
+    };
+
+    struct{
+        byte month;
+        byte day;
+        int year;
+        byte hour;
+        byte minute;
+        #if !defined DATETIME24
+        char *period;
+        #endif//DATETIME24
+    } currentDateTime;
+
+    byte lastDayOfEachMonth[12];
+    #endif//DateTimeSetup
+	
 };
 
 extern ReefAngelClass ReefAngel;  // make an instance for the user
