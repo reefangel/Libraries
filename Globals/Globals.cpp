@@ -507,8 +507,9 @@ byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean
 
 	y+=0.5; // for proper rounding
 
-	// y is now between PulseMinSpeed and PulseMaxSpeed, constrain for safety  
-	return constrain(byte(y),30,100); 
+	// don't need to constrain to 30 at the bottom anymore because users have a PumpThreshold function for 
+	// safety if they would like to use it.
+	return constrain(byte(y),0,100); 
 }
 
 byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync)
