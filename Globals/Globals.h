@@ -153,6 +153,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
+#define SIXTEENCH_PWM_EXPANSION_CHANNELS     		16
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
@@ -310,6 +311,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CIO_PCF8574       0x27
 #define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
+#define I2CPWM_16CH_PCA9685		0x41
 #define I2CLeak				0X48
 #define I2CMultiWaterLevel	0X49
 #define I2CPAR				0X4a
@@ -332,9 +334,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #endif // __PLUS_SPECIAL_WIFI__
 
 #ifdef RANET
-#define RANET_SIZE						26
+#define RANET_SIZE						42
 // 8 Exp. Boxes, 1 Dimming
-// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
+// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + 16 dimming channels + CR + LF = 42 bytes
 static byte RANetSeq, RANetCRC;
 static byte RANetData[RANET_SIZE];
 static byte RANetStatus[RANET_SIZE];
@@ -388,7 +390,23 @@ static SoftwareSerial RaNetSerial(RaNetRXPin,RaNetTXPin);
 #define OVERRIDE_RF_INTENSITY	16
 #define OVERRIDE_DAYLIGHT2		17
 #define OVERRIDE_ACTINIC2		18
-#define OVERRIDE_CHANNELS		19 // This is the last channel for if comparisons
+#define OVERRIDE_16CH_CHANNEL0		19
+#define OVERRIDE_16CH_CHANNEL1		20
+#define OVERRIDE_16CH_CHANNEL2		21
+#define OVERRIDE_16CH_CHANNEL3		22
+#define OVERRIDE_16CH_CHANNEL4		23
+#define OVERRIDE_16CH_CHANNEL5		24
+#define OVERRIDE_16CH_CHANNEL6		25
+#define OVERRIDE_16CH_CHANNEL7		26
+#define OVERRIDE_16CH_CHANNEL8		27
+#define OVERRIDE_16CH_CHANNEL9		28
+#define OVERRIDE_16CH_CHANNEL10		29
+#define OVERRIDE_16CH_CHANNEL11		30
+#define OVERRIDE_16CH_CHANNEL12		31
+#define OVERRIDE_16CH_CHANNEL13		32
+#define OVERRIDE_16CH_CHANNEL14		33
+#define OVERRIDE_16CH_CHANNEL15		34
+#define OVERRIDE_CHANNELS		35 // This is the last channel for if comparisons
 
 
 // Message IDs
@@ -1000,8 +1018,8 @@ typedef struct Compensation
 } COMPENSATION ;
 
 // Used by the DCPump class
-#define NON		    0
-#define Sync		  1
+#define NON		0
+#define Sync		1
 #define AntiSync	2
 
 // Internal EEPROM
@@ -1278,6 +1296,7 @@ const prog_char EXP_RELAY_6_LABEL[] PROGMEM = "Exp. Relay Box 6";
 const prog_char EXP_RELAY_7_LABEL[] PROGMEM = "Exp. Relay Box 7";
 const prog_char EXP_RELAY_8_LABEL[] PROGMEM = "Exp. Relay Box 8";
 const prog_char PWM_EXPANSION_LABEL[] PROGMEM = "PWM Expansion";
+const prog_char SIXTEENCH_PWM_EXPANSION_LABEL[] PROGMEM = "16 Ch PWM Expansion";
 const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
 const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
 const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
@@ -1285,7 +1304,7 @@ const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
 const prog_char DCPUMP_LABEL[] PROGMEM = "DC Pump";
 const prog_char CVAR_LABEL[] PROGMEM = "Custom Variables";
 
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
+static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, SIXTEENCH_PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -1426,6 +1445,12 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #else
 	#define PARbit		0
 #endif  // PAREXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	#define SCPWMbit		16
+#else
+	#define SCPWMbit		0
+#endif  // SIXTEENCHPWMEXPANSION
+
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))

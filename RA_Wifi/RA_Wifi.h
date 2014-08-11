@@ -92,6 +92,10 @@ const prog_char XML_DCT_END[] PROGMEM = "</DCT>";
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char XML_SCPWME[] PROGMEM = "<SCPWME";
+const prog_char XML_SCPWME_END[] PROGMEM = "</SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char XML_AIW[] PROGMEM = "<AIW>";
 const prog_char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
@@ -219,6 +223,9 @@ const prog_char JSON_DCT[] PROGMEM = "DCT";
 #ifdef PWMEXPANSION
 const prog_char JSON_PWME[] PROGMEM = "PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char JSON_SCPWME[] PROGMEM = "SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char JSON_AIW[] PROGMEM = "AIW";
 const prog_char JSON_AIB[] PROGMEM = "AIB";
@@ -319,6 +326,10 @@ const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 #ifdef PWMEXPANSION
 	const prog_char BannerPWME[] PROGMEM = "&pwme";
 #endif  // PWMEXPANSION
+
+#ifdef SIXTEENCHPWMEXPANSION
+	const prog_char BannerSCPWME[] PROGMEM = "&scpwme";
+#endif  // SIXTEENCHPWMEXPANSION
 
 #ifdef RFEXPANSION
 	const prog_char BannerRFM[] PROGMEM = "&rfm=";

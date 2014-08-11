@@ -384,6 +384,17 @@ void RA_Wifi::ProcessHTTP()
 			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.GetChannelOverrideValue(EID));
 #endif
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+			s += 664;
+			//<SCPWME0></SCPWME0><SCPWME1></SCPWME1><SCPWME2></SCPWME2><SCPWME3></SCPWME3><SCPWME4></SCPWME4><SCPWME5></SCPWME5><SCPWME6></SCPWME6><SCPWME7></SCPWME7><SCPWME8></SCPWME8><SCPWME9></SCPWME9><SCPWME10></SCPWME10><SCPWME11></SCPWME11><SCPWME12></SCPWME12><SCPWME13></SCPWME13><SCPWME14></SCPWME14><SCPWME15></SCPWME15><SCPWME0O></SCPWME0O><SCPWME1O></SCPWME1O><SCPWME2O></SCPWME2O><SCPWME3O></SCPWME3O><SCPWME4O></SCPWME4O><SCPWME5O></SCPWME5O><SCPWME6O></SCPWME6O><SCPWME7O></SCPWME7O><SCPWME8O></SCPWME8O><SCPWME9O></SCPWME9O><SCPWME10O></SCPWME10O><SCPWME11O></SCPWME11O><SCPWME12O></SCPWME12O><SCPWME13O></SCPWME13O><SCPWME14O></SCPWME14O><SCPWME15O></SCPWME15O>
+#if defined(__SAM3X8E__)
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.Get16ChannelValue(EID));
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.Get16ChannelOverrideValue(EID));
+#else
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.Get16ChannelValue(EID));
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.Get16ChannelOverrideValue(EID));
+#endif
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef RFEXPANSION
 			s += 181;
 			//<RFM></RFM><RFS></RFS><RFD></RFD><RFW></RFW><RFRB></RFRB><RFR></RFR><RFG></RFG><RFB></RFB><RFI></RFI><RFWO></RFWO><RFRBO></RFRBO><RFRO></RFRO><RFGO></RFGO><RFBO></RFBO><RFIO></RFIO>
@@ -629,6 +640,13 @@ void RA_Wifi::ProcessHTTP()
 				else if (weboption2==18) ReefAngel.PWM.SetActinic2Override(weboption);
 #endif
 #endif // RA_STAR
+#ifdef SIXTEENCHPWMEXPANSION
+#if defined(__SAM3X8E__)
+				if (weboption2>=19 && weboption2<=34) ReefAngel.VariableControl.Set16ChannelOverride(weboption2-19,weboption);
+#else
+				if (weboption2>=19 && weboption2<=34) ReefAngel.PWM.Set16ChannelOverride(weboption2-19,weboption);
+#endif
+#endif // SIXTEENCHPWMEXPANSION
 #endif // DisplayLEDPWM
 				s = 9;  // <P>OK</P>
 				// add in the channel, twice
@@ -990,6 +1008,17 @@ void RA_Wifi::ProcessHTTP()
 			for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.GetChannelOverrideValue(EID));
 #endif
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+			s += 444;
+			//,"SCPWME0":"","SCPWME1":"","SCPWME2":"","SCPWME3":"","SCPWME4":"","SCPWME5":"","SCPWME6":"","SCPWME7":"","SCPWME8":"","SCPWME9":"","SCPWME10":"","SCPWME11":"","SCPWME12":"","SCPWME13":"","SCPWME14":"","SCPWME15":"","SCPWME0O":"","SCPWME1O":"","SCPWME2O":"","SCPWME3O":"","SCPWME4O":"","SCPWME5O":"","SCPWME6O":"","SCPWME7O":"","SCPWME8O":"","SCPWME9O":"","SCPWME10O":"","SCPWME11O":"","SCPWME12O":"","SCPWME13O":"","SCPWME14O":"","SCPWME15O":""
+#if defined(__SAM3X8E__)
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.Get16ChannelValue(EID));
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.VariableControl.Get16ChannelOverrideValue(EID));
+#else
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.Get16ChannelValue(EID));
+			for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ ) s += intlength(ReefAngel.PWM.Get16ChannelOverrideValue(EID));
+#endif
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef RFEXPANSION
 			s += 143;
 			//,"RFM":"","RFS":"","RFD":"","RFW":"","RFRB":"","RFR":"","RFG":"","RFB":"","RFI":"","RFWO":"","RFRBO":"","RFRO":"","RFGO":"","RFBO":"","RFIO":""
@@ -1372,6 +1401,35 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 		PROGMEMprint(XML_CLOSE_TAG);
 	}
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ )
+	{
+		PROGMEMprint(XML_SCPWME);
+		print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+#if defined(__SAM3X8E__)
+		print(ReefAngel.VariableControl.Get16ChannelValue(EID), DEC);
+#else
+		print(ReefAngel.PWM.Get16ChannelValue(EID), DEC);
+#endif
+		PROGMEMprint(XML_SCPWME_END);
+		print(EID, DEC);
+		PROGMEMprint(XML_CLOSE_TAG);
+		PROGMEMprint(XML_SCPWME);
+		print(EID, DEC);
+		print("O");
+		PROGMEMprint(XML_CLOSE_TAG);
+#if defined(__SAM3X8E__)
+		print(ReefAngel.VariableControl.Get16ChannelOverrideValue(EID), DEC);
+#else
+		print(ReefAngel.PWM.Get16ChannelOverrideValue(EID), DEC);
+#endif
+		PROGMEMprint(XML_SCPWME_END);
+		print(EID, DEC);
+		print("O");
+		PROGMEMprint(XML_CLOSE_TAG);
+	}
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 	PROGMEMprint(XML_AIW);
 	print(ReefAngel.AI.GetChannel(0), DEC);
@@ -1617,6 +1675,41 @@ void RA_Wifi::SendJSONData()
 #endif
 	}
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ )
+	{
+		char tid[4];
+		if (EID >= 10) {
+      		tid[0]='1';
+      		tid[1]='0'+(EID-10);
+      		tid[2]=0;
+      		} else {
+      		tid[0]='0'+EID;
+      		tid[1]=0;
+      		}
+#if defined(__SAM3X8E__)
+		SendSingleJSON(JSON_SCPWME,ReefAngel.VariableControl.Get16ChannelValue(EID),tid);
+#else
+		SendSingleJSON(JSON_SCPWME,ReefAngel.PWM.Get16ChannelValue(EID),tid);
+#endif
+		if (EID >= 10) {
+      		tid[0]='1';
+      		tid[1]='0'+(EID-10);
+      		tid[2]='O';
+      		tid[3]=0;
+      		} else {
+      		tid[0]='0'+EID;
+      		tid[1]='O';
+      		tid[2]=0;
+      		}
+#if defined(__SAM3X8E__)
+		SendSingleJSON(JSON_SCPWME,ReefAngel.VariableControl.Get16ChannelOverrideValue(EID),tid);
+#else
+		SendSingleJSON(JSON_SCPWME,ReefAngel.PWM.Get16ChannelOverrideValue(EID),tid);
+#endif
+	}
+#endif  // SIXTEENCHPWMEXPANSION
+
 #ifdef AI_LED
 	SendSingleJSON(JSON_AIW,ReefAngel.AI.GetChannel(0));
 	SendSingleJSON(JSON_AIB,ReefAngel.AI.GetChannel(0));
@@ -1886,6 +1979,28 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif
   }
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+  for ( byte EID = 0; EID < SIXTEENCH_PWM_EXPANSION_CHANNELS; EID++ )
+  {
+    PROGMEMprint(BannerSCPWME);
+    print(EID, DEC);
+    print("=");
+#if defined(__SAM3X8E__)
+    print(ReefAngel.VariableControl.Get16ChannelValue(EID), DEC);
+#else
+    print(ReefAngel.PWM.Get16ChannelValue(EID), DEC);
+#endif
+    PROGMEMprint(BannerSCPWME);
+    print(EID, DEC);
+    print("O");
+    print("=");
+#if defined(__SAM3X8E__)
+    print(ReefAngel.VariableControl.Get16ChannelOverrideValue(EID), DEC);
+#else
+    print(ReefAngel.PWM.Get16ChannelOverrideValue(EID), DEC);
+#endif
+  }
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef RFEXPANSION
   PROGMEMprint(BannerRFM);
   print(ReefAngel.RF.Mode, DEC);

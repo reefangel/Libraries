@@ -41,6 +41,12 @@ DCPumpClass::DCPumpClass()
 	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 		ExpansionChannel[a]=NON;
 #endif // PWMEXPANSION
+
+#ifdef SIXTEENCHPWMEXPANSION
+	for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
+		SIXTEENChExpansionChannel[a]=NON;
+#endif // SIXTEENCHPWMEXPANSION
+
   if (InternalMemory.DCPumpThreshold_read() > 100) InternalMemory.DCPumpThreshold_write(Threshold); // if it has never been initialized, 
                                                                                              // it will be at 255 and will need to be set to something sensible
                                                                                              // like a default of 30 percent

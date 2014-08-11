@@ -93,7 +93,7 @@ public:
 	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
-  byte AlertFlags,StatusFlags;
+	byte AlertFlags,StatusFlags;
 	bool BusLocked;
 
 	ReefAngelClass();
@@ -218,6 +218,10 @@ public:
 
 	EM1 Bits
 	Bit 0 - HUMbit
+	Bit 1 - DCPumpbit
+	Bit 2 - Leakbit
+	Bit 3 - PARbit
+	Bit 4 - SCPWMbit
 	 */
 
 #ifdef RelayExp
@@ -291,6 +295,7 @@ public:
 	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
+	void inline Add16ChPWM() {};
 	void inline AddCustomColors() {};
 	void inline AddBusCheck() {};
 	void inline AddPortOverrides() {};
@@ -369,7 +374,7 @@ public:
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
 #ifdef KALKDOSER
-  void KalkDoser(byte KalkRelay, int LowPH, int TimeoutSeconds, byte MinuteInterval = 0);
+	void KalkDoser(byte KalkRelay, int LowPH, int TimeoutSeconds, byte MinuteInterval = 0);
 #endif //  KALKDOSER
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte Relay);
@@ -451,7 +456,7 @@ private:
 
     byte lastDayOfEachMonth[12];
     #endif//DateTimeSetup
-	
+
 };
 
 extern ReefAngelClass ReefAngel;  // make an instance for the user

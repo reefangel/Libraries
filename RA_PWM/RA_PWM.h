@@ -150,6 +150,29 @@ public:
 	boolean Present;
 #endif  // PWMEXPANSION
 
+#ifdef SIXTEENCHPWMEXPANSION
+	int SIXTEENChExpansionChannel[SIXTEENCH_PWM_EXPANSION_CHANNELS];
+	byte SIXTEENChExpansionChannelOverride[SIXTEENCH_PWM_EXPANSION_CHANNELS];
+	void inline Set16Channel(byte Channel, int Value) { if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannel[Channel]=Value; };
+	void inline Set16Channel(byte Channel, byte Value) { if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannel[Channel]=(int)Value*40.95; };
+	void inline Set16ChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannelOverride[Channel]=Value; };
+	void SIXTEENChExpansion(byte cmd, int data);
+	void SIXTEENChExpansion(byte cmd, byte data);
+	void SIXTEENChExpansionSetPercent(byte p);
+	void SIXTEENChExpansionWrite();
+	byte Get16ChannelValue(byte Channel);
+	int Get16ChannelValueRaw(byte Channel);
+	byte inline Get16ChannelOverrideValue(byte Channel) { return SIXTEENChExpansionChannelOverride[Channel]; };
+	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration);
+	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration, byte MinuteOffset);
+	void SIXTEENChannelPWMParabola(byte Channel, int Start, int End);	
+	void SIXTEENChannelPWMParabola(byte Channel, int Start, int End, byte MinuteOffset);	
+	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength);	
+	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, byte MinuteOffset);	
+	boolean inline SIXTEENChIsPresent() { return SIXTEENChPresent; }
+	boolean SIXTEENChPresent;
+#endif  // SIXTEENCHPWMEXPANSION
+
 private:
 	byte lastcrc;
 	int ActinicPWMValue;
