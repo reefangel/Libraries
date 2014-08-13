@@ -208,7 +208,7 @@ void RA_PWMClass::DaylightPWMParabola()
 
 void RA_PWMClass::ActinicPWMSmoothRamp(int MinuteOffset)
 {
-	AcinicPWMSmoothRamp(MinuteOffset, MinuteOffset);
+	ActinicPWMSmoothRamp(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::ActinicPWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
@@ -876,32 +876,32 @@ void RA_PWMClass::Channel5PWMParabola()
 
 void RA_PWMClass::Channel0PWMParabola(int MinuteOffset)
 {
-	Channel0PWMParabola(MinuteOffset, int MinuteOffset);
+	Channel0PWMParabola(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::Channel1PWMParabola(int MinuteOffset)
 {
-	Channel1PWMParabola(MinuteOffset, int MinuteOffset);
+	Channel1PWMParabola(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::Channel2PWMParabola(int MinuteOffset)
 {
-	Channel2PWMParabola(MinuteOffset, int MinuteOffset);
+	Channel2PWMParabola(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::Channel3PWMParabola(int MinuteOffset)
 {
-	Channel3PWMParabola(MinuteOffset, int MinuteOffset);
+	Channel3PWMParabola(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::Channel4PWMParabola(int MinuteOffset)
 {
-	Channel4PWMParabola(MinuteOffset, int MinuteOffset);
+	Channel4PWMParabola(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::Channel5PWMParabola(int MinuteOffset)
 {
-	Channel5PWMParabola(MinuteOffset, int MinuteOffset);
+	Channel5PWMParabola(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::Channel0PWMParabola(int PreMinuteOffset, int PostMinuteOffset)
@@ -1027,32 +1027,32 @@ void RA_PWMClass::Channel5PWMSmoothRamp(int MinuteOffset)
 	Channel5PWMSmoothRamp(MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::Channel0PWMSmoothRamp(int PreMinuteOffset, byte PostOffset)
+void RA_PWMClass::Channel0PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
 	ChannelPWMSlope(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(),InternalMemory.PWMSlopeDuration0_read(), PreMinuteOffset, PostMinuteOffset);
 }
 
-void RA_PWMClass::Channel1PWMSmoothRamp(int PreMinuteOffset, byte PostOffset)
+void RA_PWMClass::Channel1PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
 	ChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(),InternalMemory.PWMSlopeDuration1_read(), PreMinuteOffset, PostMinuteOffset);
 }
 
-void RA_PWMClass::Channel2PWMSmoothRamp(int PreMinuteOffset, byte PostOffset)
+void RA_PWMClass::Channel2PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
 	ChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(),InternalMemory.PWMSlopeDuration2_read(), PreMinuteOffset, PostMinuteOffset);
 }
 
-void RA_PWMClass::Channel3PWMSmoothRamp(int PreMinuteOffset, byte PostOffset)
+void RA_PWMClass::Channel3PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
 	ChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(),InternalMemory.PWMSlopeDuration3_read(), PreMinuteOffset, PostMinuteOffset);
 }
 
-void RA_PWMClass::Channel4PWMSmoothRamp(int PreMinuteOffset, byte PostOffset)
+void RA_PWMClass::Channel4PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
 	ChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(),InternalMemory.PWMSlopeDuration4_read(), PreMinuteOffset, PostMinuteOffset);
 }
 
-void RA_PWMClass::Channel5PWMSmoothRamp(int PreMinuteOffset, byte PostOffset)
+void RA_PWMClass::Channel5PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
 	ChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(),InternalMemory.PWMSlopeDuration5_read(), PreMinuteOffset, PostMinuteOffset);
 }
@@ -1077,7 +1077,7 @@ void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte 
 	ChannelPWMSmoothRamp(Channel, Start, End, SlopeLength, MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)i
+void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;

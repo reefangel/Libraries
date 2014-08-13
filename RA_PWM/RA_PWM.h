@@ -65,7 +65,7 @@ public:
 	void StandardDaylight(int MinuteOffset);
 	void StandardActinic(int PreMinuteOffset, int PostMinuteOffset);
 	void StandardDaylight(int PreMinuteOffset, int PostMinuteOffset);
-	void Override(byte Channel, byte Value, int MinuteOffset);
+	void Override(byte Channel, byte Value);
 #if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
 	void inline SetActinic2(int value) { Actinic2PWMValue = value; };
 	void inline SetDaylight2(int value) { Daylight2PWMValue = value; };
