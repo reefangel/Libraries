@@ -28,8 +28,10 @@ class HumidityClass
 {
 public:
 	HumidityClass();
+	int LastLevel;
 	void Read();
 	inline int GetLevel() {  return level; } ;
+	inline int SetLevel(int value) {  level=value; } ;
 private:
 	int level;
 	unsigned long lastlevel;

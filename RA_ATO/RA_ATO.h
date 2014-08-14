@@ -32,7 +32,7 @@ class RA_ATOClass
 {
 public:
 	RA_ATOClass();
-    virtual bool IsActive() = 0;
+  virtual bool IsActive() = 0;
 	inline bool IsTopping() { return topping; }
 #ifdef ENABLE_ATO_LOGGING
 	virtual void StartTopping(bool fHighAto = false);
@@ -87,21 +87,45 @@ public:
 #endif // ATO_LOW_REVERSE
 };
 
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 class RA_ATOWLClass : public RA_ATOClass
 {
 public:
 	inline bool IsActive() { return false; }
 };
-#endif // WATERLEVELEXPANSION
+#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
-#if defined RA_STAR
+#if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
 class RA_ATOALARMClass : public RA_ATOClass
 {
 public:
-	inline bool IsActive() { return !(PINJ & (1<<PJ4)); }
+#ifdef ATO_LOW_REVERSE
+#ifdef RA_TOUCHDISPLAY
+    inline bool IsActive() { return !activestatus; }
+#elif defined(__SAM3X8E__)
+    inline bool IsActive() { return digitalRead(AlarmPin); }
+#else // RA_TOUCHDISPLAY
+    inline bool IsActive() { return (PINJ & (1<<PJ4)); }
+#endif // RA_TOUCHDISPLAY
+#else // ATO_LOW_REVERSE
+#ifdef RA_TOUCHDISPLAY
+    inline bool IsActive() { return activestatus; }
+#elif defined(__SAM3X8E__)
+    inline bool IsActive() { return !digitalRead(AlarmPin); }
+#else // RA_TOUCHDISPLAY
+    inline bool IsActive() { return !(PINJ & (1<<PJ4)); }
+#endif // RA_TOUCHDISPLAY
+#endif // ATO_LOW_REVERSE
 };
 #endif // RA_STAR
+
+#ifdef KALKDOSER
+class RA_KalkDoserClass : public RA_ATOClass
+{
+public:
+    inline bool IsActive() { return true; }
+};
+#endif //  KALKDOSER
 
 #endif  // __RA_ATO_H__
 

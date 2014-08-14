@@ -23,11 +23,20 @@
 #define __RA_TS_H__
 
 #include <Globals.h>
-#include <avr/eeprom.h>
 #include <SPI.h>
+#include <InternalEEPROM.h>
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 
+#include <avr/eeprom.h>
 #define TP0	cbi(PORTD, 7)
 #define TP1 sbi(PORTD, 7)
+
+#elif defined(__SAM3X8E__)
+
+#define TP0  PIOD->PIO_CODR |= 1<<3;
+#define TP1  PIOD->PIO_SODR |= 1<<3;
+
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 
 class RA_TS
 {

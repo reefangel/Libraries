@@ -21,7 +21,7 @@
 #if not defined __SAM3X8E__
 #include <avr/eeprom.h>
 #else
-#include "Memory.h"
+#include "SPIEEPROM.h"
 #endif // __SAM3X8E__
 /*
 This class reads/writes to the internal EEPROM memory
@@ -200,6 +200,8 @@ class InternalEEPROMClass {
         void DCPumpSpeed_write(const uint8_t value);
         uint8_t DCPumpDuration_read();
         void DCPumpDuration_write(const uint8_t value);
+        uint8_t DCPumpThreshold_read();
+        void DCPumpThreshold_write(const uint8_t value);
         uint8_t LEDPWMDaylight2_read();
         void LEDPWMDaylight2_write(const uint8_t value);
         uint8_t LEDPWMActinic2_read();

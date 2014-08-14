@@ -23,6 +23,7 @@
 
 RA_TouchLCD::RA_TouchLCD()
 {
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	DDRL=0xff; //PORTL (Control Pins Output)
 	DDRA=0xff; //PORTA (Data Output - D8-15)
 	DDRC=0xff; //PORTC (Data Output - D0-7)
@@ -35,6 +36,12 @@ RA_TouchLCD::RA_TouchLCD()
 	PORTD|=(1<<7); //PD7 pull up
 	DDRL|=(1<<4); //PL4 (Output) - RD
 	PORTL|=(1<<4); //PL4 pull up
+#elif defined(__SAM3X8E__)
+//	PIOC->PIO_OER |= 0x001FFFFE;
+//	PIOC->PIO_OWER = 0x0001FFFE;
+//	PIOC->PIO_OWDR = 0xFFFE0001;
+	
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 }
 
 void RA_TouchLCD::Init()
@@ -45,7 +52,7 @@ void RA_TouchLCD::Init()
 
 void RA_TouchLCD::SetBacklight(byte bl)
 {
-	analogWrite(44,bl*2.55);
+	analogWrite(TouchBL,bl*2.55);
 }
 
 void RA_TouchLCD::SetOrientation(byte O)
@@ -437,7 +444,9 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 				  for (i=0; i< bmpHeight; i++) 
 				  {
 
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 					  wdt_reset();
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 					  for (j=0; j<bmpWidth; j++) 
 					  {
 						  // read more pixels
@@ -496,14 +505,20 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 			// read more pixels
 			if (buffidx >= 2*BUFFPIXEL) 
 			{
-				wdt_reset();
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+					  wdt_reset();
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				dataFile.read(sdbuffer, 2*BUFFPIXEL);
 				buffidx = 0;
 			}
 			// write out the 16 bits of color
 			// RA_TFT::SendData(sdbuffer[buffidx++],sdbuffer[buffidx++]);
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 			PORTA=sdbuffer[buffidx++];
 			PORTC=sdbuffer[buffidx++];
+#elif defined(__SAM3X8E__)
+			PIOC->PIO_ODSR = sdbuffer[buffidx++]<<9 | sdbuffer[buffidx++]<<1;
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 			WR0;
 			WR1;
 		}

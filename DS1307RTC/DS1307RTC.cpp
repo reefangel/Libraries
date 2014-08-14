@@ -1,4 +1,3 @@
-#ifndef __SAM3X8E__
 /*
  * DS1307RTC.h - library for DS1307 RTC
   
@@ -120,6 +119,8 @@ uint8_t DS1307RTC::bcd2dec(uint8_t num)
   return ((num/16 * 10) + (num % 16));
 }
 
+#if defined(__SAM3X8E__)
+DS1307RTC I2CRTC = DS1307RTC(); // create an instance for the user
+#else // defined(__SAM3X8E__)
 DS1307RTC RTC = DS1307RTC(); // create an instance for the user
-
-#endif // __SAM3X8E__
+#endif // defined(__SAM3X8E__)

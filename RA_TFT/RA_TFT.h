@@ -24,6 +24,8 @@
 
 #include <Globals.h>
 
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+
 #define CS0 cbi(PORTL,1)
 #define CS1 sbi(PORTL,1)
 #define RS0 cbi(PORTL,2)
@@ -36,6 +38,19 @@
 #define BL1 sbi(PORTL,5)
 #define LED0 cbi(PORTH, 4)
 #define LED1 sbi(PORTH, 4)
+
+#elif defined(__SAM3X8E__)
+
+#define RST0  PIOC->PIO_CODR |= 1<<20;
+#define RST1  PIOC->PIO_SODR |= 1<<20;
+#define CS0  PIOC->PIO_CODR |= 1<<19;
+#define CS1  PIOC->PIO_SODR |= 1<<19;
+#define RS0  PIOC->PIO_CODR |= 1<<18;
+#define RS1  PIOC->PIO_SODR |= 1<<18;
+#define WR0  PIOC->PIO_CODR |= 1<<17;
+#define WR1  PIOC->PIO_SODR |= 1<<17;
+
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 
 class RA_TFT
 {

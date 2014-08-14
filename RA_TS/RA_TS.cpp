@@ -31,11 +31,22 @@ void RA_TS::Init()
 	orientation=1;
 	CalibrationNeeded=false;
 	ApplyCalibration();
+#if defined(__SAM3X8E__)
+	pinMode(TPINTPin,INPUT); 
+	pinMode(TPCSPin,OUTPUT);
+#endif // defined(__SAM3X8E__)
 }
 
 void RA_TS::ApplyCalibration()
 {
+#if not defined(__SAM3X8E__)
 	eeprom_read_block((void*)&calibration, (void*)TS_CALIBRATION_ADDRESS, sizeof(CALIBRATION));
+#else
+	calibration.XMin=(InternalMemory.read(TS_CALIBRATION_ADDRESS)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+1);
+	calibration.XMax=(InternalMemory.read(TS_CALIBRATION_ADDRESS+2)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+3);
+	calibration.YMin=(InternalMemory.read(TS_CALIBRATION_ADDRESS+4)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+5);
+	calibration.YMax=(InternalMemory.read(TS_CALIBRATION_ADDRESS+6)<<8)+InternalMemory.read(TS_CALIBRATION_ADDRESS+7);
+#endif // defined(__SAM3X8E__)
 	if (calibration.XMin<TS_CALIBRATION_XMIN - TS_CALIBRATION_DELTA || calibration.XMin>TS_CALIBRATION_XMIN + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.XMax<TS_CALIBRATION_XMAX - TS_CALIBRATION_DELTA || calibration.XMax>TS_CALIBRATION_XMAX + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
 	if (calibration.YMin<TS_CALIBRATION_YMIN - TS_CALIBRATION_DELTA || calibration.YMin>TS_CALIBRATION_YMIN + TS_CALIBRATION_DELTA) CalibrationNeeded=true;
@@ -44,7 +55,18 @@ void RA_TS::ApplyCalibration()
 
 void RA_TS::SaveCalibration()
 {
+#if not defined(__SAM3X8E__)
 	eeprom_write_block((void*)&calibration, (void*)TS_CALIBRATION_ADDRESS, sizeof(CALIBRATION));
+#else
+	InternalMemory.write(TS_CALIBRATION_ADDRESS,calibration.XMin>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+1,calibration.XMin&0xff);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+2,calibration.XMax>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+3,calibration.XMax&0xff);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+4,calibration.YMin>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+5,calibration.YMin&0xff);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+6,calibration.YMax>>8);
+	InternalMemory.write(TS_CALIBRATION_ADDRESS+7,calibration.YMax&0xff);
+#endif // defined(__SAM3X8E__)
 }
 
 boolean RA_TS::GetTouch()
@@ -55,8 +77,10 @@ boolean RA_TS::GetTouch()
 	double pressure;
 
 //	SPCR=0x53;
+#if defined(__SAM3X8E__)
+	SPI.setClockDivider(255); 
+#endif // defined(__SAM3X8E__)
 	TP0;
-
 	for (int i=0;i<TouchSample;i++)
 	{
 		SPI.transfer(0xb0);
@@ -125,6 +149,9 @@ boolean RA_TS::GetTouch()
 	uY=averageY;
 
 	TP1;
+#if defined(__SAM3X8E__)
+	SPI.setClockDivider(21); 
+#endif // defined(__SAM3X8E__)
 //	SPCR=0x50;
 	if (uX==0) uY=0;
 
@@ -178,7 +205,11 @@ boolean RA_TS::GetTouch()
 
 boolean RA_TS::IsTouched()
 {
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	boolean t=!(PIND&(1<<5));
+#elif defined(__SAM3X8E__)
+	boolean t=!digitalRead(TPINTPin);
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 	if (t) 
 		t=GetTouch();
 	return t;

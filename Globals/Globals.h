@@ -30,8 +30,11 @@
 #include <Time.h>
 #include <OneWire.h>
 #include <SPI.h>
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
+#include <SoftwareSerial.h>
+#endif
 #include <avr/pgmspace.h>
 
 static unsigned long RAStart;
@@ -39,7 +42,7 @@ static unsigned long RAStart;
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany);
 void SendMaster(byte ID, byte data1, byte data2);
-#endif RA_TOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 
 #ifdef I2CMASTER
 void receiveEventMaster(int howMany);
@@ -52,7 +55,6 @@ void receiveEventMaster(int howMany);
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
-#define DisplayLEDPWM
 #undef RA_STANDARD
 #define RA_PLUS
 #endif //__AVR_ATmega2560__
@@ -76,18 +78,18 @@ void receiveEventMaster(int howMany);
 
 #if defined(__SAM3X8E__)
 #define wifi
-#define BUSCHECK
+#define LEAKDETECTOREXPANSION
+#define NOTILT
 #undef RA_STANDARD
 #undef RA_PLUS
 #define RA_EVOLUTION
+#include <SD.h>
 #include "itoa.h"
 #endif
 
 
 #if defined RA_TOUCHDISPLAY
-#define DisplayLEDPWM
 #define PWMEXPANSION
-#define DisplayLEDPWM
 #define IOEXPANSION
 #define RFEXPANSION
 #define SALINITYEXPANSION
@@ -96,24 +98,25 @@ void receiveEventMaster(int howMany);
 #define PHEXPANSION
 #define WATERLEVELEXPANSION
 #define AI_LED
+#define HUMIDITYEXPANSION
+#define DCPUMPCONTROL
+#define LEAKDETECTOREXPANSION
+#define CUSTOM_VARIABLES
 #endif // RA_TOUCHDISPLAY
 
 #if defined RA_TOUCH || defined DCPUMPCONTROL
-#define DisplayLEDPWM
 #endif // RA_TOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
 
-#ifdef __PLUS_SPECIAL_WIFI__
-#define WIFI_SERIAL Serial1
-#elif defined RA_STAR
-#define WIFI_SERIAL NetClient
-#else
-#define WIFI_SERIAL Serial
-#endif // __PLUS_SPECIAL_WIFI__
-
-#define RANET_SERIAL	Serial2
+// Board ids
+#define RA				0
+#define RAPlus			1
+#define RATouchDisplay	2
+#define RATouch			3
+#define	RAStar			4
+#define RAEvolution		5
 
 // Outlets on Relay box
 #define Port8   8
@@ -139,7 +142,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define ATOTimeOutFlag	0
 #define OverheatFlag   	1
 #define BusLockFlag   	2
-#define LeakFlag		3
+#define LeakFlag		    3
 
 // Status Flag Bits
 #define LightsOnFlag   	0
@@ -150,14 +153,21 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
+#define SIXTEENCH_PWM_EXPANSION_CHANNELS     		16
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
-#define WATERLEVEL_CHANNELS				5
+#ifndef EXTRA_TEMP_PROBES
+#define TEMP_PROBES						3
+#else
+#define TEMP_PROBES						6
+#endif
 
-// 8 Exp. Boxes, 1 Dimming
-// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
-#define RANET_SIZE						26
+#if defined MULTIWATERLEVELEXPANSION
+#define WATERLEVEL_CHANNELS       5
+#else  // MULTIWATERLEVELEXPANSION
+#define WATERLEVEL_CHANNELS       1
+#endif  // MULTIWATERLEVELEXPANSION
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -252,24 +262,42 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define LeakPin             5
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
-//#define Piezo               16 
+//#define Piezo               16
 
 //Digital I/O
-#ifdef REEFANGEL_MINI
-#define ledPin              6
-#else
-#define ledPin              7
-#endif //REEFANGEL_MINI
 #define tempPin             8
 #define actinicPWMPin       9
 #define daylightPWMPin      10
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define HW_SPI_Pin			53
+#if defined(__SAM3X8E__)
+#define SDPin				29
+#define AlarmPin          	30
+#define BuzzerPin			31
+#define daylight2PWMPin     5
+#define actinic2PWMPin      6
+#define ExpBusPin           23
+#define ledPin              24
+#define EEPROMPin			26
+#define TPINTPin			27
+#define TPCSPin				28
+#define TouchBL				3
+#else //
+#define TouchBL				44
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
+#define BuzzerPin			48
 #define SDPin				49
-#define HW_SPI_Pin			53
+#define RaNetRXPin			50
+#define RaNetTXPin			52
+#ifdef REEFANGEL_MINI
+#define ledPin              6
+#else
+#define ledPin              7
+#endif //REEFANGEL_MINI
+#endif //__SAM3X8E__
 
 // I2C Addresses
 #define I2CPWM				0x08
@@ -283,8 +311,10 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CIO_PCF8574       0x27
 #define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
+#define I2CPWM_16CH_PCA9685		0x41
 #define I2CLeak				0X48
 #define I2CMultiWaterLevel	0X49
+#define I2CPAR				0X4a
 #define I2CORP				0X4c
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
@@ -294,6 +324,32 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CHumidity			0x5c
 #define I2CClock            0x68
 
+
+#ifdef __PLUS_SPECIAL_WIFI__
+#define WIFI_SERIAL Serial1
+#elif defined RA_STAR
+#define WIFI_SERIAL NetClient
+#else
+#define WIFI_SERIAL Serial
+#endif // __PLUS_SPECIAL_WIFI__
+
+#ifdef RANET
+#define RANET_SIZE						42
+// 8 Exp. Boxes, 1 Dimming
+// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + 16 dimming channels + CR + LF = 42 bytes
+static byte RANetSeq, RANetCRC;
+static byte RANetData[RANET_SIZE];
+static byte RANetStatus[RANET_SIZE];
+static unsigned long RANetlastmillis;
+
+#ifdef RA_STAR
+#define RANET_SERIAL	Serial2
+#elif defined RA_PLUS
+static SoftwareSerial RaNetSerial(RaNetRXPin,RaNetTXPin);
+#define RANET_SERIAL	RaNetSerial
+#endif // RA_STAR
+
+#endif // RANET
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
@@ -310,6 +366,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define T1_PROBE		1
 #define T2_PROBE		2
 #define T3_PROBE		3
+#define T4_PROBE		4
+#define T5_PROBE		5
+#define T6_PROBE		6
 
 // PWM Override IDs
 #define OVERRIDE_DAYLIGHT		0
@@ -329,9 +388,25 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_GREEN		14
 #define OVERRIDE_RF_BLUE		15
 #define OVERRIDE_RF_INTENSITY	16
-#define OVERRIDE_CHANNELS		17
-#define OVERRIDE_DAYLIGHT2		18
-#define OVERRIDE_ACTINIC2		19
+#define OVERRIDE_DAYLIGHT2		17
+#define OVERRIDE_ACTINIC2		18
+#define OVERRIDE_16CH_CHANNEL0		19
+#define OVERRIDE_16CH_CHANNEL1		20
+#define OVERRIDE_16CH_CHANNEL2		21
+#define OVERRIDE_16CH_CHANNEL3		22
+#define OVERRIDE_16CH_CHANNEL4		23
+#define OVERRIDE_16CH_CHANNEL5		24
+#define OVERRIDE_16CH_CHANNEL6		25
+#define OVERRIDE_16CH_CHANNEL7		26
+#define OVERRIDE_16CH_CHANNEL8		27
+#define OVERRIDE_16CH_CHANNEL9		28
+#define OVERRIDE_16CH_CHANNEL10		29
+#define OVERRIDE_16CH_CHANNEL11		30
+#define OVERRIDE_16CH_CHANNEL12		31
+#define OVERRIDE_16CH_CHANNEL13		32
+#define OVERRIDE_16CH_CHANNEL14		33
+#define OVERRIDE_16CH_CHANNEL15		34
+#define OVERRIDE_CHANNELS		35 // This is the last channel for if comparisons
 
 
 // Message IDs
@@ -340,6 +415,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define MESSAGE_CHANNEL_OVERRIDE	2
 #define MESSAGE_MENU	3
 #define MESSAGE_COMMAND	4
+#define MESSAGE_RESEND_ALL	5
+
 
 // I2C Command IDs
 // Don't use command 0. It is going to be used to clear the command check on function UpdateTouchDisplay()
@@ -347,6 +424,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define COMMAND_CLEAR_OVERHEAT	2
 #define COMMAND_LIGHTS_ON	3
 #define COMMAND_LIGHTS_OFF	4
+#define COMMAND_CLEAR_LEAK	5
 
 /*
 EEPROM locations
@@ -410,7 +488,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_HeaterTempOff       VarsStart+24
 #define Mem_I_ChillerTempOn       VarsStart+26
 #define Mem_I_ChillerTempOff      VarsStart+28
-#define Mem_B_ATOTimeout          VarsStart+30
+#define Mem_B_ATOTimeout          VarsStart+30 // DEPRECATED, use Mem_I_ATOExtendedTimeout instead
 #define Mem_I_PHMax               VarsStart+31
 #define Mem_I_PHMin               VarsStart+33
 #define Mem_B_MHDelay             VarsStart+35
@@ -420,7 +498,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DP2OnMinute         VarsStart+39
 #define Mem_B_ATOHourInterval     VarsStart+40
 #define Mem_B_ATOHighHourInterval VarsStart+41
-#define Mem_B_ATOHighTimeout      VarsStart+42
+#define Mem_B_ATOHighTimeout      VarsStart+42 // DEPRECATED, use Mem_I_ATOExtendedTimeout instead
 #define Mem_I_DP1RepeatInterval	  VarsStart+43
 #define Mem_I_DP2RepeatInterval	  VarsStart+45
 #define Mem_I_SalMax			  VarsStart+47
@@ -452,7 +530,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_PWMSlopeEnd5	      VarsStart+74
 #define Mem_B_PWMSlopeDuration5   VarsStart+75
 #define Mem_I_ATOExtendedTimeout  VarsStart+76
-#define Mem_I_ATOHighExtendedTimeout  VarsStart+78
+#define Mem_I_ATOHighExtendedTimeout  VarsStart+78 // DEPRECATED, use Mem_I_ATOExtendedTimeout instead
 #define Mem_I_ORPMin			  VarsStart+80
 #define Mem_I_ORPMax			  VarsStart+82
 #define Mem_B_ActinicOffset		  VarsStart+84
@@ -517,9 +595,10 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_PWMSlopeStartA2     VarsStart+161
 #define Mem_B_PWMSlopeEndA2	      VarsStart+162
 #define Mem_B_PWMSlopeDurationA2  VarsStart+163
+#define Mem_B_DCPumpThreshold     VarsStart+164
 
-#define VarsEnd					  VarsStart+164
-// Next value starts VarsStart+164
+#define VarsEnd					  VarsStart+165
+// Next value starts VarsStart+165
 
 
 // EEProm Pointers
@@ -642,7 +721,7 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -669,11 +748,13 @@ When adding more variables, use the previous value plus 1 or 2
 #define DIVISION					RGB565(0x40, 0x40, 0x40)
 #define RELAYBOXLABELBAR			RGB565(0xDC, 0xAC, 0xDE)
 #define PWMLABELBAR					RGB565(0xF7, 0xBC, 0x54)
-#define RFLABELBAR					RGB565(0xF6, 0x03, 0xFF)
+#define RFLABELBAR					RGB565(0x27, 0xA0, 0x78)
 #define RFLABELBAR1					RGB565(0x46, 0xd1, 0xFF)
 #define AILABELBAR					RGB565(0xFF, 0x8A, 0x00)
-#define IOLABELBAR					RGB565(0x89, 0x21, 0xaa)
+#define IOLABELBAR					RGB565(0x89, 0x21, 0x3a)
 #define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
+#define DCLABELBAR					RGB565(0xA1, 0xC5, 0x59)
+#define CVARLABELBAR				RGB565(0xF6, 0x03, 0xFF)
 #define PWMWHITE					COLOR_ORANGE
 #define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
 #define PWMRED						COLOR_RED
@@ -882,6 +963,12 @@ Used by the RF Expansion Module
 #define None          99
 #define Radion        100
 
+/*
+ * Non-Vortech DC Pump modes added, using unused integers, else matched to U-App development
+ */
+#define Else		12
+#define Sine 		13
+
 // Radion Channels
 #define Radion_White      0
 #define Radion_RoyalBlue  1
@@ -903,7 +990,7 @@ const byte RawChannel[]={67,65,66};
 
 // Parameters structure, moved from RA_NokiaLCD.h to a more central location
 typedef struct  {
-  int Temp[4];
+  int Temp[TEMP_PROBES+1];
   int PH;
   int Salinity;
   int ORP;
@@ -931,107 +1018,130 @@ typedef struct Compensation
 } COMPENSATION ;
 
 // Used by the DCPump class
-#define None		0
+#define NON		0
 #define Sync		1
 #define AntiSync	2
 
-//Internal EEPROM
+// Internal EEPROM
 #define TS_CALIBRATION_ADDRESS 		0x0
 #define TT_COMPENSATION_ADDRESS 	0x10
 
-#define	Probe1Name					0x400
-#define	Probe2Name					0x410
-#define	Probe3Name					0x420
+// Custom Labels
 
-#define	PWMChannel1					0x430
-#define	PWMChannel2					0x440
-#define	PWMChannel3					0x450
-#define	PWMChannel4					0x460
-#define	PWMChannel5					0x470
-#define	PWMChannel6					0x480
+#define Port1Label				0
+#define Port2Label				1
+#define Port3Label				2
+#define Port4Label				3
+#define Port5Label				4
+#define Port6Label				5
+#define Port7Label				6
+#define Port8Label				7
+#define Box1_Port1Label			8
+#define Box1_Port2Label			9
+#define Box1_Port3Label			10
+#define Box1_Port4Label			11
+#define Box1_Port5Label			12
+#define Box1_Port6Label			13
+#define Box1_Port7Label			14
+#define Box1_Port8Label			15
+#define Box2_Port1Label			16
+#define Box2_Port2Label			17
+#define Box2_Port3Label			17
+#define Box2_Port4Label			18
+#define Box2_Port5Label			20
+#define Box2_Port6Label			21
+#define Box2_Port7Label			22
+#define Box2_Port8Label			23
+#define Box3_Port1Label			24
+#define Box3_Port2Label			25
+#define Box3_Port3Label			26
+#define Box3_Port4Label			27
+#define Box3_Port5Label			28
+#define Box3_Port6Label			29
+#define Box3_Port7Label			30
+#define Box3_Port8Label			31
+#define Box4_Port1Label			32
+#define Box4_Port2Label			33
+#define Box4_Port3Label			34
+#define Box4_Port4Label			35
+#define Box4_Port5Label			36
+#define Box4_Port6Label			37
+#define Box4_Port7Label			38
+#define Box4_Port8Label			39
+#define Box5_Port1Label			40
+#define Box5_Port2Label			41
+#define Box5_Port3Label			42
+#define Box5_Port4Label			43
+#define Box5_Port5Label			44
+#define Box5_Port6Label			45
+#define Box5_Port7Label			46
+#define Box5_Port8Label			47
+#define Box6_Port1Label			48
+#define Box6_Port2Label			49
+#define Box6_Port3Label			50
+#define Box6_Port4Label			51
+#define Box6_Port5Label			52
+#define Box6_Port6Label			53
+#define Box6_Port7Label			54
+#define Box6_Port8Label			55
+#define Box7_Port1Label			56
+#define Box7_Port2Label			57
+#define Box7_Port3Label			58
+#define Box7_Port4Label			59
+#define Box7_Port5Label			60
+#define Box7_Port6Label			61
+#define Box7_Port7Label			62
+#define Box7_Port8Label			63
+#define Box8_Port1Label			64
+#define Box8_Port2Label			65
+#define Box8_Port3Label			66
+#define Box8_Port4Label			67
+#define Box8_Port5Label			68
+#define Box8_Port6Label			69
+#define Box8_Port7Label			70
+#define Box8_Port8Label			71
+#define Temp1Label				72
+#define Temp2Label				73
+#define Temp3Label				74
+#define PHLabel					75
+#define ATOLowLabel				76
+#define ATOHighLabel			77
+#define AlarmLabel				78
+#define DaylightLabel			79
+#define ActinicLabel			80
+#define Daylight2Label			81
+#define Actinic2Label			82
+#define DimmingChannel0Label	83
+#define DimmingChannel1Label	84
+#define DimmingChannel2Label	85
+#define DimmingChannel3Label	86
+#define DimmingChannel4Label	87
+#define DimmingChannel5Label	88
+#define IOChannel0Label			89
+#define IOChannel1Label			90
+#define IOChannel2Label			91
+#define IOChannel3Label			92
+#define IOChannel4Label			93
+#define IOChannel5Label			94
+#define SalinityLabel			95
+#define ORPLabel				96
+#define PHExpLabel				97
+#define WaterLevelLabel			98
+#define WaterLevel1Label		99
+#define WaterLevel2Label		100
+#define WaterLevel3Label		101
+#define WaterLevel4Label		102
+#define HumidityLabel			103
+#define LeakLabel				104
+#define CustomVar0Label			105
+#define CustomVar1Label			106
+#define CustomVar2Label			107
+#define CustomVar3Label			108
+#define CustomVar4Label			109
+#define CustomVar5Label			110
+#define CustomVar6Label			111
+#define CustomVar7Label			112
 
-#define	IOChannel1					0x490
-#define	IOChannel2					0x4a0
-#define	IOChannel3					0x4b0
-#define	IOChannel4					0x4c0
-#define	IOChannel5					0x4d0
-#define	IOChannel6					0x4e0
-
-#define	R1Name						0x500
-#define	R2Name						0x510
-#define	R3Name						0x520
-#define	R4Name						0x530
-#define	R5Name						0x540
-#define	R6Name						0x550
-#define	R7Name						0x560
-#define	R8Name						0x570
-#define	R11Name						0x580
-#define	R12Name						0x590
-#define	R13Name						0x5a0
-#define	R14Name						0x5b0
-#define	R15Name						0x5c0
-#define	R16Name						0x5d0
-#define	R17Name						0x5e0
-#define	R18Name						0x5f0
-#define	R21Name						0x600
-#define	R22Name						0x610
-#define	R23Name						0x620
-#define	R24Name						0x630
-#define	R25Name						0x640
-#define	R26Name						0x650
-#define	R27Name						0x660
-#define	R28Name						0x670
-#define	R31Name						0x680
-#define	R32Name						0x690
-#define	R33Name						0x6a0
-#define	R34Name						0x6b0
-#define	R35Name						0x6c0
-#define	R36Name						0x6d0
-#define	R37Name						0x6e0
-#define	R38Name						0x6f0
-#define	R41Name						0x700
-#define	R42Name						0x710
-#define	R43Name						0x720
-#define	R44Name						0x730
-#define	R45Name						0x740
-#define	R46Name						0x750
-#define	R47Name						0x760
-#define	R48Name						0x770
-#define	R51Name						0x780
-#define	R52Name						0x790
-#define	R53Name						0x7a0
-#define	R54Name						0x7b0
-#define	R55Name						0x7c0
-#define	R56Name						0x7d0
-#define	R57Name						0x7e0
-#define	R58Name						0x7f0
-#define	R61Name						0x800
-#define	R62Name						0x810
-#define	R63Name						0x820
-#define	R64Name						0x830
-#define	R65Name						0x840
-#define	R66Name						0x850
-#define	R67Name						0x860
-#define	R68Name						0x870
-#define	R71Name						0x880
-#define	R72Name						0x890
-#define	R73Name						0x8a0
-#define	R74Name						0x8b0
-#define	R75Name						0x8c0
-#define	R76Name						0x8d0
-#define	R77Name						0x8e0
-#define	R78Name						0x8f0
-#define	R81Name						0x900
-#define	R82Name						0x910
-#define	R83Name						0x920
-#define	R84Name						0x930
-#define	R85Name						0x940
-#define	R86Name						0x950
-#define	R87Name						0x960
-#define	R88Name						0x970
-
-#define ATOLowName					0xa00
-#define ATOHighName					0xa10
 
 // IsRelayPresent function from Don Edvalson
 #define MAIN_RELAY 0xff
@@ -1046,22 +1156,25 @@ typedef struct Compensation
 
 //Main Screens
 #define MAIN_SCREEN			0
-#define RELAY_BOX			1
-#define EXP_BOX_1			2
-#define EXP_BOX_2			3
-#define EXP_BOX_3			4
-#define EXP_BOX_4			5
-#define EXP_BOX_5			6
-#define EXP_BOX_6			7
-#define EXP_BOX_7			8
-#define EXP_BOX_8			9
-#define PWM_SCREEN			10
-#define RF_SCREEN			11
-#define RF_SCREEN1			12
-#define AI_SCREEN			13
-#define IO_SCREEN			14
+#define DIMMING_ATO			1
+#define RELAY_BOX			2
+#define EXP_BOX_1			3
+#define EXP_BOX_2			4
+#define EXP_BOX_3			5
+#define EXP_BOX_4			6
+#define EXP_BOX_5			7
+#define EXP_BOX_6			8
+#define EXP_BOX_7			9
+#define EXP_BOX_8			10
+#define PWM_SCREEN			11
+#define RF_SCREEN			12
+#define RF_SCREEN1			13
+#define AI_SCREEN			14
+#define IO_SCREEN			15
+#define DCPUMP_SCREEN		16
+#define CVAR_SCREEN			17
+#define MAX_SCREENS			18 // Highest ID for main screens
 #define DIMMING_OVERRIDE	127
-#define MAX_SCREENS			15 // Highest ID for main screens
 
 //Menu Screens
 #define MAIN_MENU_SCREEN	0
@@ -1071,26 +1184,32 @@ typedef struct Compensation
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
 #define SplashDuration					5000
-#define TouchSample						20
+#define TouchSample						10
 #define TouchSlideDelta					20
 #define TouchPressure					1500
-#define MAX_RELAY_EXPANSION_MODULES		8
 #define FONT_HEADER 					7
+#if defined RA_EVOLUTION
+#define TS_CALIBRATION_XMIN				4500
+#define TS_CALIBRATION_XMAX				7400
+#define TS_CALIBRATION_YMIN				4500
+#define TS_CALIBRATION_YMAX				7400
+#else
 #define TS_CALIBRATION_XMIN				700
 #define TS_CALIBRATION_XMAX				3200
 #define TS_CALIBRATION_YMIN				700
 #define TS_CALIBRATION_YMAX				3200
+#endif
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 
 uint16_t read16(File f);
 uint32_t read32(File f);
 
-//#define ILI9341
+#define ILI9341
 //#define HX8347D
-#define HX8347G
+//#define HX8347G
 
 const prog_char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
 const prog_char NoIMLine2[] PROGMEM = "File";
@@ -1150,16 +1269,6 @@ const prog_char WL_CALI6[] PROGMEM = "%";
 const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
 
 // Labels
-const prog_char LABEL_TEMP[] PROGMEM = "Temp ";
-const prog_char LABEL_RELAY[] PROGMEM = "Relay ";
-const prog_char LABEL_CHANNEL[] PROGMEM = "Ch. ";
-const prog_char LABEL_PH[] PROGMEM = "pH";
-const prog_char LABEL_SALINITY[] PROGMEM = "Salinity";
-const prog_char LABEL_ORP[] PROGMEM = "ORP";
-const prog_char LABEL_PHE[] PROGMEM = "PH Exp";
-const prog_char LABEL_WL[] PROGMEM = "Water Lvl";
-const prog_char LABEL_ACTINIC[] PROGMEM = "Actinic";
-const prog_char LABEL_DAYLIGHT[] PROGMEM = "Daylight";
 const prog_char LABEL_AI_WHITE[] PROGMEM = "White";
 const prog_char LABEL_AI_BLUE[] PROGMEM = "Blue";
 const prog_char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
@@ -1171,9 +1280,6 @@ const prog_char LABEL_RF_BLUE[] PROGMEM = "Green";
 const prog_char LABEL_RF_GREEN[] PROGMEM = "Blue";
 const prog_char LABEL_RF_INTENSITY[] PROGMEM = "Intensity";
 static PROGMEM const char *LABEL_RF[] = {LABEL_RF_WHITE, LABEL_RF_ROYAL_BLUE, LABEL_RF_RED, LABEL_RF_BLUE, LABEL_RF_GREEN, LABEL_RF_INTENSITY};
-const prog_char LABEL_ATOHIGHPORT[] PROGMEM = "ATO Low";
-const prog_char LABEL_ATOLOWPORT[] PROGMEM = "ATO High";
-const prog_char LABEL_IOPORT[] PROGMEM = "Input Port ";
 const prog_char LABEL_MODE[] PROGMEM = "Mode";
 const prog_char LABEL_DURATION[] PROGMEM = "Duration";
 const prog_char LABEL_SPEED[] PROGMEM = "Speed";
@@ -1190,11 +1296,15 @@ const prog_char EXP_RELAY_6_LABEL[] PROGMEM = "Exp. Relay Box 6";
 const prog_char EXP_RELAY_7_LABEL[] PROGMEM = "Exp. Relay Box 7";
 const prog_char EXP_RELAY_8_LABEL[] PROGMEM = "Exp. Relay Box 8";
 const prog_char PWM_EXPANSION_LABEL[] PROGMEM = "PWM Expansion";
+const prog_char SIXTEENCH_PWM_EXPANSION_LABEL[] PROGMEM = "16 Ch PWM Expansion";
 const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
 const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
 const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
 const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL};
+const prog_char DCPUMP_LABEL[] PROGMEM = "DC Pump";
+const prog_char CVAR_LABEL[] PROGMEM = "Custom Variables";
+
+static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, SIXTEENCH_PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -1305,11 +1415,11 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 	#define PHbit		0
 #endif  // PHEXPANSION
 
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	#define WLbit		128
 #else
 	#define WLbit		0
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
 // EM1 Bits
 #ifdef HUMIDITYEXPANSION
@@ -1329,6 +1439,18 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #else
 	#define Leakbit		0
 #endif  // LEAKDETECTOREXPANSION
+
+#ifdef PAREXPANSION
+	#define PARbit		8
+#else
+	#define PARbit		0
+#endif  // PAREXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	#define SCPWMbit		16
+#else
+	#define SCPWMbit		0
+#endif  // SIXTEENCHPWMEXPANSION
+
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))
@@ -1357,8 +1479,13 @@ void inline pingSerial() {};
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
+int PWMSlopeHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, int oldValue);
+int PWMParabolaHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue);
+int PWMSmoothRampHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, int oldValue);
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue);
 byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue);
+byte PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, byte oldValue);
+byte PumpThreshold(byte value, byte threshold);
 byte MoonPhase();
 void ConvertNumToString(char* string, int num, byte decimal);
 #ifdef MOONPHASELABEL
@@ -1380,6 +1507,7 @@ byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync);
 byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
+byte ElseMode(byte midPoint, byte offset, boolean waveSync);
 
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);

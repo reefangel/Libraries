@@ -15,6 +15,11 @@
 NumMins	KEYWORD2
 PWMSlope	KEYWORD2
 PWMParabola	KEYWORD2
+PWMSmoothRamp	KEYWORD2
+PWMSlopeHighRes	KEYWORD2
+PWMParabolaHighRes	KEYWORD2
+PWMSmoothRampHighRes	KEYWORD2
+PumpThreshold	KEYWORD2
 MoonPhase	KEYWORD2
 ConvertNumToString	KEYWORD2
 pingSerial	KEYWORD2
@@ -26,6 +31,7 @@ ReefCrestMode	KEYWORD2
 NutrientTransportMode	KEYWORD2
 TidalSwellMode	KEYWORD2
 TideMode	KEYWORD2
+ElseMode	KEYWORD2
 
 # ReefAngel
 
@@ -40,15 +46,18 @@ AddPHExpansion	KEYWORD2
 AddWaterLevelExpansion	KEYWORD2
 AddMultiChannelWaterLevelExpansion	KEYWORD2
 AddHumidityExpansion	KEYWORD2
+AddPARExpansion	KEYWORD2
 AddStandardMenu	KEYWORD2
 AddWifi	KEYWORD2
 AddRANet	KEYWORD2
 AddSPILCD	KEYWORD2
 StandardLights	KEYWORD2
 AddRFExpansion	KEYWORD2
+Add16ChPWM	KEYWORD2
 AddDateTimeMenu	KEYWORD2
 AddCustomColors	KEYWORD2
 AddBusCheck	KEYWORD2
+AddExtraTempProbes	KEYWORD2
 Display24h	KEYWORD2
 ReverseATOLow   KEYWORD2
 ReverseATOHigh  KEYWORD2
@@ -96,6 +105,9 @@ CO2Control	KEYWORD2
 PHControl	KEYWORD2
 LightsOn	KEYWORD2
 LightsOff	KEYWORD2
+BuzzerOn	KEYWORD2
+BuzzerOff	KEYWORD2
+UseFlexiblePhCalibration	KEYWORD2
 
 #LCD
 
@@ -195,6 +207,9 @@ Set	KEYWORD2
 Write	KEYWORD2
 Status	KEYWORD2
 IsRelayPresent	KEYWORD2
+Override	KEYWORD2
+isMaskOn	KEYWORD2
+isMaskOff	KEYWORD2
 
 #ATO
 
@@ -237,6 +252,10 @@ Read	KEYWORD2
 
 #Network
 DirectAccess	KEYWORD2
+
+#WifiAlert
+SetDelay	KEYWORD2
+
 
 #InternalEEPROM
 
@@ -514,6 +533,7 @@ write_dword	KEYWORD2
 ReefAngel	KEYWORD1
 LCD	LITERAL1
 PWM	LITERAL1
+VariableControl	LITERAL1
 Relay	LITERAL1
 LowATO	LITERAL1
 HighATO	LITERAL1
@@ -531,6 +551,9 @@ WaterLevel	LITERAL1
 Humidity	LITERAL1
 DCPump	LITERAL1
 Network	LITERAL1
+WiFiAlert	LITERAL1
+PAR	LITERAL1
+
 
 #######################################
 # Constants (LITERAL1)
@@ -707,4 +730,7 @@ ActinicChannel	LITERAL2
 FeedingSpeed	LITERAL2
 WaterChangeSpeed	LITERAL2
 
-IsLeakDetected	KEYWORD2	
+IsLeakDetected	KEYWORD2
+
+WifiAuthentication	KEYWORD2
+DDNS	KEYWORD2

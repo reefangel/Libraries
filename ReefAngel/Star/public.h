@@ -5,11 +5,6 @@ RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
 RA_ATOALARMClass AlarmInput;
 
-byte RANetSeq, RANetCRC;
-byte RANetData[RANET_SIZE];
-byte RANetStatus[RANET_SIZE];
-unsigned long RANetlastmillis;
-
 bool SDFound;
 
 void ShowInterface();
@@ -54,19 +49,24 @@ void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
 void ApplySalinityCompensation();
-void SetupCalibrateSalinity();
+void StartSetupCalibrateSalinity();
+void DisplaySetupCalibrateSalinity();
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
-void SetupCalibratePHExp();
+void StartSetupCalibrateChoicePHExp();
+void DisplaySetupCalibrateChoicePHExp();
 #endif  // defined PHEXPANSION
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();
-#endif  // defined WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+
 #if defined DateTimeSetup
 #ifdef DATETIME24
-void SetupDateTime24();
+void StartSetupDateTime24();
+void DisplaySetupDateTime24();
 #else
-void SetupDateTime();
+void StartSetupDateTime();
+void DisplaySetupDateTime();
 #endif  // DATETIME24
 #endif  // DateTimeSetup
 
@@ -75,3 +75,6 @@ void SetupDateTime();
 void SetupDosingPump();
 #endif  // DosingPumpSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
+
+void BuzzerOn(byte style=0);
+void BuzzerOff();

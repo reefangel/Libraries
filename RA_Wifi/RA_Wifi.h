@@ -23,10 +23,11 @@
 #define __RA_WIFI_H__
 
 #include <Globals.h>
+
+#if defined wifi || defined ETH_WIZ5100
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 
-#if defined wifi || defined ETH_WIZ5100
 const prog_char XML_ID[] PROGMEM = "<RA><ID>";
 const prog_char XML_T1[] PROGMEM = "</ID><T1>";
 const prog_char XML_T2[] PROGMEM = "</T1><T2>";
@@ -44,7 +45,8 @@ const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
 const prog_char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
 const prog_char XML_EM1[] PROGMEM = "</EM><EM1>";
 const prog_char XML_REM[] PROGMEM = "</EM1><REM>";
-const prog_char XML_ALERTFLAG[] PROGMEM = "</REM><AF>";
+const prog_char XML_BOARDID[] PROGMEM = "</REM><BID>";
+const prog_char XML_ALERTFLAG[] PROGMEM = "</BID><AF>";
 const prog_char XML_STATUSFLAG[] PROGMEM = "</AF><SF>";
 const prog_char XML_STATUSFLAG_END[] PROGMEM = "</SF>";
 
@@ -67,24 +69,33 @@ const prog_char XML_SAL_END[] PROGMEM = "</SAL>";
 const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
 const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char XML_WL[] PROGMEM = "<WL";
 const prog_char XML_WL_END[] PROGMEM = "</WL";
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char XML_HUM[] PROGMEM = "<HUM>";
 const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+const prog_char XML_PAR[] PROGMEM = "<PAR>";
+const prog_char XML_PAR_END[] PROGMEM = "</PAR>";
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 const prog_char XML_DCM[] PROGMEM = "<DCM>";
 const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
 const prog_char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
-const prog_char XML_DCD_END[] PROGMEM = "</DCD>";
+const prog_char XML_DCD_END[] PROGMEM = "</DCD><DCT>";
+const prog_char XML_DCT_END[] PROGMEM = "</DCT>";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char XML_SCPWME[] PROGMEM = "<SCPWME";
+const prog_char XML_SCPWME_END[] PROGMEM = "</SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char XML_AIW[] PROGMEM = "<AIW>";
 const prog_char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
@@ -124,7 +135,7 @@ const prog_char XML_C_END[] PROGMEM = "</C";
 const prog_char XML_LEAK[] PROGMEM = "<LEAK>";
 const prog_char XML_LEAK_END[] PROGMEM = "</LEAK>";
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 const prog_char XML_ALARM[] PROGMEM = "<ALARM>";
 const prog_char XML_ALARM_END[] PROGMEM = "</ALARM>";
 const prog_char XML_PWMA2[] PROGMEM = "<PWMA2>";
@@ -179,6 +190,7 @@ const prog_char JSON_EM1[] PROGMEM = "EM1";
 const prog_char JSON_REM[] PROGMEM = "REM";
 const prog_char JSON_ALERTFLAG[] PROGMEM = "AF";
 const prog_char JSON_STATUSFLAG[] PROGMEM = "SF";
+const prog_char JSON_BOARDID[] PROGMEM = "BID";
 
 #ifdef DisplayLEDPWM
 const prog_char JSON_PWMA[] PROGMEM = "PWMA";
@@ -193,20 +205,27 @@ const prog_char JSON_SAL[] PROGMEM = "SAL";
 #ifdef PHEXPANSION
 const prog_char JSON_PHEXP[] PROGMEM = "PHE";
 #endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char JSON_WL[] PROGMEM = "WL";
-#endif  // WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char JSON_HUM[] PROGMEM = "HUM";
 #endif  // HUMIDITYEXPANSION
+#ifdef PAREXPANSION
+const prog_char JSON_PAR[] PROGMEM = "PAR";
+#endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
 const prog_char JSON_DCM[] PROGMEM = "DCM";
 const prog_char JSON_DCS[] PROGMEM = "DCS";
 const prog_char JSON_DCD[] PROGMEM = "DCD";
+const prog_char JSON_DCT[] PROGMEM = "DCT";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char JSON_PWME[] PROGMEM = "PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char JSON_SCPWME[] PROGMEM = "SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char JSON_AIW[] PROGMEM = "AIW";
 const prog_char JSON_AIB[] PROGMEM = "AIB";
@@ -232,7 +251,7 @@ const prog_char JSON_C[] PROGMEM = "C";
 #ifdef LEAKDETECTOREXPANSION
 const prog_char JSON_LEAK[] PROGMEM = "LEAK";
 #endif  // LEAKDETECTOREXPANSION
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 const prog_char JSON_ALARM[] PROGMEM = "ALARM";
 const prog_char JSON_PWMA2[] PROGMEM = "PWMA2";
 const prog_char JSON_PWMD2[] PROGMEM = "PWMD2";
@@ -294,6 +313,8 @@ const prog_char BannerCustom[] PROGMEM = "&c";
 const prog_char BannerKey[] PROGMEM = "&key=";
 const prog_char BannerAlertFlag[] PROGMEM = "&af=";
 const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
+const prog_char BannerBoardID[] PROGMEM = "&bid=";
+const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
@@ -305,6 +326,10 @@ const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 #ifdef PWMEXPANSION
 	const prog_char BannerPWME[] PROGMEM = "&pwme";
 #endif  // PWMEXPANSION
+
+#ifdef SIXTEENCHPWMEXPANSION
+	const prog_char BannerSCPWME[] PROGMEM = "&scpwme";
+#endif  // SIXTEENCHPWMEXPANSION
 
 #ifdef RFEXPANSION
 	const prog_char BannerRFM[] PROGMEM = "&rfm=";
@@ -340,18 +365,23 @@ const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 	const prog_char BannerPHE[] PROGMEM = "&phe=";
 #endif  // PHEXPANSION
 
-#ifdef WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	const prog_char BannerWL[] PROGMEM = "&wl";
-#endif  // WATERLEVELEXPANSION
-	
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+
 #ifdef HUMIDITYEXPANSION
 	const prog_char BannerHumidity[] PROGMEM = "&hum=";
 #endif  // HUMIDITYEXPANSION
+
+#ifdef PAREXPANSION
+	const prog_char BannerPAR[] PROGMEM = "&par=";
+#endif  // PAREXPANSION
 
 #ifdef DCPUMPCONTROL
 	const prog_char BannerDCM[] PROGMEM = "&dcm=";
 	const prog_char BannerDCS[] PROGMEM = "&dcs=";
 	const prog_char BannerDCD[] PROGMEM = "&dcd=";
+	const prog_char BannerDCT[] PROGMEM = "&dct=";
 #endif  // DCPUMPCONTROL
 
 #ifdef CUSTOM_VARIABLES
@@ -362,7 +392,7 @@ const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 	const prog_char BannerLeak[] PROGMEM = "&leak=";
 #endif  // LEAKDETECTOREXPANSION
 
-#ifdef RA_STAR
+#if defined RA_STAR || defined RA_EVOLUTION
 	const prog_char BannerAlarm[] PROGMEM = "&alarm=";
 	const prog_char BannerPWMA2[] PROGMEM = "&pwma2=";
 	const prog_char BannerPWMD2[] PROGMEM = "&pwmd2=";
@@ -519,11 +549,15 @@ class RA_Wifi: public Print
     void LoadWebBanner(int pointer, byte qty);
     void Portal(char* username);
     void Portal(char* username, char* key);
+    void DDNS(char* subdomain);
     void SendPortal(char* username, char* key);
     inline void CheckWifi(){};
     inline void pingSerial(){};
     char *portalusername;
-
+    char *portalkey;
+    char encodeduserpass[50];
+    char *portalsubdomain;
+    
 #ifndef ETH_WIZ5100
     using Print::write;
     inline size_t write(uint8_t c) { return _wifiSerial->write((uint8_t)c); }
@@ -540,7 +574,7 @@ class RA_Wifi: public Print
     unsigned long timeout;
     boolean bIncoming;
     boolean auth;
-    char authStr[32];
+    boolean usingAuth;
     int weboption;
     int weboption2;
     int weboption3;
@@ -550,7 +584,12 @@ class RA_Wifi: public Print
     boolean webnegoption;
 
   private:
+#if defined(__SAM3X8E__)
+    UARTClass *_wifiSerial;
+#else
     HardwareSerial* _wifiSerial;
+#endif
+
 };
 
 #endif  // __RA_WIFI_H__

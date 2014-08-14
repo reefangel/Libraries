@@ -33,10 +33,12 @@ void RA_Wiznet5100::Init()
 	FoundIP=false;
 	RelayConnected=false;
 	RelayIndex=0;
+	ConnectionRetry=0;
 	RelayClient.setTimeout(100);
 	PortalClient.setTimeout(100);
 	PortalConnection=false;
 	PortalWaiting=false;
+	PortalDataReceived=false;
 }
 
 void RA_Wiznet5100::Update()
@@ -64,6 +66,7 @@ void RA_Wiznet5100::Update()
 				char c = PortalClient.read();
 				Serial.write(c);
 			}
+			PortalDataReceived=true;
 			Serial.println();
 			Serial.println("Portal Received");
 		}
@@ -74,6 +77,8 @@ void RA_Wiznet5100::Update()
 			Serial.println("Portal Disconnected");
 			PortalConnection=false;
 			PortalClient.stop();
+			if (!PortalDataReceived) Init();
+			PortalDataReceived=false;
 		}
 
 		// if request timed out, stop the client
@@ -82,17 +87,28 @@ void RA_Wiznet5100::Update()
 			Serial.println("Portal Timeout");
 			PortalConnection=false;
 			PortalClient.stop();
+			if (!PortalDataReceived) Init();
+			PortalDataReceived=false;
 		}
-
 		// Relay server
 		if (!RelayClient.connected()) // Check for relay server closed connection
 		{
+			Serial.println("Relay Disconnected");
+			ConnectionRetry++;
 			cbi(PORTD,4);
 			RelayConnected=false;
 			RelayIndex=0;
 			RelayClient.stop(); // Make sure we free up the client
-			delay(100);
-			RelayClient.noblockconnect(RelayServer, 80);
+			if (ConnectionRetry>=RETRY_COUNT) // Connection failed too many times
+			{
+				Serial.println("Reinitialzing");
+				Init();
+			}
+			else
+			{
+				delay(100);
+				RelayClient.noblockconnect(RelayServer, 80);
+			}
 		}
 		else
 		{
@@ -100,9 +116,10 @@ void RA_Wiznet5100::Update()
 			{
 				if (!RelayConnected)
 				{
+					Serial.println("Relay Connected");
+					ConnectionRetry=0;
 					sbi(PORTD,4);
 					RelayConnected=true;
-	//				Serial1.println("Connected");
 					RelayClient.print("POST /");
 					RelayClient.print(uid);
 					RelayClient.println(" HTTP/1.1");
@@ -200,11 +217,12 @@ void RA_Wiznet5100::ProcessRelayEthernet()
 		{
 			if (RelayIndex++==5)
 			{
-				for (int a=0;a<uid.length();a++)
-				{
-					RelayClient.read(); // Consume the unique id
-				}
-				if (RelayClient.peek()=='/') RelayClient.read(); // Consume the slash, we already have one
+				// Commented to allow for direct access subdomain instead of folder
+//				for (int a=0;a<uid.length();a++)
+//				{
+//					RelayClient.read(); // Consume the unique id
+//				}
+//				if (RelayClient.peek()=='/') RelayClient.read(); // Consume the slash, we already have one
 			}
 			char c=RelayClient.read();
 //			Serial1.write(c);

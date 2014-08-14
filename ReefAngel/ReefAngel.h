@@ -31,10 +31,17 @@
 #include <LED.h>
 #include <RA_TempSensor.h>
 #include <Relay.h>
+#ifdef SC16IS750
+#include <RA_SC16IS750.h>
+#endif // SC16IS750
+#ifdef DisplayLEDPWM
 #include <RA_PWM.h>
+#endif  // DisplayLEDPWM
 #include <Timer.h>
 #include <Memory.h>
+#ifdef DCPUMPCONTROL
 #include <DCPump.h>
+#endif  // DCPUMPCONTROL
 #include <DS1307RTC.h>
 #if defined wifi || defined RA_STAR
 #include <RA_Wifi.h>
@@ -48,9 +55,9 @@
 #if defined PHEXPANSION
 #include <PH.h>
 #endif  // defined PHEXPANSION
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 #include <WaterLevel.h>
-#endif  // defined WATERLEVELEXPANSION
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined RFEXPANSION
 #include <RF.h>
 #endif  // defined RFEXPANSION
@@ -63,6 +70,9 @@
 #if defined HUMIDITYEXPANSION
 #include <Humidity.h>
 #endif  // defined HUMIDITYEXPANSION
+#if defined PAREXPANSION
+#include <PAR.h>
+#endif  // defined PAREXPANSION
 
 #ifdef RA_STANDARD
 #include <Standard/includes.h>
@@ -80,9 +90,10 @@ class ReefAngelClass
 {
 
 public:
+	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
-	byte Flags,AlertFlags,StatusFlags;
+	byte AlertFlags,StatusFlags;
 	bool BusLocked;
 
 	ReefAngelClass();
@@ -102,17 +113,29 @@ public:
 	LEDClass LED;
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
+#ifdef KALKDOSER
+	RA_KalkDoserClass KWDoser;
+#endif //  KALKDOSER
 	RA_TempSensorClass TempSensor;
-	RelayClass Relay;
-#ifdef wifi
-	RA_Wifi Network;
-#endif  // wifi
+#ifndef SC16IS750
+  RelayClass Relay;
+#else
+  RA_SC16IS750 Relay;
+#endif // SC16IS750
 #ifdef ETH_WIZ5100
 	RA_Wiznet5100 Network;
+#elif defined wifi
+  RA_Wifi Network;
 #endif // ETH_WIZ5100
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
+
+#if defined DisplayLEDPWM && ! defined RemoveAllLights || defined DCPUMPCONTROL
+#if defined(__SAM3X8E__)
+	RA_PWMClass VariableControl;
+#else // __SAM3X8E__
 	RA_PWMClass PWM;
+#endif // __SAM3X8E__
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
+
 #ifdef DCPUMPCONTROL
 	DCPumpClass DCPump;
 #endif  // DCPUMPCONTROL
@@ -128,10 +151,10 @@ public:
 	int PHExpMin, PHExpMax;
 	PHClass PH;
 #endif  // PHEXPANSION	
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WaterLevelClass WaterLevel;
 	RA_ATOWLClass WLATO;
-#endif  // WATERLEVELEXPANSION	
+#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined RFEXPANSION
 	RFClass RF;
 #endif  // defined RFEXPANSION
@@ -144,6 +167,9 @@ public:
 #if defined HUMIDITYEXPANSION
 	HumidityClass Humidity;
 #endif  // defined HUMIDITYEXPANSION
+#if defined PAREXPANSION
+	PARClass PAR;
+#endif  // defined PAREXPANSION
 	/*
 	Timers:
 	0 - Feeding Mode timer
@@ -192,6 +218,10 @@ public:
 
 	EM1 Bits
 	Bit 0 - HUMbit
+	Bit 1 - DCPumpbit
+	Bit 2 - Leakbit
+	Bit 3 - PARbit
+	Bit 4 - SCPWMbit
 	 */
 
 #ifdef RelayExp
@@ -229,8 +259,8 @@ public:
 	void LightsOn();
 	void LightsOff();
 	void RefreshScreen();
-	void SetupCalibratePH();
-	void SetupCalibrateChoicePH();
+	void StartSetupCalibrateChoicePH();
+        void DisplaySetupCalibrateChoicePH();
 	void ClearScreen(byte Color);
 	void ExitMenu();
 	void SetDisplayedMenu(byte value);
@@ -244,8 +274,12 @@ public:
 #endif //CUSTOM_VARIABLES
 
 #ifdef I2CMASTER
+#define MASTERARRAYSIZE	100
+	byte olddata[MASTERARRAYSIZE];
 	byte I2CCommand;
 	void UpdateTouchDisplay();
+	void MasterWrite(int value, byte index);
+	unsigned long lastmasterupdate;
 #endif // I2CMASTER
 
 	void inline Use2014Screen() {};
@@ -255,15 +289,18 @@ public:
 	void inline AddWaterLevelExpansion() {};
 	void inline AddMultiChannelWaterLevelExpansion() {};
 	void inline AddHumidityExpansion() {};
+	void inline AddPARExpansion() {};
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
 	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
+	void inline Add16ChPWM() {};
 	void inline AddCustomColors() {};
 	void inline AddBusCheck() {};
 	void inline AddPortOverrides() {};
 	void inline AddSPILCD() {};
+	void inline AddExtraTempProbes() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
 	void inline ReverseATOLow() {};
@@ -275,14 +312,26 @@ public:
 	void inline NoSD() {};
 	void inline NoTilt() {};
 	void inline Star() {};
+	void inline Evolution() {};
 	void inline ChangeWifiPort() {};
+	
+#ifdef BUSCHECK
+	boolean isBusLock();
+#endif //BUSCHECK
 
 #ifdef LEAKDETECTOREXPANSION
+#ifdef RA_TOUCHDISPLAY
+	boolean LeakStatus;
+#endif // RA_TOUCHDISPLAY
 	boolean IsLeakDetected();
 	void LeakCheck();
 	void LeakClear();
+	boolean isLeak();
 #endif  // LEAKDETECTOREXPANSION
 
+	boolean isATOTimeOut();
+	boolean isOverheat();
+	
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
@@ -290,9 +339,11 @@ public:
 	void CO2Control(byte CO2Relay, int LowPH, int HighPH);
 	void PHControl(byte PHControlRelay, int LowPH, int HighPH);
 	void StandardATO(byte ATORelay, int ATOTimeout);
-#ifdef WATERLEVELEXPANSION	
-	void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
-#endif  // WATERLEVELEXPANSION	
+#ifdef MULTIWATERLEVELEXPANSION
+	void WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+#else
+  void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+#endif  // MULTIWATERLEVELEXPANSION
 	void SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
 	void DosingPump(byte DPRelay, byte OnHour, byte OnMinute, int RunTime);
@@ -311,6 +362,7 @@ public:
 	void DelayedStartLights(byte Relay);
 	void MoonLights(byte Relay);
 	void MHLights(byte Relay);
+	void MHLights(byte Relay, byte MinuteOffset);
 	void StandardHeater(byte Relay);
 	void StandardFan(byte Relay);
 	void StandardATO(byte Relay);
@@ -321,9 +373,14 @@ public:
 	void StandardATOExtended(byte Relay);
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
-#ifdef WATERLEVELEXPANSION
+#ifdef KALKDOSER
+	void KalkDoser(byte KalkRelay, int LowPH, int TimeoutSeconds, byte MinuteInterval = 0);
+#endif //  KALKDOSER
+#ifdef MULTIWATERLEVELEXPANSION
+	void WaterLevelATO(byte Channel, byte Relay);
+#else
 	void WaterLevelATO(byte Relay);
-#endif  // WATERLEVELEXPANSION
+#endif  // MULTIWATERLEVELEXPANSION
 	void DosingPump1(byte Relay);
 	void DosingPump2(byte Relay);
 	void DosingPumpRepeat1(byte Relay);
@@ -338,6 +395,7 @@ public:
 #if defined wifi || defined RA_STAR
 	void Portal(char *username);
 	void Portal(char *username, char *key);
+	void DDNS(char *subdomain);
 #endif
 
 private:
@@ -350,6 +408,54 @@ private:
 	byte PreviousMenu;
 	bool redrawmenu;
 	void CheckOffset(byte &x, byte &y);
+        
+        /* Constants defined in ReefAngel.cpp */
+        static const byte PH_MAXIMUM_RANGE[2];
+        static const byte PH_DEFAULT_RANGE[2];
+        static const char PH_SETUP_MENU_LABEL[2][19];
+        static const char PH_SETUP_MENU_STEP[2][13];
+        
+        enum {SETUP_PH, SETUP_CANCEL, SETUP_OK};
+        
+	unsigned int ph_target_range[2];
+	unsigned int ph_read_range[2];
+	unsigned int salinity_read;
+        
+	byte setup_option;
+	byte setup_step;
+	
+	bool setup_input_select;
+	bool setup_input_render;
+	bool setup_screen_refresh;
+	bool setup_save;
+	
+    #if defined DateTimeSetup
+    enum{
+        SETUP_DATETIME_MONTH, 
+        SETUP_DATETIME_DAY, 
+        SETUP_DATETIME_YEAR, 
+        SETUP_DATETIME_HOUR, 
+        SETUP_DATETIME_MINUTE, 
+        #if !defined DATETIME24
+        SETUP_DATETIME_PERIOD, 
+        #endif//DATETIME24
+        SETUP_DATETIME_CANCEL,
+        SETUP_DATETIME_OK
+    };
+
+    struct{
+        byte month;
+        byte day;
+        int year;
+        byte hour;
+        byte minute;
+        #if !defined DATETIME24
+        char *period;
+        #endif//DATETIME24
+    } currentDateTime;
+
+    byte lastDayOfEachMonth[12];
+    #endif//DateTimeSetup
 
 };
 
