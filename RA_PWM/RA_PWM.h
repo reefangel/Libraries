@@ -29,8 +29,8 @@ class RA_PWMClass
 {
 public:
 	RA_PWMClass();
-	void inline SetActinic(int value) { ActinicPWMValue = value; };
-	void inline SetDaylight(int value) { DaylightPWMValue = value; };
+	void inline SetActinicRaw(int value) { ActinicPWMValue = value; };
+	void inline SetDaylightRaw(int value) { DaylightPWMValue = value; };
 	void inline SetActinic(byte value) { ActinicPWMValue = (int)value*40.95; };
 	void inline SetDaylight(byte value) { DaylightPWMValue = (int)value*40.95; };
 	void inline SetActinicOverride(byte value) { if (value>100) value=255; ActinicPWMOverride = value; };
@@ -67,8 +67,8 @@ public:
 	void StandardDaylight(int PreMinuteOffset, int PostMinuteOffset);
 	void Override(byte Channel, byte Value);
 #if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
-	void inline SetActinic2(int value) { Actinic2PWMValue = value; };
-	void inline SetDaylight2(int value) { Daylight2PWMValue = value; };
+	void inline SetActinic2Raw(int value) { Actinic2PWMValue = value; };
+	void inline SetDaylight2Raw(int value) { Daylight2PWMValue = value; };
 	void inline SetActinic2(byte value) { Actinic2PWMValue = (int)value*40.95; };
 	void inline SetDaylight2(byte value) { Daylight2PWMValue = (int)value*40.95; };
 	void inline SetActinic2Override(byte value) { if (value>100) value=255; Actinic2PWMOverride = value; };
@@ -109,7 +109,7 @@ public:
         boolean NewExpansion;
 	int ExpansionChannel[PWM_EXPANSION_CHANNELS];
 	byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
-	void inline SetChannel(byte Channel, int Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
+	void inline SetChannelRaw(byte Channel, int Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
 	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=(int)Value*40.95; };
 	void inline SetChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannelOverride[Channel]=Value; };
 	void Expansion(byte cmd, byte data);
@@ -190,7 +190,7 @@ public:
 #ifdef SIXTEENCHPWMEXPANSION
 	int SIXTEENChExpansionChannel[SIXTEENCH_PWM_EXPANSION_CHANNELS];
 	byte SIXTEENChExpansionChannelOverride[SIXTEENCH_PWM_EXPANSION_CHANNELS];
-	void inline Set16Channel(byte Channel, int Value) { if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannel[Channel]=Value; };
+	void inline Set16ChannelRaw(byte Channel, int Value) { if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannel[Channel]=Value; };
 	void inline Set16Channel(byte Channel, byte Value) { if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannel[Channel]=(int)Value*40.95; };
 	void inline Set16ChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<SIXTEENCH_PWM_EXPANSION_CHANNELS) SIXTEENChExpansionChannelOverride[Channel]=Value; };
 	void SIXTEENChExpansion(byte cmd, int data);
