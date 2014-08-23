@@ -20,6 +20,7 @@
   */
 
 #include "Globals.h"
+#include "Math.h"
 
 byte intlength(int intin)
 {
@@ -210,11 +211,11 @@ int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMi
       return endPWMint; // if it's in the middle of the slope, return the high level
     else if ((current - start) < slopeLengthSecs) 
     {  // it's in the beginning slope up go from -5 to 5
-      smoothPhase = (10.0*(current-start)/(float)slopeLengthSecs) - 5.0;
+      smoothPhase = (10.0*(float)(current-start)/(float)slopeLengthSecs) - 5.0;
     }
     else if ((end - current) < slopeLength)
     { // it's in the end slope down, go from 5 to -5
-      smoothPhase = (10.0*(end-current)/(float)slopeLengthSecs) - 5.0;
+      smoothPhase = (10.0*(float)(end-current)/(float)slopeLengthSecs) - 5.0;
     }
     return startPWMint + (int)((1.0/(1.0+exp(0.0-smoothPhase)))*pwmDelta);
   }
@@ -360,11 +361,11 @@ byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, 
       return endPWM; // if it's in the middle of the slope, return the high level
     else if ((current - start) < slopeLength) 
     {  // it's in the beginning slope up go from -5 to 5
-      smoothPhase = (10.0*(current-start)/(float)slopeLength) - 5.0;
+      smoothPhase = (10.0*(float)(current-start)/(float)slopeLength) - 5.0;
     }
     else if ((end - current) < slopeLength)
     { // it's in the end slope down, go from 5 to -5
-      smoothPhase = (10.0*(end-current)/(float)slopeLength) - 5.0;
+      smoothPhase = (10.0*(float)(end-current)/(float)slopeLength) - 5.0;
     }
     return startPWM + (byte)((1.0/(1.0+exp(0.0-smoothPhase)))*pwmDelta);
   }

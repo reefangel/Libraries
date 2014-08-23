@@ -1485,7 +1485,7 @@ void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byt
 
 void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset)
 {
-	SIXTEENChannelPWMSigmoidHighRes(Channel, Start, End, SlopeLength, MinuteOffset, MinuteOffset);
+	SIXTEENChannelPWMSigmoid(Channel, Start, End, SlopeLength, MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)
