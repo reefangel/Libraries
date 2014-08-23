@@ -342,6 +342,10 @@ void RA_PWMClass::Override(byte Channel, byte Value)
 	else if (Channel>=OVERRIDE_CHANNEL0 && Channel<=OVERRIDE_CHANNEL5) // Dimming Expansion channel 0-5
 		SetChannelOverride(Channel-OVERRIDE_CHANNEL0,Value);
 #endif // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	else if (Channel>=OVERRIDE_16CH_CHANNEL0 && Channel<=OVERRIDE_16CH_CHANNEL15) // 16Ch Dimming Expansion channel 0-15
+		Set16ChannelOverride(Channel-OVERRIDE_16CH_CHANNEL0,Value);
+#endif // SIXTEENCHPWMEXPANSION
 #if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
 	else if (Channel==OVERRIDE_DAYLIGHT2) // Daylight2 channel
 		SetDaylight2Override(Value);
@@ -810,7 +814,7 @@ void RA_PWMClass::Channel5PWMSlope(int PreMinuteOffset, int PostMinuteOffset)
 
 void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration)
 {
-	SetChannel(Channel,PWMSlopeHighRes(
+	SetChannelRaw(Channel,PWMSlopeHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -832,7 +836,7 @@ void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Durat
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetChannel(Channel,PWMSlopeHighRes(
+	SetChannelRaw(Channel,PWMSlopeHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
@@ -936,7 +940,7 @@ void RA_PWMClass::Channel5PWMParabola(int PreMinuteOffset, int PostMinuteOffset)
 
 void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End)
 {
-	SetChannel(Channel,PWMParabolaHighRes(
+	SetChannelRaw(Channel,PWMParabolaHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -956,7 +960,7 @@ void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, int Pre
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetChannel(Channel,PWMParabolaHighRes(
+	SetChannelRaw(Channel,PWMParabolaHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
@@ -1060,7 +1064,7 @@ void RA_PWMClass::Channel5PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffse
 
 void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength)
 {
-	SetChannel(Channel,PWMSmoothRampHighRes(
+	SetChannelRaw(Channel,PWMSmoothRampHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -1081,7 +1085,7 @@ void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte 
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;
-	SetChannel(Channel,PWMSmoothRampHighRes(
+	SetChannelRaw(Channel,PWMSmoothRampHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
@@ -1177,7 +1181,7 @@ int RA_PWMClass::Get16ChannelValueRaw(byte Channel)
 
 void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration)
 {
-	Set16Channel(Channel,PWMSlopeHighRes(
+	Set16ChannelRaw(Channel,PWMSlopeHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -1198,7 +1202,7 @@ void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte 
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;
-	Set16Channel(Channel,PWMSlopeHighRes(
+	Set16ChannelRaw(Channel,PWMSlopeHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
@@ -1212,7 +1216,7 @@ void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte 
 
 void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, int Start, int End)
 {
-	Set16Channel(Channel,PWMParabolaHighRes(
+	Set16ChannelRaw(Channel,PWMParabolaHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -1232,7 +1236,7 @@ void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, int Start, int End, in
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	Set16Channel(Channel,PWMParabolaHighRes(
+	Set16ChannelRaw(Channel,PWMParabolaHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
@@ -1245,7 +1249,7 @@ void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, int Start, int End, in
 
 void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength)
 {
-	Set16Channel(Channel,PWMSmoothRampHighRes(
+	Set16ChannelRaw(Channel,PWMSmoothRampHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -1266,7 +1270,7 @@ void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, 
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	Set16Channel(Channel,PWMSmoothRampHighRes(
+	Set16ChannelRaw(Channel,PWMSmoothRampHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
