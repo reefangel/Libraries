@@ -207,7 +207,7 @@ int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMi
     int pwmDelta = endPWMint - startPWMint;
     float smoothPhase; // X axis, needs to go from -5.0 to 5.0 over slopeLength
     if ((current > (start + slopeLengthSecs)) && (current < (end - slopeLengthSecs))) 
-      return endPWM; // if it's in the middle of the slope, return the high level
+      return endPWMint; // if it's in the middle of the slope, return the high level
     else if ((current - start) < slopeLengthSecs) 
     {  // it's in the beginning slope up go from -5 to 5
       smoothPhase = (10.0*(current-start)/(float)slopeLengthSecs) - 5.0;
