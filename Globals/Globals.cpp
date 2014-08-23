@@ -608,7 +608,7 @@ byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync)
 	if (PulseSync)
 		return newspeed;
 	else
-		return WaveSpeed-(newspeed-WaveSpeed);
+		return constrain(WaveSpeed-(newspeed-WaveSpeed),0,100);
 }
 
 byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
