@@ -59,6 +59,12 @@ public:
 	void DaylightPWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset);
 	void ActinicPWMSmoothRamp();
 	void DaylightPWMSmoothRamp();
+	void ActinicPWMSigmoid(int MinuteOffset);
+	void DaylightPWMSigmoid(int MinuteOffset);
+	void ActinicPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void DaylightPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void ActinicPWMSigmoid();
+	void DaylightPWMSigmoid();
 	void StandardActinic();
 	void StandardDaylight();
 	void StandardActinic(int MinuteOffset);
@@ -97,6 +103,12 @@ public:
 	void Daylight2PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset);
 	void Actinic2PWMSmoothRamp();
 	void Daylight2PWMSmoothRamp();
+	void Actinic2PWMSigmoid(int MinuteOffset);
+	void Daylight2PWMSigmoid(int MinuteOffset);
+	void Actinic2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void Daylight2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void Actinic2PWMSigmoid();
+	void Daylight2PWMSigmoid();
 	void StandardActinic2();
 	void StandardDaylight2();
 	void StandardActinic2(int MinuteOffset);
@@ -183,6 +195,28 @@ public:
 	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength);	
 	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int MinuteOffset);	
 	void ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
+	void Channel0PWMSigmoid();
+	void Channel1PWMSigmoid();
+	void Channel2PWMSigmoid();
+	void Channel3PWMSigmoid();
+	void Channel4PWMSigmoid();
+	void Channel5PWMSigmoid();
+	void Channel0PWMSigmoid(int MinuteOffset);
+	void Channel1PWMSigmoid(int MinuteOffset);
+	void Channel2PWMSigmoid(int MinuteOffset);
+	void Channel3PWMSigmoid(int MinuteOffset);
+	void Channel4PWMSigmoid(int MinuteOffset);
+	void Channel5PWMSigmoid(int MinuteOffset);
+	void Channel0PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void Channel1PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void Channel2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void Channel3PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void Channel4PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void Channel5PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
+	void ChannelPWMSigmoid(byte Channel, byte Start, byte End);
+	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength);	
+	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength, int MinuteOffset);	
+	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
 	boolean inline IsPresent() { return Present; }
 	boolean Present;
 #endif  // PWMEXPANSION
@@ -209,6 +243,9 @@ public:
 	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength);	
 	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset);	
 	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
 	boolean inline SIXTEENChIsPresent() { return SIXTEENChPresent; }
 	boolean SIXTEENChPresent;
 #endif  // SIXTEENCHPWMEXPANSION
