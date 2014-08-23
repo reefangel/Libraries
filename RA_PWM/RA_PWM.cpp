@@ -276,7 +276,7 @@ void RA_PWMClass::ActinicPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinic(PWMSigmoidHighRes(
+	SetActinicRaw(PWMSigmoidHighRes(
 			onTime/60,
 			onTime%60,
 			offTime/60,
@@ -297,7 +297,7 @@ void RA_PWMClass::DaylightPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylight(PWMSigmoidHighRes(
+	SetDaylightRaw(PWMSigmoidHighRes(
 			onTime/60,
 			onTime%60,
 			offTime/60,
@@ -316,7 +316,7 @@ void RA_PWMClass::ActinicPWMSigmoid()
 
 void RA_PWMClass::DaylightPWMSigmoid()
 {
-	SetDaylight(PWMSigmoidHighRes(
+	SetDaylightRaw(PWMSigmoidHighRes(
 			InternalMemory.StdLightsOnHour_read(),
 			InternalMemory.StdLightsOnMinute_read(),
 			InternalMemory.StdLightsOffHour_read(),
@@ -637,7 +637,7 @@ void RA_PWMClass::Actinic2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinic2(PWMSigmoidHighRes(
+	SetActinic2Raw(PWMSigmoidHighRes(
 			onTime/60,
 			onTime%60,
 			offTime/60,
@@ -658,7 +658,7 @@ void RA_PWMClass::Daylight2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylight2(PWMSigmoidHighRes(
+	SetDaylight2Raw(PWMSigmoidHighRes(
 			onTime/60,
 			onTime%60,
 			offTime/60,
@@ -677,7 +677,7 @@ void RA_PWMClass::Actinic2PWMSigmoid()
 
 void RA_PWMClass::Daylight2PWMSigmoid()
 {
-	SetDaylight2(PWMSigmoidHighRes(
+	SetDaylight2Raw(PWMSigmoidHighRes(
 			InternalMemory.StdLightsOnHour_read(),
 			InternalMemory.StdLightsOnMinute_read(),
 			InternalMemory.StdLightsOffHour_read(),
@@ -1251,7 +1251,7 @@ void RA_PWMClass::Channel5PWMSigmoid()
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength)
 {
-	SetChannel(Channel,PWMSigmoidHighRes(
+	SetChannelRaw(Channel,PWMSigmoidHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -1272,7 +1272,7 @@ void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte Slo
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;
-	SetChannel(Channel,PWMSigmoidHighRes(
+	SetChannelRaw(Channel,PWMSigmoidHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
@@ -1471,7 +1471,7 @@ void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, 
 
 void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength)
 {
-	Set16Channel(Channel,PWMSigmoidHighRes(
+	Set16ChannelRaw(Channel,PWMSigmoidHighRes(
 		InternalMemory.StdLightsOnHour_read(),
 		InternalMemory.StdLightsOnMinute_read(),
 		InternalMemory.StdLightsOffHour_read(),
@@ -1492,7 +1492,7 @@ void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byt
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	Set16Channel(Channel,PWMSigmoidHighRes(
+	Set16ChannelRaw(Channel,PWMSigmoidHighRes(
 		onTime/60,
 		onTime%60,
 		offTime/60,
