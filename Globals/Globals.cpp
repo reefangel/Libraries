@@ -178,6 +178,48 @@ int PWMSmoothRampHighRes(byte startHour, byte startMinute, byte endHour, byte en
   }
 }
 
+int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, int oldValue)
+{
+  LightsOverride=true;
+  int current_hour = hour();
+  long start = NumMins(startHour, startMinute)*60L;
+  long end = NumMins(endHour, endMinute)*60L;
+  long slopeLengthSecs = slopeLength*60L;
+
+  if (startPWM > 100)
+     startPWM = 100;
+  if (endPWM > 100)
+     endPWM = 100;
+  int startPWMint = map(startPWM, 0, 100, 0, 4095);
+  int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
+  if (start > end) // Start is greater than End so it is over midnight
+  {
+    if (current_hour < endHour) start -= 1440*60L; // past midnight
+    if (current_hour >= startHour) end += 1440*60L; // before midnight
+  }
+  long current = NumMins(current_hour, minute())*60L + second();
+  if (slopeLengthSecs > ((end-start)/2) ) slopeLengthSecs = (end-start)/2; // don't allow a slope length greater than half the total period
+  if (current <= start || current >= end) 
+    return oldValue; // it's before the start or after the end, return the default
+  else
+  { // do the slope calculation
+    int pwmDelta = endPWMint - startPWMint;
+    float smoothPhase; // X axis, needs to go from -5.0 to 5.0 over slopeLength
+    if ((current > (start + slopeLengthSecs)) && (current < (end - slopeLengthSecs))) 
+      return endPWM; // if it's in the middle of the slope, return the high level
+    else if ((current - start) < slopeLengthSecs) 
+    {  // it's in the beginning slope up go from -5 to 5
+      smoothPhase = (10.0*(current-start)/(float)slopeLengthSecs) - 5.0;
+    }
+    else if ((end - current) < slopeLength)
+    { // it's in the end slope down, go from 5 to -5
+      smoothPhase = (10.0*(end-current)/(float)slopeLengthSecs) - 5.0;
+    }
+    return startPWMint + (int)((1.0/(1.0+exp(0.0-smoothPhase)))*pwmDelta);
+  }
+}
+
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue)
 {
 	// Contribution of thekameleon
@@ -286,6 +328,45 @@ byte PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinut
     }
     return startPWM + (byte)(pwmDelta*((1.0+(cos(radians(smoothPhase))))/2.0));
 
+  }
+}
+
+byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, byte oldValue)
+{
+  LightsOverride=true;
+  int current_hour = hour();
+  int start = NumMins(startHour, startMinute);
+  int end = NumMins(endHour, endMinute);
+
+  if (startPWM > 100)
+     startPWM = 100;
+  if (endPWM > 100)
+     endPWM = 100;
+
+  if (start > end) // Start is greater than End so it is over midnight
+  {
+    if (current_hour < endHour) start -= 1440; // past midnight
+    if (current_hour >= startHour) end += 1440; // before midnight
+  }
+  int current = NumMins(current_hour, minute());
+  if (slopeLength > ((end-start)/2) ) slopeLength = (end-start)/2; // don't allow a slope length greater than half the total period
+  if (current <= start || current >= end) 
+    return oldValue; // it's before the start or after the end, return the default
+  else
+  { // do the slope calculation
+    byte pwmDelta = endPWM - startPWM;
+    float smoothPhase; // X axis, needs to go from -5.0 to 5.0 over slopeLength
+    if ((current > (start + slopeLength)) && (current < (end - slopeLength))) 
+      return endPWM; // if it's in the middle of the slope, return the high level
+    else if ((current - start) < slopeLength) 
+    {  // it's in the beginning slope up go from -5 to 5
+      smoothPhase = (10.0*(current-start)/(float)slopeLength) - 5.0;
+    }
+    else if ((end - current) < slopeLength)
+    { // it's in the end slope down, go from 5 to -5
+      smoothPhase = (10.0*(end-current)/(float)slopeLength) - 5.0;
+    }
+    return startPWM + (byte)((1.0/(1.0+exp(0.0-smoothPhase)))*pwmDelta);
   }
 }
 
