@@ -1243,7 +1243,7 @@ void RA_PWMClass::Channel5PWMSigmoid()
 	ChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
 }
 
-void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength)
+void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End)
 {
 	SetChannelRaw(Channel,PWMSigmoidHighRes(
 		InternalMemory.StdLightsOnHour_read(),
@@ -1258,7 +1258,7 @@ void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte Slo
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, int MinuteOffset)
 {
-	ChannelPWMSigmoid(Channel, Start, End, SlopeLength, MinuteOffset, MinuteOffset);
+	ChannelPWMSigmoid(Channel, Start, End, MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset)
