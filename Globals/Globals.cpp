@@ -179,13 +179,12 @@ int PWMSmoothRampHighRes(byte startHour, byte startMinute, byte endHour, byte en
   }
 }
 
-int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, int oldValue)
+int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue)
 {
   LightsOverride=true;
   int current_hour = hour();
   long start = NumMins(startHour, startMinute)*60L;
   long end = NumMins(endHour, endMinute)*60L;
-  long FWHMSecs = slopeLength*120L; // slopeLength is half width half max in order to avoid overflowing byte boundary, so doubled here
 
   if (startPWM > 100)
      startPWM = 100;
@@ -199,6 +198,7 @@ int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMi
     if (current_hour < endHour) start -= 1440*60L; // past midnight
     if (current_hour >= startHour) end += 1440*60L; // before midnight
   }
+  long FWHMSecs = (end-start)*60L/2L;  // fwhm is half of full duration
   long current = (NumMins(current_hour, minute())*60L) + second();
   if (FWHMSecs > ((end-start)/2) ) FWHMSecs = (end-start)/2; // don't allow a slope length greater than half the total period
   if (current <= start || current >= end) 
@@ -333,13 +333,12 @@ byte PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinut
   }
 }
 
-byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, byte oldValue)
+byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue)
 {
   LightsOverride=true;
   int current_hour = hour();
   int start = NumMins(startHour, startMinute);
   int end = NumMins(endHour, endMinute);
-  int FWHM = (int)slopeLength*2; // slopeLength is half width half max in order to avoid overflowing byte boundary, so doubled here
 
   if (startPWM > 100)
      startPWM = 100;
@@ -351,6 +350,7 @@ byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, 
     if (current_hour < endHour) start -= 1440; // past midnight
     if (current_hour >= startHour) end += 1440; // before midnight
   }
+  int FWHM = (end-start)/2; // slopes up to peak and back down determined by the number of minutes in the full duration
   int current = NumMins(current_hour, minute());
   if (FWHM > ((end-start)/2) ) FWHM = (end-start)/2; // don't allow a slope length greater than half the total period
   if (current <= start || current >= end) 
@@ -363,11 +363,11 @@ byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, 
       return endPWM; // if it's in the middle of the slope, return the high level
     else if ((current - start) < FWHM) 
     {  // it's in the beginning slope up go from -5 to 5
-      smoothPhase = (10.0*((float)current-(float)start)/(float)FWHM) - 5.0;
+      smoothPhase = (10.0*(float)(current-start)/(float)FWHM) - 5.0;
     }
     else if ((end - current) < FWHM)
     { // it's in the end slope down, go from 5 to -5
-      smoothPhase = (10.0*((float)end-(float)current)/(float)FWHM) - 5.0;
+      smoothPhase = (10.0*(float)(end-current)/(float)FWHM) - 5.0;
     }
     smoothPhase = -1.0*smoothPhase;
     return startPWM + (byte)((1.0/(1.0+exp(smoothPhase)))*pwmDelta);
