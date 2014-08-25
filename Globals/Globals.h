@@ -968,6 +968,7 @@ Used by the RF Expansion Module
  */
 #define Else		12
 #define Sine 		13
+#define Gyre		14
 
 // Radion Channels
 #define Radion_White      0
