@@ -214,9 +214,8 @@ public:
 	void Channel4PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
 	void Channel5PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset);
 	void ChannelPWMSigmoid(byte Channel, byte Start, byte End);
-	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength);	
-	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength, int MinuteOffset);	
-	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
+	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, int MinuteOffset);	
+	void ChannelPWMSigmoid(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset);	
 	boolean inline IsPresent() { return Present; }
 	boolean Present;
 #endif  // PWMEXPANSION
@@ -243,9 +242,9 @@ public:
 	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength);	
 	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset);	
 	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
-	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength);	
-	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset);	
-	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int MinuteOffset);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int PreMinuteOffset, int PostMinuteOffset);	
 	boolean inline SIXTEENChIsPresent() { return SIXTEENChPresent; }
 	boolean SIXTEENChPresent;
 #endif  // SIXTEENCHPWMEXPANSION

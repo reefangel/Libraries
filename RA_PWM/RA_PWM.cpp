@@ -283,7 +283,6 @@ void RA_PWMClass::ActinicPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartA_read(),
 			InternalMemory.PWMSlopeEndA_read(),
-			InternalMemory.PWMSlopeDurationA_read(),
 			ActinicPWMValue
 			));
 }
@@ -304,7 +303,6 @@ void RA_PWMClass::DaylightPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
-			InternalMemory.PWMSlopeDurationD_read(),
 			DaylightPWMValue
 			));
 }
@@ -323,7 +321,6 @@ void RA_PWMClass::DaylightPWMSigmoid()
 			InternalMemory.StdLightsOffMinute_read(),
 			InternalMemory.PWMSlopeStartD_read(),
 			InternalMemory.PWMSlopeEndD_read(),
-			InternalMemory.PWMSlopeDurationD_read(),
 			DaylightPWMValue
 			));
 }
@@ -644,7 +641,6 @@ void RA_PWMClass::Actinic2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartA2_read(),
 			InternalMemory.PWMSlopeEndA2_read(),
-			InternalMemory.PWMSlopeDurationA2_read(),
 			Actinic2PWMValue
 			));
 }
@@ -665,7 +661,6 @@ void RA_PWMClass::Daylight2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 			offTime%60,
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
-			InternalMemory.PWMSlopeDurationD2_read(),
 			Daylight2PWMValue
 			));
 }
@@ -684,7 +679,6 @@ void RA_PWMClass::Daylight2PWMSigmoid()
 			InternalMemory.StdLightsOffMinute_read(),
 			InternalMemory.PWMSlopeStartD2_read(),
 			InternalMemory.PWMSlopeEndD2_read(),
-			InternalMemory.PWMSlopeDurationD2_read(),
 			Daylight2PWMValue
 			));
 }
@@ -1221,32 +1215,32 @@ void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte 
 
 void RA_PWMClass::Channel0PWMSigmoid()
 {
-	ChannelPWMSigmoid(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(),InternalMemory.PWMSlopeDuration0_read());
+	ChannelPWMSigmoid(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read());
 }
 
 void RA_PWMClass::Channel1PWMSigmoid()
 {
-	ChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(),InternalMemory.PWMSlopeDuration1_read());
+	ChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read());
 }
 
 void RA_PWMClass::Channel2PWMSigmoid()
 {
-	ChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(),InternalMemory.PWMSlopeDuration2_read());
+	ChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read());
 }
 
 void RA_PWMClass::Channel3PWMSigmoid()
 {
-	ChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(),InternalMemory.PWMSlopeDuration3_read());
+	ChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read());
 }
 
 void RA_PWMClass::Channel4PWMSigmoid()
 {
-	ChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(),InternalMemory.PWMSlopeDuration4_read());
+	ChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read());
 }
 
 void RA_PWMClass::Channel5PWMSigmoid()
 {
-	ChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(),InternalMemory.PWMSlopeDuration5_read());
+	ChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
 }
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength)
@@ -1258,17 +1252,16 @@ void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte Slo
 		InternalMemory.StdLightsOffMinute_read(),
 		Start,
 		End, 
-		SlopeLength, 
 		ExpansionChannel[Channel] 
 	));	
 }
 
-void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength, int MinuteOffset)
+void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, int MinuteOffset)
 {
 	ChannelPWMSigmoid(Channel, Start, End, SlopeLength, MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)
+void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset)
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;
@@ -1279,7 +1272,6 @@ void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, byte Slo
 		offTime%60,
 		Start,
 		End, 
-                SlopeLength,
 		ExpansionChannel[Channel] 
 	));	
 }
@@ -1469,7 +1461,7 @@ void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, 
 	));	
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength)
+void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End)
 {
 	Set16ChannelRaw(Channel,PWMSigmoidHighRes(
 		InternalMemory.StdLightsOnHour_read(),
@@ -1478,17 +1470,16 @@ void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byt
 		InternalMemory.StdLightsOffMinute_read(),
 		Start,
 		End, 
-		SlopeLength, 
 		SIXTEENChExpansionChannel[Channel] 
 	));	
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int MinuteOffset)
 {
-	SIXTEENChannelPWMSigmoid(Channel, Start, End, SlopeLength, MinuteOffset, MinuteOffset);
+	SIXTEENChannelPWMSigmoid(Channel, Start, End, MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int PreMinuteOffset, int PostMinuteOffset)
 {
 	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
 	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
@@ -1499,7 +1490,6 @@ void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, byt
 		offTime%60,
 		Start,
 		End, 
-                SlopeLength,
 		SIXTEENChExpansionChannel[Channel] 
 	));	
 }
