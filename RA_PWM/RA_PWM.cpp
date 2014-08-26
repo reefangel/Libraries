@@ -1220,27 +1220,27 @@ void RA_PWMClass::Channel0PWMSigmoid()
 
 void RA_PWMClass::Channel1PWMSigmoid()
 {
-	ChannelPWMSlope(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read());
+	ChannelPWMSigmoid(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read());
 }
 
 void RA_PWMClass::Channel2PWMSigmoid()
 {
-	ChannelPWMSlope(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read());
+	ChannelPWMSigmoid(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read());
 }
 
 void RA_PWMClass::Channel3PWMSigmoid()
 {
-	ChannelPWMSlope(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read());
+	ChannelPWMSigmoid(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read());
 }
 
 void RA_PWMClass::Channel4PWMSigmoid()
 {
-	ChannelPWMSlope(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read());
+	ChannelPWMSigmoid(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read());
 }
 
 void RA_PWMClass::Channel5PWMSigmoid()
 {
-	ChannelPWMSlope(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
+	ChannelPWMSigmoid(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
 }
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End)
