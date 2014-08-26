@@ -1243,6 +1243,66 @@ void RA_PWMClass::Channel5PWMSigmoid()
 	ChannelPWMSigmoid(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
 }
 
+void RA_PWMClass::Channel0PWMSigmoid(int MinuteOffset)
+{
+	Channel0PWMSigmoid(MinuteOffset, MinuteOffset);
+}
+
+void RA_PWMClass::Channel1PWMSigmoid(int MinuteOffset)
+{
+	Channel1PWMSigmoid(MinuteOffset, MinuteOffset);
+}
+
+void RA_PWMClass::Channel2PWMSigmoid(int MinuteOffset)
+{
+	Channel2PWMSigmoid(MinuteOffset, MinuteOffset);
+}
+
+void RA_PWMClass::Channel3PWMSigmoid(int MinuteOffset)
+{
+	Channel3PWMSigmoid(MinuteOffset, MinuteOffset);
+}
+
+void RA_PWMClass::Channel4PWMSigmoid(int MinuteOffset)
+{
+	Channel4PWMSigmoid(MinuteOffset, MinuteOffset);
+}
+
+void RA_PWMClass::Channel5PWMSigmoid(int MinuteOffset)
+{
+	Channel5PWMSigmoid(MinuteOffset, MinuteOffset);
+}
+
+void RA_PWMClass::Channel0PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
+{
+	ChannelPWMSigmoid(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read(), PreMinuteOffset, PostMinuteOffset);
+}
+
+void RA_PWMClass::Channel1PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
+{
+	ChannelPWMSigmoid(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read(), PreMinuteOffset, PostMinuteOffset);
+}
+
+void RA_PWMClass::Channel2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
+{
+	ChannelPWMSigmoid(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read(), PreMinuteOffset, PostMinuteOffset);
+}
+
+void RA_PWMClass::Channel3PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
+{
+	ChannelPWMSigmoid(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read(), PreMinuteOffset, PostMinuteOffset);
+}
+
+void RA_PWMClass::Channel4PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
+{
+	ChannelPWMSigmoid(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read(), PreMinuteOffset, PostMinuteOffset);
+}
+
+void RA_PWMClass::Channel5PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
+{
+	ChannelPWMSigmoid(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read(), PreMinuteOffset, PostMinuteOffset);
+}
+
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End)
 {
 	SetChannelRaw(Channel,PWMSigmoidHighRes(
