@@ -968,6 +968,7 @@ Used by the RF Expansion Module
  */
 #define Else		12
 #define Sine 		13
+#define Gyre		14
 
 // Radion Channels
 #define Radion_White      0
@@ -1504,6 +1505,7 @@ unsigned int crc16(int *ptr, byte len);
 //Wave Patterns
 byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte GyreMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync);
 byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);

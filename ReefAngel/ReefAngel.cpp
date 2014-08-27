@@ -458,6 +458,44 @@ void ReefAngelClass::Refresh()
 #endif // SIXTEENCHPWMEXPANSION
 		break;
 	}
+	case Gyre:
+	{
+		if (DCPump.DaylightChannel!=NON)
+#if defined(__SAM3X8E__)
+			VariableControl.SetDaylight(PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.DaylightChannel-1),DCPump.Threshold));
+#else // __SAM3X8E__
+			PWM.SetDaylight(PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.DaylightChannel-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+		if (DCPump.ActinicChannel!=NON)
+#if defined(__SAM3X8E__)
+			VariableControl.SetActinic(PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.ActinicChannel-1),DCPump.Threshold));
+#else // __SAM3X8E__
+			PWM.SetActinic(PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.ActinicChannel-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+		if (DCPump.LowATOChannel!=NON)
+			analogWrite(lowATOPin, 2.55*PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.LowATOChannel-1),DCPump.Threshold));
+		if (DCPump.HighATOChannel!=NON)
+			analogWrite(highATOPin, 2.55*PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.HighATOChannel-1),DCPump.Threshold));
+#ifdef PWMEXPANSION
+		for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+			if (DCPump.ExpansionChannel[a]!=NON)
+#if defined(__SAM3X8E__)
+				VariableControl.SetChannel(a,PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.ExpansionChannel[a]-1),DCPump.Threshold));
+#else // __SAM3X8E__
+				PWM.SetChannel(a,PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.ExpansionChannel[a]-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+#endif // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+		for (int a=0; a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
+			if (DCPump.SIXTEENChExpansionChannel[a]!=NON)
+#if defined(__SAM3X8E__)
+				VariableControl.SetChannel(a,PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.SIXTEENChExpansionChannel[a]-1),DCPump.Threshold));
+#else // __SAM3X8E__
+				PWM.Set16Channel(a,PumpThreshold(GyreMode(0,DCPump.Speed,DCPump.Duration,DCPump.SIXTEENChExpansionChannel[a]-1),DCPump.Threshold));
+#endif // __SAM3X8E__
+#endif // SIXTEENCHPWMEXPANSION
+		break;
+	}
 	case NutrientTransport:
 	{
 		if (DCPump.DaylightChannel!=NON)

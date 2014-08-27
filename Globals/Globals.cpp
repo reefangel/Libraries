@@ -570,6 +570,33 @@ byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, bo
 		return (tspeed==PulseMinSpeed)?PulseMaxSpeed:PulseMinSpeed;
 }
 
+byte GyreMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
+{
+	double x,y;
+        PulseDuration = PulseDuration*60;// Pulse Duration is in minutes, not seconds here, so
+
+
+	LightsOverride=false;
+	x=double(now()%(PulseDuration));
+	x/=PulseDuration;
+	x*=2.0*PI;
+	if (!PulseSync) return 0;
+
+	y=sin(x);// y is now between -1 and 1
+	y+=1.0; // y is now between 0 and 2
+	y/=2.0; // y is now between 0 and 1  
+
+	// now compute the tunze speed
+	y*=double(PulseMaxSpeed-PulseMinSpeed);
+	y+=double(PulseMinSpeed); 
+
+	y+=0.5; // for proper rounding
+
+	// don't need to constrain to 30 at the bottom anymore because users have a PumpThreshold function for 
+	// safety if they would like to use it.
+	return constrain(byte(y),0,100); 
+}
+
 byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
 {
 	// Contribution of Discocarp
