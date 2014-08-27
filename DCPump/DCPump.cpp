@@ -27,10 +27,10 @@ DCPumpClass::DCPumpClass()
 	UseMemory=true;
 	FeedingSpeed=0;
 	WaterChangeSpeed=0;
-	DaylightChannel=NON;
-	ActinicChannel=NON;
-	LowATOChannel=NON;
-	HighATOChannel=NON;
+	DaylightChannel=None;
+	ActinicChannel=None;
+	LowATOChannel=None;
+	HighATOChannel=None;
 #ifdef RFEXPANSION
 	Threshold=0;
 #else //RFEXPANSION
@@ -39,12 +39,12 @@ DCPumpClass::DCPumpClass()
 
 #ifdef PWMEXPANSION
 	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-		ExpansionChannel[a]=NON;
+		ExpansionChannel[a]=None;
 #endif // PWMEXPANSION
 
 #ifdef SIXTEENCHPWMEXPANSION
 	for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
-		SIXTEENChExpansionChannel[a]=NON;
+		SIXTEENChExpansionChannel[a]=None;
 #endif // SIXTEENCHPWMEXPANSION
 
   if (InternalMemory.DCPumpThreshold_read() > 100) InternalMemory.DCPumpThreshold_write(Threshold); // if it has never been initialized, 

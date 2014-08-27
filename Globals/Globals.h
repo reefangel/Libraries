@@ -960,7 +960,7 @@ Used by the RF Expansion Module
 #define Custom        11
 #define Slave_Start   97
 #define Slave_Stop    98
-#define None          99
+#define RF_None       99
 #define Radion        100
 
 /*
@@ -1019,7 +1019,7 @@ typedef struct Compensation
 } COMPENSATION ;
 
 // Used by the DCPump class
-#define NON		0
+#define None		0
 #define Sync		1
 #define AntiSync	2
 
