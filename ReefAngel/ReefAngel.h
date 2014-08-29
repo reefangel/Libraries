@@ -270,7 +270,6 @@ public:
 	void CheckFeedingDrawing();
 	void CheckWaterChangeDrawing();
 
-
 #ifdef CUSTOM_VARIABLES
 	byte CustomVar[8];
 #endif //CUSTOM_VARIABLES
