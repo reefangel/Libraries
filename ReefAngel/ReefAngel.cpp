@@ -2272,6 +2272,7 @@ void receiveEventMaster(int howMany)
 }
 #endif // I2CMASTER
 
+#ifdef DCPUMPCONTROL
 void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed) 
 {
 		// Apply the Threshold
@@ -2349,5 +2350,6 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 #endif // __SAM3X8E__
 #endif // SIXTEENCHPWMEXPANSION
 }
+#endif // DCPUMPCONTROL
 
 ReefAngelClass ReefAngel = ReefAngelClass() ;
