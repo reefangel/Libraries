@@ -36,6 +36,7 @@ DCPumpClass::DCPumpClass()
 #else //RFEXPANSION
 	Threshold=30;
 #endif // RFEXPANSION
+	AntiSyncOffset=100;
 
 #ifdef PWMEXPANSION
 	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)

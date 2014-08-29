@@ -33,6 +33,7 @@ public:
 	 byte Speed;
 	 byte Duration;
 	 byte Threshold;
+	 byte AntiSyncOffset;
 	 byte DaylightChannel;
 	 byte ActinicChannel;
 	 byte LowATOChannel;
