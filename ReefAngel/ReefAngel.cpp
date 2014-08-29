@@ -344,7 +344,6 @@ void ReefAngelClass::Refresh()
 		SyncSpeed=DCPump.WaterChangeSpeed;
 		AntiSyncSpeed=DCPump.WaterChangeSpeed;
 	}
-	AntiSyncSpeed*=(float) DCPump.AntiSyncOffset/100;
 	SetDCPumpChannels(SyncSpeed,AntiSyncSpeed);
 #endif  // DCPUMPCONTROL
 
@@ -2275,6 +2274,8 @@ void receiveEventMaster(int howMany)
 
 void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed) 
 {
+		AntiSyncSpeed*=(float) DCPump.AntiSyncOffset/100;
+
         if (DCPump.DaylightChannel==Sync)
 #if defined(__SAM3X8E__)
             VariableControl.SetDaylight(PumpThreshold(SyncSpeed,DCPump.Threshold));
