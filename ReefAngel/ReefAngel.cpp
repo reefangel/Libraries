@@ -2274,57 +2274,62 @@ void receiveEventMaster(int howMany)
 
 void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed) 
 {
+		// Apply the Threshold
+		SyncSpeed=PumpThreshold(SyncSpeed,DCPump.Threshold);
+
+		// Apply the Threshold and AntiSyncOffset
 		AntiSyncSpeed*=(float) DCPump.AntiSyncOffset/100;
+		AntiSyncSpeed=PumpThreshold(AntiSyncSpeed,DCPump.Threshold);
 
         if (DCPump.DaylightChannel==Sync)
 #if defined(__SAM3X8E__)
-            VariableControl.SetDaylight(PumpThreshold(SyncSpeed,DCPump.Threshold));
+            VariableControl.SetDaylight(SyncSpeed);
 #else // __SAM3X8E__
-            PWM.SetDaylight(PumpThreshold(SyncSpeed,DCPump.Threshold));
+            PWM.SetDaylight(SyncSpeed);
 #endif // __SAM3X8E__
 		else if (DCPump.DaylightChannel==AntiSync)
 #if defined(__SAM3X8E__)
-            VariableControl.SetDaylight(PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+            VariableControl.SetDaylight(AntiSyncSpeed);
 #else // __SAM3X8E__
-            PWM.SetDaylight(PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+            PWM.SetDaylight(AntiSyncSpeed);
 #endif // __SAM3X8E__
 
         if (DCPump.ActinicChannel==Sync) 
 #if defined(__SAM3X8E__)
-            VariableControl.SetActinic(PumpThreshold(SyncSpeed,DCPump.Threshold));
+            VariableControl.SetActinic(SyncSpeed);
 #else // __SAM3X8E__
-            PWM.SetActinic(PumpThreshold(SyncSpeed,DCPump.Threshold));
+            PWM.SetActinic(SyncSpeed);
 #endif // __SAM3X8E__
 		else if (DCPump.ActinicChannel==AntiSync) 
 #if defined(__SAM3X8E__)
-            VariableControl.SetActinic(PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+            VariableControl.SetActinic(AntiSyncSpeed);
 #else // __SAM3X8E__
-            PWM.SetActinic(PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+            PWM.SetActinic(AntiSyncSpeed);
 #endif // __SAM3X8E__
 
         if (DCPump.LowATOChannel==Sync)
-            analogWrite(lowATOPin, 2.55*PumpThreshold(SyncSpeed,DCPump.Threshold));
+            analogWrite(lowATOPin, 2.55*SyncSpeed);
 		else if (DCPump.LowATOChannel==AntiSync)
-            analogWrite(lowATOPin, 2.55*PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+            analogWrite(lowATOPin, 2.55*AntiSyncSpeed);
 
         if (DCPump.HighATOChannel==Sync)
-            analogWrite(highATOPin, 2.55*PumpThreshold(SyncSpeed,DCPump.Threshold));
+            analogWrite(highATOPin, 2.55*SyncSpeed);
 		else if (DCPump.HighATOChannel==AntiSync)
-            analogWrite(highATOPin, 2.55*PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+            analogWrite(highATOPin, 2.55*AntiSyncSpeed);
 
 #ifdef PWMEXPANSION
         for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
             if (DCPump.ExpansionChannel[a]==Sync)
 #if defined(__SAM3X8E__)
-                VariableControl.SetChannel(a,PumpThreshold(SyncSpeed,DCPump.Threshold));
+                VariableControl.SetChannel(a,SyncSpeed);
 #else // __SAM3X8E__
-                PWM.SetChannel(a,PumpThreshold(SyncSpeed,DCPump.Threshold));
+                PWM.SetChannel(a,SyncSpeed);
 #endif // __SAM3X8E__
 #if defined(__SAM3X8E__)
             else if (DCPump.ExpansionChannel[a]==AntiSync)
-                VariableControl.SetChannel(a,PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+                VariableControl.SetChannel(a,AntiSyncSpeed);
 #else // __SAM3X8E__
-                PWM.SetChannel(a,PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+                PWM.SetChannel(a,AntiSyncSpeed,);
 #endif // __SAM3X8E__
 #endif // PWMEXPANSION
 
@@ -2332,15 +2337,15 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
         for (int a=0; a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
             if (DCPump.SIXTEENChExpansionChannel[a]==Sync)
 #if defined(__SAM3X8E__)
-                VariableControl.SetChannel(a,PumpThreshold(SyncSpeed,DCPump.Threshold));
+                VariableControl.SetChannel(a,SyncSpeed);
 #else // __SAM3X8E__
-                PWM.Set16Channel(a,PumpThreshold(SyncSpeed,DCPump.Threshold));
+                PWM.Set16Channel(a,SyncSpeed);
 #endif // __SAM3X8E__
             else if (DCPump.SIXTEENChExpansionChannel[a]==AntiSync)
 #if defined(__SAM3X8E__)
-                VariableControl.SetChannel(a,PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+                VariableControl.SetChannel(a,AntiSyncSpeed);
 #else // __SAM3X8E__
-                PWM.Set16Channel(a,PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
+                PWM.Set16Channel(a,AntiSyncSpeed);
 #endif // __SAM3X8E__
 #endif // SIXTEENCHPWMEXPANSION
 }
