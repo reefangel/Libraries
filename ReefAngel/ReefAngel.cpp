@@ -279,7 +279,7 @@ void ReefAngelClass::Refresh()
 	case Lagoon:
 	{
 		SyncSpeed=ReefCrestMode(DCPump.Speed,10,true);
-		AntiSyncSpeed=ReefCrestMode(DCpump.Speed,10,false);
+		AntiSyncSpeed=ReefCrestMode(DCPump.Speed,10,false);
 		break;
 	}
 	case ReefCrest:
@@ -305,6 +305,7 @@ void ReefAngelClass::Refresh()
 		SyncSpeed=GyreMode(0,DCPump.Speed,DCPump.Duration,true);
 		AntiSyncSpeed=GyreMode(0,DCPump.Speed,DCPump.Duration,false);
 		break;
+	}
 	case NutrientTransport:
 	{
 		SyncSpeed=NutrientTransportMode(0,DCPump.Speed,DCPump.Duration*10,true);
@@ -328,20 +329,20 @@ void ReefAngelClass::Refresh()
 		int offset = DCPump.Speed;
 		if (DCPump.Speed > 50) offset = 100 - DCPump.Speed;
 
-		SyncSpeed=ElseMode(DCPump.Speed,offset,DCPump.Duration,true);
-		AntiSyncSpeed=ElseMode(DCPump.Speed,offset,DCPump.Duration,false);
+		SyncSpeed=ElseMode(DCPump.Speed,offset,true);
+		AntiSyncSpeed=ElseMode(DCPump.Speed,offset,false);
 		break;
 	}
-        }
+    }
 	if (DisplayedMenu==FEEDING_MODE)
 	{
 		SyncSpeed=DCPump.FeedingSpeed;
-		AntiSyncSpeed=DCPump.FeedingSpeed
+		AntiSyncSpeed=DCPump.FeedingSpeed;
 	}
 	if (DisplayedMenu==WATERCHANGE_MODE)
 	{
 		SyncSpeed=DCPump.WaterChangeSpeed;
-		AntiSyncSpeed=DCPump.WaterChangeSpeed
+		AntiSyncSpeed=DCPump.WaterChangeSpeed;
 	}
 	AntiSyncSpeed*=(float) DCPump.AntiSyncOffset/100;
 	SetDCPumpChannels(SyncSpeed,AntiSyncSpeed);
@@ -2272,7 +2273,7 @@ void receiveEventMaster(int howMany)
 }
 #endif // I2CMASTER
 
-void SetDCPumpChannels(byte SyncSpeed, AntiSyncSpeed) 
+void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed) 
 {
         if (DCPump.DaylightChannel==Sync)
 #if defined(__SAM3X8E__)
@@ -2302,12 +2303,12 @@ void SetDCPumpChannels(byte SyncSpeed, AntiSyncSpeed)
 
         if (DCPump.LowATOChannel==Sync)
             analogWrite(lowATOPin, 2.55*PumpThreshold(SyncSpeed,DCPump.Threshold));
-		else if (DCpump.LowATOChannel==AntiSync)
+		else if (DCPump.LowATOChannel==AntiSync)
             analogWrite(lowATOPin, 2.55*PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
 
         if (DCPump.HighATOChannel==Sync)
             analogWrite(highATOPin, 2.55*PumpThreshold(SyncSpeed,DCPump.Threshold));
-		else if (DCpump.HighATOChannel==AntiSync)
+		else if (DCPump.HighATOChannel==AntiSync)
             analogWrite(highATOPin, 2.55*PumpThreshold(AntiSyncSpeed,DCPump.Threshold));
 
 #ifdef PWMEXPANSION

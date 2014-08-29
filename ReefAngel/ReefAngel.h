@@ -268,7 +268,7 @@ public:
 	void CheckDrawGraph();
 	void CheckFeedingDrawing();
 	void CheckWaterChangeDrawing();
-	void SetDCPumpChannels(byte Speed)
+	void SetDCPumpChannels(byte SyncSpeed,byte AntiSyncSpeed);
 
 #ifdef CUSTOM_VARIABLES
 	byte CustomVar[8];
