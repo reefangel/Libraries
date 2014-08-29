@@ -51,10 +51,12 @@ void SetupCalibrateORP();
 void ApplySalinityCompensation();
 void StartSetupCalibrateSalinity();
 void DisplaySetupCalibrateSalinity();
+inline void SetupCalibrateSalinity() { StartSetupCalibrateSalinity(); }
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
 void StartSetupCalibrateChoicePHExp();
 void DisplaySetupCalibrateChoicePHExp();
+inline void SetupCalibratePHExp() { StartSetupCalibrateChoicePHExp(); }
 #endif  // defined PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();
@@ -64,9 +66,11 @@ void SetupCalibrateWaterLevel();
 #ifdef DATETIME24
 void StartSetupDateTime24();
 void DisplaySetupDateTime24();
+inline void SetupDateTime24() { StartSetupDateTime24(); }
 #else
 void StartSetupDateTime();
 void DisplaySetupDateTime();
+inline void SetupDateTime() { StartSetupDateTime(); }
 #endif  // DATETIME24
 #endif  // DateTimeSetup
 
