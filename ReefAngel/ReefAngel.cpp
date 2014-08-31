@@ -2319,7 +2319,8 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
             analogWrite(highATOPin, 2.55*AntiSyncSpeed);
 
 #ifdef PWMEXPANSION
-        for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
+        for (int a=0; a<PWM_EXPANSION_CHANNELS;a++) 
+		{
             if (DCPump.ExpansionChannel[a]==Sync)
 #if defined(__SAM3X8E__)
                 VariableControl.SetChannel(a,SyncSpeed);
@@ -2330,12 +2331,14 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
             else if (DCPump.ExpansionChannel[a]==AntiSync)
                 VariableControl.SetChannel(a,AntiSyncSpeed);
 #else // __SAM3X8E__
-                PWM.SetChannel(a,AntiSyncSpeed,);
+                PWM.SetChannel(a,AntiSyncSpeed);
 #endif // __SAM3X8E__
+		}
 #endif // PWMEXPANSION
 
 #ifdef SIXTEENCHPWMEXPANSION
-        for (int a=0; a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
+        for (int a=0; a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++) 
+		{
             if (DCPump.SIXTEENChExpansionChannel[a]==Sync)
 #if defined(__SAM3X8E__)
                 VariableControl.SetChannel(a,SyncSpeed);
@@ -2348,6 +2351,7 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 #else // __SAM3X8E__
                 PWM.Set16Channel(a,AntiSyncSpeed);
 #endif // __SAM3X8E__
+		}
 #endif // SIXTEENCHPWMEXPANSION
 }
 #endif // DCPUMPCONTROL
