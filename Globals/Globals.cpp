@@ -880,6 +880,8 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset)
 
 byte ElseMode( byte midPoint, byte offset, boolean waveSync )
 {
+  // Contribution of cosmith71
+  // http://forum.reefangel.com/viewtopic.php?f=3&t=3481
   // Static's only initialize the first time they are called
   static unsigned long lastChange=millis(); // Set the inital time that the last change occurred
   static int delay = random( 500, 3000); // Set the initial delay
