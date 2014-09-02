@@ -581,21 +581,25 @@ byte GyreMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean
 	x=double(now()%(PulseDuration));
 	x/=PulseDuration;
 	x*=2.0*PI;
-	if (!PulseSync) return 0;
 
 	y=sin(x);// y is now between -1 and 1
-	y+=1.0; // y is now between 0 and 2
-	y/=2.0; // y is now between 0 and 1  
 
-	// now compute the tunze speed
-	y*=double(PulseMaxSpeed-PulseMinSpeed);
-	y+=double(PulseMinSpeed); 
-
-	y+=0.5; // for proper rounding
-
-	// don't need to constrain to 30 at the bottom anymore because users have a PumpThreshold function for 
-	// safety if they would like to use it.
-	return constrain(byte(y),0,100); 
+	if (y > 0) { // call positive the sync channel
+	  // now compute the tunze speed
+	  y*=double(PulseMaxSpeed-PulseMinSpeed);
+	  y+=double(PulseMinSpeed); 
+	  y+=0.5; // for proper rounding
+          if (PulseSync) return constrain(byte(y),0,100);
+	  if (!PulseSync) return 0;
+	} else { // call negative the antisync channel
+	  y*=-1; // switch sign
+	  // now compute the tunze speed
+	  y*=double(PulseMaxSpeed-PulseMinSpeed);
+	  y+=double(PulseMinSpeed); 
+	  y+=0.5; // for proper rounding
+          if (!PulseSync) return constrain(byte(y),0,100);
+	  if (PulseSync) return 0;
+	}
 }
 
 byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
