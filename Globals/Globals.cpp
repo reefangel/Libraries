@@ -378,6 +378,7 @@ byte PumpThreshold(byte value, byte threshold)
 {
 	if (value < threshold/2) return 0;
 	if ((value >= threshold/2) && (value < threshold)) return threshold;
+	if (value > 100) return 100;
 	return value;
 }
 
