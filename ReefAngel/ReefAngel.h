@@ -260,7 +260,8 @@ public:
 	void LightsOff();
 	void RefreshScreen();
 	void StartSetupCalibrateChoicePH();
-        void DisplaySetupCalibrateChoicePH();
+	inline void SetupCalibratePH() { StartSetupCalibrateChoicePH(); }
+	void DisplaySetupCalibrateChoicePH();
 	void ClearScreen(byte Color);
 	void ExitMenu();
 	void SetDisplayedMenu(byte value);
