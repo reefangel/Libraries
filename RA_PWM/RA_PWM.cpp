@@ -60,7 +60,7 @@ byte RA_PWMClass::GetActinicValue()
 	if (ActinicPWMOverride<=100)
 		return ActinicPWMOverride;
 	else
-		return (byte)(ActinicPWMValue/40.95);
+		return (byte)(((float)ActinicPWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
 }
 
 int RA_PWMClass::GetActinicValueRaw()
@@ -76,7 +76,7 @@ byte RA_PWMClass::GetDaylightValue()
 	if (DaylightPWMOverride<=100)
 		return DaylightPWMOverride;
 	else
-		return (byte)(DaylightPWMValue/40.95);
+		return (byte)(((float)DaylightPWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
 }
 
 int RA_PWMClass::GetDaylightValueRaw()
@@ -418,7 +418,7 @@ byte RA_PWMClass::GetActinic2Value()
 	if (Actinic2PWMOverride<=100)
 		return Actinic2PWMOverride;
 	else
-		return (byte)(Actinic2PWMValue/40.95);
+		return (byte)(((float)Actinic2PWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
 }
 
 int RA_PWMClass::GetActinic2ValueRaw()
@@ -434,7 +434,7 @@ byte RA_PWMClass::GetDaylight2Value()
 	if (Daylight2PWMOverride<=100)
 		return Daylight2PWMOverride;
 	else
-		return (byte)(Daylight2PWMValue/40.95);
+		return (byte)(((float)Daylight2PWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
 }
 
 int RA_PWMClass::GetDaylight2ValueRaw()
@@ -827,7 +827,7 @@ byte RA_PWMClass::GetChannelValue(byte Channel)
 	if (ExpansionChannelOverride[Channel]<=100)
 		return ExpansionChannelOverride[Channel];
 	else
-		return (byte)(ExpansionChannel[Channel]/40.95);
+		return (byte)(((float)ExpansionChannel[Channel]/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
 }
 
 int RA_PWMClass::GetChannelValueRaw(byte Channel)
@@ -1407,7 +1407,7 @@ byte RA_PWMClass::Get16ChannelValue(byte Channel)
 	if (SIXTEENChExpansionChannelOverride[Channel]<=100)
 		return SIXTEENChExpansionChannelOverride[Channel];
 	else
-		return (byte)(SIXTEENChExpansionChannel[Channel]/40.95);
+		return (byte)(((float)SIXTEENChExpansionChannel[Channel]/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
 }
 
 int RA_PWMClass::Get16ChannelValueRaw(byte Channel)
