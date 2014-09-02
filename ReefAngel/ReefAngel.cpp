@@ -2279,7 +2279,7 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 		SyncSpeed=PumpThreshold(SyncSpeed,DCPump.Threshold);
 
 		// Apply the Threshold and AntiSyncOffset
-		AntiSyncSpeed*=(float) DCPump.AntiSyncOffset/100;
+		AntiSyncSpeed*=((float) DCPump.AntiSyncOffset/100);
 		AntiSyncSpeed=PumpThreshold(AntiSyncSpeed,DCPump.Threshold);
 
         if (DCPump.DaylightChannel==Sync)
