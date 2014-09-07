@@ -2327,8 +2327,8 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 #else // __SAM3X8E__
                 PWM.SetChannel(a,SyncSpeed);
 #endif // __SAM3X8E__
-#if defined(__SAM3X8E__)
 			} else if (DCPump.ExpansionChannel[a]==AntiSync) {
+#if defined(__SAM3X8E__)
                 VariableControl.SetChannel(a,AntiSyncSpeed);
 #else // __SAM3X8E__
                 PWM.SetChannel(a,AntiSyncSpeed);
