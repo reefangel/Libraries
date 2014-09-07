@@ -2321,36 +2321,38 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 #ifdef PWMEXPANSION
         for (int a=0; a<PWM_EXPANSION_CHANNELS;a++) 
 		{
-            if (DCPump.ExpansionChannel[a]==Sync)
+            if (DCPump.ExpansionChannel[a]==Sync) {
 #if defined(__SAM3X8E__)
                 VariableControl.SetChannel(a,SyncSpeed);
 #else // __SAM3X8E__
                 PWM.SetChannel(a,SyncSpeed);
 #endif // __SAM3X8E__
 #if defined(__SAM3X8E__)
-            else if (DCPump.ExpansionChannel[a]==AntiSync)
+			} else if (DCPump.ExpansionChannel[a]==AntiSync) {
                 VariableControl.SetChannel(a,AntiSyncSpeed);
 #else // __SAM3X8E__
                 PWM.SetChannel(a,AntiSyncSpeed);
 #endif // __SAM3X8E__
+			}
 		}
 #endif // PWMEXPANSION
 
 #ifdef SIXTEENCHPWMEXPANSION
         for (int a=0; a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++) 
 		{
-            if (DCPump.SIXTEENChExpansionChannel[a]==Sync)
+            if (DCPump.SIXTEENChExpansionChannel[a]==Sync) {
 #if defined(__SAM3X8E__)
                 VariableControl.SetChannel(a,SyncSpeed);
 #else // __SAM3X8E__
                 PWM.Set16Channel(a,SyncSpeed);
 #endif // __SAM3X8E__
-            else if (DCPump.SIXTEENChExpansionChannel[a]==AntiSync)
+            } else if (DCPump.SIXTEENChExpansionChannel[a]==AntiSync) {
 #if defined(__SAM3X8E__)
                 VariableControl.SetChannel(a,AntiSyncSpeed);
 #else // __SAM3X8E__
                 PWM.Set16Channel(a,AntiSyncSpeed);
 #endif // __SAM3X8E__
+			}
 		}
 #endif // SIXTEENCHPWMEXPANSION
 }
