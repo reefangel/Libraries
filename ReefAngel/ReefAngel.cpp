@@ -302,7 +302,7 @@ void ReefAngelClass::Refresh()
 	}
 	case Gyre:
 	{
-		SyncSpeed=GyreMode(DCpump.Threshold,DCPump.Speed,DCPump.Duration,true);
+		SyncSpeed=GyreMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,true);
 		AntiSyncSpeed=GyreMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,false);
 		break;
 	}
