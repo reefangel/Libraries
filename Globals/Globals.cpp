@@ -377,7 +377,7 @@ byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, 
 byte PumpThreshold(byte value, byte threshold)
 {
 	if (value > 0) 
-		return map(value,1,100,threshold,100);
+		return constrain(value,threshold,100);
 	else 
 		return 0;
 }
