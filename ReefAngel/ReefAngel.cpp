@@ -320,8 +320,8 @@ void ReefAngelClass::Refresh()
 	}
 	case Sine:
 	{
-		SyncSpeed=SineMode(0,DCPump.Speed,DCPump.Duration,true);
-		AntiSyncSpeed=SineMode(0,DCPump.Speed,DCPump.Duration,false);
+		SyncSpeed=SineMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,true);
+		AntiSyncSpeed=SineMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,false);
 		break;
 	}
 	case Else:
