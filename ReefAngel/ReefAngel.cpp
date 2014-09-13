@@ -336,13 +336,19 @@ void ReefAngelClass::Refresh()
     }
 	if (DisplayedMenu==FEEDING_MODE)
 	{
-		SyncSpeed=DCPump.FeedingSpeed;
-		AntiSyncSpeed=DCPump.FeedingSpeed;
+		if (DCPump.FeedingSpeed > 100) 
+		{
+			SyncSpeed=DCPump.FeedingSpeed;
+			AntiSyncSpeed=DCPump.FeedingSpeed;
+		}
 	}
 	if (DisplayedMenu==WATERCHANGE_MODE)
 	{
-		SyncSpeed=DCPump.WaterChangeSpeed;
-		AntiSyncSpeed=DCPump.WaterChangeSpeed;
+		if (DCPump.WaterChangeSpeed > 100) 
+		{
+			SyncSpeed=DCPump.WaterChangeSpeed;
+			AntiSyncSpeed=DCPump.WaterChangeSpeed;
+		}
 	}
 	SetDCPumpChannels(SyncSpeed,AntiSyncSpeed);
 #endif  // DCPUMPCONTROL
