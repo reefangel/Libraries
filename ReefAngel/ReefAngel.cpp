@@ -336,7 +336,7 @@ void ReefAngelClass::Refresh()
     }
 	if (DisplayedMenu==FEEDING_MODE)
 	{
-		if (DCPump.FeedingSpeed > 100) 
+		if (DCPump.FeedingSpeed < 100) 
 		{
 			SyncSpeed=DCPump.FeedingSpeed;
 			AntiSyncSpeed=DCPump.FeedingSpeed;
@@ -344,7 +344,7 @@ void ReefAngelClass::Refresh()
 	}
 	if (DisplayedMenu==WATERCHANGE_MODE)
 	{
-		if (DCPump.WaterChangeSpeed > 100) 
+		if (DCPump.WaterChangeSpeed < 100) 
 		{
 			SyncSpeed=DCPump.WaterChangeSpeed;
 			AntiSyncSpeed=DCPump.WaterChangeSpeed;
