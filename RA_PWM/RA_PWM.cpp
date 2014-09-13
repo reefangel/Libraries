@@ -528,7 +528,7 @@ void RA_PWMClass::Actinic2PWMParabola(int PreMinuteOffset, int PostMinuteOffset)
 
 void RA_PWMClass::Daylight2PWMParabola(int MinuteOffset)
 {
-	Daylight2PWMParabola(MinuteOffset, int MinuteOffset)
+	Daylight2PWMParabola(MinuteOffset, MinuteOffset);
 }
 
 void RA_PWMClass::Daylight2PWMParabola(int PreMinuteOffset, int PostMinuteOffset)
