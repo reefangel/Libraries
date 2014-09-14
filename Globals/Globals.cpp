@@ -376,10 +376,10 @@ byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, 
 
 byte PumpThreshold(byte value, byte threshold)
 {
-	if (value < threshold/2) return 0;
-	if ((value >= threshold/2) && (value < threshold)) return threshold;
-	if (value > 100) return 100;
-	return value;
+	if (value > 0) 
+		return constrain(value,threshold,100);
+	else 
+		return 0;
 }
 
 byte MoonPhase()

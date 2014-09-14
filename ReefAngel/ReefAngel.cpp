@@ -302,8 +302,8 @@ void ReefAngelClass::Refresh()
 	}
 	case Gyre:
 	{
-		SyncSpeed=GyreMode(0,DCPump.Speed,DCPump.Duration,true);
-		AntiSyncSpeed=GyreMode(0,DCPump.Speed,DCPump.Duration,false);
+		SyncSpeed=GyreMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,true);
+		AntiSyncSpeed=GyreMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,false);
 		break;
 	}
 	case NutrientTransport:
@@ -320,8 +320,8 @@ void ReefAngelClass::Refresh()
 	}
 	case Sine:
 	{
-		SyncSpeed=SineMode(0,DCPump.Speed,DCPump.Duration,true);
-		AntiSyncSpeed=SineMode(0,DCPump.Speed,DCPump.Duration,false);
+		SyncSpeed=SineMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,true);
+		AntiSyncSpeed=SineMode(DCPump.Threshold,DCPump.Speed,DCPump.Duration,false);
 		break;
 	}
 	case Else:
