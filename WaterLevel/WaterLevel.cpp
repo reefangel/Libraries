@@ -91,7 +91,6 @@ void WaterLevelClass::Convert()
 	if (t!=0)
 	{
 		t=constrain(map(t, InternalMemory.WaterLevel2Min_read(), InternalMemory.WaterLevel2Max_read(), 0, 100),0,255); // apply the calibration to the sensor reading
-		t=constrain(t,0,200);
 	}
 	level[2] = t;
 
@@ -99,7 +98,6 @@ void WaterLevelClass::Convert()
 	if (t!=0)
 	{
 		t=constrain(map(t, InternalMemory.WaterLevel3Min_read(), InternalMemory.WaterLevel3Max_read(), 0, 100),0,255); // apply the calibration to the sensor reading
-		t=constrain(t,0,200);
 	}
 	level[3] = t;
 
@@ -107,7 +105,6 @@ void WaterLevelClass::Convert()
 	if (t!=0)
 	{
 		t=constrain(map(t, InternalMemory.WaterLevel4Min_read(), InternalMemory.WaterLevel4Max_read(), 0, 100),0,255); // apply the calibration to the sensor reading
-		t=constrain(t,0,200);
 	}
 	level[4] = t;
 }
