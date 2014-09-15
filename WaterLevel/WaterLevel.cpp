@@ -76,23 +76,21 @@ void WaterLevelClass::Convert()
 	t/=20;
 	if (t!=0)
 	{
-		t=map(t, InternalMemory.WaterLevelMin_read(), InternalMemory.WaterLevelMax_read(), 0, 100); // apply the calibration to the sensor reading
-		t=constrain(t,0,200);
+		t=constrain(map(t, InternalMemory.WaterLevelMin_read(), InternalMemory.WaterLevelMax_read(), 0, 100),0,255); // apply the calibration to the sensor reading
 	}
 	level[0] = t;
 
 	t=Read(1);
 	if (t!=0)
 	{
-		t=map(t, InternalMemory.WaterLevel1Min_read(), InternalMemory.WaterLevel1Max_read(), 0, 100); // apply the calibration to the sensor reading
-		t=constrain(t,0,200);
+		t=constrain(map(t, InternalMemory.WaterLevel1Min_read(), InternalMemory.WaterLevel1Max_read(), 0, 100),0,255); // apply the calibration to the sensor reading
 	}
 	level[1] = t;
 
 	t=Read(2);
 	if (t!=0)
 	{
-		t=map(t, InternalMemory.WaterLevel2Min_read(), InternalMemory.WaterLevel2Max_read(), 0, 100); // apply the calibration to the sensor reading
+		t=constrain(map(t, InternalMemory.WaterLevel2Min_read(), InternalMemory.WaterLevel2Max_read(), 0, 100),0,255); // apply the calibration to the sensor reading
 		t=constrain(t,0,200);
 	}
 	level[2] = t;
@@ -100,7 +98,7 @@ void WaterLevelClass::Convert()
 	t=Read(3);
 	if (t!=0)
 	{
-		t=map(t, InternalMemory.WaterLevel3Min_read(), InternalMemory.WaterLevel3Max_read(), 0, 100); // apply the calibration to the sensor reading
+		t=constrain(map(t, InternalMemory.WaterLevel3Min_read(), InternalMemory.WaterLevel3Max_read(), 0, 100),0,255); // apply the calibration to the sensor reading
 		t=constrain(t,0,200);
 	}
 	level[3] = t;
@@ -108,7 +106,7 @@ void WaterLevelClass::Convert()
 	t=Read(4);
 	if (t!=0)
 	{
-		t=map(t, InternalMemory.WaterLevel4Min_read(), InternalMemory.WaterLevel4Max_read(), 0, 100); // apply the calibration to the sensor reading
+		t=constrain(map(t, InternalMemory.WaterLevel4Min_read(), InternalMemory.WaterLevel4Max_read(), 0, 100),0,255); // apply the calibration to the sensor reading
 		t=constrain(t,0,200);
 	}
 	level[4] = t;
