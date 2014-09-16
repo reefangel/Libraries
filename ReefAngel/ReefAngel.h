@@ -345,8 +345,9 @@ public:
 	void StandardATO(byte ATORelay, int ATOTimeout);
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+	inline void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel) { WaterLevelATO(0, ATORelay, ATOTimeout, LowLevel, HighLevel); };
 #else
-  void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+	void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
 #endif  // MULTIWATERLEVELEXPANSION
 	void SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
