@@ -502,6 +502,11 @@ void ReefAngelClass::Refresh()
 #endif // ETH_WIZ5100
 
 #ifdef RANET
+	// Check for Joystick OK button. We disable interrupts due to SoftwareSerial
+#ifdef RA_PLUS
+	if (!digitalRead(okPin)) ButtonPress++;
+#endif // RA_PLUS
+
 	// Send RANet data
 	if (millis()-RANetlastmillis>RANetDelay)
 	{

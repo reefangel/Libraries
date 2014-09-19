@@ -1,3 +1,6 @@
+#if defined RANET && defined RA_PLUS
+// disable interrupts to avoid conflict with SoftwareSerial
+#else
 SIGNAL(PCINT0_vect)
 {
 	if (millis()-ButtonDebounce>600)
@@ -6,6 +9,7 @@ SIGNAL(PCINT0_vect)
 		ButtonPress++;
 	}
 }
+#endif // RANET
 
 // Menu Headings
 const prog_char Menu_0_label[] PROGMEM = "Main:";
