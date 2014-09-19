@@ -290,8 +290,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
-#define RaNetRXPin			50
-#define RaNetTXPin			52
+#define RANetRXPin			50
+#define RANetTXPin			52
 #ifdef REEFANGEL_MINI
 #define ledPin              6
 #else
@@ -345,8 +345,8 @@ static unsigned long RANetlastmillis;
 #ifdef RA_STAR
 #define RANET_SERIAL	Serial2
 #elif defined RA_PLUS
-static SoftwareSerial RaNetSerial(RaNetRXPin,RaNetTXPin);
-#define RANET_SERIAL	RaNetSerial
+static SoftwareSerial RANetSerial(RANetRXPin,RANetTXPin);
+#define RANET_SERIAL	RANetSerial
 #endif // RA_STAR
 
 #endif // RANET
