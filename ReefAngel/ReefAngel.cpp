@@ -1525,7 +1525,8 @@ void ReefAngelClass::FeedingModeStart()
 #endif  // RelayExp
 	CheckFeedingDrawing();
 #ifdef RFEXPANSION
-	if (RF.FeedingSpeed < 100) RF.SetMode(Feeding_Start,RF.FeedingSpeed,0);
+	if (RF.FeedingSpeed < 100) RF.SetMode(Constant,RF.FeedingSpeed,0);
+	else RF.SetMode(Feeding_Start,0,0);
 #endif  // RFEXPANSION
 	Timer[FEEDING_TIMER].Start();  //Start Feeding Mode timer
 	// Tell controller what mode we are in
