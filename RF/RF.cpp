@@ -28,6 +28,8 @@ RFClass::RFClass()
 	UseMemory=true;
 	VortechEnable=true;
 	lastcrc=-1;
+    FeedingSpeed=0;
+    WaterChangeSpeed=0;
 	for ( byte a = 0; a < RF_CHANNELS; a++ )
 	{
 		RadionChannels[a]=0;
