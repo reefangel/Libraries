@@ -1545,7 +1545,7 @@ void ReefAngelClass::WaterChangeModeStart()
 	}
 #endif  // RelayExp
 #ifdef RFEXPANSION
-	if (RF.WaterChangeSpeed < 100) RF.Speed=RF.WaterChangeSpeed;
+	if (RF.WaterChangeSpeed < 100) RF.SetMode(Constant,RF.WaterChangeSpeed,0);
 #endif  // RFEXPANSION
 	CheckWaterChangeDrawing();
 	// Tell controller what mode we are in
