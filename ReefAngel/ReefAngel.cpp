@@ -1525,7 +1525,7 @@ void ReefAngelClass::FeedingModeStart()
 #endif  // RelayExp
 	CheckFeedingDrawing();
 #ifdef RFEXPANSION
-	RF.SetMode(Feeding_Start,0,0);
+	if (RF.FeedingSpeed < 100) RF.SetMode(Feeding_Start,RF.FeedingSpeed,0);
 #endif  // RFEXPANSION
 	Timer[FEEDING_TIMER].Start();  //Start Feeding Mode timer
 	// Tell controller what mode we are in
@@ -1544,6 +1544,9 @@ void ReefAngelClass::WaterChangeModeStart()
 		Relay.RelayMaskOffE[i] &= ~WaterChangePortsE[i];
 	}
 #endif  // RelayExp
+#ifdef RFEXPANSION
+	if (RF.WaterChangeSpeed < 100) RF.Speed=RF.WaterChangeSpeed;
+#endif  // RFEXPANSION
 	CheckWaterChangeDrawing();
 	// Tell controller what mode we are in
 	SetDisplayedMenu(WATERCHANGE_MODE);
