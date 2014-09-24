@@ -33,6 +33,8 @@ public:
 	byte Mode;
 	byte Speed;
 	byte Duration;
+    byte FeedingSpeed;
+    byte WaterChangeSpeed;
 	boolean VortechEnable;
 	byte RadionChannels[RF_CHANNELS];
 	byte RadionChannelsOverride[RF_CHANNELS];
