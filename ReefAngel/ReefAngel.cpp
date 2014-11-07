@@ -947,14 +947,30 @@ void ReefAngelClass::StandardFan(byte FanRelay, int LowTemp, int HighTemp)
 
 void ReefAngelClass::CO2Control(byte CO2Relay, int LowPH, int HighPH)
 {
-	if (Params.PH <= LowPH) Relay.Off(CO2Relay);  // If PH <= LowPH - turn on CO2
-	if (Params.PH >= HighPH) Relay.On(CO2Relay);  // If sensor 1 PH >= HighPH - turn off CO2
+	CO2Control(CO2Relay,LowPH,HighPH,false);
+}
+
+void ReefAngelClass::CO2Control(byte CO2Relay, int LowPH, int HighPH, bool useExp)
+{
+	int ph=Params.PH;
+	if (useExp) ph=Params.PHExp;
+
+	if (ph <= LowPH) Relay.Off(CO2Relay);  // If PH <= LowPH - turn on CO2
+	if (ph >= HighPH) Relay.On(CO2Relay);  // If sensor 1 PH >= HighPH - turn off CO2
 }
 
 void ReefAngelClass::PHControl(byte PHControlRelay, int LowPH, int HighPH)
 {
-	if (Params.PH <= LowPH) Relay.On(PHControlRelay);  // If PH <= LowPH - turn on PHControlRelay
-	if (Params.PH >= HighPH) Relay.Off(PHControlRelay);  // If sensor 1 PH >= HighPH - turn off PHControlRelay
+	PHControl(PHControlRelay,LowPH,HighPH,false);
+}
+
+void ReefAngelClass::PHControl(byte PHControlRelay, int LowPH, int HighPH, bool useExp)
+{
+	int ph=Params.PH;
+	if (useExp) ph=Params.PHExp;
+
+	if (ph <= LowPH) Relay.On(PHControlRelay);  // If PH <= LowPH - turn on PHControlRelay
+	if (ph >= HighPH) Relay.Off(PHControlRelay);  // If sensor 1 PH >= HighPH - turn off PHControlRelay
 }
 
 void ReefAngelClass::StandardATO(byte ATORelay, int ATOTimeout)

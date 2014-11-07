@@ -341,7 +341,9 @@ public:
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
 	void CO2Control(byte CO2Relay, int LowPH, int HighPH);
+	void CO2Control(byte CO2Relay, int LowPH, int HighPH, bool useExp);
 	void PHControl(byte PHControlRelay, int LowPH, int HighPH);
+	void PHControl(byte PHControlRelay, int LowPH, int HighPH, bool useExp);
 	void StandardATO(byte ATORelay, int ATOTimeout);
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
