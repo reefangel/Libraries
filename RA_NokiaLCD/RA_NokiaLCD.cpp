@@ -1638,6 +1638,27 @@ void RA_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, char *un
     }
 }
 
+/*
+ * Make sure that the text to be displayed(char *option) 
+ * is not longer then the length argument otherwise it will overflow.
+ * Maximum text length is currently 5(five) characters!
+ */
+void RA_NokiaLCD::DrawSelect(char *option, bool selected, byte x, byte y, byte length) {
+    byte offset[6] = {0, 6, 6, 12, 18, 24};
+    byte x2 = offset[length>5? 5: length] + x;
+    byte bcolor = DefaultBGColor;
+    byte fcolor = DefaultFGColor;
+    Clear(DefaultBGColor, x - 1, y - 8, x2 + 5, y + 15);
+    if (selected) {
+        bcolor = SelectionBGColor;
+        fcolor = SelectionFGColor;
+        DrawText(DefaultFGColor, DefaultBGColor, x + ((x2 - x - 12) / 2), y - 8, " ^ ");
+        DrawText(DefaultFGColor, DefaultBGColor, x + ((x2 - x - 12) / 2), y + 8, " ` ");
+    }
+    Clear(bcolor, x - 1, y - 2, x2 + 5, y + 8);
+    DrawText(fcolor, bcolor, x, y, option);
+}
+
 void RA_NokiaLCD::DrawCancel(bool Selected)
 {
     byte bcolor;

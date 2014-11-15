@@ -20,6 +20,7 @@
   */
 
 #include "Globals.h"
+#include "Math.h"
 
 byte intlength(int intin)
 {
@@ -54,6 +55,173 @@ bool IsLeapYear(int year)
     return true;
 }
 
+int PWMSlopeHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, int oldValue)
+{
+	// Contribution of thekameleon
+	// http://forum.reefangel.com/viewtopic.php?p=23893#p23893
+	LightsOverride=true;
+	int current_hour = hour();
+	long start = NumMins(startHour, startMinute)*60L;
+	long end = NumMins(endHour, endMinute)*60L;
+
+        // convert PWM inputs from percents to 12-bit int values.
+        if (startPWM > 100)
+           startPWM = 100;
+        if (endPWM > 100)
+           endPWM = 100;
+        int startPWMint = map(startPWM, 0, 100, 0, 4095);
+        int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
+	if (start > end) //Start is greater than End so its over midnight
+	{
+		//Example: 2300hrs to 0200hrs
+		if (current_hour < endHour) start -= 1440L*60L; //past midnight
+		if (current_hour >= startHour) end += 1440L*60L; //before midnight
+	}
+	long current = NumMins(current_hour, minute())*60L + second();
+	long startD = start + Duration*60L;
+	long stopD = end - Duration*60L;
+
+	if ( current >= start && current <= startD )
+		return constrain(map(current, start, startD, startPWMint, endPWMint),startPWMint, endPWMint);
+	else if ( current >= stopD && current <= end )
+	{
+		int v = constrain(map(current, stopD, end, startPWMint, endPWMint),startPWMint, endPWMint);
+		return endPWMint - v + startPWMint;
+	}
+	else if ( current > startD && current < stopD )
+		return endPWMint;
+
+	// lastly return the existing value
+	return oldValue;
+}
+
+int PWMParabolaHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue)
+{
+	// Contribution of thekameleon
+	// http://forum.reefangel.com/viewtopic.php?p=23813#p23813
+	LightsOverride=true;
+	int current_hour = hour();
+	long start = NumMins(startHour, startMinute)*60L;
+	long end = NumMins(endHour, endMinute)*60L;
+
+        // convert PWM inputs from percents to 12-bit int values.
+        if (startPWM > 100)
+           startPWM = 100;
+        if (endPWM > 100)
+           endPWM = 100;
+        int startPWMint = map(startPWM, 0, 100, 0, 4095);
+        int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
+	if (start > end) //Start is greater than End so its over midnight
+	{
+		//Example: 2300hrs to 0200hrs
+		if (current_hour < endHour) start -= 1440L*60L; //past midnight
+		if (current_hour >= startHour) end += 1440L*60L; //before midnight
+	}
+
+	long current = NumMins(current_hour, minute())*60L + second();
+
+	if ( current <= start || current >= end)
+		return oldValue;
+	else
+	{
+		int pwmDelta = endPWMint - startPWMint;
+		float parabolaPhase = ((float)(current-start)/(float)(end-start))*180.0;
+		//byte parabolaPhase = constrain(map(current, start, end, 0, 180), 0, 180);
+		return startPWMint + (int)(pwmDelta * sin(radians(parabolaPhase)));
+	}
+}
+
+int PWMSmoothRampHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, int oldValue)
+{
+  LightsOverride=true;
+  int current_hour = hour();
+  long start = NumMins(startHour, startMinute)*60L;
+  long end = NumMins(endHour, endMinute)*60L;
+  long slopeLengthSecs = slopeLength*60L;
+
+  // convert PWM inputs from percents to 12-bit int values.
+  if (startPWM > 100)
+     startPWM = 100;
+  if (endPWM > 100)
+     endPWM = 100;
+  int startPWMint = map(startPWM, 0, 100, 0, 4095);
+  int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
+  if (start > end) // Start is greater than End so it is over midnight
+  {
+    if (current_hour < endHour) start -= 1440L*60L; // past midnight
+    if (current_hour >= startHour) end += 1440L*60L; // before midnight
+  }
+  long current = NumMins(current_hour, minute())*60L + second();
+  if (slopeLengthSecs > ((end-start)/2) ) slopeLengthSecs = (end-start)/2; // don't allow a slope length greater than half the total period
+  if (current <= start || current >= end) 
+    return oldValue; // it's before the start or after the end, return the default
+  else
+  { // do the slope calculation
+    int pwmDelta = endPWMint - startPWMint;
+    float smoothPhase;
+    if ((current > (start + slopeLengthSecs)) && (current < (end - slopeLengthSecs))) 
+      return endPWMint; // if it's in the middle of the slope, return the high level
+    else if ((current - start) < slopeLengthSecs) 
+    {  // it's in the beginning slope up
+      smoothPhase = (((float)(current-start)/(float)slopeLengthSecs)*180.0) + 180.0;
+      //smoothPhase = constrain(map(current, start, start+slopeLengthSecs, 180, 360), 180, 360);
+    }
+    else if ((end - current) < slopeLengthSecs)
+    { // it's in the end slope down
+      smoothPhase = (((float)(current-start)/(float)slopeLengthSecs)*180.0);
+      //smoothPhase = constrain(map(current, end-slopeLengthSecs, end, 0, 180), 0, 180);
+    }
+    return startPWMint + (int)(pwmDelta*((1.0+(cos(radians(smoothPhase))))/2.0));
+
+  }
+}
+
+int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue)
+{
+  LightsOverride=true;
+  int current_hour = hour();
+  long start = NumMins(startHour, startMinute)*60L;
+  long end = NumMins(endHour, endMinute)*60L;
+
+  if (startPWM > 100)
+     startPWM = 100;
+  if (endPWM > 100)
+     endPWM = 100;
+  int startPWMint = map(startPWM, 0, 100, 0, 4095);
+  int endPWMint = map(endPWM, 0, 100, 0, 4095);
+
+  if (start > end) // Start is greater than End so it is over midnight
+  {
+    if (current_hour < endHour) start -= 1440*60L; // past midnight
+    if (current_hour >= startHour) end += 1440*60L; // before midnight
+  }
+  long FWHMSecs = (end-start)*60L/2L;  // fwhm is half of full duration
+  long current = (NumMins(current_hour, minute())*60L) + second();
+  if (FWHMSecs > ((end-start)/2) ) FWHMSecs = (end-start)/2; // don't allow a slope length greater than half the total period
+  if (current <= start || current >= end) 
+    return oldValue; // it's before the start or after the end, return the default
+  else
+  { // do the slope calculation
+    int pwmDelta = endPWMint - startPWMint;
+    float smoothPhase; // X axis, needs to go from -5.0 to 5.0 over FWHM
+    if ((current > (start + FWHMSecs)) && (current < (end - FWHMSecs))) 
+      return endPWMint; // if it's in the middle of the slope, return the high level
+    else if ((current - start) < FWHMSecs) 
+    {  // it's in the beginning slope up go from -5 to 5
+      smoothPhase = (10.0*((float)current-(float)start)/(float)FWHMSecs) - 5.0;
+    }
+    else if ((end - current) < FWHMSecs)
+    { // it's in the end slope down, go from 5 to -5
+      smoothPhase = (10.0*((float)end-(float)current)/(float)FWHMSecs) - 5.0;
+    }
+    smoothPhase = -1.0*smoothPhase;
+    return startPWMint + (int)((1.0/(1.0+exp(smoothPhase)))*pwmDelta);
+  }
+}
+
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue)
 {
 	// Contribution of thekameleon
@@ -62,6 +230,12 @@ byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, by
 	int current_hour = hour();
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
+
+        if (startPWM > 100)
+           startPWM = 100;
+        if (endPWM > 100)
+           endPWM = 100;
+
 	if (start > end) //Start is greater than End so its over midnight
 	{
 		//Example: 2300hrs to 0200hrs
@@ -94,6 +268,12 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	int current_hour = hour();
 	int start = NumMins(startHour, startMinute);
 	int end = NumMins(endHour, endMinute);
+
+        if (startPWM > 100)
+           startPWM = 100;
+        if (endPWM > 100)
+           endPWM = 100;
+
 	if (start > end) //Start is greater than End so its over midnight
 	{
 		//Example: 2300hrs to 0200hrs
@@ -113,12 +293,18 @@ byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute,
 	}
 }
 
-int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, int startPWM, int endPWM, byte slopeLength, int oldValue)
+byte PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, byte oldValue)
 {
   LightsOverride=true;
   int current_hour = hour();
   int start = NumMins(startHour, startMinute);
   int end = NumMins(endHour, endMinute);
+
+  if (startPWM > 100)
+     startPWM = 100;
+  if (endPWM > 100)
+     endPWM = 100;
+
   if (start > end) // Start is greater than End so it is over midnight
   {
     if (current_hour < endHour) start -= 1440; // past midnight
@@ -130,8 +316,8 @@ int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute
     return oldValue; // it's before the start or after the end, return the default
   else
   { // do the slope calculation
-    int pwmDelta = endPWM - startPWM;
-    byte smoothPhase;
+    byte pwmDelta = endPWM - startPWM;
+    int smoothPhase;
     if ((current > (start + slopeLength)) && (current < (end - slopeLength))) 
       return endPWM; // if it's in the middle of the slope, return the high level
     else if ((current - start) < slopeLength) 
@@ -142,16 +328,58 @@ int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute
     { // it's in the end slope down
       smoothPhase = constrain(map(current, end-slopeLength, end, 0, 180), 0, 180);
     }
-    return startPWM + (int)(pwmDelta*(1.0+(cos(radians(smoothPhase)))/2.0));
+    return startPWM + (byte)(pwmDelta*((1.0+(cos(radians(smoothPhase))))/2.0));
+
   }
 }
 
+byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue)
+{
+  LightsOverride=true;
+  int current_hour = hour();
+  int start = NumMins(startHour, startMinute);
+  int end = NumMins(endHour, endMinute);
+
+  if (startPWM > 100)
+     startPWM = 100;
+  if (endPWM > 100)
+     endPWM = 100;
+
+  if (start > end) // Start is greater than End so it is over midnight
+  {
+    if (current_hour < endHour) start -= 1440; // past midnight
+    if (current_hour >= startHour) end += 1440; // before midnight
+  }
+  int FWHM = (end-start)/2; // slopes up to peak and back down determined by the number of minutes in the full duration
+  int current = NumMins(current_hour, minute());
+  if (FWHM > ((end-start)/2) ) FWHM = (end-start)/2; // don't allow a slope length greater than half the total period
+  if (current <= start || current >= end) 
+    return oldValue; // it's before the start or after the end, return the default
+  else
+  { // do the slope calculation
+    byte pwmDelta = endPWM - startPWM;
+    float smoothPhase; // X axis, needs to go from -5.0 to 5.0 over FWHM
+    if ((current > (start + FWHM)) && (current < (end - FWHM))) 
+      return endPWM; // if it's in the middle of the slope, return the high level
+    else if ((current - start) < FWHM) 
+    {  // it's in the beginning slope up go from -5 to 5
+      smoothPhase = (10.0*(float)(current-start)/(float)FWHM) - 5.0;
+    }
+    else if ((end - current) < FWHM)
+    { // it's in the end slope down, go from 5 to -5
+      smoothPhase = (10.0*(float)(end-current)/(float)FWHM) - 5.0;
+    }
+    smoothPhase = -1.0*smoothPhase;
+    return startPWM + (byte)((1.0/(1.0+exp(smoothPhase)))*pwmDelta);
+  }
+}
 
 byte PumpThreshold(byte value, byte threshold)
 {
-	if (value < threshold/2) return 0;
-	if ((value >= threshold/2) && (value < threshold)) return threshold;
-	return value;
+	if (value > 0) 
+		return constrain(value,threshold,100);
+	else 
+		return 0;
 }
 
 byte MoonPhase()
@@ -343,6 +571,37 @@ byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, bo
 		return (tspeed==PulseMinSpeed)?PulseMaxSpeed:PulseMinSpeed;
 }
 
+byte GyreMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
+{
+	double x,y;
+        PulseDuration = PulseDuration*60;// Pulse Duration is in minutes, not seconds here, so
+
+
+	LightsOverride=false;
+	x=double(now()%(PulseDuration));
+	x/=PulseDuration;
+	x*=2.0*PI;
+
+	y=sin(x);// y is now between -1 and 1
+
+	if (y > 0) { // call positive the sync channel
+	  // now compute the tunze speed
+	  y*=double(PulseMaxSpeed-PulseMinSpeed);
+	  y+=double(PulseMinSpeed); 
+	  y+=0.5; // for proper rounding
+          if (PulseSync) return constrain(byte(y),0,100);
+	  if (!PulseSync) return 0;
+	} else { // call negative the antisync channel
+	  y*=-1; // switch sign
+	  // now compute the tunze speed
+	  y*=double(PulseMaxSpeed-PulseMinSpeed);
+	  y+=double(PulseMinSpeed); 
+	  y+=0.5; // for proper rounding
+          if (!PulseSync) return constrain(byte(y),0,100);
+	  if (PulseSync) return 0;
+	}
+}
+
 byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
 {
 	// Contribution of Discocarp
@@ -365,8 +624,9 @@ byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean
 
 	y+=0.5; // for proper rounding
 
-	// y is now between PulseMinSpeed and PulseMaxSpeed, constrain for safety  
-	return constrain(byte(y),30,100); 
+	// don't need to constrain to 30 at the bottom anymore because users have a PumpThreshold function for 
+	// safety if they would like to use it.
+	return constrain(byte(y),0,100); 
 }
 
 byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync)
@@ -384,7 +644,7 @@ byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync)
 	if (PulseSync)
 		return newspeed;
 	else
-		return WaveSpeed-(newspeed-WaveSpeed);
+		return constrain(WaveSpeed-(newspeed-WaveSpeed),0,100);
 }
 
 byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync)
@@ -620,6 +880,8 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset)
 
 byte ElseMode( byte midPoint, byte offset, boolean waveSync )
 {
+  // Contribution of cosmith71
+  // http://forum.reefangel.com/viewtopic.php?f=3&t=3481
   // Static's only initialize the first time they are called
   static unsigned long lastChange=millis(); // Set the inital time that the last change occurred
   static int delay = random( 500, 3000); // Set the initial delay

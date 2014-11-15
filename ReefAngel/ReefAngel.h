@@ -93,7 +93,7 @@ public:
 	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
-  byte AlertFlags,StatusFlags;
+	byte AlertFlags,StatusFlags;
 	bool BusLocked;
 
 	ReefAngelClass();
@@ -218,6 +218,10 @@ public:
 
 	EM1 Bits
 	Bit 0 - HUMbit
+	Bit 1 - DCPumpbit
+	Bit 2 - Leakbit
+	Bit 3 - PARbit
+	Bit 4 - SCPWMbit
 	 */
 
 #ifdef RelayExp
@@ -255,8 +259,9 @@ public:
 	void LightsOn();
 	void LightsOff();
 	void RefreshScreen();
-	void SetupCalibratePH();
-	void SetupCalibrateChoicePH();
+	void StartSetupCalibrateChoicePH();
+	inline void SetupCalibratePH() { StartSetupCalibrateChoicePH(); }
+	void DisplaySetupCalibrateChoicePH();
 	void ClearScreen(byte Color);
 	void ExitMenu();
 	void SetDisplayedMenu(byte value);
@@ -264,6 +269,9 @@ public:
 	void CheckDrawGraph();
 	void CheckFeedingDrawing();
 	void CheckWaterChangeDrawing();
+#ifdef DCPUMPCONTROL
+	void SetDCPumpChannels(byte SyncSpeed,byte AntiSyncSpeed);
+#endif //DCPUMPCONTROL
 
 #ifdef CUSTOM_VARIABLES
 	byte CustomVar[8];
@@ -291,6 +299,7 @@ public:
 	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
+	void inline Add16ChPWM() {};
 	void inline AddCustomColors() {};
 	void inline AddBusCheck() {};
 	void inline AddPortOverrides() {};
@@ -336,8 +345,9 @@ public:
 	void StandardATO(byte ATORelay, int ATOTimeout);
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+	inline void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel) { WaterLevelATO(0, ATORelay, ATOTimeout, LowLevel, HighLevel); };
 #else
-  void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
+	void WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel, byte HighLevel);
 #endif  // MULTIWATERLEVELEXPANSION
 	void SingleATO(bool bLow, byte ATORelay, int intTimeout, byte byteHrInterval);
 	void DosingPump(byte DPRelay, byte DPTimer, byte OnHour, byte OnMinute, int RunTime);
@@ -369,7 +379,7 @@ public:
 	void SingleATOLowExtended(byte Relay);
 	void SingleATOHighExtended(byte Relay);
 #ifdef KALKDOSER
-  void KalkDoser(byte KalkRelay, int LowPH, int TimeoutSeconds, byte MinuteInterval = 0);
+	void KalkDoser(byte KalkRelay, int LowPH, int TimeoutSeconds, byte MinuteInterval = 0);
 #endif //  KALKDOSER
 #ifdef MULTIWATERLEVELEXPANSION
 	void WaterLevelATO(byte Channel, byte Relay);
@@ -390,6 +400,7 @@ public:
 #if defined wifi || defined RA_STAR
 	void Portal(char *username);
 	void Portal(char *username, char *key);
+	void DDNS(char *subdomain);
 #endif
 
 private:
@@ -402,6 +413,54 @@ private:
 	byte PreviousMenu;
 	bool redrawmenu;
 	void CheckOffset(byte &x, byte &y);
+        
+        /* Constants defined in ReefAngel.cpp */
+        static const byte PH_MAXIMUM_RANGE[2];
+        static const byte PH_DEFAULT_RANGE[2];
+        static const char PH_SETUP_MENU_LABEL[2][19];
+        static const char PH_SETUP_MENU_STEP[2][13];
+        
+        enum {SETUP_PH, SETUP_CANCEL, SETUP_OK};
+        
+	unsigned int ph_target_range[2];
+	unsigned int ph_read_range[2];
+	unsigned int salinity_read;
+        
+	byte setup_option;
+	byte setup_step;
+	
+	bool setup_input_select;
+	bool setup_input_render;
+	bool setup_screen_refresh;
+	bool setup_save;
+	
+    #if defined DateTimeSetup
+    enum{
+        SETUP_DATETIME_MONTH, 
+        SETUP_DATETIME_DAY, 
+        SETUP_DATETIME_YEAR, 
+        SETUP_DATETIME_HOUR, 
+        SETUP_DATETIME_MINUTE, 
+        #if !defined DATETIME24
+        SETUP_DATETIME_PERIOD, 
+        #endif//DATETIME24
+        SETUP_DATETIME_CANCEL,
+        SETUP_DATETIME_OK
+    };
+
+    struct{
+        byte month;
+        byte day;
+        int year;
+        byte hour;
+        byte minute;
+        #if !defined DATETIME24
+        char *period;
+        #endif//DATETIME24
+    } currentDateTime;
+
+    byte lastDayOfEachMonth[12];
+    #endif//DateTimeSetup
 
 };
 

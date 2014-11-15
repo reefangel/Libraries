@@ -27,14 +27,30 @@ DCPumpClass::DCPumpClass()
 	UseMemory=true;
 	FeedingSpeed=0;
 	WaterChangeSpeed=0;
-	DaylightChannel=NON;
-	ActinicChannel=NON;
-	LowATOChannel=NON;
+	DaylightChannel=None;
+	ActinicChannel=None;
+	LowATOChannel=None;
+	HighATOChannel=None;
+#ifdef RFEXPANSION
+	Threshold=0;
+#else //RFEXPANSION
 	Threshold=30;
+#endif // RFEXPANSION
+	AntiSyncOffset=100;
+
 #ifdef PWMEXPANSION
 	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
 		ExpansionChannel[a]=None;
 #endif // PWMEXPANSION
+
+#ifdef SIXTEENCHPWMEXPANSION
+	for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
+		SIXTEENChExpansionChannel[a]=None;
+#endif // SIXTEENCHPWMEXPANSION
+
+  if (InternalMemory.DCPumpThreshold_read() > 100) InternalMemory.DCPumpThreshold_write(Threshold); // if it has never been initialized, 
+                                                                                             // it will be at 255 and will need to be set to something sensible
+                                                                                             // like a default of 30 percent
 }
 
 void DCPumpClass::SetMode(byte mode, byte speed, byte duration)
@@ -42,7 +58,6 @@ void DCPumpClass::SetMode(byte mode, byte speed, byte duration)
 	 Mode=mode;
 	 Speed=speed;
 	 Duration=duration;
-         Threshold=30;
 }
 
 void DCPumpClass::SetMode(byte mode, byte speed, byte duration, byte threshold)

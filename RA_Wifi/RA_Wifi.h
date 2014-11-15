@@ -85,12 +85,17 @@ const prog_char XML_PAR_END[] PROGMEM = "</PAR>";
 const prog_char XML_DCM[] PROGMEM = "<DCM>";
 const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
 const prog_char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
-const prog_char XML_DCD_END[] PROGMEM = "</DCD>";
+const prog_char XML_DCD_END[] PROGMEM = "</DCD><DCT>";
+const prog_char XML_DCT_END[] PROGMEM = "</DCT>";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char XML_PWME[] PROGMEM = "<PWME";
 const prog_char XML_PWME_END[] PROGMEM = "</PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char XML_SCPWME[] PROGMEM = "<SCPWME";
+const prog_char XML_SCPWME_END[] PROGMEM = "</SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char XML_AIW[] PROGMEM = "<AIW>";
 const prog_char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
@@ -213,10 +218,14 @@ const prog_char JSON_PAR[] PROGMEM = "PAR";
 const prog_char JSON_DCM[] PROGMEM = "DCM";
 const prog_char JSON_DCS[] PROGMEM = "DCS";
 const prog_char JSON_DCD[] PROGMEM = "DCD";
+const prog_char JSON_DCT[] PROGMEM = "DCT";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char JSON_PWME[] PROGMEM = "PWME";
 #endif  // PWMEXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+const prog_char JSON_SCPWME[] PROGMEM = "SCPWME";
+#endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
 const prog_char JSON_AIW[] PROGMEM = "AIW";
 const prog_char JSON_AIB[] PROGMEM = "AIB";
@@ -305,6 +314,7 @@ const prog_char BannerKey[] PROGMEM = "&key=";
 const prog_char BannerAlertFlag[] PROGMEM = "&af=";
 const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
 const prog_char BannerBoardID[] PROGMEM = "&bid=";
+const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
@@ -316,6 +326,10 @@ const prog_char BannerBoardID[] PROGMEM = "&bid=";
 #ifdef PWMEXPANSION
 	const prog_char BannerPWME[] PROGMEM = "&pwme";
 #endif  // PWMEXPANSION
+
+#ifdef SIXTEENCHPWMEXPANSION
+	const prog_char BannerSCPWME[] PROGMEM = "&scpwme";
+#endif  // SIXTEENCHPWMEXPANSION
 
 #ifdef RFEXPANSION
 	const prog_char BannerRFM[] PROGMEM = "&rfm=";
@@ -367,6 +381,7 @@ const prog_char BannerBoardID[] PROGMEM = "&bid=";
 	const prog_char BannerDCM[] PROGMEM = "&dcm=";
 	const prog_char BannerDCS[] PROGMEM = "&dcs=";
 	const prog_char BannerDCD[] PROGMEM = "&dcd=";
+	const prog_char BannerDCT[] PROGMEM = "&dct=";
 #endif  // DCPUMPCONTROL
 
 #ifdef CUSTOM_VARIABLES
@@ -534,12 +549,15 @@ class RA_Wifi: public Print
     void LoadWebBanner(int pointer, byte qty);
     void Portal(char* username);
     void Portal(char* username, char* key);
+    void DDNS(char* subdomain);
     void SendPortal(char* username, char* key);
     inline void CheckWifi(){};
     inline void pingSerial(){};
     char *portalusername;
     char *portalkey;
-
+    char encodeduserpass[50];
+    char *portalsubdomain;
+    
 #ifndef ETH_WIZ5100
     using Print::write;
     inline size_t write(uint8_t c) { return _wifiSerial->write((uint8_t)c); }
@@ -556,7 +574,7 @@ class RA_Wifi: public Print
     unsigned long timeout;
     boolean bIncoming;
     boolean auth;
-    char authStr[32];
+    boolean usingAuth;
     int weboption;
     int weboption2;
     int weboption3;

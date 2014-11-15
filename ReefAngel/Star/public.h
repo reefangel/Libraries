@@ -5,11 +5,6 @@ RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
 RA_ATOALARMClass AlarmInput;
 
-byte RANetSeq, RANetCRC;
-byte RANetData[RANET_SIZE];
-byte RANetStatus[RANET_SIZE];
-unsigned long RANetlastmillis;
-
 bool SDFound;
 
 void ShowInterface();
@@ -54,19 +49,28 @@ void SetupCalibrateORP();
 #endif  // defined ORPEXPANSION
 #if defined SALINITYEXPANSION
 void ApplySalinityCompensation();
-void SetupCalibrateSalinity();
+void StartSetupCalibrateSalinity();
+void DisplaySetupCalibrateSalinity();
+inline void SetupCalibrateSalinity() { StartSetupCalibrateSalinity(); }
 #endif  // defined SALINITYEXPANSION
 #if defined PHEXPANSION
-void SetupCalibratePHExp();
+void StartSetupCalibrateChoicePHExp();
+void DisplaySetupCalibrateChoicePHExp();
+inline void SetupCalibratePHExp() { StartSetupCalibrateChoicePHExp(); }
 #endif  // defined PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+
 #if defined DateTimeSetup
 #ifdef DATETIME24
-void SetupDateTime24();
+void StartSetupDateTime24();
+void DisplaySetupDateTime24();
+inline void SetupDateTime24() { StartSetupDateTime24(); }
 #else
-void SetupDateTime();
+void StartSetupDateTime();
+void DisplaySetupDateTime();
+inline void SetupDateTime() { StartSetupDateTime(); }
 #endif  // DATETIME24
 #endif  // DateTimeSetup
 
