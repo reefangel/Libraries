@@ -6,10 +6,13 @@ DDNS Implementation
 HTTP Basic Authentication added
 KalkDoser functions added
 Inclusion of SunLocation, Moon, and Tide classes
+SunLocation now will apply any changes to ActinicOffset in memory immediately
 New Class TimedPort with built in timers, stop/start runtimes, OSC function
 Implementation of Feeding/WaterChange Speeds for RF module
 PAR Expansion Module support added
 WiFiAlert class added
+Functions for CO2 and PH Control for relays using phExpansion
+
 
 WaterLevel Module Changes
 	MultiChannel WaterLevel support added
