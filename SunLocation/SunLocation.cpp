@@ -42,12 +42,14 @@ void SunLocation::SetOffset(long risehour, long risesec, long sethour, long sets
 
 void SunLocation::CheckAndUpdate()
 {
+	static byte MinuteOffset=InternalMemory.ActinicOffset_read();
 	
 	// check if we are in a new day and recalculate sunrise and sunset as necessary
-	if ( m_DayOfMonth != day() )
+	if ((m_DayOfMonth != day()) || (MinuteOffset != InternalMemory.ActinicOffset_read() ))
 	{
 		CalSun();
 		m_DayOfMonth = day();
+		MinuteOffset = InternalMemory.ActinicOffset_read();
 
 		if (UseMemory) {
 		  // Write sunrise/sunset to memory for Standard and Actinic Lights to work
