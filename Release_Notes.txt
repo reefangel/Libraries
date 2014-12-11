@@ -1,0 +1,70 @@
+Release Notes for 1.1.1
+========= 
+Some RANet Fixes
+PH Expansion average fix
+DDNS Implementation
+HTTP Basic Authentication added
+KalkDoser functions added
+Inclusion of SunLocation, Moon, and Tide classes
+SunLocation now will apply any changes to ActinicOffset in memory immediately
+New Class TimedPort with built in timers, stop/start runtimes, OSC function
+Implementation of Feeding/WaterChange Speeds for RF module
+PAR Expansion Module support added
+WiFiAlert class added
+Functions for CO2 and PH Control for relays using phExpansion
+
+
+WaterLevel Module Changes
+	MultiChannel WaterLevel support added
+	WaterLevel will no longer wrap below 0%
+
+DCPump Changes - 
+	LowATOChannel support to go with HighATOChannel support that was always there.
+	16Channel PWM support
+	New modes added to DCPump and in Globals - Else, Gyre, and Sine modes
+          If you have Else or Sine in your INO file they should be removed as they are now
+          included in the Libraries and are valid DCPump modes.
+		Example: DCPump.Mode = Else;
+	Threshold to limit speed at 30% cutoff. Can be set in Memory or in INO
+		Example: DCPump.Threshold = 30;
+	Gyre mode is similar to Long Pulse, except instead of the pump turning on and off at the full speed
+	  it uses a Sine profile to ramp up to the full speed and ramp back down, alternating between sync 
+          and anti-sync.  By default the running pump goes from the DCPump threshold to full and back down.
+	AntiSyncOffset - Set an offset to increase/decrease the secondary pump
+	Feeding and WaterChange speed default changed to 255 (Disabled if >100)
+
+PWM Changes
+	16Channel Module support added
+	Offset expanded to include Pre/Post Offsets
+	HighRes functions added for up to 12bit resolution or 4095 levels.
+	Dimming ports on the relay box and the old-style 6 channel PWM expansion use 8bit dimming or 255 levels.
+	Higher Resolution PWM functions used internally for the PWM functions like PWMSlope, PWMParabola, etc.
+	New PWM curves added 
+		PWMSmoothRamp (slope with smooth transitions) 
+		PWMSigmoid (Bell-curve, parabola with smooth transitions)
+
+16Channel Usage Notes:
+
+- To activate 16 Channel dimming module add the line "ReefAngel.Add16ChPWM();" to your INO file somewhere.
+- The 16 channel dimmer channels can be used as DCPump channels 
+	Example: DCPump.SIXTEENChExpansionChannel[0]=sync
+- To run slope, parabola, smoothramp, or Sigmoid light profiles you can address them as 
+  	Example: ReefAngel.PWM.SIXTEENChannelPWMSlope();
+- To set the channel values directly in your INO file using a profile you have written or using one of the
+  profiles in Globals you can do it as:
+	Example: ReefAngel.PWM.Set16Channel(channel,percent);
+
+Higher Resolution Usage Notes:
+
+- To set the channel value if you want to make sure that you are using all 4095 levels of dimming you can use 
+  the "HighRes" and Raw versions in Globals and in PWM, respectively.
+	Example: ReefAngel.PWM.SetChannelRaw(0,PWMSigmoidHighRes(startHour,startMinute,endHour,endMinute,startPWM,endPWM,0))
+- Note that the 16 channel dimmer and newer versions of the 6 channel dimmer support 12 bits (4095), other dimmers
+  support 8 bits (255).  Values used to be set internally based upon percents, which was 100 levels of dimming.  The 
+  difference won't be noticeable except at very dim levels.
+- If you are using the GetChannelValue(), GetDaylightValue() type functions in your INO file they will still 
+  return percentages, not raw values.
+- If you want the raw value being sent to the PWM you can use GetChannelValueRaw() to get the raw bit value being
+  sent to the PWM chipset.
+
+
