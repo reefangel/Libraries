@@ -931,18 +931,52 @@ void ReefAngelClass::MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte
 		StandardLights(LightsRelay, OnHour, OnMinute, OffHour, OffMinute);
 }
 
+void ReefAngelClass::StandardHeater(byte Probe, byte HeaterRelay, int LowTemp, int HighTemp)
+{
+	if (LowTemp < 100) LowTemp *= 10; // Correct temp settings that aren't in the correct range
+	if (HighTemp < 100) HighTemp *= 10; // Correct temp settings that aren't in the correct range
+	if (Params.Temp[Probe] == 0) return;  // Don't turn the heater on if the temp is reading 0
+	if (Params.Temp[Probe] <= LowTemp && Params.Temp[Probe] > 0) Relay.On(HeaterRelay);  // If sensor 1 temperature <= LowTemp - turn on heater
+	if (Params.Temp[Probe] >= HighTemp) Relay.Off(HeaterRelay);  // If sensor 1 temperature >= HighTemp - turn off heater
+}
+
 void ReefAngelClass::StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp)
 {
-	if (Params.Temp[TempProbe] == 0) return;  // Don't turn the heater on if the temp is reading 0
-	if (Params.Temp[TempProbe] <= LowTemp && Params.Temp[TempProbe] > 0) Relay.On(HeaterRelay);  // If sensor 1 temperature <= LowTemp - turn on heater
-	if (Params.Temp[TempProbe] >= HighTemp) Relay.Off(HeaterRelay);  // If sensor 1 temperature >= HighTemp - turn off heater
+	StandardHeater(T1_PROBE, HeaterRelay, LowTemp, HighTemp);
+}
+
+void ReefAngelClass::StandardHeater2(byte HeaterRelay, int LowTemp, int HighTemp)
+{
+	StandardHeater(T2_PROBE, HeaterRelay, LowTemp, HighTemp);
+}
+
+void ReefAngelClass::StandardHeater3(byte HeaterRelay, int LowTemp, int HighTemp)
+{
+	StandardHeater(T3_PROBE, HeaterRelay, LowTemp, HighTemp);
+}
+
+void ReefAngelClass::StandardFan(byte Probe, byte FanRelay, int LowTemp, int HighTemp)
+{
+	if (LowTemp < 100) LowTemp *= 10; // Correct temp settings that aren't in the correct range
+	if (HighTemp < 100) HighTemp *= 10; // Correct temp settings that aren't in the correct range
+	if (Params.Temp[Probe] == 0) return;  // Don't turn the fan/chiller on if the temp is reading 0
+	if (Params.Temp[Probe] >= HighTemp) Relay.On(FanRelay);  // If sensor 1 temperature >= HighTemp - turn on fan
+	if (Params.Temp[Probe] <= LowTemp) Relay.Off(FanRelay);  // If sensor 1 temperature <= LowTemp - turn off fan
 }
 
 void ReefAngelClass::StandardFan(byte FanRelay, int LowTemp, int HighTemp)
 {
-	if (Params.Temp[TempProbe] == 0) return;  // Don't turn the fan/chiller on if the temp is reading 0
-	if (Params.Temp[TempProbe] >= HighTemp) Relay.On(FanRelay);  // If sensor 1 temperature >= HighTemp - turn on fan
-	if (Params.Temp[TempProbe] <= LowTemp) Relay.Off(FanRelay);  // If sensor 1 temperature <= LowTemp - turn off fan
+	StandardFan(T1_PROBE, FanRelay, LowTemp, HighTemp);
+}
+
+void ReefAngelClass::StandardFan2(byte FanRelay, int LowTemp, int HighTemp)
+{
+	StandardFan(T2_PROBE, FanRelay, LowTemp, HighTemp);
+}
+
+void ReefAngelClass::StandardFan3(byte FanRelay, int LowTemp, int HighTemp)
+{
+	StandardFan(T3_PROBE, FanRelay, LowTemp, HighTemp);
 }
 
 void ReefAngelClass::CO2Control(byte CO2Relay, int LowPH, int HighPH)

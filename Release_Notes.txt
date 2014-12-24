@@ -1,3 +1,11 @@
+Release Notes for 1.1.2
+========= 
+Heater/Fan Updates
+	Added argument to specify probe for StandardHeater and StandardFan functions
+	New functions for defaults of probe1/2/3 (i.e. StandardHeater, StandardHeater2, StandardHeater3)
+	Normalize temps that are under 100 if someone uses the wrong values
+		i.e. StandardHeater(Port1,79,80); // We will now assume this means 790,800 by multiplying by 10
+
 Release Notes for 1.1.1
 ========= 
 Some RANet Fixes

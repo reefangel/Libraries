@@ -338,8 +338,14 @@ public:
 	
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
+	void StandardHeater(byte Probe, byte HeaterRelay, int LowTemp, int HighTemp);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
+	void StandardHeater2(byte HeaterRelay, int LowTemp, int HighTemp);
+	void StandardHeater3(byte HeaterRelay, int LowTemp, int HighTemp);
+	void StandardFan(byte Probe, byte FanRelay, int LowTemp, int HighTemp);
 	void StandardFan(byte FanRelay, int LowTemp, int HighTemp);
+	void StandardFan2(byte FanRelay, int LowTemp, int HighTemp);
+	void StandardFan3(byte FanRelay, int LowTemp, int HighTemp);
 	void CO2Control(byte CO2Relay, int LowPH, int HighPH);
 	void CO2Control(byte CO2Relay, int LowPH, int HighPH, bool useExp);
 	void PHControl(byte PHControlRelay, int LowPH, int HighPH);
