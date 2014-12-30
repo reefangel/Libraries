@@ -87,8 +87,19 @@ void RA_Wifi::PushBuffer(byte inStr)
 		//if (m_pushbackindex>0) Serial.println(test,DEC);
 		if (usingAuth && !auth)
 		{
-			auth=_wifiSerial->find(encodeduserpass);
-			_wifiSerial->flush();
+			if (_wifiSerial->find("/sa"))
+			{
+				auth=true;
+				_wifiSerial->flush();
+				reqtype = -REQ_RA_STATUS;
+				Serial.println(reqtype);
+				return;
+			}
+			else
+			{
+				auth=_wifiSerial->find(encodeduserpass);
+				_wifiSerial->flush();
+			}
 		}
 	}
 	else
