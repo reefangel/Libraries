@@ -85,22 +85,9 @@ void RA_Wifi::PushBuffer(byte inStr)
 //		if (authStr[m_pushbackindex]==0) auth=true;
 		//if (m_pushbackindex>0) Serial.println(m_pushbackindex,DEC);
 		//if (m_pushbackindex>0) Serial.println(test,DEC);
-		if (usingAuth && !auth)
-		{
-			if (_wifiSerial->find("/sa"))
-			{
-				auth=true;
-				_wifiSerial->flush();
-				reqtype = -REQ_RA_STATUS;
-				Serial.println(reqtype);
-				return;
-			}
-			else
-			{
-				auth=_wifiSerial->find(encodeduserpass);
-				_wifiSerial->flush();
-			}
-		}
+		if (usingAuth && !auth) auth=_wifiSerial->find(encodeduserpass);
+		if (reqtype==10) auth=true;
+		_wifiSerial->flush();
 	}
 	else
 	{
@@ -238,6 +225,10 @@ void RA_Wifi::ProcessHTTP()
   if (usingAuth && !auth)
   {
 	  PROGMEMprint(SERVER_DENY);
+	  m_pushbackindex=0;
+	  reqtype=0;
+	  weboption=0;
+	  webnegoption=false;
 	  return;
   }
   if (webnegoption) weboption*=-1;
