@@ -353,7 +353,7 @@ void ReefAngelClass::Refresh()
 	SetDCPumpChannels(SyncSpeed,AntiSyncSpeed);
 #endif  // DCPUMPCONTROL
 
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI && !defined DCPUMPCONTROL
 	if (LightRelayOn && LightsOverride)
 	{
 #if defined(__SAM3X8E__)
