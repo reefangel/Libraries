@@ -60,7 +60,7 @@ void RFClass::SetMode(byte mode, byte speed, byte duration)
 			Duration=duration;
 			speed*=2.55;
 			if (millis()%60000<200) lastcrc=-1;
-			if ( (lastcrc!=mode+speed+duration) || millis()<5000 )
+			if ( (lastcrc!=(byte)(mode+speed+duration)) || millis()<5000 )
 			{
 				SendData(mode, speed, duration);
 				lastcrc=mode+speed+duration;
