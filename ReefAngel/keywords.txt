@@ -34,6 +34,7 @@ NutrientTransportMode	KEYWORD2
 TidalSwellMode	KEYWORD2
 TideMode	KEYWORD2
 ElseMode	KEYWORD2
+GyreMode	KEYWORD2
 
 # ReefAngel
 
