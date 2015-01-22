@@ -535,6 +535,7 @@ void ReefAngelClass::Refresh()
 #endif
 #else
 			RANetData[18+a]=0;
+			RANetData[18+a+1]=0;
 #endif // PWMEXPANSION
 		}
 		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a=a+2)
@@ -548,7 +549,8 @@ void ReefAngelClass::Refresh()
 			RANetData[30+a+1]=newdata>>8;	// MSB
 #endif
 #else
-			RANetData[24+a]=0;
+			RANetData[30+a]=0;
+			RANetData[30+a+1]=0;
 #endif // SIXTEENCHPWMEXPANSION
 		}
 //		char buf[3];
