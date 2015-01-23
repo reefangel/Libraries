@@ -522,7 +522,7 @@ void ReefAngelClass::Refresh()
 			RANetData[10+a]=0;
 #endif // RelayExp
 		}
-		for (int a=0;a<PWM_EXPANSION_CHANNELS;a=a+2)
+		for (int a=0;a<PWM_EXPANSION_CHANNELS*2;a=a+2)
 		{
 #ifdef PWMEXPANSION
 #if defined(__SAM3X8E__)
@@ -538,11 +538,11 @@ void ReefAngelClass::Refresh()
 			RANetData[18+a+1]=0;
 #endif // PWMEXPANSION
 		}
-		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a=a+2)
+		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS*2;a=a+2)
 		{
 #ifdef SIXTEENCHPWMEXPANSION
 #if defined(__SAM3X8E__)
-			RANetData[24+a]=VariableControl.Get16ChannelValue(a);
+			RANetData[26+a]=VariableControl.Get16ChannelValue(a);
 #else
 			int newdata=PWM.Get16ChannelValueRaw(a/2);
 			RANetData[30+a]=newdata&0xff;	// LSB
