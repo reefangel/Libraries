@@ -165,6 +165,10 @@ StandardDaylight2	KEYWORD2
 StandardActinic2	KEYWORD2
 SetChannel	KEYWORD2
 SetChannelOverride	KEYWORD2
+SetChannelRaw	KEYWORD2
+Set16Channel	KEYWORD2
+Set16ChannelOverride	KEYWORD2
+Set16ChannelRaw	KEYWORD2
 Expansion	KEYWORD2
 ExpansionSetPercent	KEYWORD2
 ExpansionWrite	KEYWORD2
