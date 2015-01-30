@@ -554,6 +554,7 @@ void ReefAngelClass::Refresh()
 #endif // SIXTEENCHPWMEXPANSION
 		}
 //		char buf[3];
+		RANetData[62]=0xff;		// Trigger Byte
 		for (int a=0;a<RANET_SIZE-2;a++)
 		{
 			RANetCRC+=RANetData[a];
