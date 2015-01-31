@@ -554,7 +554,8 @@ void ReefAngelClass::Refresh()
 #endif // SIXTEENCHPWMEXPANSION
 		}
 //		char buf[3];
-		RANetData[62]=0xff;		// Trigger Byte
+		RANetData[62]=TriggerValue;	// Trigger byte
+		TriggerValue=0;				// Reset to 0
 		for (int a=0;a<RANET_SIZE-2;a++)
 		{
 			RANetCRC+=RANetData[a];
@@ -715,6 +716,10 @@ void ReefAngelClass::Refresh()
 #endif
 }
 
+void ReefAngelClass::RANetTrigger(byte Trigger)
+{
+	TriggerValue = Trigger;
+}
 void ReefAngelClass::SetTemperatureUnit(byte unit)
 {
 	// 0 (or DEGREE_F) for farenheit
