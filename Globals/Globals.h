@@ -339,6 +339,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 // Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + 16 dimming channels + CR + LF = 42 bytes
 // NEW Seq + Size + 8 relay status +8 relay fallback + 12 bytes for integer dimming + 32 bytes for integer 16 channel dimming + Trigger + CR + LF = 64 bytes
 static byte RANetSeq, RANetCRC;
+static byte RANetTrigger, TriggerValue;
 static byte RANetData[RANET_SIZE];
 static byte RANetStatus[RANET_SIZE];
 static unsigned long RANetlastmillis;
