@@ -467,7 +467,7 @@ void ReefAngelClass::ShowInterface()
 		case SAL_CALIBRATE_MENU:
                     DisplaySetupCalibrateSalinity();
                     break;
-                #endif SALINITYEXPANSION
+                #endif // SALINITYEXPANSION
 		case ORP_CALIBRATE_MENU:
                 #ifdef PHEXPANSION
 		case PHE_CALIBRATE_MENU:
