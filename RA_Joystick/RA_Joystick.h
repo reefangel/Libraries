@@ -43,7 +43,7 @@ private:
 	unsigned long KeyKeep;
 	byte KeyTurbo;
 	byte KeyCount;
-#ifdef REEFANGEL_MINI	
+#if defined REEFANGEL_MINI || defined RANET 	
 	unsigned long ButtonDebounce;
 #endif // REEFANGEL_MINI
 };
