@@ -31,9 +31,9 @@
 #include <LED.h>
 #include <RA_TempSensor.h>
 #include <Relay.h>
-#ifdef SC16IS750
-#include <RA_SC16IS750.h>
-#endif // SC16IS750
+#ifdef CUSTOM_RELAY
+#include <CustomRelay.h>
+#endif // CUSTOM_RELAY
 #ifdef DisplayLEDPWM
 #include <RA_PWM.h>
 #endif  // DisplayLEDPWM
@@ -117,11 +117,11 @@ public:
 	RA_KalkDoserClass KWDoser;
 #endif //  KALKDOSER
 	RA_TempSensorClass TempSensor;
-#ifndef SC16IS750
+#ifndef CUSTOM_RELAY
   RelayClass Relay;
 #else
-  RA_SC16IS750 Relay;
-#endif // SC16IS750
+  CustomRelay Relay;
+#endif // CUSTOM_RELAY
 #ifdef ETH_WIZ5100
 	RA_Wiznet5100 Network;
 #elif defined wifi
