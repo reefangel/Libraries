@@ -95,6 +95,8 @@ public:
 	ParamsStruct Params;
 	byte AlertFlags,StatusFlags;
 	bool BusLocked;
+	unsigned long LastFeedingMode;
+	unsigned long LastWaterChangeMode;
 
 	ReefAngelClass();
 

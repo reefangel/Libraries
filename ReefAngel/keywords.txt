@@ -589,6 +589,8 @@ LeakShutoffPorts	LITERAL2
 LeakShutoffPortsE	LITERAL2
 ExpansionChannel	LITERAL2
 CustomVar	LITERAL2
+LastFeedingMode	LITERAL2
+LastWaterChangeMode	LITERAL2
 
 MENU_START_COL	LITERAL2
 MENU_START_ROW	LITERAL2

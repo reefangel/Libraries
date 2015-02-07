@@ -90,6 +90,8 @@ void ReefAngelClass::Init()
 #endif // __AVR_ATmega2560__
 	TempSensor.Init();
 	RAStart=now();
+	LastFeedingMode=now();
+	LastWaterChangeMode=now();
 	LastStart = RAStart;  // Set the time normal mode is started
 	BusLocked=false;  // Bus is not locked
 	ChangeMode=0;
@@ -1747,7 +1749,9 @@ void ReefAngelClass::LightsOff()
 void ReefAngelClass::ExitMenu()
 {
 	// Handles the cleanup to return to the main screen
+	if (bitRead(StatusFlags,FeedingFlag)) LastFeedingMode=now();
 	bitClear(StatusFlags,FeedingFlag);
+	if (bitRead(StatusFlags,WaterChangeFlag)) LastWaterChangeMode=now();
 	bitClear(StatusFlags,WaterChangeFlag);
 	WDTReset();
 	ClearScreen(DefaultBGColor);
