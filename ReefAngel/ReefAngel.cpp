@@ -522,31 +522,40 @@ void ReefAngelClass::Refresh()
 			RANetData[10+a]=0;
 #endif // RelayExp
 		}
-		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+		for (int a=0;a<PWM_EXPANSION_CHANNELS*2;a=a+2)
 		{
 #ifdef PWMEXPANSION
 #if defined(__SAM3X8E__)
 			RANetData[18+a]=VariableControl.GetChannelValue(a);
 #else
-			RANetData[18+a]=PWM.GetChannelValue(a);
+			int newdata=PWM.GetChannelValueRaw(a/2);
+			RANetData[18+a]=newdata&0xff;	// LSB
+			RANetData[18+a+1]=newdata>>8;	// MSB
+			
 #endif
 #else
 			RANetData[18+a]=0;
+			RANetData[18+a+1]=0;
 #endif // PWMEXPANSION
 		}
-		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
+		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS*2;a=a+2)
 		{
 #ifdef SIXTEENCHPWMEXPANSION
 #if defined(__SAM3X8E__)
-			RANetData[24+a]=VariableControl.Get16ChannelValue(a);
+			RANetData[26+a]=VariableControl.Get16ChannelValue(a);
 #else
-			RANetData[24+a]=PWM.Get16ChannelValue(a);
+			int newdata=PWM.Get16ChannelValueRaw(a/2);
+			RANetData[30+a]=newdata&0xff;	// LSB
+			RANetData[30+a+1]=newdata>>8;	// MSB
 #endif
 #else
-			RANetData[24+a]=0;
+			RANetData[30+a]=0;
+			RANetData[30+a+1]=0;
 #endif // SIXTEENCHPWMEXPANSION
 		}
 //		char buf[3];
+		RANetData[62]=TriggerValue;	// Trigger byte
+		TriggerValue=0;				// Reset to 0
 		for (int a=0;a<RANET_SIZE-2;a++)
 		{
 			RANetCRC+=RANetData[a];
@@ -707,6 +716,10 @@ void ReefAngelClass::Refresh()
 #endif
 }
 
+void ReefAngelClass::RANetTrigger(byte Trigger)
+{
+	TriggerValue = Trigger;
+}
 void ReefAngelClass::SetTemperatureUnit(byte unit)
 {
 	// 0 (or DEGREE_F) for farenheit
