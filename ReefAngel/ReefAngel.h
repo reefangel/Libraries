@@ -269,7 +269,9 @@ public:
 	void CheckDrawGraph();
 	void CheckFeedingDrawing();
 	void CheckWaterChangeDrawing();
+#ifdef RANET
 	void RANetTrigger(byte TriggerValue);
+#endif // RANET
 #ifdef DCPUMPCONTROL
 	void SetDCPumpChannels(byte SyncSpeed,byte AntiSyncSpeed);
 #endif //DCPUMPCONTROL

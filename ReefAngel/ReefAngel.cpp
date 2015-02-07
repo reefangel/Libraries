@@ -716,10 +716,13 @@ void ReefAngelClass::Refresh()
 #endif
 }
 
+#ifdef RANET
 void ReefAngelClass::RANetTrigger(byte Trigger)
 {
 	TriggerValue = Trigger;
 }
+#endif // RANET
+
 void ReefAngelClass::SetTemperatureUnit(byte unit)
 {
 	// 0 (or DEGREE_F) for farenheit
