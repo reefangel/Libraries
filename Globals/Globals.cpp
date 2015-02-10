@@ -905,11 +905,11 @@ byte ElseMode( byte midPoint, byte offset, boolean waveSync )
   }
   if (waveSync)
   {
-    return newSpeed;
+    return constrain(newSpeed,0,100);
   }
   else
   {
-    return antiSpeed;
+    return constrain(antiSpeed,0,100);
   }
 }
 
