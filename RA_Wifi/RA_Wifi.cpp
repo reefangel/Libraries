@@ -313,6 +313,7 @@ void RA_Wifi::ProcessHTTP()
 			ReefAngel.Relay.Write();
 			// Force update of the Portal after relay change
 //				ReefAngel.Timer[PORTAL_TIMER].ForceTrigger();
+			break;
 		}
 		case REQ_RA_STATUS:
 		case REQ_R_STATUS:
@@ -427,7 +428,9 @@ void RA_Wifi::ProcessHTTP()
 			//<PHE></PHE>
 			s += intlength(ReefAngel.Params.PHExp);
 #endif  // PHEXPANSION
-#if defined WATERLEVELEXPANSION
+// We should be able to start at WL1 but the web interface screws up if we don't have WL
+// so we add it for multi expansion too
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 			s += 9;
 			//<WL></WL>
 			s += intlength(ReefAngel.WaterLevel.GetLevel());
@@ -435,6 +438,7 @@ void RA_Wifi::ProcessHTTP()
 #if defined MULTIWATERLEVELEXPANSION
 			s += 44;
 			//<WL1></WL1><WL2></WL2><WL3></WL3><WL4></WL4>
+
 			for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ ) s += intlength(ReefAngel.WaterLevel.GetLevel(EID));
 #endif  // MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
@@ -1307,7 +1311,7 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.Params.PHExp, DEC);
 	PROGMEMprint(XML_PHEXP_END);
 #endif  // PHEXPANSION
-#if defined WATERLEVELEXPANSION
+#if defined WATERLEVELEXPANSION  || defined MULTIWATERLEVELEXPANSION
 	PROGMEMprint(XML_WL);
 	PROGMEMprint(XML_CLOSE_TAG);
 	print(ReefAngel.WaterLevel.GetLevel(), DEC);
