@@ -30,11 +30,17 @@
 #include <Time.h>
 #include <OneWire.h>
 #include <SPI.h>
+
 #if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+#if defined RA_STAR
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
+#endif //  RA_STAR
+#if defined RANET && !defined RA_STAR
 #include <SoftwareSerial.h>
-#endif
+#endif // RANET && !RA_STAR
+#endif //__AVR_ATmega2560__
+
 #include <avr/pgmspace.h>
 
 #ifdef __GNUC__
@@ -53,6 +59,12 @@
 #endif
 #endif
 
+// Workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34734
+#ifdef PROGMEM
+#undef PROGMEM
+#define PROGMEM __attribute__((section(".progmem.data")))
+#endif
+
 static unsigned long RAStart;
 
 #ifdef RA_TOUCHDISPLAY
@@ -64,11 +76,12 @@ void SendMaster(byte ID, byte data1, byte data2);
 void receiveEventMaster(int howMany);
 #endif // I2CMASTER
 
-
 #define RA_STANDARD // We start assuming it is a Standard Reef Angel
 
 #if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+#if defined RANET
 #define wifi
+#endif // RANET
 #define DateTimeSetup
 #define BUSCHECK
 #undef RA_STANDARD
@@ -349,8 +362,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define WIFI_SERIAL Serial
 #endif // __PLUS_SPECIAL_WIFI__
 
-#ifdef RANET
-#define RANET_SIZE						42
+#if defined RANET || defined RA_STAR
+#define RANET_SIZE 						42
 // 8 Exp. Boxes, 1 Dimming
 // Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + 16 dimming channels + CR + LF = 42 bytes
 static byte RANetSeq, RANetCRC;
