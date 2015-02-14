@@ -313,7 +313,6 @@ void RA_Wifi::ProcessHTTP()
 			ReefAngel.Relay.Write();
 			// Force update of the Portal after relay change
 //				ReefAngel.Timer[PORTAL_TIMER].ForceTrigger();
-			break;
 		}
 		case REQ_RA_STATUS:
 		case REQ_R_STATUS:
