@@ -19,24 +19,32 @@
   * Updates Released under Apache License, Version 2.0
   */
 
-#ifndef __TIMER_H__
-#define __TIMER_H__
+#include <Globals.h>
+#include <TimerClass.h>
 
-#include <Time.h>
-
-class TimerClass
+TimerClass::TimerClass()
 {
-public:
-	TimerClass();
-	time_t Trigger;
+	Trigger = 0;
+	Interval = 0;
+}
 
-	void Start();
-	bool IsTriggered();
-	inline void ForceTrigger() { Trigger = 1; }
-	inline void SetInterval(int i) { Interval = i; }
+void TimerClass::Start()
+{
+	if (Interval)
+	{
+	    Trigger = now() + Interval;
+	}
+}
 
-private:
-    time_t Interval;
-};
-
-#endif // __TIMER_H__
+bool TimerClass::IsTriggered()
+{
+	if (now()>Trigger && Trigger!=0)
+	{
+		Trigger = 0;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

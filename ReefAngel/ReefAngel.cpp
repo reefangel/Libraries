@@ -472,7 +472,7 @@ void ReefAngelClass::Refresh()
 #endif // __SAM3X8E__
 #endif  // PWMEXPANSION
 
-#ifdef SIXTEENCHPWMEXPANSION && defined DisplayLEDPWM
+#if defined SIXTEENCHPWMEXPANSION && defined DisplayLEDPWM
 #if defined(__SAM3X8E__)
 	VariableControl.SIXTEENChExpansionWrite();
 #else // __SAM3X8E__
