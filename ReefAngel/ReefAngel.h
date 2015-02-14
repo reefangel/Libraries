@@ -37,7 +37,7 @@
 #ifdef DisplayLEDPWM
 #include <RA_PWM.h>
 #endif  // DisplayLEDPWM
-#include <Timer.h>
+#include <TimerClass.h>
 #include <Memory.h>
 #ifdef DCPUMPCONTROL
 #include <DCPump.h>
