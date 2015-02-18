@@ -600,9 +600,10 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_DCPumpThreshold     VarsStart+164
 #define Mem_I_PHEControlOn        VarsStart+165
 #define Mem_I_PHEControlOff       VarsStart+167
+#define Mem_B_TestMode			  VarsStart+169
 
-#define VarsEnd					  VarsStart+169
-// Next value starts VarsStart+169
+#define VarsEnd					  VarsStart+170
+// Next value starts VarsStart+170
 
 
 // EEProm Pointers
