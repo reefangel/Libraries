@@ -18,6 +18,7 @@ setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 Joystick.Init();
 LCD.LCDID=InternalMemory.LCDID_read();
 LCD.Init();
+relaytest=(InternalMemory.read(Mem_B_TestMode)==0);
 #ifdef RANET
 RANET_SERIAL.begin(57600);
 #endif // RANET
