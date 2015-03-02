@@ -328,11 +328,8 @@ void ReefAngelClass::Refresh()
 	}
 	case Else:
 	{
-		int offset = DCPump.Speed;
-		if (DCPump.Speed > 50) offset = 100 - DCPump.Speed;
-
-		SyncSpeed=ElseMode(DCPump.Speed,offset,true);
-		AntiSyncSpeed=ElseMode(DCPump.Speed,offset,false);
+		SyncSpeed=ElseMode(DCPump.Speed,DCPump.Duration,true);
+		AntiSyncSpeed=ElseMode(DCPump.Speed,DCPump.Duration,false);
 		break;
 	}
     }
