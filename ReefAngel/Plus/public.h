@@ -3,6 +3,7 @@
 DS1307RTC RTC;
 RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
+boolean relaytest;
 
 void ShowInterface();
 void DrawStandardMain();

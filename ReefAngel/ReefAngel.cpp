@@ -380,6 +380,13 @@ void ReefAngelClass::Refresh()
 	analogWrite(actinicPWMPin, map(VariableControl.GetActinicValueRaw(),0,4095,0,255));
 	analogWrite(daylightPWMPin, map(VariableControl.GetDaylightValueRaw(),0,4095,0,255));
 #else  // __SAM3X8E__
+#ifdef RA_PLUS
+	if (relaytest)
+	{
+		PWM.SetActinic((millis()%2000)/20);
+		PWM.SetDaylight(100-((millis()%2000)/20));
+	}
+#endif // RA_PLUS
 	analogWrite(actinicPWMPin, map(PWM.GetActinicValueRaw(),0,4095,0,255));
 	analogWrite(daylightPWMPin, map(PWM.GetDaylightValueRaw(),0,4095,0,255));
 #endif  // __SAM3X8E__
@@ -496,6 +503,14 @@ void ReefAngelClass::Refresh()
 #endif  // RelayExp
 #endif  // OVERRRIDE_PORTS
 
+#ifdef RA_PLUS
+	if (relaytest)
+	{
+		Relay.RelayData=0;
+		Relay.RelayMaskOff=255;
+		Relay.RelayMaskOn=1<<((millis()%3200)/400);
+	}
+#endif // RA_PLUS
 	Relay.Write();
 
 #ifdef ETH_WIZ5100
