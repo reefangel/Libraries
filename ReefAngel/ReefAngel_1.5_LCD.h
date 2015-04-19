@@ -1882,7 +1882,8 @@ void ReefAngelClass::Draw2014Main()
 		for (int a=0; a<8; a++)
 		{
 			ConvertNumToString(text, CustomVar[a], 1);
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,text);
+			LCD.DrawLargeText(COLOR_BLACK,DefaultBGColor,x,y,"   ");
+			LCD.DrawLargeText(COLOR_BLACK,DefaultBGColor,x,y,text);
 			y+=12;
 		}
 		break;
