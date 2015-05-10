@@ -610,6 +610,10 @@ const prog_uchar init_code_S6B33B[] PROGMEM = {
 0x56, 0x00, 0x57, 0x9f, 0x59, 0x00, 0x00, 0x9f, 0x00, 0x51
 };
 
+const byte color_table_16bit_red[] = {0,32,72,104,144,176,216,248};
+const byte color_table_16bit_green1[] = {0,1,2,3,4,5,6,7};
+const byte color_table_16bit_green2[] = {0,1,2,3,4,5,6,7};
+const byte color_table_16bit_blue[] = {0,10,20,31};
 
 RA_NokiaLCD::RA_NokiaLCD()
 {
@@ -722,6 +726,15 @@ inline void RA_NokiaLCD::SendColor12Bit(const byte &color)
 	SendData(GG+BB);
 }
 
+inline void RA_NokiaLCD::SendColor16Bit(const byte &color)
+{
+    byte RR = (color & 0xE0) >> 5;
+    byte GG = (color & 0x1C) >> 2;
+    byte BB = (color & 0x03);
+	SendData(color_table_16bit_red[RR] + color_table_16bit_green1[GG]);
+	SendData(color_table_16bit_green2[GG] + color_table_16bit_red[BB]);
+}
+
 void RA_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
 {
 #if defined WDT || defined WDT_FORCE
@@ -737,7 +750,21 @@ void RA_NokiaLCD::SetBox(byte x1, byte y1, byte x2, byte y2)
 	    SendCMD(x1);
 	    SendCMD(x2);
 	}
-	else
+    else if (LCDID==1)
+    {
+	    SendCMD(CASET);   // page start/end ram
+	    SendData(0x00);
+	    SendData(x1);     // for some reason starts at 2
+	    SendData(0x00);
+	    SendData(x2);
+
+	    SendCMD(PASET);   // column start/end ram
+	    SendData(0x00);
+	    SendData(y1);
+	    SendData(0x00);
+	    SendData(y2);
+    }
+    else
 	{
 	    SendCMD(CASET);   // page start/end ram
 	    SendData(x1);     // for some reason starts at 2
@@ -777,6 +804,8 @@ void RA_NokiaLCD::Clear(byte color, byte x1, byte y1, byte x2, byte y2)
     	{
 			if (LCDID==0)
 				SendColor12Bit(color);
+			else if (LCDID==1)
+				SendColor16Bit(color);
 			else
 				SendData(~color);
     	}
@@ -800,6 +829,27 @@ void RA_NokiaLCD::Init()
         for (int a=0;a<SIZE(init_code_S6B33B);a++)
         	SendCMD(pgm_read_byte_near(init_code_S6B33B + a));
         Clear(DefaultBGColor,2,2,129,129);
+    }
+    else if (LCDID==1)
+    {
+    	// ILI9163V
+		SendCMD(0x11); // Sleep Out
+
+		delay(120);
+
+		SendCMD(0x36); //Memory Access Control
+		SendData(0x08);
+
+		SendCMD(0x3A); //16 bit color mode
+		SendData(0x05);
+
+		SendCMD(0x26); // Gamma
+		SendData(0x04);
+
+		Clear(DefaultBGColor,0,0,131,131);
+
+		SendCMD(0x29); //Display on
+
     }
     else
     {
@@ -883,9 +933,23 @@ void RA_NokiaLCD::DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, ui
 	for(i=inc;i>=0;i--)
 	{
 		if (1<<i & c)
-			if (LCDID==0) SendColor12Bit(fcolor); else SendData(~fcolor);
+		{
+			if (LCDID==0)
+				SendColor12Bit(fcolor);
+			else if (LCDID==1)
+				SendColor16Bit(fcolor);
+			else
+				SendData(~fcolor);
+		}
 		else
-			if (LCDID==0) SendColor12Bit(bcolor); else SendData(~bcolor);
+		{
+			if (LCDID==0)
+				SendColor12Bit(bcolor);
+			else if (LCDID==1)
+				SendColor16Bit(bcolor);
+			else
+				SendData(~bcolor);
+		}
 	}
 }
 #endif  // FONT_8x8 || FONT_8x16 || FONT_12x16 || NUMBERS_8x8 || NUMBERS_8x16 || NUMBERS_12x16
@@ -1011,9 +1075,24 @@ void RA_NokiaLCD::DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, 
 	for(i=0;i<16;i++)
 	{
 		if (1<<i & c)
-			if (LCDID==0) SendColor12Bit(fcolor); else SendData(~fcolor);
+		{
+			if (LCDID==0) 
+				SendColor12Bit(fcolor);
+			else if (LCDID==1)
+				SendColor16Bit(fcolor);
+			else
+				SendData(~fcolor);
+		}
 		else
-			if (LCDID==0) SendColor12Bit(bcolor); else SendData(~bcolor);
+		{
+			if (LCDID==0)
+				
+				SendColor12Bit(bcolor);
+			else if (LCDID==1)
+				SendColor16Bit(bcolor);
+			else
+				SendData(~bcolor);
+		}
 	}
 }
 
@@ -1043,9 +1122,24 @@ void RA_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor, byte x, byte y,char c)
     for(i=0;i<8;i++)
     {
 		if (1<<i & c)
-			if (LCDID==0) SendColor12Bit(fcolor); else SendData(~fcolor);
+		{
+			if (LCDID==0) 
+				SendColor12Bit(fcolor);
+			else if (LCDID==1)
+				SendColor16Bit(fcolor);
+			else
+				SendData(~fcolor);
+		}
 		else
-			if (LCDID==0) SendColor12Bit(bcolor); else SendData(~bcolor);
+		{
+			if (LCDID==0)
+				
+				SendColor12Bit(bcolor);
+			else if (LCDID==1)
+				SendColor16Bit(bcolor);
+			else
+				SendData(~bcolor);
+		}
     }
 }
 
@@ -1094,13 +1188,11 @@ void RA_NokiaLCD::PutPixel(byte color, byte x, byte y)
 {
 	SetBox(x,y,x+1,y+1);
 	if (LCDID==0)
-	{
     	SendColor12Bit(color);
-	}
+	else if (LCDID==1)
+		SendColor16Bit(color);
 	else
-	{
 		SendData(~color);
-	}
 }
 
 void RA_NokiaLCD::SetContrast(byte Contrast)
@@ -1534,13 +1626,11 @@ void RA_NokiaLCD::DrawImage(int swidth, int sheight, byte x, byte y, const prog_
             count+=1;
             if (count<=swidth*sheight)
             	if (LCDID==0)
-            	{
             		SendColor12Bit(pgm_read_byte_near(iPtr++));
-            	}
+    			else if (LCDID==1)
+    				SendColor16Bit(pgm_read_byte_near(iPtr++));
             	else
-            	{
             		SendData(~pgm_read_byte_near(iPtr++));
-            	}
         }
     }
     while (count < swidth*sheight);
