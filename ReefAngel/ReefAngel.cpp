@@ -94,6 +94,9 @@ void ReefAngelClass::Init()
 	LastWaterChangeMode=now();
 	LastStart = RAStart;  // Set the time normal mode is started
 	BusLocked=false;  // Bus is not locked
+	OldTempRelay=255;
+	OldDaylight=255;
+	OldActinic=255;
 	ChangeMode=0;
 	AlertFlags = 0;
 	StatusFlags = 0;

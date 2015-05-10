@@ -93,6 +93,8 @@ public:
 	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
+	ParamsStruct OldParams;
+	byte OldTempRelay, OldDaylight, OldActinic;
 	byte AlertFlags,StatusFlags;
 	bool BusLocked;
 	unsigned long LastFeedingMode;

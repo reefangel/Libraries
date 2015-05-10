@@ -1133,7 +1133,6 @@ void RA_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor, byte x, byte y,char c)
 		else
 		{
 			if (LCDID==0)
-				
 				SendColor12Bit(bcolor);
 			else if (LCDID==1)
 				SendColor16Bit(bcolor);
