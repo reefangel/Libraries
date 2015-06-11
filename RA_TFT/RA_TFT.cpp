@@ -277,7 +277,7 @@ void RA_TFT::SendData(byte H,byte L)
 void RA_TFT::WriteBus(byte H,byte L)
 {
 	CS0;
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	PORTA=H;
 	PORTC=L;
 #elif defined(__SAM3X8E__)

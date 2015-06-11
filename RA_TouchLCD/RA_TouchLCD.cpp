@@ -23,19 +23,23 @@
 
 RA_TouchLCD::RA_TouchLCD()
 {
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	DDRL=0xff; //PORTL (Control Pins Output)
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	DDRA=0xff; //PORTA (Data Output - D8-15)
 	DDRC=0xff; //PORTC (Data Output - D0-7)
 	PORTA=0xff; //PORTA pull up
 	PORTC=0xff; //PORTC pull up
-	PORTL=0xdf; //PORTL pull up
-	DDRD&=(0<<5); //PD5 (Input) - TP Interrupt
-	PORTD|=(1<<5); //PD5 pull up
-	DDRD|=(1<<7); //PD7 (Output) - TP Chip Select
-	PORTD|=(1<<7); //PD7 pull up
-	DDRL|=(1<<4); //PL4 (Output) - RD
-	PORTL|=(1<<4); //PL4 pull up
+	DDRE|=(1<<3); //PE3 (Output) - LDC Data/Command
+	PORTE|=(1<<3); //PE3 pull up
+	DDRE|=(1<<4); //PE4 (Output) - LDC Backlight
+	PORTE&=~(1<<4); //PE4 pull down
+	DDRE|=(1<<5); //PE5 (Output) - LDC Chip Select
+	PORTE|=(1<<5); //PE5 pull up
+	DDRE|=(1<<6); //PE6 (Output) - LDC Write
+	PORTE|=(1<<6); //PE6 pull up
+	DDRE|=(1<<7); //PE7 (Output) - LDC Read
+	PORTE|=(1<<7); //PE7 pull up
+	DDRH|=(1<<3); //PH3 (Output) - LDC Reset
+	PORTH|=(1<<3); //PH3 pull up
 #elif defined(__SAM3X8E__)
 //	PIOC->PIO_OER |= 0x001FFFFE;
 //	PIOC->PIO_OWER = 0x0001FFFE;
@@ -444,7 +448,7 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 				  for (i=0; i< bmpHeight; i++) 
 				  {
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 					  wdt_reset();
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 					  for (j=0; j<bmpWidth; j++) 
@@ -505,7 +509,7 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 			// read more pixels
 			if (buffidx >= 2*BUFFPIXEL) 
 			{
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 					  wdt_reset();
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				dataFile.read(sdbuffer, 2*BUFFPIXEL);
@@ -513,7 +517,7 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 			}
 			// write out the 16 bits of color
 			// RA_TFT::SendData(sdbuffer[buffidx++],sdbuffer[buffidx++]);
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 			PORTA=sdbuffer[buffidx++];
 			PORTC=sdbuffer[buffidx++];
 #elif defined(__SAM3X8E__)

@@ -34,6 +34,10 @@ void RA_TS::Init()
 #if defined(__SAM3X8E__)
 	pinMode(TPINTPin,INPUT); 
 	pinMode(TPCSPin,OUTPUT);
+#else
+	pinMode(okPin,INPUT);
+	DDRD|=(1<<7); //PD7 (Output) - TP Chip Select
+	PORTD|=(1<<7); //PD7 pull up
 #endif // defined(__SAM3X8E__)
 }
 
@@ -83,21 +87,21 @@ boolean RA_TS::GetTouch()
 	TP0;
 	for (int i=0;i<TouchSample;i++)
 	{
-		SPI.transfer(0xb0);
-		a= SPI.transfer(0);
-		b= SPI.transfer(0);
-		uZ1=(a<<5|b>>3);
-
-		SPI.transfer(0xc0);
-		a= SPI.transfer(0);
-		b= SPI.transfer(0);
-		uZ2=(a<<5|b>>3);
-
-		pressure=uZ2;
-		pressure/=uZ1;
-		pressure*=100;
+//		SPI.transfer(0xb0);
+//		a= SPI.transfer(0);
+//		b= SPI.transfer(0);
+//		uZ1=(a<<5|b>>3);
+//		SPI.transfer(0xc0);
+//		a= SPI.transfer(0);
+//		b= SPI.transfer(0);
+//		uZ2=(a<<5|b>>3);
+//
+//		pressure=uZ2;
+//		pressure/=uZ1;
+//		pressure*=100;
 //		Serial.println(pressure);
 
+		pressure=0;
 		if (pressure<TouchPressure)
 		{
 			SPI.transfer(0xd0);
@@ -117,21 +121,22 @@ boolean RA_TS::GetTouch()
 
 	for (int i=0;i<TouchSample;i++)
 	{
-		SPI.transfer(0xb0);
-		a= SPI.transfer(0);
-		b= SPI.transfer(0);
-		uZ1=(a<<5|b>>3);
-
-		SPI.transfer(0xc0);
-		a= SPI.transfer(0);
-		b= SPI.transfer(0);
-		uZ2=(a<<5|b>>3);
-
-		pressure=uZ2;
-		pressure/=uZ1;
-		pressure*=100;
+//		SPI.transfer(0xb0);
+//		a= SPI.transfer(0);
+//		b= SPI.transfer(0);
+//		uZ1=(a<<5|b>>3);
+//
+//		SPI.transfer(0xc0);
+//		a= SPI.transfer(0);
+//		b= SPI.transfer(0);
+//		uZ2=(a<<5|b>>3);
+//
+//		pressure=uZ2;
+//		pressure/=uZ1;
+//		pressure*=100;
 //		Serial.println(pressure);
 
+		pressure=0;
 		if (pressure<TouchPressure)
 		{
 			SPI.transfer(0x90);
@@ -205,8 +210,8 @@ boolean RA_TS::GetTouch()
 
 boolean RA_TS::IsTouched()
 {
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	boolean t=!(PIND&(1<<5));
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
+	boolean t=!digitalRead(okPin);
 #elif defined(__SAM3X8E__)
 	boolean t=!digitalRead(TPINTPin);
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY

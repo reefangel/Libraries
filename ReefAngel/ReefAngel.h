@@ -43,7 +43,7 @@
 #include <DCPump.h>
 #endif  // DCPUMPCONTROL
 #include <DS1307RTC.h>
-#if defined wifi || defined RA_STAR
+#if defined wifi
 #include <RA_Wifi.h>
 #endif  // wifi
 #if defined ORPEXPANSION

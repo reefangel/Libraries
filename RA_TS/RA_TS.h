@@ -25,7 +25,7 @@
 #include <Globals.h>
 #include <SPI.h>
 #include <InternalEEPROM.h>
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 
 #include <avr/eeprom.h>
 #define TP0	cbi(PORTD, 7)

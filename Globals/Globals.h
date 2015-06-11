@@ -66,14 +66,28 @@ void receiveEventMaster(int howMany);
 #endif //  RA_TOUCH
 
 #if defined RA_STAR
+#include <SD.h>
 #undef RA_PLUS
 #undef wifi
+#define DisplayLEDPWM
 #define ETH_WIZ5100
+#define LEAKDETECTOREXPANSION
 #define EMBEDDED_LEAK
-#define DIGITAL_JOYSTICK
-#define HWSPILCD
-#define MAIN_2014
-#define FONT_8x8
+#define RANET
+#define NOTILT
+#define PWMEXPANSION
+#define IOEXPANSION
+#define RFEXPANSION
+#define SALINITYEXPANSION
+#define ORPEXPANSION
+#define RelayExp
+#define PHEXPANSION
+#define WATERLEVELEXPANSION
+#define AI_LED
+#define HUMIDITYEXPANSION
+#define DCPUMPCONTROL
+#define LEAKDETECTOREXPANSION
+#define CUSTOM_VARIABLES
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
@@ -105,6 +119,7 @@ void receiveEventMaster(int howMany);
 #endif // RA_TOUCHDISPLAY
 
 #if defined RA_TOUCH || defined DCPUMPCONTROL
+#define NOTILT
 #endif // RA_TOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
@@ -285,7 +300,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define TPCSPin				28
 #define TouchBL				3
 #else //
-#define TouchBL				44
+#define TouchBL				2
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
 #define BuzzerPin			48
@@ -726,7 +741,7 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -1208,7 +1223,7 @@ typedef struct Compensation
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 
 uint16_t read16(File f);
 uint32_t read32(File f);
@@ -1310,7 +1325,7 @@ const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
 const prog_char DCPUMP_LABEL[] PROGMEM = "DC Pump";
 const prog_char CVAR_LABEL[] PROGMEM = "Custom Variables";
 
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, SIXTEENCH_PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
+static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -1323,7 +1338,7 @@ const prog_char RF_TSM[] PROGMEM = "Tidal Swell";
 const prog_char RF_FEEDING[] PROGMEM = "Feeding";
 const prog_char RF_NIGHT[] PROGMEM = "Night";
 const prog_char RF_SLAVE[] PROGMEM = "Slave Check";
-const prog_char RF_None[] PROGMEM = "None";
+//const prog_char RF_None[] PROGMEM = "None";
 static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
 
 const prog_char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
@@ -1517,6 +1532,8 @@ byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDura
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 byte ElseMode(byte midPoint, byte offset, boolean waveSync);
+
+const char* ip_to_str(const uint8_t* ipAddr);
 
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);

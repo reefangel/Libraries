@@ -212,7 +212,7 @@ void ReefAngelClass::Refresh()
 		WaterChangeModeStart();
 		break;
 	case PH_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibratePH();
 #else
 		StartSetupCalibrateChoicePH();
@@ -220,7 +220,7 @@ void ReefAngelClass::Refresh()
 		break;
 #ifdef SALINITYEXPANSION
 	case SAL_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibrateSal();
 #else
 		StartSetupCalibrateSalinity();
@@ -229,7 +229,7 @@ void ReefAngelClass::Refresh()
 #endif // SALINITYEXPANSION
 #ifdef ORPEXPANSION
 	case ORP_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibrateORP();
 #else
 		SetupCalibrateORP();
@@ -238,7 +238,7 @@ void ReefAngelClass::Refresh()
 #endif // ORPEXPANSION
 #ifdef PHEXPANSION
 	case PHE_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibratePHExp();
 #else
 		StartSetupCalibrateChoicePHExp();
@@ -247,7 +247,7 @@ void ReefAngelClass::Refresh()
 #endif // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibrateWL();
 #else
 		SetupCalibrateWaterLevel();
@@ -407,7 +407,7 @@ void ReefAngelClass::Refresh()
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 	if (!Splash)
 	{
 #if not defined NOTILT
@@ -425,7 +425,7 @@ void ReefAngelClass::Refresh()
 		{
 			CalibrateTouchScreen();
 		}
-		if(SDFound)	TouchLCD.FullClear(BKCOLOR);
+		TouchLCD.FullClear(BKCOLOR);
 	}
 #if defined (__AVR_ATmega2560__)
 	if (PINJ&(1<<7)) // Check for bus lock
@@ -591,7 +591,7 @@ void ReefAngelClass::Refresh()
 #endif // RANET
 #if defined wifi || defined RA_STAR
     ReefAngel.Network.ReceiveData();
-#endif  // wifi || RA_STAR
+#endif  // wifi || defined RA_STAR
 
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
@@ -922,7 +922,7 @@ void ReefAngelClass::LeakClear()
 	}
 #endif  // RelayExp
 	Relay.Write();
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1646,7 +1646,7 @@ void ReefAngelClass::ATOClear()
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WLATO.StopTopping();
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1694,7 +1694,7 @@ void ReefAngelClass::OverheatClear()
 	}
 #endif  // RelayExp
 	Relay.Write();
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1720,7 +1720,7 @@ void ReefAngelClass::LightsOn()
 #endif  // RelayExp
 	Relay.Write();
 	bitSet(StatusFlags,LightsOnFlag);
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	menu_button_functions1[4] = &ReefAngelClass::LightsOff;
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
@@ -1753,7 +1753,7 @@ void ReefAngelClass::LightsOff()
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	Relay.Write();
 	bitClear(StatusFlags,LightsOnFlag);
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	menu_button_functions1[4] = &ReefAngelClass::LightsOn;
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);

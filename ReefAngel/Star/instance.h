@@ -2,8 +2,6 @@
 
 ReefAngelClass::ReefAngelClass()
 {
-	PCMSK0 |= 128;
-	PCICR |= 1;
 }
 
 void ReefAngelClass::WDTReset()
@@ -50,4 +48,5 @@ void ReefAngelClass::BuzzerOff()
 	digitalWrite(BuzzerPin,LOW);
 }
 
-#include <ReefAngel_1.5_LCD.h>
+#include <ReefAngel_2.8_LCD.h>
+

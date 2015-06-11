@@ -36,6 +36,7 @@ bool SDFound;
 time_t newnow;
 int CalVal1, CalVal2;
 byte CalStep;
+unsigned long lastRedraw; 
 
 void SetOrientation(byte o);
 void CalibrateTouchScreen();

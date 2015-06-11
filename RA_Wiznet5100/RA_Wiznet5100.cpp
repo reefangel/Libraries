@@ -50,6 +50,11 @@ void RA_Wiznet5100::Update()
 
 	if (ipAddr[0]!=0)
 	{
+		if (!FoundIP)
+		{
+	        Serial.print("IP address: ");
+	        Serial.println(ip_to_str(ipAddr));
+		}
 		FoundIP=true;
 		sbi(PORTD,5);
 		// Let's check for any incoming data
