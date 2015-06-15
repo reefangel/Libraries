@@ -123,8 +123,13 @@ void ReefAngelClass::InitCustomLabels()
 
 void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 {
+	WDTReset();
 	NeedsRedraw=true;
-	DisplayedScreen+=index;
+	if (millis()-lastDisplayChange>200)
+	{
+		lastDisplayChange=millis();
+		DisplayedScreen+=index;
+	}
 	if (DisplayedMenu==TOUCH_MENU)
 	{
 		if (DisplayedScreen<0) DisplayedScreen=MAX_MENU_SCREENS-1;
@@ -457,6 +462,7 @@ void ReefAngelClass::ShowTouchMenu()
 	SetDisplayedMenu(TOUCH_MENU);
 	DisplayedScreen=MAIN_MENU_SCREEN;
 	NeedsRedraw=true;
+	ReDrawScreen();
 }
 
 void ReefAngelClass::ShowTouchInterface()
@@ -496,10 +502,6 @@ void ReefAngelClass::ShowTouchInterface()
 #else  // CUSTOM_MAIN
 		if (!Splash)
 		{
-			int i,j;
-			byte TempRelay,TempRelayOn,TempRelayOff;
-
-			if (orientation%2==0) i=0; else i=12;
 			if (!TS.IsTouched())
 				ReDrawScreen();
 			CheckTouch();
@@ -516,11 +518,7 @@ void ReefAngelClass::ShowTouchInterface()
 		if ( (t >= 0) && ! Timer[FEEDING_TIMER].IsTriggered() )
 		{
 			if (orientation%2==0) y=0; else y=40;
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
-		wdt_reset();
-#elif defined(__SAM3X8E__)
-		WDT_Restart( WDT );
-#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
+			WDTReset();
 			if (NeedsRedraw)
 			{
 				delay(50);
@@ -589,11 +587,7 @@ void ReefAngelClass::ShowTouchInterface()
 		byte y;
 		bool bDone = false;
 		if (orientation%2==0) y=0; else y=40;
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
-		wdt_reset();
-#elif defined(__SAM3X8E__)
-		WDT_Restart( WDT );
-#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
+		WDTReset();
 		if (NeedsRedraw)
 		{
 			TouchLCD.FullClear(BKCOLOR);
@@ -647,126 +641,125 @@ void ReefAngelClass::ShowTouchInterface()
 	}
 	case TOUCH_MENU:
 	{
-		int ch;
-		int border;
-		if (orientation%2==0)
-		{
-			ch=35;
-			border=0;
-		}
-		else
-		{
-			ch=48;
-			border=2;
-		}
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
-		wdt_reset();
-#elif defined(__SAM3X8E__)
-		WDT_Restart( WDT );
-#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
-		if (!TS.IsTouched())
-		{
-			TouchEnabled=true;
-			if (NeedsRedraw)
-			{
-				NeedsRedraw=false;
-				TouchLCD.Clear(COLOR_WHITE,0,0,twidth,theight); // Clear screen
-				//Arrows
-				TouchLCD.DrawBMP(10,theight-25,ARROWLEFT);
-				TouchLCD.DrawBMP(twidth-10-23,theight-25,ARROWRIGHT);
-				Font.SetColor(RGB565(0xBD, 0x13, 0x00),COLOR_WHITE,true);
-				switch ( DisplayedScreen )
-				{
-				case MAIN_MENU_SCREEN:
-				{
-					for (int a=0;a<6;a++)
-					{
-						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,6+(ch*a),(twidth/2)-6,ch*(a+1),4,true);
-						TouchLCD.DrawRoundRect(COLOR_SILVER,5+border,6+border+(ch*a),(twidth/2)-6-border,(ch*(a+1))-border,4,false);
-						if (a==4)
-						{
-							if (bitRead(StatusFlags,LightsOnFlag))
-								Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),MENU_BUTTON_CANCEL);
-							else
-#if defined (__SAM3X8E__)
-								Font.DrawCenterText(twidth/4,8+(border*3)+(ch*a),menu_button_items1[a*2]);
-#else
-								Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[a*2])));
-#endif // (__SAM3X8E__)
-						}
-						else
-						{
-#if defined (__SAM3X8E__)
-							Font.DrawCenterText(twidth/4,8+(border*3)+(ch*a),menu_button_items1[a*2]);
-#else
-							Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[a*2])));
-#endif // (__SAM3X8E__)
-						}
-						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,6+(ch*a),twidth-6,ch*(a+1),4,true);
-						TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+5+border,6+border+(ch*a),twidth-6-border,(ch*(a+1))-border,4,false);
-#if defined (__SAM3X8E__)
-						Font.DrawCenterText(twidth/4,22+(border*4)+(ch*a),menu_button_items1[(a*2)+1]);
-						Font.DrawCenterText(twidth/4*3,8+(border*3)+(ch*a),menu_button_items2[a*2]);
-						Font.DrawCenterText(twidth/4*3,22+(border*4)+(ch*a),menu_button_items2[(a*2)+1]);
-#else
-						Font.DrawCenterTextP(twidth/4,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[(a*2)+1])));
-						Font.DrawCenterTextP(twidth/4*3,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items2[a*2])));
-						Font.DrawCenterTextP(twidth/4*3,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items2[(a*2)+1])));
-#endif // (__SAM3X8E__)
-					}
-					break;
-				}
-				case SETUP_MENU_SCREEN:
-				{
-					for (int a=0;a<6;a++)
-					{
-						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,6+(ch*a),(twidth/2)-6,ch*(a+1),4,true);
-						TouchLCD.DrawRoundRect(COLOR_SILVER,5+border,6+border+(ch*a),(twidth/2)-6-border,(ch*(a+1))-border,4,false);
-						Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items3[a*2])));
-						Font.DrawCenterTextP(twidth/4,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items3[(a*2)+1])));
-
-						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,6+(ch*a),twidth-6,ch*(a+1),4,true);
-						TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+5+border,6+border+(ch*a),twidth-6-border,(ch*(a+1))-border,4,false);
-						Font.DrawCenterTextP(twidth/4*3,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items4[a*2])));
-						Font.DrawCenterTextP(twidth/4*3,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items4[(a*2)+1])));
-					}
-					break;
-				}
-				}
-			}
-			if (MenuFunctionPtr!=&ReefAngelClass::Touch) // check to see if any menu choice was touched
-			{
-				(this->*MenuFunctionPtr)(); // call function
-				NeedsRedraw=true;
-				MenuFunctionPtr=&ReefAngelClass::Touch; // put pointer back to default
-			}
-		}
-		else
-		{
-			menutimeout=now();
-			if (TouchEnabled && DisplayedScreen<MAX_SCREENS)
-			{
-				TouchEnabled=false;
-				if (TS.X<50 && TS.Y>theight-30 && TS.X>0)
-					ChangeDisplayedScreen(-1);
-				if (TS.X>twidth-50 && TS.Y>theight-30)
-					ChangeDisplayedScreen(1);
-				switch ( DisplayedScreen )
-				{
-				case MAIN_MENU_SCREEN:
-				{
-					for (int a=0;a<6;a++)
-					{
-						if (TS.IsTouchedInside(0,5+(47*a),twidth/2,5+ch+(47*a)))
-							MenuFunctionPtr=menu_button_functions1[a]; // Assing function pointers when buttons are touched
-						if (TS.IsTouchedInside(twidth/2,5+(47*a),twidth,5+ch+(47*a)))
-							MenuFunctionPtr=menu_button_functions2[a]; // Assing function pointers when buttons are touched
-					}
-					break;
-				}
-				}
-			}
-		}
+//		int ch;
+//		int border;
+//		if (orientation%2==0)
+//		{
+//			ch=35;
+//			border=0;
+//		}
+//		else
+//		{
+//			ch=48;
+//			border=2;
+//		}
+//		WDTReset();
+//		if (!TS.IsTouched())
+//			ReDrawScreen();
+		CheckTouch();
+//		if (!TS.IsTouched())
+//		{
+//			TouchEnabled=true;
+//			if (NeedsRedraw)
+//			{
+//				NeedsRedraw=false;
+//				TouchLCD.Clear(COLOR_WHITE,0,0,twidth,theight); // Clear screen
+//				//Arrows
+//				TouchLCD.DrawBMP(10,theight-25,ARROWLEFT);
+//				TouchLCD.DrawBMP(twidth-10-23,theight-25,ARROWRIGHT);
+//				Font.SetColor(RGB565(0xBD, 0x13, 0x00),COLOR_WHITE,true);
+//				switch ( DisplayedScreen )
+//				{
+//				case MAIN_MENU_SCREEN:
+//				{
+//					for (int a=0;a<6;a++)
+//					{
+//						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,6+(ch*a),(twidth/2)-6,ch*(a+1),4,true);
+//						TouchLCD.DrawRoundRect(COLOR_SILVER,5+border,6+border+(ch*a),(twidth/2)-6-border,(ch*(a+1))-border,4,false);
+//						if (a==4)
+//						{
+//							if (bitRead(StatusFlags,LightsOnFlag))
+//								Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),MENU_BUTTON_CANCEL);
+//							else
+//#if defined (__SAM3X8E__)
+//								Font.DrawCenterText(twidth/4,8+(border*3)+(ch*a),menu_button_items1[a*2]);
+//#else
+//								Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[a*2])));
+//#endif // (__SAM3X8E__)
+//						}
+//						else
+//						{
+//#if defined (__SAM3X8E__)
+//							Font.DrawCenterText(twidth/4,8+(border*3)+(ch*a),menu_button_items1[a*2]);
+//#else
+//							Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[a*2])));
+//#endif // (__SAM3X8E__)
+//						}
+//						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,6+(ch*a),twidth-6,ch*(a+1),4,true);
+//						TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+5+border,6+border+(ch*a),twidth-6-border,(ch*(a+1))-border,4,false);
+//#if defined (__SAM3X8E__)
+//						Font.DrawCenterText(twidth/4,22+(border*4)+(ch*a),menu_button_items1[(a*2)+1]);
+//						Font.DrawCenterText(twidth/4*3,8+(border*3)+(ch*a),menu_button_items2[a*2]);
+//						Font.DrawCenterText(twidth/4*3,22+(border*4)+(ch*a),menu_button_items2[(a*2)+1]);
+//#else
+//						Font.DrawCenterTextP(twidth/4,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[(a*2)+1])));
+//						Font.DrawCenterTextP(twidth/4*3,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items2[a*2])));
+//						Font.DrawCenterTextP(twidth/4*3,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items2[(a*2)+1])));
+//#endif // (__SAM3X8E__)
+//					}
+//					break;
+//				}
+//				case SETUP_MENU_SCREEN:
+//				{
+//					for (int a=0;a<6;a++)
+//					{
+//						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,6+(ch*a),(twidth/2)-6,ch*(a+1),4,true);
+//						TouchLCD.DrawRoundRect(COLOR_SILVER,5+border,6+border+(ch*a),(twidth/2)-6-border,(ch*(a+1))-border,4,false);
+//						Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items3[a*2])));
+//						Font.DrawCenterTextP(twidth/4,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items3[(a*2)+1])));
+//
+//						TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,6+(ch*a),twidth-6,ch*(a+1),4,true);
+//						TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+5+border,6+border+(ch*a),twidth-6-border,(ch*(a+1))-border,4,false);
+//						Font.DrawCenterTextP(twidth/4*3,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items4[a*2])));
+//						Font.DrawCenterTextP(twidth/4*3,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items4[(a*2)+1])));
+//					}
+//					break;
+//				}
+//				}
+//			}
+//			if (MenuFunctionPtr!=&ReefAngelClass::Touch) // check to see if any menu choice was touched
+//			{
+//				(this->*MenuFunctionPtr)(); // call function
+//				NeedsRedraw=true;
+//				MenuFunctionPtr=&ReefAngelClass::Touch; // put pointer back to default
+//			}
+//		}
+//		else
+//		{
+//			menutimeout=now();
+//			if (TouchEnabled && DisplayedScreen<MAX_SCREENS)
+//			{
+//				TouchEnabled=false;
+//				if (TS.X<50 && TS.Y>theight-30 && TS.X>0)
+//					ChangeDisplayedScreen(-1);
+//				if (TS.X>twidth-50 && TS.Y>theight-30)
+//					ChangeDisplayedScreen(1);
+//				switch ( DisplayedScreen )
+//				{
+//				case MAIN_MENU_SCREEN:
+//				{
+//					for (int a=0;a<6;a++)
+//					{
+//						if (TS.IsTouchedInside(0,5+(47*a),twidth/2,5+ch+(47*a)))
+//							MenuFunctionPtr=menu_button_functions1[a]; // Assing function pointers when buttons are touched
+//						if (TS.IsTouchedInside(twidth/2,5+(47*a),twidth,5+ch+(47*a)))
+//							MenuFunctionPtr=menu_button_functions2[a]; // Assing function pointers when buttons are touched
+//					}
+//					break;
+//				}
+//				}
+//			}
+//		}
 		CheckMenuTimeout();
 		break;
 	}
@@ -1766,6 +1759,7 @@ void ReefAngelClass::ReDrawScreen()
 	byte TempRelay,TempRelayOn,TempRelayOff;
 	byte numexp=0;
 
+	WDTReset();
 	if ((EM&(1<<3))!=0) numexp++;
 	if ((EM&(1<<4))!=0) numexp++;
 	if ((EM&(1<<6))!=0) numexp++;
@@ -1774,7 +1768,7 @@ void ReefAngelClass::ReDrawScreen()
 	
 	if (!Sleeping)
 	{
-		if (millis()-lastRedraw>100)
+//		if (millis()-lastRedraw>100)
 		{
 			int twidth=TouchLCD.GetWidth();
 			int theight=TouchLCD.GetHeight();
@@ -1784,20 +1778,12 @@ void ReefAngelClass::ReDrawScreen()
 			//Draw Top Bar
 			if (NeedsRedraw)
 			{
-				//Top Bar
-				TouchLCD.DrawRectangle(TOPBAR_BC,0,0,twidth,27,true);
-				for (int a=0;a<=5;a++)
-				{
-					TouchLCD.DrawLine(alphaBlend(COLOR_WHITE,(5-a)*15),0,28+a,twidth,28+a);
-				}
 				//Bottom Bar
 				TouchLCD.DrawRectangle(BOTTOMBAR_BC,0,theight-27,twidth,theight,true);
 				for (int a=0;a<=5;a++)
 				{
 					TouchLCD.DrawLine(alphaBlend(COLOR_WHITE,(5-a)*15),0,theight-28-a,twidth,theight-28-a);
 				}
-				//Logo
-				TouchLCD.DrawBMP(5,2,ICONLOGO);
 				//Arrows
 				TouchLCD.DrawBMP(10,theight-25,ARROWLEFT);
 				TouchLCD.DrawBMP(twidth-10-23,theight-25,ARROWRIGHT);
@@ -1808,74 +1794,270 @@ void ReefAngelClass::ReDrawScreen()
 				Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
 				Font.DrawCenterText(twidth/2,theight-15,"Menu");
 			}
-			TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
-			CheckTouch();
-			TouchLCD.DrawFlags(StatusFlags);
-			CheckTouch();
-			if (DisplayedScreen==MAIN_SCREEN)
+			if (DisplayedMenu==DEFAULT_MENU || DisplayedMenu==MAIN_MENU)
 			{
-				int x=0;
-				if (NeedsRedraw)
+				TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
+				TouchLCD.DrawFlags(StatusFlags);
+				if (DisplayedScreen==MAIN_SCREEN)
 				{
-					NeedsRedraw=false;
-					LastParams.Temp[T1_PROBE]=-1;
-					LastParams.Temp[T2_PROBE]=-1;
-					LastParams.Temp[T3_PROBE]=-1;
-					LastParams.PH=0;
-#ifdef SALINITYEXPANSION
-					LastParams.Salinity=-1;
-#endif // SALINITYEXPANSION
-#ifdef ORPEXPANSION
-					LastParams.ORP=-1;
-#endif // ORPEXPANSION
-#ifdef PHEXPANSION
-					LastParams.PHExp=-1;
-#endif // PHEXPANSION
-#ifdef HUMIDITYEXPANSION
-					Humidity.LastLevel=-1;
-#endif // HUMIDITYEXPANSION
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-					for (int a=0; a<WATERLEVEL_CHANNELS; a++)
-						WaterLevel.LastLevel[a]=-1;
-#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+					int x=0;
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						//Top Bar
+						TouchLCD.DrawRectangle(TOPBAR_BC,0,0,twidth,27,true);
+						for (int a=0;a<=5;a++)
+						{
+							TouchLCD.DrawLine(alphaBlend(COLOR_WHITE,(5-a)*15),0,28+a,twidth,28+a);
+						}
+						//Logo
+						TouchLCD.DrawBMP(5,2,ICONLOGO);
 
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						LastParams.Temp[T1_PROBE]=-1;
+						LastParams.Temp[T2_PROBE]=-1;
+						LastParams.Temp[T3_PROBE]=-1;
+						LastParams.PH=0;
+	#ifdef SALINITYEXPANSION
+						LastParams.Salinity=-1;
+	#endif // SALINITYEXPANSION
+	#ifdef ORPEXPANSION
+						LastParams.ORP=-1;
+	#endif // ORPEXPANSION
+	#ifdef PHEXPANSION
+						LastParams.PHExp=-1;
+	#endif // PHEXPANSION
+	#ifdef HUMIDITYEXPANSION
+						Humidity.LastLevel=-1;
+	#endif // HUMIDITYEXPANSION
+	#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
+						for (int a=0; a<WATERLEVEL_CHANNELS; a++)
+							WaterLevel.LastLevel[a]=-1;
+	#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						if (i==12 || i==4) // Orientation is portrait
+						{
+							x=twidth*3/16;
+							if (numexp>2) i=4;
+							//Temperature
+							j=65+i;
+							Font.SetColor(COLOR_GOLD,BKCOLOR,true);								
+							Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
+							Serial.println(CustomLabels[Temp1Label]);
+							x+=twidth*5/16;
+							Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
+							x+=twidth*5/16;
+							Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
+
+							//pH
+							x=twidth*3/16;
+							j+=45+i;
+							Font.DrawCenterText(x,j,CustomLabels[PHLabel]);
+							x+=twidth*5/16;
+	#ifdef SALINITYEXPANSION
+							//Salinity
+							if ((EM&(1<<3))!=0)
+							{
+								Font.DrawCenterText(x,j,CustomLabels[SalinityLabel]);
+								x+=twidth*5/16;
+							}
+	#endif // SALINITYEXPANSION
+	#ifdef ORPEXPANSION
+							//ORP
+							if ((EM&(1<<4))!=0)
+							{
+								Font.DrawCenterText(x,j,CustomLabels[ORPLabel]);
+								x+=twidth*5/16;
+							}
+	#endif // ORPEXPANSION
+	#ifdef PHEXPANSION
+							//pH Exp
+							if ((EM&(1<<6))!=0)
+							{
+								if (x>twidth*14/16)
+								{
+									x=twidth*3/16;
+									j+=45+i;
+								}
+								Font.DrawCenterText(x,j,CustomLabels[PHExpLabel]);
+								x+=twidth*5/16;
+							}
+	#endif // PHEXPANSION
+	#ifdef HUMIDITYEXPANSION
+							//Humidity
+							if ((EM1&(1<<0))!=0)
+							{
+								if (x>twidth*14/16)
+								{
+									x=twidth*3/16;
+									j+=45+i;
+								}
+								Font.DrawCenterText(x,j,CustomLabels[HumidityLabel]);
+								x+=twidth*5/16;
+							}
+	#endif // HUMIDITYEXPANSION								
+	#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
+							//Water Level
+							if ((EM&(1<<7))!=0)
+							{
+								for (int a=0; a<WATERLEVEL_CHANNELS; a++)
+								{
+									if (x>twidth*14/16)
+									{
+										x=twidth*3/16;
+										j+=45+i;
+									}
+									Font.DrawCenterText(x,j,CustomLabels[WaterLevelLabel+a]);
+									x+=twidth*5/16;
+								}
+							}
+	#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+						}
+						else // Orientation is landscape
+						{
+							//Temperature, pH
+							x=twidth*3/21;
+							if (numexp==0) i=7;
+							j=64+i;
+							Font.SetColor(COLOR_GOLD,BKCOLOR,true);
+							Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
+							x+=twidth*5/21;
+							Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
+							x+=twidth*5/21;
+							Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
+							x+=twidth*5/21;
+							Font.DrawCenterText(x,j,CustomLabels[PHLabel]);
+							x+=twidth*5/21;
+
+	#ifdef SALINITYEXPANSION
+							//Salinity
+							if ((EM&(1<<3))!=0)
+							{
+								if (x>twidth*18/21)
+								{
+									x=twidth*3/21;
+									j+=43+i;
+								}
+								Font.DrawCenterText(x,j,CustomLabels[SalinityLabel]);
+								x+=twidth*5/21;
+							}
+	#endif // SALINITYEXPANSION
+	#ifdef ORPEXPANSION
+							//ORP
+							if ((EM&(1<<4))!=0)
+							{
+								if (x>twidth*18/21)
+								{
+									x=twidth*3/21;
+									j+=43+i;
+								}
+								Font.DrawCenterText(x,j,CustomLabels[ORPLabel]);
+								x+=twidth*5/21;
+							}
+	#endif // ORPEXPANSION
+	#ifdef PHEXPANSION
+							//pH Exp
+							if ((EM&(1<<6))!=0)
+							{
+								if (x>twidth*18/21)
+								{
+									x=twidth*3/21;
+									j+=43+i;
+								}
+								Font.DrawCenterText(x,j,CustomLabels[PHExpLabel]);
+								x+=twidth*5/21;
+							}
+	#endif // PHEXPANSION
+	#ifdef HUMIDITYEXPANSION
+							//pH Exp
+							if ((EM1&(1<<0))!=0)
+							{
+								if (x>twidth*18/21)
+								{
+									x=twidth*3/21;
+									j+=43+i;
+								}
+								Font.DrawCenterText(x,j,CustomLabels[HumidityLabel]);
+								x+=twidth*5/21;
+							}
+	#endif // HUMIDITYEXPANSION
+	#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
+							//Water Level
+							if ((EM&(1<<7))!=0)
+							{
+								for (int a=0;a<WATERLEVEL_CHANNELS;a++)
+								{
+									if (x>twidth*18/21)
+									{
+										x=twidth*3/21;
+										j+=43+i;
+									}
+									Font.DrawCenterText(x,j,CustomLabels[WaterLevelLabel+a]);
+									x+=twidth*5/21;
+								}
+							}
+	#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+						}
+					}
+					// Draw Parameter values
 					if (i==12 || i==4) // Orientation is portrait
 					{
-						x=twidth*3/16;
 						if (numexp>2) i=4;
 						//Temperature
-						j=65+i;
-						Font.SetColor(COLOR_GOLD,BKCOLOR,true);								
-						Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
-						Serial.println(CustomLabels[Temp1Label]);
+						x=twidth*3/16;
+						j=31+i;
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
+						if (Params.Temp[T1_PROBE]!=LastParams.Temp[T1_PROBE])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[T1_PROBE],10);
+							LastParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
+						}
 						x+=twidth*5/16;
-						Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
+						if (Params.Temp[T1_PROBE]!=LastParams.Temp[T2_PROBE])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
+							LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
+						}
 						x+=twidth*5/16;
-						Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
-
+						if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
+							LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
+						}
 						//pH
 						x=twidth*3/16;
-						j+=45+i;
-						Font.DrawCenterText(x,j,CustomLabels[PHLabel]);
+						j+=43+i;
+						if (Params.PH!=LastParams.PH)
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.PH,100);
+							LastParams.PH=Params.PH;
+						}
 						x+=twidth*5/16;
-#ifdef SALINITYEXPANSION
+	#ifdef SALINITYEXPANSION
 						//Salinity
 						if ((EM&(1<<3))!=0)
 						{
-							Font.DrawCenterText(x,j,CustomLabels[SalinityLabel]);
+							if (Params.Salinity!=LastParams.Salinity)
+							{
+								LargeFont.DrawCenterNumber(x,j,Params.Salinity,10);
+								LastParams.Salinity=Params.Salinity;
+							}
 							x+=twidth*5/16;
 						}
-#endif // SALINITYEXPANSION
-#ifdef ORPEXPANSION
+	#endif // SALINITYEXPANSION
+	#ifdef ORPEXPANSION
 						//ORP
 						if ((EM&(1<<4))!=0)
 						{
-							Font.DrawCenterText(x,j,CustomLabels[ORPLabel]);
+							if (Params.ORP!=LastParams.ORP)
+							{
+								LargeFont.DrawCenterNumber(x,j,Params.ORP,1);
+								LastParams.ORP=Params.ORP;
+							}
 							x+=twidth*5/16;
 						}
-#endif // ORPEXPANSION
-#ifdef PHEXPANSION
+	#endif // ORPEXPANSION
+	#ifdef PHEXPANSION
 						//pH Exp
 						if ((EM&(1<<6))!=0)
 						{
@@ -1884,11 +2066,15 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/16;
 								j+=45+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[PHExpLabel]);
+							if (Params.PHExp!=LastParams.PHExp)
+							{
+								LargeFont.DrawCenterNumber(x,j,Params.PHExp,100);
+								LastParams.PHExp=Params.PHExp;
+							}
 							x+=twidth*5/16;
 						}
-#endif // PHEXPANSION
-#ifdef HUMIDITYEXPANSION
+	#endif // PHEXPANSION
+	#ifdef HUMIDITYEXPANSION
 						//Humidity
 						if ((EM1&(1<<0))!=0)
 						{
@@ -1897,48 +2083,67 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/16;
 								j+=45+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[HumidityLabel]);
+							if (Humidity.GetLevel()!=Humidity.LastLevel)
+							{
+								LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),10);
+								Humidity.LastLevel=Humidity.GetLevel();
+							}
 							x+=twidth*5/16;
 						}
-#endif // HUMIDITYEXPANSION								
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
+	#endif // HUMIDITYEXPANSION							
+	#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 						//Water Level
 						if ((EM&(1<<7))!=0)
 						{
-							for (int a=0; a<WATERLEVEL_CHANNELS; a++)
+							for (int a=0;a<WATERLEVEL_CHANNELS;a++)
 							{
 								if (x>twidth*14/16)
 								{
 									x=twidth*3/16;
 									j+=45+i;
 								}
-								Font.DrawCenterText(x,j,CustomLabels[WaterLevelLabel+a]);
+								if (WaterLevel.GetLevel(a)!=WaterLevel.LastLevel[a])
+								{
+									LargeFont.DrawCenterNumber(x,j,ReefAngel.WaterLevel.GetLevel(a),0);
+									WaterLevel.LastLevel[a]=WaterLevel.GetLevel(a);
+								}
 								x+=twidth*5/16;
 							}
 						}
-#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+	#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 					}
 					else // Orientation is landscape
 					{
-						//Temperature, pH
 						x=twidth*3/21;
 						if (numexp==0) i=7;
-						j=64+i;
-						Font.SetColor(COLOR_GOLD,BKCOLOR,true);
-						Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
-						CheckTouch();
+						//Temperature
+						j=32+i;
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
+						if (Params.Temp[T1_PROBE]!=LastParams.Temp[T1_PROBE])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[T1_PROBE],10);
+							LastParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
+						}
 						x+=twidth*5/21;
-						Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
-						CheckTouch();
+						if (Params.Temp[T2_PROBE]!=LastParams.Temp[T2_PROBE])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
+							LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
+						}
 						x+=twidth*5/21;
-						Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
-						CheckTouch();
+						if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
+							LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
+						}
 						x+=twidth*5/21;
-						Font.DrawCenterText(x,j,CustomLabels[PHLabel]);
-						CheckTouch();
+						if (Params.PH!=LastParams.PH)
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.PH,100);
+							LastParams.PH=Params.PH;
+						}
 						x+=twidth*5/21;
-
-#ifdef SALINITYEXPANSION
+	#ifdef SALINITYEXPANSION
 						//Salinity
 						if ((EM&(1<<3))!=0)
 						{
@@ -1947,12 +2152,15 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[SalinityLabel]);
-							CheckTouch();
+							if (Params.Salinity!=LastParams.Salinity)
+							{
+								LargeFont.DrawCenterNumber(x,j,Params.Salinity,10);
+								LastParams.Salinity=Params.Salinity;
+							}
 							x+=twidth*5/21;
 						}
-#endif // SALINITYEXPANSION
-#ifdef ORPEXPANSION
+	#endif // SALINITYEXPANSION
+	#ifdef ORPEXPANSION
 						//ORP
 						if ((EM&(1<<4))!=0)
 						{
@@ -1961,12 +2169,15 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[ORPLabel]);
-							CheckTouch();
+							if (Params.ORP!=LastParams.ORP)
+							{
+								LargeFont.DrawCenterNumber(x,j,Params.ORP,1);
+								LastParams.ORP=Params.ORP;
+							}
 							x+=twidth*5/21;
 						}
-#endif // ORPEXPANSION
-#ifdef PHEXPANSION
+	#endif // ORPEXPANSION
+	#ifdef PHEXPANSION
 						//pH Exp
 						if ((EM&(1<<6))!=0)
 						{
@@ -1975,13 +2186,16 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[PHExpLabel]);
-							CheckTouch();
+							if (Params.PHExp!=LastParams.PHExp)
+							{
+								LargeFont.DrawCenterNumber(x,j,Params.PHExp,100);
+								LastParams.PHExp=Params.PHExp;
+							}
 							x+=twidth*5/21;
 						}
-#endif // PHEXPANSION
-#ifdef HUMIDITYEXPANSION
-						//pH Exp
+	#endif // PHEXPANSION
+	#ifdef HUMIDITYEXPANSION
+						//Humidity
 						if ((EM1&(1<<0))!=0)
 						{
 							if (x>twidth*18/21)
@@ -1989,805 +2203,652 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[HumidityLabel]);
-							CheckTouch();
+							if (Humidity.GetLevel()!=Humidity.LastLevel)
+							{
+								LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),10);
+								Humidity.LastLevel=Humidity.GetLevel();
+							}
 							x+=twidth*5/21;
 						}
-#endif // HUMIDITYEXPANSION
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
+	#endif // HUMIDITYEXPANSION
+	#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 						//Water Level
 						if ((EM&(1<<7))!=0)
 						{
-							for (int a=0;a<WATERLEVEL_CHANNELS;a++)
+							for (int a=0;a<5;a++)
 							{
 								if (x>twidth*18/21)
 								{
 									x=twidth*3/21;
 									j+=43+i;
 								}
-								Font.DrawCenterText(x,j,CustomLabels[WaterLevelLabel+a]);
-								CheckTouch();
+								if (WaterLevel.GetLevel(a)!=WaterLevel.LastLevel[a])
+								{
+									LargeFont.DrawCenterNumber(x,j,ReefAngel.WaterLevel.GetLevel(a),0);
+									WaterLevel.LastLevel[a]=WaterLevel.GetLevel(a);
+								}
 								x+=twidth*5/21;
 							}
 						}
-#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+	#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 					}
-				}
-				CheckTouch();
-				// Draw Parameter values
-				if (i==12 || i==4) // Orientation is portrait
-				{
-					if (numexp>2) i=4;
-					//Temperature
-					x=twidth*3/16;
-					j=31+i;
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					if (Params.Temp[T1_PROBE]!=LastParams.Temp[T1_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T1_PROBE],10);
-						LastParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
-					}
-					CheckTouch();
-					x+=twidth*5/16;
-					if (Params.Temp[T1_PROBE]!=LastParams.Temp[T2_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
-						LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
-					}
-					CheckTouch();
-					x+=twidth*5/16;
-					if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
-						LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
-					}
-					//pH
-					CheckTouch();
-					x=twidth*3/16;
-					j+=43+i;
-					if (Params.PH!=LastParams.PH)
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.PH,100);
-						LastParams.PH=Params.PH;
-					}
-					CheckTouch();
-					x+=twidth*5/16;
-#ifdef SALINITYEXPANSION
-					//Salinity
-					if ((EM&(1<<3))!=0)
-					{
-						if (Params.Salinity!=LastParams.Salinity)
-						{
-							LargeFont.DrawCenterNumber(x,j,Params.Salinity,10);
-							LastParams.Salinity=Params.Salinity;
-						}
-						x+=twidth*5/16;
-					}
-#endif // SALINITYEXPANSION
-					CheckTouch();
-#ifdef ORPEXPANSION
-					//ORP
-					if ((EM&(1<<4))!=0)
-					{
-						if (Params.ORP!=LastParams.ORP)
-						{
-							LargeFont.DrawCenterNumber(x,j,Params.ORP,1);
-							LastParams.ORP=Params.ORP;
-						}
-						x+=twidth*5/16;
-					}
-#endif // ORPEXPANSION
-					CheckTouch();
-#ifdef PHEXPANSION
-					//pH Exp
-					if ((EM&(1<<6))!=0)
-					{
-						if (x>twidth*14/16)
-						{
-							x=twidth*3/16;
-							j+=45+i;
-						}
-						if (Params.PHExp!=LastParams.PHExp)
-						{
-							LargeFont.DrawCenterNumber(x,j,Params.PHExp,100);
-							LastParams.PHExp=Params.PHExp;
-						}
-						x+=twidth*5/16;
-					}
-#endif // PHEXPANSION
-					CheckTouch();
-#ifdef HUMIDITYEXPANSION
-					//Humidity
-					if ((EM1&(1<<0))!=0)
-					{
-						if (x>twidth*14/16)
-						{
-							x=twidth*3/16;
-							j+=45+i;
-						}
-						if (Humidity.GetLevel()!=Humidity.LastLevel)
-						{
-							LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),10);
-							Humidity.LastLevel=Humidity.GetLevel();
-						}
-						x+=twidth*5/16;
-					}
-#endif // HUMIDITYEXPANSION							
-					CheckTouch();
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-					//Water Level
-					if ((EM&(1<<7))!=0)
-					{
-						for (int a=0;a<WATERLEVEL_CHANNELS;a++)
-						{
-							if (x>twidth*14/16)
-							{
-								x=twidth*3/16;
-								j+=45+i;
-							}
-							if (WaterLevel.GetLevel(a)!=WaterLevel.LastLevel[a])
-							{
-								LargeFont.DrawCenterNumber(x,j,ReefAngel.WaterLevel.GetLevel(a),0);
-								WaterLevel.LastLevel[a]=WaterLevel.GetLevel(a);
-							}
-							x+=twidth*5/16;
-						}
-					}
-#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-				}
-				else // Orientation is landscape
-				{
-					x=twidth*3/21;
-					if (numexp==0) i=7;
-					//Temperature
-					j=32+i;
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					if (Params.Temp[T1_PROBE]!=LastParams.Temp[T1_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T1_PROBE],10);
-						LastParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
-					}
-					CheckTouch();
-					x+=twidth*5/21;
-					if (Params.Temp[T2_PROBE]!=LastParams.Temp[T2_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
-						LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
-					}
-					CheckTouch();
-					x+=twidth*5/21;
-					if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
-						LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
-					}
-					CheckTouch();
-					x+=twidth*5/21;
-					if (Params.PH!=LastParams.PH)
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.PH,100);
-						LastParams.PH=Params.PH;
-					}
-					CheckTouch();
-					x+=twidth*5/21;
-#ifdef SALINITYEXPANSION
-					//Salinity
-					if ((EM&(1<<3))!=0)
-					{
-						if (x>twidth*18/21)
-						{
-							x=twidth*3/21;
-							j+=43+i;
-						}
-						if (Params.Salinity!=LastParams.Salinity)
-						{
-							LargeFont.DrawCenterNumber(x,j,Params.Salinity,10);
-							LastParams.Salinity=Params.Salinity;
-						}
-						x+=twidth*5/21;
-					}
-#endif // SALINITYEXPANSION
-					CheckTouch();
-#ifdef ORPEXPANSION
-					//ORP
-					if ((EM&(1<<4))!=0)
-					{
-						if (x>twidth*18/21)
-						{
-							x=twidth*3/21;
-							j+=43+i;
-						}
-						if (Params.ORP!=LastParams.ORP)
-						{
-							LargeFont.DrawCenterNumber(x,j,Params.ORP,1);
-							LastParams.ORP=Params.ORP;
-						}
-						x+=twidth*5/21;
-					}
-#endif // ORPEXPANSION
-					CheckTouch();
-#ifdef PHEXPANSION
-					//pH Exp
-					if ((EM&(1<<6))!=0)
-					{
-						if (x>twidth*18/21)
-						{
-							x=twidth*3/21;
-							j+=43+i;
-						}
-						if (Params.PHExp!=LastParams.PHExp)
-						{
-							LargeFont.DrawCenterNumber(x,j,Params.PHExp,100);
-							LastParams.PHExp=Params.PHExp;
-						}
-						x+=twidth*5/21;
-					}
-#endif // PHEXPANSION
-					CheckTouch();
-#ifdef HUMIDITYEXPANSION
-					//Humidity
-					if ((EM1&(1<<0))!=0)
-					{
-						if (x>twidth*18/21)
-						{
-							x=twidth*3/21;
-							j+=43+i;
-						}
-						if (Humidity.GetLevel()!=Humidity.LastLevel)
-						{
-							LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),10);
-							Humidity.LastLevel=Humidity.GetLevel();
-						}
-						x+=twidth*5/21;
-					}
-#endif // HUMIDITYEXPANSION
-					CheckTouch();
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-					//Water Level
-					if ((EM&(1<<7))!=0)
-					{
-						for (int a=0;a<5;a++)
-						{
-							if (x>twidth*18/21)
-							{
-								x=twidth*3/21;
-								j+=43+i;
-							}
-							if (WaterLevel.GetLevel(a)!=WaterLevel.LastLevel[a])
-							{
-								LargeFont.DrawCenterNumber(x,j,ReefAngel.WaterLevel.GetLevel(a),0);
-								WaterLevel.LastLevel[a]=WaterLevel.GetLevel(a);
-							}
-							x+=twidth*5/21;
-						}
-					}
-#endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-				}
 
-				if (i==4) i=12;
-				if (i==7) i=0;
+					if (i==4) i=12;
+					if (i==7) i=0;
 
-			}
-			else if(DisplayedScreen==DIMMING_ATO)
-			{
-				int x=0;
-				if (NeedsRedraw)
+				}
+				else if(DisplayedScreen==DIMMING_ATO)
 				{
-					NeedsRedraw=false;
+					int x=0;
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
 
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					PB[0].NeedsRedraw=true;
-					PB[1].NeedsRedraw=true;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						PB[0].NeedsRedraw=true;
+						PB[1].NeedsRedraw=true;
+						if (Board==RAStar)
+						{
+							j=40;
+							PB[2].NeedsRedraw=true;
+							PB[3].NeedsRedraw=true;
+						}
+						else
+						{
+							j=40+i;
+						}
+						//ATO Ports
+						if (Board==RAStar || bitRead(EM1,3))
+							x=(twidth/4)-25;
+						else
+							x=(twidth/2)-25;
+						Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[ATOHighLabel]);
+						j+=20+(i*2);
+						Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[ATOLowLabel]);
+						if (Board==RAStar || bitRead(EM1,3))
+						{
+							j=40;
+							x=(twidth*3/4)-25;
+							Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[LeakLabel]);
+						}
+						if (Board==RAStar)
+						{
+							j+=20+(i*2);
+							Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[AlarmLabel]);
+						}
+						j+=25+i;
+						//Division
+						TouchLCD.DrawLine(DIVISION,0,j,twidth,j);
+					}
 					if (Board==RAStar)
-					{
 						j=40;
-						PB[2].NeedsRedraw=true;
-						PB[3].NeedsRedraw=true;
-					}
 					else
-					{
 						j=40+i;
-					}
-					//ATO Ports
+					// ATO Buttons
 					if (Board==RAStar || bitRead(EM1,3))
-						x=(twidth/4)-25;
+						x=(twidth/4)-50;
 					else
-						x=(twidth/2)-25;
-					Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[ATOHighLabel]);
+						x=(twidth/2)-50;
+						
+					if (HighATO.IsActive())
+						TouchLCD.DrawBMP(x,j,GREENBUTTON);
+					else
+						TouchLCD.DrawBMP(x,j,REDBUTTON);
 					j+=20+(i*2);
-					Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[ATOLowLabel]);
+					if (LowATO.IsActive())
+						TouchLCD.DrawBMP(x,j,GREENBUTTON);
+					else
+						TouchLCD.DrawBMP(x,j,REDBUTTON);						
 					if (Board==RAStar || bitRead(EM1,3))
 					{
 						j=40;
-						x=(twidth*3/4)-25;
-						Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[LeakLabel]);
+						x=(twidth*3/4)-50;
+						if (IsLeakDetected())
+							TouchLCD.DrawBMP(x,j,GREENBUTTON);
+						else
+							TouchLCD.DrawBMP(x,j,REDBUTTON);
 					}
 					if (Board==RAStar)
 					{
 						j+=20+(i*2);
-						Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[AlarmLabel]);
+						if (AlarmInput.IsActive())
+							TouchLCD.DrawBMP(x,j,GREENBUTTON);
+						else
+							TouchLCD.DrawBMP(x,j,REDBUTTON);
 					}
-					j+=25+i;
-					//Division
-					TouchLCD.DrawLine(DIVISION,0,j,twidth,j);
-				}
-				if (Board==RAStar)
-					j=40;
-				else
-					j=40+i;
-				// ATO Buttons
-				if (Board==RAStar || bitRead(EM1,3))
-					x=(twidth/4)-50;
-				else
-					x=(twidth/2)-50;
 					
-				if (HighATO.IsActive())
-					TouchLCD.DrawBMP(x,j,GREENBUTTON);
-				else
-					TouchLCD.DrawBMP(x,j,REDBUTTON);
-				j+=20+(i*2);
-				if (LowATO.IsActive())
-					TouchLCD.DrawBMP(x,j,GREENBUTTON);
-				else
-					TouchLCD.DrawBMP(x,j,REDBUTTON);						
-				if (Board==RAStar || bitRead(EM1,3))
-				{
-					j=40;
-					x=(twidth*3/4)-50;
-					if (IsLeakDetected())
-						TouchLCD.DrawBMP(x,j,GREENBUTTON);
-					else
-						TouchLCD.DrawBMP(x,j,REDBUTTON);
-				}
-				if (Board==RAStar)
-				{
-					j+=20+(i*2);
-					if (AlarmInput.IsActive())
-						TouchLCD.DrawBMP(x,j,GREENBUTTON);
-					else
-						TouchLCD.DrawBMP(x,j,REDBUTTON);
-				}
-				
-				j+=35+i;
+					j+=35+i;
 
-				// Progress Bars
-				PB[0].SetPosition(10,j);
-				PB[0].SetColor(COLOR_ORANGE);
-				PB[0].SetLabel(CustomLabels[DaylightLabel]);
-#if defined(__SAM3X8E__)
-				PB[0].SetCurrent(VariableControl.GetDaylightValue());
-#else
-				PB[0].SetCurrent(PWM.GetDaylightValue());
-#endif
-				PB[0].Show();
-				j+=30+i;
-				PB[1].SetPosition(10,j);
-				PB[1].SetColor(COLOR_ROYALBLUE);
-				PB[1].SetLabel(CustomLabels[ActinicLabel]);
-#if defined(__SAM3X8E__)
-				PB[1].SetCurrent(VariableControl.GetActinicValue());
-#else
-				PB[1].SetCurrent(PWM.GetActinicValue());
-#endif
-				PB[1].Show();
-				j+=30+i;
-				if (Board==RAStar)
-				{
-					PB[2].SetPosition(10,j);
-					PB[2].SetColor(COLOR_ORANGE);
-					PB[2].SetLabel(CustomLabels[Daylight2Label]);
-#if defined(__SAM3X8E__)
-					PB[2].SetCurrent(VariableControl.GetDaylight2Value());
-#else
-					PB[2].SetCurrent(PWM.GetDaylight2Value());
-#endif
-					PB[2].Show();
+					// Progress Bars
+					PB[0].SetPosition(10,j);
+					PB[0].SetColor(COLOR_ORANGE);
+					PB[0].SetLabel(CustomLabels[DaylightLabel]);
+	#if defined(__SAM3X8E__)
+					PB[0].SetCurrent(VariableControl.GetDaylightValue());
+	#else
+					PB[0].SetCurrent(PWM.GetDaylightValue());
+	#endif
+					PB[0].Show();
 					j+=30+i;
-					PB[3].SetPosition(10,j);
-					PB[3].SetColor(COLOR_ROYALBLUE);
-					PB[3].SetLabel(CustomLabels[Actinic2Label]);
-#if defined(__SAM3X8E__)
-					PB[3].SetCurrent(VariableControl.GetActinic2Value());
-#else
-					PB[3].SetCurrent(PWM.GetActinic2Value());
-#endif
-					PB[3].Show();
-				}
-			}
-			else if (DisplayedScreen>=RELAY_BOX && DisplayedScreen<=EXP_BOX_8)
-			{
-				int l=twidth;
-				byte k;
-				int rx;
-
-				if (DisplayedScreen==RELAY_BOX)
-				{
-					TempRelay=Relay.RelayData;
-					TempRelayOn=Relay.RelayMaskOn;
-					TempRelayOff=Relay.RelayMaskOff;
-				}
-				else
-				{
-#ifdef RelayExp
-					TempRelay=Relay.RelayDataE[DisplayedScreen-3];
-					TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-3];
-					TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-3];
-#endif // RelayExp
-				}
-				TempRelay&=TempRelayOff;
-				TempRelay|=TempRelayOn;
-
-				if (NeedsRedraw)
-				{
-					NeedsRedraw=false;
-
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RELAYBOXLABELBAR/DisplayedScreen,a*3),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
-				}
-
-				// Relay Ports Status
-				j=36;
-				k=l*5/16;
-				rx=10;
-				if (i==0) // Orientation is landscape
-				{
-					j=42;
-					k=l/4;
-				}
-				for (int a=1;a<9;a++)
-				{
-					if (a==5)
+					PB[1].SetPosition(10,j);
+					PB[1].SetColor(COLOR_ROYALBLUE);
+					PB[1].SetLabel(CustomLabels[ActinicLabel]);
+	#if defined(__SAM3X8E__)
+					PB[1].SetCurrent(VariableControl.GetActinicValue());
+	#else
+					PB[1].SetCurrent(PWM.GetActinicValue());
+	#endif
+					PB[1].Show();
+					j+=30+i;
+					if (Board==RAStar)
 					{
-						j=36;
-						k=l*11/16;
-						if (i==0) // Orientation is landscape
-						{
-							j=42;
-							k=l*3/4;
-						}
-						rx=l-40;
+						PB[2].SetPosition(10,j);
+						PB[2].SetColor(COLOR_ORANGE);
+						PB[2].SetLabel(CustomLabels[Daylight2Label]);
+	#if defined(__SAM3X8E__)
+						PB[2].SetCurrent(VariableControl.GetDaylight2Value());
+	#else
+						PB[2].SetCurrent(PWM.GetDaylight2Value());
+	#endif
+						PB[2].Show();
+						j+=30+i;
+						PB[3].SetPosition(10,j);
+						PB[3].SetColor(COLOR_ROYALBLUE);
+						PB[3].SetLabel(CustomLabels[Actinic2Label]);
+	#if defined(__SAM3X8E__)
+						PB[3].SetCurrent(VariableControl.GetActinic2Value());
+	#else
+						PB[3].SetCurrent(PWM.GetActinic2Value());
+	#endif
+						PB[3].Show();
 					}
-					if (i==12) j+=52; else j+=34;
-					Font.SetColor(COLOR_WHITE,BKCOLOR,true);
-					Font.DrawCenterText(k,j+3,CustomLabels[(a-1)+((DisplayedScreen-2)*8)]);
-					SmallFont.SetColor(COLOR_YELLOW,BKCOLOR,true);
-					if (bitRead(TempRelayOn,a-1) || !bitRead(TempRelayOff,a-1))
-						SmallFont.DrawCenterTextP(k,j+18,LABEL_OVERRIDE);
+				}
+				else if (DisplayedScreen>=RELAY_BOX && DisplayedScreen<=EXP_BOX_8)
+				{
+					int l=twidth;
+					byte k;
+					int rx;
+
+					if (DisplayedScreen==RELAY_BOX)
+					{
+						TempRelay=Relay.RelayData;
+						TempRelayOn=Relay.RelayMaskOn;
+						TempRelayOff=Relay.RelayMaskOff;
+					}
 					else
-						TouchLCD.Clear(BKCOLOR,k-23,j+18,k+23,j+26);
-					TouchLCD.DrawRelayStatus(rx,j,bitRead(TempRelay,a-1));
-				}
-			}
-#ifdef PWMEXPANSION
-			else if(DisplayedScreen==PWM_SCREEN)
-			{
-				if (NeedsRedraw)
-				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(PWMLABELBAR,a*4),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
+					{
+	#ifdef RelayExp
+						TempRelay=Relay.RelayDataE[DisplayedScreen-3];
+						TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-3];
+						TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-3];
+	#endif // RelayExp
+					}
+					TempRelay&=TempRelayOff;
+					TempRelay|=TempRelayOn;
 
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RELAYBOXLABELBAR/DisplayedScreen,a*3),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+					}
+
+					// Relay Ports Status
+					j=36;
+					k=l*5/16;
+					rx=10;
+					if (i==0) // Orientation is landscape
+					{
+						j=42;
+						k=l/4;
+					}
+					for (int a=1;a<9;a++)
+					{
+						if (a==5)
+						{
+							j=36;
+							k=l*11/16;
+							if (i==0) // Orientation is landscape
+							{
+								j=42;
+								k=l*3/4;
+							}
+							rx=l-40;
+						}
+						if (i==12) j+=52; else j+=34;
+						Font.SetColor(COLOR_WHITE,BKCOLOR,true);
+						Font.DrawCenterText(k,j+3,CustomLabels[(a-1)+((DisplayedScreen-2)*8)]);
+						SmallFont.SetColor(COLOR_YELLOW,BKCOLOR,true);
+						if (bitRead(TempRelayOn,a-1) || !bitRead(TempRelayOff,a-1))
+							SmallFont.DrawCenterTextP(k,j+18,LABEL_OVERRIDE);
+						else
+							TouchLCD.Clear(BKCOLOR,k-23,j+18,k+23,j+26);
+						TouchLCD.DrawRelayStatus(rx,j,bitRead(TempRelay,a-1));
+					}
+				}
+	#ifdef PWMEXPANSION
+				else if(DisplayedScreen==PWM_SCREEN)
+				{
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(PWMLABELBAR,a*4),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+
+						for (int a=0;a<6;a++)
+							PB[a].NeedsRedraw=true;
+					}
+
+					// Progress Bars
+					j=50+(i/2);
+					Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
 					for (int a=0;a<6;a++)
-						PB[a].NeedsRedraw=true;
+					{
+						j+=22+i;
+						PB[a].SetPosition(10,j);
+						PB[a].SetColor(COLOR_GREEN);
+						PB[a].SetLabel(CustomLabels[DimmingChannel0Label+a]);
+	#if defined(__SAM3X8E__)
+						PB[a].SetCurrent(VariableControl.GetChannelValue(a));
+	#else
+						PB[a].SetCurrent(PWM.GetChannelValue(a));
+	#endif
+						PB[a].Show();
+					}
 				}
-
-				// Progress Bars
-				j=50+(i/2);
-				Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
-				for (int a=0;a<6;a++)
+	#endif // PWMEXPANSION
+	#ifdef RFEXPANSION
+				else if(DisplayedScreen==RF_SCREEN)
 				{
-					j+=22+i;
-					PB[a].SetPosition(10,j);
-					PB[a].SetColor(COLOR_GREEN);
-					PB[a].SetLabel(CustomLabels[DimmingChannel0Label+a]);
-#if defined(__SAM3X8E__)
-					PB[a].SetCurrent(VariableControl.GetChannelValue(a));
-#else
-					PB[a].SetCurrent(PWM.GetChannelValue(a));
-#endif
-					PB[a].Show();
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RFLABELBAR,a*4),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+						j=60;
+						Font.SetColor(COLOR_GOLD,BKCOLOR,false);
+						j+=40+(i*2);
+						Font.DrawCenterTextP((twidth/2),j,LABEL_MODE);
+						j+=45+(i*2);
+						Font.DrawCenterTextP((twidth/2),j,LABEL_SPEED);
+						j+=45+(i*2);
+						Font.DrawCenterTextP((twidth/2),j,LABEL_DURATION);
+						
+						j=27;
+						j+=40+(i*2);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
+						char temp[25];
+						char rf_mode[35];
+	#if defined (__SAM3X8E__)
+						strcpy(temp,rf_items[RF.Mode]);
+	#else
+						strcpy_P(temp,(char * )pgm_read_word(&(rf_items[RF.Mode])));
+	#endif // (__SAM3X8E__)
+						strcpy(rf_mode,"   ");
+						strcat(rf_mode,temp);
+						strcat(rf_mode,"   ");
+						LargeFont.DrawCenterText((twidth/2),j,rf_mode);
+						j+=45+(i*2);
+						LargeFont.DrawCenterNumber((twidth/2),j,RF.Speed,0);
+						j+=45+(i*2);
+						LargeFont.DrawCenterNumber((twidth/2),j,RF.Duration,0);
+					}
 				}
-			}
-#endif // PWMEXPANSION
-#ifdef RFEXPANSION
-			else if(DisplayedScreen==RF_SCREEN)
-			{
-				if (NeedsRedraw)
+				else if(DisplayedScreen==RF_SCREEN1)
 				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RFLABELBAR,a*4),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
-					j=60;
-					Font.SetColor(COLOR_GOLD,BKCOLOR,false);
-					j+=40+(i*2);
-					Font.DrawCenterTextP((twidth/2),j,LABEL_MODE);
-					j+=45+(i*2);
-					Font.DrawCenterTextP((twidth/2),j,LABEL_SPEED);
-					j+=45+(i*2);
-					Font.DrawCenterTextP((twidth/2),j,LABEL_DURATION);
-					
-					j=27;
-					j+=40+(i*2);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					char temp[25];
-					char rf_mode[35];
-#if defined (__SAM3X8E__)
-					strcpy(temp,rf_items[RF.Mode]);
-#else
-					strcpy_P(temp,(char * )pgm_read_word(&(rf_items[RF.Mode])));
-#endif // (__SAM3X8E__)
-					strcpy(rf_mode,"   ");
-					strcat(rf_mode,temp);
-					strcat(rf_mode,"   ");
-					LargeFont.DrawCenterText((twidth/2),j,rf_mode);
-					j+=45+(i*2);
-					LargeFont.DrawCenterNumber((twidth/2),j,RF.Speed,0);
-					j+=45+(i*2);
-					LargeFont.DrawCenterNumber((twidth/2),j,RF.Duration,0);
-				}
-			}
-			else if(DisplayedScreen==RF_SCREEN1)
-			{
-				if (NeedsRedraw)
-				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RFLABELBAR1,a*4),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RFLABELBAR1,a*4),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+						for (int a=0;a<6;a++)
+							PB[a].NeedsRedraw=true;
+					}
+					// Progress Bars
+					j=50+(i/2);
+					int rfcolor[] = {COLOR_ORANGE,COLOR_ROYALBLUE,COLOR_RED,COLOR_GREEN,COLOR_LIGHTBLUE,COLOR_MAGENTA};
 					for (int a=0;a<6;a++)
-						PB[a].NeedsRedraw=true;
-				}
-				// Progress Bars
-				j=50+(i/2);
-				int rfcolor[] = {COLOR_ORANGE,COLOR_ROYALBLUE,COLOR_RED,COLOR_GREEN,COLOR_LIGHTBLUE,COLOR_MAGENTA};
-				for (int a=0;a<6;a++)
-				{
-					j+=22+i;
-					char tempname[16];
-#if defined (__SAM3X8E__)
-					strcpy(tempname, LABEL_RF[a]);
-#else
-					int ptr = pgm_read_word(&(LABEL_RF[a]));
-					strcpy_P(tempname, (char *)ptr);
-#endif // (__SAM3X8E__)
-					PB[a].SetPosition(10,j);
-					PB[a].SetColor(rfcolor[a]);
-					PB[a].SetLabel(tempname);
-					PB[a].SetCurrent(RF.GetChannel(a));
-					PB[a].Show();
-				}
+					{
+						j+=22+i;
+						char tempname[16];
+	#if defined (__SAM3X8E__)
+						strcpy(tempname, LABEL_RF[a]);
+	#else
+						int ptr = pgm_read_word(&(LABEL_RF[a]));
+						strcpy_P(tempname, (char *)ptr);
+	#endif // (__SAM3X8E__)
+						PB[a].SetPosition(10,j);
+						PB[a].SetColor(rfcolor[a]);
+						PB[a].SetLabel(tempname);
+						PB[a].SetCurrent(RF.GetChannel(a));
+						PB[a].Show();
+					}
 
-			}
-#endif // RFEXPANSION
-#ifdef AI_LED
-			else if(DisplayedScreen==AI_SCREEN)
-			{
-				if (NeedsRedraw)
+				}
+	#endif // RFEXPANSION
+	#ifdef AI_LED
+				else if(DisplayedScreen==AI_SCREEN)
 				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(AILABELBAR,a*4),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(AILABELBAR,a*4),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+						for (int a=0;a<3;a++)
+							PB[a].NeedsRedraw=true;
+					}
+
+					// Progress Bars
+					j=35;
+					int aicolor[] = {COLOR_ORANGE,COLOR_LIGHTBLUE,COLOR_ROYALBLUE};
 					for (int a=0;a<3;a++)
-						PB[a].NeedsRedraw=true;
+					{
+						j+=40+(i*2);
+						char tempname[16];
+	#if defined (__SAM3X8E__)
+						strcpy(tempname, LABEL_AI[a]);
+	#else
+						int ptr = pgm_read_word(&(LABEL_AI[a]));
+						strcpy_P(tempname, (char *)ptr);
+	#endif // (__SAM3X8E__)
+						PB[a].SetPosition(10,j);
+						PB[a].SetColor(aicolor[a]);
+						PB[a].SetLabel(tempname);
+						PB[a].SetCurrent(AI.GetChannel(a));
+						PB[a].Show();
+					}
 				}
-
-				// Progress Bars
-				j=35;
-				int aicolor[] = {COLOR_ORANGE,COLOR_LIGHTBLUE,COLOR_ROYALBLUE};
-				for (int a=0;a<3;a++)
+	#endif //  AI_LED
+	#ifdef IOEXPANSION
+				else if(DisplayedScreen==IO_SCREEN)
 				{
-					j+=40+(i*2);
-					char tempname[16];
-#if defined (__SAM3X8E__)
-					strcpy(tempname, LABEL_AI[a]);
-#else
-					int ptr = pgm_read_word(&(LABEL_AI[a]));
-					strcpy_P(tempname, (char *)ptr);
-#endif // (__SAM3X8E__)
-					PB[a].SetPosition(10,j);
-					PB[a].SetColor(aicolor[a]);
-					PB[a].SetLabel(tempname);
-					PB[a].SetCurrent(AI.GetChannel(a));
-					PB[a].Show();
-				}
-			}
-#endif //  AI_LED
-#ifdef IOEXPANSION
-			else if(DisplayedScreen==IO_SCREEN)
-			{
-				if (NeedsRedraw)
-				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(IOLABELBAR,a*4),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
-					Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(IOLABELBAR,a*4),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+						Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
+						j=50+(i/2);
+						for (int a=0;a<6;a++)
+						{
+							j+=22+i;
+							Font.DrawCenterText((twidth/2)-10,j+5,CustomLabels[IOChannel0Label+a]);
+						}								
+					}
 					j=50+(i/2);
 					for (int a=0;a<6;a++)
 					{
 						j+=22+i;
-						Font.DrawCenterText((twidth/2)-10,j+5,CustomLabels[IOChannel0Label+a]);
-					}								
-				}
-				j=50+(i/2);
-				for (int a=0;a<6;a++)
-				{
-					j+=22+i;
-					int iocolor;
-					if (IO.GetChannel(a))
-						TouchLCD.DrawBMP(twidth/6,j+3,GREENBUTTON);
-					else
-						TouchLCD.DrawBMP(twidth/6,j+3,REDBUTTON);
-				}
+						int iocolor;
+						if (IO.GetChannel(a))
+							TouchLCD.DrawBMP(twidth/6,j+3,GREENBUTTON);
+						else
+							TouchLCD.DrawBMP(twidth/6,j+3,REDBUTTON);
+					}
 
-			}
-#endif //  IOEXPANSION
-#ifdef DCPUMPCONTROL
-			else if(DisplayedScreen==DCPUMP_SCREEN)
-			{
-				if (NeedsRedraw)
-				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(DCLABELBAR,a*4),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
-					j=60;
-					Font.SetColor(COLOR_GOLD,BKCOLOR,false);
-					j+=40+(i*2);
-					Font.DrawCenterTextP((twidth/2),j,LABEL_MODE);
-					j+=45+(i*2);
-					Font.DrawCenterTextP((twidth/2),j,LABEL_SPEED);
-					j+=45+(i*2);
-					Font.DrawCenterTextP((twidth/2),j,LABEL_DURATION);
-					
-					j=27;
-					j+=40+(i*2);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					char temp[25];
-					char rf_mode[35];
-#if defined (__SAM3X8E__)
-					strcpy(temp,rf_items[DCPump.Mode]);
-#else
-					strcpy_P(temp,(char * )pgm_read_word(&(rf_items[DCPump.Mode])));
-#endif // (__SAM3X8E__)
-					strcpy(rf_mode,"   ");
-					strcat(rf_mode,temp);
-					strcat(rf_mode,"   ");
-					LargeFont.DrawCenterText((twidth/2),j,rf_mode);
-					j+=45+(i*2);
-					LargeFont.DrawCenterNumber((twidth/2),j,DCPump.Speed,0);
-					j+=45+(i*2);
-					LargeFont.DrawCenterNumber((twidth/2),j,DCPump.Duration,0);
 				}
-			}
-#endif // DCPUMPCONTROL					
-#ifdef CUSTOM_VARIABLES
-			else if(DisplayedScreen==CVAR_SCREEN)
-			{
-				if (NeedsRedraw)
+	#endif //  IOEXPANSION
+	#ifdef DCPUMPCONTROL
+				else if(DisplayedScreen==DCPUMP_SCREEN)
 				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
-					//Gray Bar
-					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(CVARLABELBAR,a*4),0,40+a,twidth,40+a);
-					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
-#if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
-#else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
-#endif // (__SAM3X8E__)
-					Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(DCLABELBAR,a*4),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+						j=60;
+						Font.SetColor(COLOR_GOLD,BKCOLOR,false);
+						j+=40+(i*2);
+						Font.DrawCenterTextP((twidth/2),j,LABEL_MODE);
+						j+=45+(i*2);
+						Font.DrawCenterTextP((twidth/2),j,LABEL_SPEED);
+						j+=45+(i*2);
+						Font.DrawCenterTextP((twidth/2),j,LABEL_DURATION);
+						
+						j=27;
+						j+=40+(i*2);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
+						char temp[25];
+						char rf_mode[35];
+	#if defined (__SAM3X8E__)
+						strcpy(temp,rf_items[DCPump.Mode]);
+	#else
+						strcpy_P(temp,(char * )pgm_read_word(&(rf_items[DCPump.Mode])));
+	#endif // (__SAM3X8E__)
+						strcpy(rf_mode,"   ");
+						strcat(rf_mode,temp);
+						strcat(rf_mode,"   ");
+						LargeFont.DrawCenterText((twidth/2),j,rf_mode);
+						j+=45+(i*2);
+						LargeFont.DrawCenterNumber((twidth/2),j,DCPump.Speed,0);
+						j+=45+(i*2);
+						LargeFont.DrawCenterNumber((twidth/2),j,DCPump.Duration,0);
+					}
+				}
+	#endif // DCPUMPCONTROL					
+	#ifdef CUSTOM_VARIABLES
+				else if(DisplayedScreen==CVAR_SCREEN)
+				{
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+						//Gray Bar
+						for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(CVARLABELBAR,a*4),0,40+a,twidth,40+a);
+						LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+	#if defined (__SAM3X8E__)
+						LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+	#else
+						LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+						LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+						LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+	#endif // (__SAM3X8E__)
+						Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
+						j=53+(i/2);
+						for (int a=0;a<8;a++)
+						{
+							j+=16+(i/2);
+							Font.DrawText((twidth/8),j+5,CustomLabels[CustomVar0Label+a]);
+						}								
+					}
 					j=53+(i/2);
 					for (int a=0;a<8;a++)
 					{
 						j+=16+(i/2);
-						Font.DrawText((twidth/8),j+5,CustomLabels[CustomVar0Label+a]);
-					}								
-				}
-				j=53+(i/2);
-				for (int a=0;a<8;a++)
-				{
-					j+=16+(i/2);
-					Font.DrawText((twidth*7/10),j+5,CustomVar[a]);
-				}
+						Font.DrawText((twidth*7/10),j+5,CustomVar[a]);
+					}
 
-			}
-#endif //  CUSTOM_VARIABLES
-			else if(DisplayedScreen==DIMMING_OVERRIDE)
-			{
-				if (NeedsRedraw)
-				{
-					NeedsRedraw=false;
-					TouchLCD.Clear(COLOR_WHITE,0,28,twidth,theight);
-					Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight*7/12,PWM_OVERRIDE_LABEL1);
-					Font.DrawCenterTextP(twidth/2,theight*2/3,PWM_OVERRIDE_LABEL2);
-					OkButton.SetPosition(twidth/4-40,theight*17/20);
-					OkButton.Show();
-					CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
-					CancelButton.Show();
-					Slider.SetPosition(0,theight/5);
-					Slider.Show();
-					//									Slider.Refresh();
 				}
+	#endif //  CUSTOM_VARIABLES
+				else if(DisplayedScreen==DIMMING_OVERRIDE)
+				{
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						TouchLCD.Clear(COLOR_WHITE,0,28,twidth,theight);
+						Font.SetColor(COLOR_BLACK,COLOR_WHITE,false);
+						Font.DrawCenterTextP(twidth/2,theight*7/12,PWM_OVERRIDE_LABEL1);
+						Font.DrawCenterTextP(twidth/2,theight*2/3,PWM_OVERRIDE_LABEL2);
+						OkButton.SetPosition(twidth/4-40,theight*17/20);
+						OkButton.Show();
+						CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
+						CancelButton.Show();
+						Slider.SetPosition(0,theight/5);
+						Slider.Show();
+					}
+				}				
+			}
+			else if (DisplayedMenu==TOUCH_MENU)
+			{
+				if(DisplayedScreen==MAIN_MENU_SCREEN)
+				{
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						int ch;
+						int border;
+						if (orientation%2==0)
+						{
+							ch=35;
+							border=0;
+						}
+						else
+						{
+							ch=48;
+							border=2;
+						}
+						TouchLCD.Clear(COLOR_WHITE,0,0,twidth,theight-28); // Clear screen
+						Font.SetColor(RGB565(0xBD, 0x13, 0x00),COLOR_WHITE,true);
+						for (int a=0;a<6;a++)
+						{
+							TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,6+(ch*a),(twidth/2)-6,ch*(a+1),4,true);
+							TouchLCD.DrawRoundRect(COLOR_SILVER,5+border,6+border+(ch*a),(twidth/2)-6-border,(ch*(a+1))-border,4,false);
+							if (a==4)
+							{
+								if (bitRead(StatusFlags,LightsOnFlag))
+									Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),MENU_BUTTON_CANCEL);
+								else
+		#if defined (__SAM3X8E__)
+									Font.DrawCenterText(twidth/4,8+(border*3)+(ch*a),menu_button_items1[a*2]);
+		#else
+									Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[a*2])));
+		#endif // (__SAM3X8E__)
+							}
+							else
+							{
+		#if defined (__SAM3X8E__)
+								Font.DrawCenterText(twidth/4,8+(border*3)+(ch*a),menu_button_items1[a*2]);
+		#else
+								Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[a*2])));
+		#endif // (__SAM3X8E__)
+							}
+							TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,6+(ch*a),twidth-6,ch*(a+1),4,true);
+							TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+5+border,6+border+(ch*a),twidth-6-border,(ch*(a+1))-border,4,false);
+		#if defined (__SAM3X8E__)
+							Font.DrawCenterText(twidth/4,22+(border*4)+(ch*a),menu_button_items1[(a*2)+1]);
+							Font.DrawCenterText(twidth/4*3,8+(border*3)+(ch*a),menu_button_items2[a*2]);
+							Font.DrawCenterText(twidth/4*3,22+(border*4)+(ch*a),menu_button_items2[(a*2)+1]);
+		#else
+							Font.DrawCenterTextP(twidth/4,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items1[(a*2)+1])));
+							Font.DrawCenterTextP(twidth/4*3,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items2[a*2])));
+							Font.DrawCenterTextP(twidth/4*3,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items2[(a*2)+1])));
+		#endif // (__SAM3X8E__)
+						}
+					}
+				}
+				else if(DisplayedScreen==SETUP_MENU_SCREEN)
+				{
+					if (NeedsRedraw)
+					{
+						NeedsRedraw=false;
+						int ch;
+						int border;
+						if (orientation%2==0)
+						{
+							ch=35;
+							border=0;
+						}
+						else
+						{
+							ch=48;
+							border=2;
+						}
+						TouchLCD.Clear(COLOR_WHITE,0,0,twidth,theight-28); // Clear screen
+						Font.SetColor(RGB565(0xBD, 0x13, 0x00),COLOR_WHITE,true);
+						for (int a=0;a<6;a++)
+						{
+							TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),5,6+(ch*a),(twidth/2)-6,ch*(a+1),4,true);
+							TouchLCD.DrawRoundRect(COLOR_SILVER,5+border,6+border+(ch*a),(twidth/2)-6-border,(ch*(a+1))-border,4,false);
+							Font.DrawCenterTextP(twidth/4,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items3[a*2])));
+							Font.DrawCenterTextP(twidth/4,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items3[(a*2)+1])));
+
+							TouchLCD.DrawRoundRect(RGB565(0xD2, 0xE0, 0xAB),(twidth/2)+5,6+(ch*a),twidth-6,ch*(a+1),4,true);
+							TouchLCD.DrawRoundRect(COLOR_SILVER,(twidth/2)+5+border,6+border+(ch*a),twidth-6-border,(ch*(a+1))-border,4,false);
+							Font.DrawCenterTextP(twidth/4*3,8+(border*3)+(ch*a),(char * )pgm_read_word(&(menu_button_items4[a*2])));
+							Font.DrawCenterTextP(twidth/4*3,22+(border*4)+(ch*a),(char * )pgm_read_word(&(menu_button_items4[(a*2)+1])));
+						}
+					}
+				}				
 			}
 		}
 	}
@@ -2799,6 +2860,7 @@ void ReefAngelClass::ProcessTouch()
 	byte TempRelay,TempRelayOn,TempRelayOff;
 	byte numexp=0;
 
+	WDTReset();
 	if ((EM&(1<<3))!=0) numexp++;
 	if ((EM&(1<<4))!=0) numexp++;
 	if ((EM&(1<<6))!=0) numexp++;
@@ -2816,310 +2878,339 @@ void ReefAngelClass::ProcessTouch()
 //						TouchLCD.Init();
 //					}
 //				}
-	if (TouchEnabled && Sleeping)
+	if (Sleeping) Sleeping=false;
+	if (TouchEnabled)
 	{
 		TouchEnabled=false;
-		Sleeping=false;
-	}
-	else
-	{
-		Serial.println(TouchEnabled);
 		int twidth=TouchLCD.GetWidth();
 		int theight=TouchLCD.GetHeight();
 
-		if (TouchEnabled && DisplayedScreen<MAX_SCREENS)
+		if (DisplayedMenu==TOUCH_MENU)
 		{
-			int j;
-			TouchEnabled=false;
-			if (TS.X<50 && TS.Y>theight-30 && TS.X>0)
-				ChangeDisplayedScreen(-1);
-			if (TS.X>twidth-50 && TS.Y>theight-30)
-				ChangeDisplayedScreen(1);
-			if (TS.X<twidth-80 && TS.X>80 && TS.Y>theight-30)
-				ShowTouchMenu();
-			if(DisplayedScreen==DIMMING_ATO)
+			if(DisplayedScreen==MAIN_MENU_SCREEN)
 			{
-				if (Board==RAStar)
-					j=95+(i*3);
+				int ch;
+				int border;
+				if (orientation%2==0)
+				{
+					ch=35;
+					border=0;
+				}
 				else
-					j=95+(i*4);
-				if (TS.IsTouchedInside(0,j-5,twidth,j+25))
 				{
-					RecallScreen=DisplayedScreen;
-					DisplayedScreen=DIMMING_OVERRIDE;
-					NeedsRedraw=true;
-					Slider.SetColor(COLOR_ORANGE);
-#if defined(__SAM3X8E__)
-					Slider.SetCurrent(VariableControl.GetDaylightValue());
-#else
-					Slider.SetCurrent(PWM.GetDaylightValue());
-#endif
-					Slider.SetOverrideID(OVERRIDE_DAYLIGHT);
-					Slider.SetLabel(CustomLabels[DaylightLabel]);
+					ch=48;
+					border=2;
 				}
-				j+=30+i;
-				if (TS.IsTouchedInside(0,j-5,twidth,j+25))
+				for (int a=0;a<6;a++)
 				{
-					RecallScreen=DisplayedScreen;
-					NeedsRedraw=true;
-					DisplayedScreen=DIMMING_OVERRIDE;
-					Slider.SetColor(COLOR_ROYALBLUE);
-#if defined(__SAM3X8E__)
-					Slider.SetCurrent(VariableControl.GetActinicValue());
-#else
-					Slider.SetCurrent(PWM.GetActinicValue());
-#endif
-					Slider.SetOverrideID(OVERRIDE_ACTINIC);
-					Slider.SetLabel(CustomLabels[ActinicLabel]);
+					if (TS.IsTouchedInside(0,5+(ch*a),twidth/2,5+ch+(ch*a)))
+						MenuFunctionPtr=menu_button_functions1[a]; // Assing function pointers when buttons are touched
+					if (TS.IsTouchedInside(twidth/2,5+(ch*a),twidth,5+ch+(ch*a)))
+						MenuFunctionPtr=menu_button_functions2[a]; // Assing function pointers when buttons are touched
 				}
-				j+=30+i;
-				if (TS.IsTouchedInside(0,j-5,twidth,j+25))
+				if (MenuFunctionPtr!=&ReefAngelClass::Touch) // check to see if any menu choice was touched
 				{
-					RecallScreen=DisplayedScreen;
-					DisplayedScreen=DIMMING_OVERRIDE;
+					(this->*MenuFunctionPtr)(); // call function
 					NeedsRedraw=true;
-					Slider.SetColor(COLOR_ORANGE);
-#if defined(__SAM3X8E__)
-					Slider.SetCurrent(VariableControl.GetDaylight2Value());
-#else
-					Slider.SetCurrent(PWM.GetDaylight2Value());
-#endif
-					Slider.SetOverrideID(OVERRIDE_DAYLIGHT2);
-					Slider.SetLabel(CustomLabels[Daylight2Label]);
-				}
-				j+=30+i;
-				if (TS.IsTouchedInside(0,j-5,twidth,j+25))
-				{
-					RecallScreen=DisplayedScreen;
-					NeedsRedraw=true;
-					DisplayedScreen=DIMMING_OVERRIDE;
-					Slider.SetColor(COLOR_ROYALBLUE);
-#if defined(__SAM3X8E__)
-					Slider.SetCurrent(VariableControl.GetActinic2Value());
-#else
-					Slider.SetCurrent(PWM.GetActinic2Value());
-#endif
-					Slider.SetOverrideID(OVERRIDE_ACTINIC2);
-					Slider.SetLabel(CustomLabels[ActinicLabel]);
+					MenuFunctionPtr=&ReefAngelClass::Touch; // put pointer back to default
 				}
 			}
-			else if (DisplayedScreen>=RELAY_BOX && DisplayedScreen<=EXP_BOX_8)
+		}
+		if (DisplayedMenu==DEFAULT_MENU || DisplayedMenu==MAIN_MENU)
+		{
+			if (DisplayedScreen<MAX_SCREENS)
 			{
-				int k,l,x,x1,h;
-
-				if (DisplayedScreen==RELAY_BOX)
+				int j;
+				if (TS.X<50 && TS.Y>theight-30 && TS.X>0)
+					ChangeDisplayedScreen(-1);
+				if (TS.X>twidth-50 && TS.Y>theight-30)
+					ChangeDisplayedScreen(1);
+				if (TS.X<twidth-80 && TS.X>80 && TS.Y>theight-30)
 				{
-					TempRelay=Relay.RelayData;
-					TempRelayOn=Relay.RelayMaskOn;
-					TempRelayOff=Relay.RelayMaskOff;
+					ShowTouchMenu();
+					return;
 				}
-				else
+				
+				if(DisplayedScreen==DIMMING_ATO)
 				{
-#ifdef RelayExp
-					TempRelay=Relay.RelayDataE[DisplayedScreen-3];
-					TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-3];
-					TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-3];
-#endif // RelayExp
-				}
-				TempRelay&=TempRelayOff;
-				TempRelay|=TempRelayOn;
-
-				if (orientation%2==0) // Orientation is landscape
-				{
-					j=53;
-					l=34;
-					h=16;
-				}
-				else
-				{
-					j=43;
-					l=52;
-					h=24;
-				}
-				k=j;
-				x=0;
-				x1=45;
-				for (int a=1;a<9;a++)
-				{
-
-					if (a==5)
+					if (Board==RAStar)
+						j=95+(i*3);
+					else
+						j=95+(i*4);
+					if (TS.IsTouchedInside(0,j-5,twidth,j+25))
 					{
-						k=j;
-						x=twidth-45;
-						x1=twidth-118;
+						RecallScreen=DisplayedScreen;
+						DisplayedScreen=DIMMING_OVERRIDE;
+						NeedsRedraw=true;
+						Slider.SetColor(COLOR_ORANGE);
+	#if defined(__SAM3X8E__)
+						Slider.SetCurrent(VariableControl.GetDaylightValue());
+	#else
+						Slider.SetCurrent(PWM.GetDaylightValue());
+	#endif
+						Slider.SetOverrideID(OVERRIDE_DAYLIGHT);
+						Slider.SetLabel(CustomLabels[DaylightLabel]);
 					}
-					k+=l;
-					if (TS.IsTouchedInside(x,k-h,x+45,k+h))
+					j+=30+i;
+					if (TS.IsTouchedInside(0,j-5,twidth,j+25))
 					{
-						if (bitRead(TempRelayOn,a-1))
+						RecallScreen=DisplayedScreen;
+						NeedsRedraw=true;
+						DisplayedScreen=DIMMING_OVERRIDE;
+						Slider.SetColor(COLOR_ROYALBLUE);
+	#if defined(__SAM3X8E__)
+						Slider.SetCurrent(VariableControl.GetActinicValue());
+	#else
+						Slider.SetCurrent(PWM.GetActinicValue());
+	#endif
+						Slider.SetOverrideID(OVERRIDE_ACTINIC);
+						Slider.SetLabel(CustomLabels[ActinicLabel]);
+					}
+					j+=30+i;
+					if (TS.IsTouchedInside(0,j-5,twidth,j+25))
+					{
+						RecallScreen=DisplayedScreen;
+						DisplayedScreen=DIMMING_OVERRIDE;
+						NeedsRedraw=true;
+						Slider.SetColor(COLOR_ORANGE);
+	#if defined(__SAM3X8E__)
+						Slider.SetCurrent(VariableControl.GetDaylight2Value());
+	#else
+						Slider.SetCurrent(PWM.GetDaylight2Value());
+	#endif
+						Slider.SetOverrideID(OVERRIDE_DAYLIGHT2);
+						Slider.SetLabel(CustomLabels[Daylight2Label]);
+					}
+					j+=30+i;
+					if (TS.IsTouchedInside(0,j-5,twidth,j+25))
+					{
+						RecallScreen=DisplayedScreen;
+						NeedsRedraw=true;
+						DisplayedScreen=DIMMING_OVERRIDE;
+						Slider.SetColor(COLOR_ROYALBLUE);
+	#if defined(__SAM3X8E__)
+						Slider.SetCurrent(VariableControl.GetActinic2Value());
+	#else
+						Slider.SetCurrent(PWM.GetActinic2Value());
+	#endif
+						Slider.SetOverrideID(OVERRIDE_ACTINIC2);
+						Slider.SetLabel(CustomLabels[ActinicLabel]);
+					}
+				}
+				else if (DisplayedScreen>=RELAY_BOX && DisplayedScreen<=EXP_BOX_8)
+				{
+					int k,l,x,x1,h;
+
+					if (DisplayedScreen==RELAY_BOX)
+					{
+						TempRelay=Relay.RelayData;
+						TempRelayOn=Relay.RelayMaskOn;
+						TempRelayOff=Relay.RelayMaskOff;
+					}
+					else
+					{
+	#ifdef RelayExp
+						TempRelay=Relay.RelayDataE[DisplayedScreen-3];
+						TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-3];
+						TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-3];
+	#endif // RelayExp
+					}
+					TempRelay&=TempRelayOff;
+					TempRelay|=TempRelayOn;
+
+					if (orientation%2==0) // Orientation is landscape
+					{
+						j=53;
+						l=34;
+						h=16;
+					}
+					else
+					{
+						j=43;
+						l=52;
+						h=24;
+					}
+					k=j;
+					x=0;
+					x1=45;
+					for (int a=1;a<9;a++)
+					{
+
+						if (a==5)
 						{
-#ifdef RA_TOUCHDISPLAY
-							SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,0);
-#endif // RA_TOUCHDISPLAY
-							Relay.Override(a+(DisplayedScreen-2)*10,0);
+							k=j;
+							x=twidth-45;
+							x1=twidth-118;
 						}
-						else if (!bitRead(TempRelayOff,a-1))
+						k+=l;
+						if (TS.IsTouchedInside(x,k-h,x+45,k+h))
 						{
-#ifdef RA_TOUCHDISPLAY
-							SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,1);
-#endif // RA_TOUCHDISPLAY
-							Relay.Override(a+(DisplayedScreen-2)*10,1);
-						}
-						else if (!bitRead(TempRelayOn,a-1) && bitRead(TempRelayOff,a-1))
-						{
-#ifdef RA_TOUCHDISPLAY
-							SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,!bitRead(TempRelay,a-1));
-#endif // RA_TOUCHDISPLAY
-							if (bitRead(TempRelay,a-1))
+							if (bitRead(TempRelayOn,a-1))
 							{
+	#ifdef RA_TOUCHDISPLAY
+								SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,0);
+	#endif // RA_TOUCHDISPLAY
 								Relay.Override(a+(DisplayedScreen-2)*10,0);
 							}
-							else
+							else if (!bitRead(TempRelayOff,a-1))
 							{
+	#ifdef RA_TOUCHDISPLAY
+								SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,1);
+	#endif // RA_TOUCHDISPLAY
 								Relay.Override(a+(DisplayedScreen-2)*10,1);
 							}
+							else if (!bitRead(TempRelayOn,a-1) && bitRead(TempRelayOff,a-1))
+							{
+	#ifdef RA_TOUCHDISPLAY
+								SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,!bitRead(TempRelay,a-1));
+	#endif // RA_TOUCHDISPLAY
+								if (bitRead(TempRelay,a-1))
+								{
+									Relay.Override(a+(DisplayedScreen-2)*10,0);
+								}
+								else
+								{
+									Relay.Override(a+(DisplayedScreen-2)*10,1);
+								}
+							}
+						}
+						if (TS.IsTouchedInside(x1,k-h,x1+74,k+h))
+						{
+	#ifdef RA_TOUCHDISPLAY
+							SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,2);
+	#endif // RA_TOUCHDISPLAY
+							Relay.Override(a+(DisplayedScreen-2)*10,2);
 						}
 					}
-					if (TS.IsTouchedInside(x1,k-h,x1+74,k+h))
+				}
+	#ifdef PWMEXPANSION
+				else if (DisplayedScreen==PWM_SCREEN)
+				{
+					int j,h,k;
+					if (orientation%2==0)
 					{
-#ifdef RA_TOUCHDISPLAY
-						SendMaster(MESSAGE_RELAY_OVERRIDE,a+(DisplayedScreen-2)*10,2);
-#endif // RA_TOUCHDISPLAY
-						Relay.Override(a+(DisplayedScreen-2)*10,2);
+						//landscape
+						j=60;
+						h=10;
+						k=22;
+					}
+					else
+					{
+						//portrait
+						j=65;
+						h=15;
+						k=34;
+					}
+					for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+					{
+						j+=k;
+						if (TS.IsTouchedInside(0,j-h,twidth,j+h))
+						{
+							RecallScreen=DisplayedScreen;
+							NeedsRedraw=true;
+							DisplayedScreen=DIMMING_OVERRIDE;
+							Slider.SetColor(COLOR_GREEN);
+	#if defined(__SAM3X8E__)
+							Slider.SetCurrent(VariableControl.GetChannelValue(a));
+	#else
+							Slider.SetCurrent(PWM.GetChannelValue(a));
+	#endif
+							Slider.SetOverrideID(OVERRIDE_CHANNEL0+a);
+							Slider.SetLabel(CustomLabels[DimmingChannel0Label+a]);
+						}
 					}
 				}
-			}
-#ifdef PWMEXPANSION
-			else if (DisplayedScreen==PWM_SCREEN)
-			{
-				int j,h,k;
-				if (orientation%2==0)
+	#endif // PWMEXPANSION
+	#ifdef AI_LED
+				else if (DisplayedScreen==AI_SCREEN)
 				{
-					//landscape
-					j=60;
-					h=10;
-					k=22;
-				}
-				else
-				{
-					//portrait
-					j=65;
-					h=15;
-					k=34;
-				}
-				for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-				{
-					j+=k;
-					if (TS.IsTouchedInside(0,j-h,twidth,j+h))
+					int j,h,k;
+					if (orientation%2==0)
 					{
-						RecallScreen=DisplayedScreen;
-						NeedsRedraw=true;
-						DisplayedScreen=DIMMING_OVERRIDE;
-						Slider.SetColor(COLOR_GREEN);
-#if defined(__SAM3X8E__)
-						Slider.SetCurrent(VariableControl.GetChannelValue(a));
-#else
-						Slider.SetCurrent(PWM.GetChannelValue(a));
-#endif
-						Slider.SetOverrideID(OVERRIDE_CHANNEL0+a);
-						Slider.SetLabel(CustomLabels[DimmingChannel0Label+a]);
+						//landscape
+						j=45;
+						h=17;
+						k=40;
+					}
+					else
+					{
+						//portrait
+						j=45;
+						h=20;
+						k=64;
+					}
+					int aicolor[] = {COLOR_ORANGE,COLOR_LIGHTBLUE,COLOR_ROYALBLUE};
+					for (int a=0;a<AI_CHANNELS;a++)
+					{
+						j+=k;
+						if (TS.IsTouchedInside(0,j-h,twidth,j+h))
+						{
+							char tempname[16];
+							RecallScreen=DisplayedScreen;
+							NeedsRedraw=true;
+							DisplayedScreen=DIMMING_OVERRIDE;
+							Slider.SetColor(aicolor[a]);
+							Slider.SetCurrent(AI.GetChannel(a));
+							Slider.SetOverrideID(OVERRIDE_AI_WHITE+a);
+	#if defined (__SAM3X8E__)
+							strcpy(tempname, LABEL_AI[a]);
+	#else
+							int ptr = pgm_read_word(&(LABEL_AI[a]));
+							strcpy_P(tempname, (char *)ptr);
+	#endif // (__SAM3X8E__)
+							Slider.SetLabel(tempname);
+						}
 					}
 				}
-			}
-#endif // PWMEXPANSION
-#ifdef AI_LED
-			else if (DisplayedScreen==AI_SCREEN)
-			{
-				int j,h,k;
-				if (orientation%2==0)
+	#endif // AI_LED
+	#ifdef RFEXPANSION
+				else if (DisplayedScreen==RF_SCREEN1)
 				{
-					//landscape
-					j=45;
-					h=17;
-					k=40;
-				}
-				else
-				{
-					//portrait
-					j=45;
-					h=20;
-					k=64;
-				}
-				int aicolor[] = {COLOR_ORANGE,COLOR_LIGHTBLUE,COLOR_ROYALBLUE};
-				for (int a=0;a<AI_CHANNELS;a++)
-				{
-					j+=k;
-					if (TS.IsTouchedInside(0,j-h,twidth,j+h))
+					int j,h,k;
+					if (orientation%2==0)
 					{
-						char tempname[16];
-						RecallScreen=DisplayedScreen;
-						NeedsRedraw=true;
-						DisplayedScreen=DIMMING_OVERRIDE;
-						Slider.SetColor(aicolor[a]);
-						Slider.SetCurrent(AI.GetChannel(a));
-						Slider.SetOverrideID(OVERRIDE_AI_WHITE+a);
-#if defined (__SAM3X8E__)
-						strcpy(tempname, LABEL_AI[a]);
-#else
-						int ptr = pgm_read_word(&(LABEL_AI[a]));
-						strcpy_P(tempname, (char *)ptr);
-#endif // (__SAM3X8E__)
-						Slider.SetLabel(tempname);
+						//landscape
+						j=60;
+						h=10;
+						k=22;
+					}
+					else
+					{
+						//portrait
+						j=65;
+						h=15;
+						k=34;
+					}
+					int rfcolor[] = {COLOR_ORANGE,COLOR_ROYALBLUE,COLOR_RED,COLOR_GREEN,COLOR_LIGHTBLUE,COLOR_MAGENTA};
+					for (int a=0;a<RF_CHANNELS;a++)
+					{
+						j+=k;
+						if (TS.IsTouchedInside(0,j-h,twidth,j+h))
+						{
+							char tempname[16];
+							RecallScreen=DisplayedScreen;
+							NeedsRedraw=true;
+							DisplayedScreen=DIMMING_OVERRIDE;
+							Slider.SetColor(rfcolor[a]);
+							Slider.SetCurrent(RF.GetChannel(a));
+							Slider.SetOverrideID(OVERRIDE_RF_WHITE+a);
+	#if defined (__SAM3X8E__)
+							strcpy(tempname, LABEL_RF[a]);
+	#else
+							int ptr = pgm_read_word(&(LABEL_RF[a]));
+							strcpy_P(tempname, (char *)ptr);
+	#endif // (__SAM3X8E__)
+							Slider.SetLabel(tempname);
+						}
 					}
 				}
+	#endif // RFEXPANSION
 			}
-#endif // AI_LED
-#ifdef RFEXPANSION
-			else if (DisplayedScreen==RF_SCREEN1)
+			else
 			{
-				int j,h,k;
-				if (orientation%2==0)
+				// if we are displaying overrides, refresh sliders
+				if(DisplayedScreen==DIMMING_OVERRIDE)
 				{
-					//landscape
-					j=60;
-					h=10;
-					k=22;
-				}
-				else
-				{
-					//portrait
-					j=65;
-					h=15;
-					k=34;
-				}
-				int rfcolor[] = {COLOR_ORANGE,COLOR_ROYALBLUE,COLOR_RED,COLOR_GREEN,COLOR_LIGHTBLUE,COLOR_MAGENTA};
-				for (int a=0;a<RF_CHANNELS;a++)
-				{
-					j+=k;
-					if (TS.IsTouchedInside(0,j-h,twidth,j+h))
-					{
-						char tempname[16];
-						RecallScreen=DisplayedScreen;
-						NeedsRedraw=true;
-						DisplayedScreen=DIMMING_OVERRIDE;
-						Slider.SetColor(rfcolor[a]);
-						Slider.SetCurrent(RF.GetChannel(a));
-						Slider.SetOverrideID(OVERRIDE_RF_WHITE+a);
-#if defined (__SAM3X8E__)
-						strcpy(tempname, LABEL_RF[a]);
-#else
-						int ptr = pgm_read_word(&(LABEL_RF[a]));
-						strcpy_P(tempname, (char *)ptr);
-#endif // (__SAM3X8E__)
-						Slider.SetLabel(tempname);
-					}
-				}
-			}
-#endif // RFEXPANSION
-		}
-		else
-		{
-			// if we are displaying overrides, refresh sliders
-			if(DisplayedScreen==DIMMING_OVERRIDE)
-			{
-				if (TouchEnabled)
-				{
-					TouchEnabled=false;
 					bool bDone=false;
 					TS.GetTouch();
 					byte oid=Slider.GetOverrideID();
@@ -3168,13 +3259,12 @@ void ReefAngelClass::ProcessTouch()
 					}
 					if (bDone)
 					{
-						TouchEnabled=false;
 						DisplayedScreen=RecallScreen;
 						NeedsRedraw=true;
 					}
+					Slider.Refresh();
 				}
-				Slider.Refresh();
-			}
+			}			
 		}
 	}
 }

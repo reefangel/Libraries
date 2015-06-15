@@ -36,6 +36,7 @@ time_t newnow;
 int CalVal1, CalVal2;
 byte CalStep;
 unsigned long lastRedraw; 
+unsigned long lastDisplayChange; 
 
 void SetOrientation(byte o);
 void CalibrateTouchScreen();
