@@ -234,13 +234,13 @@ void ReefAngelClass::SetupTouchDateTime()
 	{
 		Font.SetColor(COLOR_SILVER, COLOR_WHITE,false);
 		y=(theight/4)-35;
-		Font.DrawCenterText(twidth/6,y,"Month");
-		Font.DrawCenterText(twidth/2,y,"Day");
-		Font.DrawCenterText(twidth*5/6,y,"Year");
+		Font.DrawCenterTextP(twidth/6,y,LABEL_MONTH);
+		Font.DrawCenterTextP(twidth/2,y,LABEL_DAY);
+		Font.DrawCenterTextP(twidth*5/6,y,LABEL_YEAR);
 		y=(theight*3/5)-35;
-		Font.DrawCenterText(twidth/6,y,"Hour");
-		Font.DrawCenterText(twidth/2,y,"Minute");
-		Font.DrawCenterText(twidth*5/6,y,"AM/PM");
+		Font.DrawCenterTextP(twidth/6,y,LABEL_HOUR);
+		Font.DrawCenterTextP(twidth/2,y,LABEL_MINUTE);
+		Font.DrawCenterTextP(twidth*5/6,y,LABEL_AMPM);
 	}
 	OkButton.SetPosition(twidth/4-40,theight*17/20);
 	OkButton.Show();
@@ -468,6 +468,16 @@ void ReefAngelClass::ShowTouchMenu()
 void ReefAngelClass::ShowTouchInterface()
 {
 	Refresh();
+	// Needed to update Diming, ATO status, IO
+	LowATO.IsActive();
+	HighATO.IsActive();
+	AlarmInput.IsActive();
+	PWM.GetDaylightValue();
+	PWM.GetActinicValue();
+	PWM.GetDaylight2Value();
+	PWM.GetActinic2Value();
+	IO.GetChannel();
+	
 	int twidth=TouchLCD.GetWidth();
 	int theight=TouchLCD.GetHeight();
 	if (LastOrientation != orientation)
@@ -1671,7 +1681,7 @@ void ReefAngelClass::ReDrawScreen()
 			TouchLCD.DrawBMP(twidth/2+50,theight-25,DIVIDER);
 			TouchLCD.DrawBMP(twidth/2-3,theight-25,ARROWMENU);
 			Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
-			Font.DrawCenterText(twidth/2,theight-15,"Menu");
+			Font.DrawCenterTextP(twidth/2,theight-15,LABEL_MENU);
 		}
 		if (DisplayedMenu==DEFAULT_MENU || DisplayedMenu==MAIN_MENU)
 		{
@@ -1722,12 +1732,11 @@ void ReefAngelClass::ReDrawScreen()
 						j=65+i;
 						Font.SetColor(COLOR_GOLD,BKCOLOR,true);								
 						Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
-						Serial.println(CustomLabels[Temp1Label]);
 						x+=twidth*5/16;
 						Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
 						x+=twidth*5/16;
 						Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
-
+						
 						//pH
 						x=twidth*3/16;
 						j+=45+i;
@@ -1799,11 +1808,11 @@ void ReefAngelClass::ReDrawScreen()
 						if (numexp==0) i=7;
 						j=64+i;
 						Font.SetColor(COLOR_GOLD,BKCOLOR,true);
-						Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
+						Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
 						x+=twidth*5/21;
 						Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
 						x+=twidth*5/21;
-						Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
+						Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
 						x+=twidth*5/21;
 						Font.DrawCenterText(x,j,CustomLabels[PHLabel]);
 						x+=twidth*5/21;
@@ -3167,7 +3176,7 @@ void ReefAngelClass::CheckTouch()
 #ifdef VersionMenu
 void ReefAngelClass::DisplayVersion()
 {
-	LargeFont.DrawText(WARNING_TEXT,BKCOLOR,20,20,"Reef Angel");
+	LargeFont.DrawTextP(WARNING_TEXT,BKCOLOR,20,20,LABEL_REEFANGEL);
 	LargeFont.DrawText(WARNING_TEXT,BKCOLOR,20,20,"v"ReefAngel_Version);
 }
 #endif  // VersionMenu
@@ -3286,7 +3295,7 @@ void ProgressBarClass::Show()
 		ReefAngel.Font.SetColor(textcolor,bkcolor,false);
 		ReefAngel.Font.DrawText(x1+5,y1+5,str);
 		ReefAngel.Font.DrawText(x1+85,y1+5,current);
-		ReefAngel.Font.DrawText("%   ");
+		ReefAngel.Font.DrawTextP(LABEL_PERCENTAGE);
 		for (int a=0;a<(ReefAngel.TouchLCD.GetWidth()-139)*current/100;a++) ReefAngel.TouchLCD.DrawLine(alphaBlend(color,COLOR_WHITE,(a*100)/(ReefAngel.TouchLCD.GetWidth()-139)),130+a,y1,130+a,y1+20);
 		ReefAngel.TouchLCD.Clear(BKCOLOR,((ReefAngel.TouchLCD.GetWidth()-139)*current/100)+130,y1,ReefAngel.TouchLCD.GetWidth(),y1+20);
 	}

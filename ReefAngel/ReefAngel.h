@@ -338,6 +338,7 @@ public:
 	void LeakCheck();
 	void LeakClear();
 	boolean isLeak();
+	byte LeakValue;
 #endif  // LEAKDETECTOREXPANSION
 
 	boolean isATOTimeOut();

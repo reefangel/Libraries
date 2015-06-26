@@ -83,10 +83,11 @@ void receiveEventMaster(int howMany);
 #define RelayExp
 #define PHEXPANSION
 #define WATERLEVELEXPANSION
+#define MULTIWATERLEVELEXPANSION
 #define AI_LED
 #define HUMIDITYEXPANSION
+#define PAREXPANSION
 #define DCPUMPCONTROL
-#define LEAKDETECTOREXPANSION
 #define CUSTOM_VARIABLES
 #endif //  RA_STAR
 
@@ -1049,6 +1050,9 @@ typedef struct Compensation
 
 // Custom Labels
 
+const prog_char CustomLabelPort1Label[] PROGMEM = "Test";
+static PROGMEM const char *CustomLabelsArray[] = {CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label};
+
 #define Port1Label				0
 #define Port2Label				1
 #define Port3Label				2
@@ -1289,7 +1293,18 @@ const prog_char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
 const prog_char WL_CALI6[] PROGMEM = "%";
 const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
 
+// Date/Time
+const prog_char LABEL_MONTH[] PROGMEM = "Month";
+const prog_char LABEL_DAY[] PROGMEM = "Day";
+const prog_char LABEL_YEAR[] PROGMEM = "Year";
+const prog_char LABEL_HOUR[] PROGMEM = "Hour";
+const prog_char LABEL_MINUTE[] PROGMEM = "Minute";
+const prog_char LABEL_AMPM[] PROGMEM = "AM/PM";
+
 // Labels
+const prog_char LABEL_MENU[] PROGMEM = "Menu";
+const prog_char LABEL_REEFANGEL[] PROGMEM = "Reef Angel";
+const prog_char LABEL_PERCENTAGE[] PROGMEM = "%   ";
 const prog_char LABEL_AI_WHITE[] PROGMEM = "White";
 const prog_char LABEL_AI_BLUE[] PROGMEM = "Blue";
 const prog_char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
@@ -1534,6 +1549,11 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 byte ElseMode(byte midPoint, byte offset, boolean waveSync);
 
 const char* ip_to_str(const uint8_t* ipAddr);
+
+static void callback(char* topic, byte* payload, unsigned int length) {
+  // handle message arrived
+}
+
 
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);

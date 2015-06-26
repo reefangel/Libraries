@@ -54,17 +54,18 @@ private:
 class RA_ATOHighClass : public RA_ATOClass
 {
 public:
+    byte Status;
 #ifdef ATO_HIGH_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return !activestatus; }
 #else // RA_TOUCHDISPLAY
-    inline bool IsActive() { return digitalRead(highATOPin); }
+    inline bool IsActive() { Status=digitalRead(highATOPin); return digitalRead(highATOPin); }
 #endif // RA_TOUCHDISPLAY
 #else // ATO_HIGH_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
 #else // RA_TOUCHDISPLAY
-    inline bool IsActive() { return !digitalRead(highATOPin); }
+    inline bool IsActive() { Status=!digitalRead(highATOPin); return !digitalRead(highATOPin); }
 #endif // RA_TOUCHDISPLAY
 #endif // ATO_HIGH_REVERSE
 };
@@ -72,17 +73,18 @@ public:
 class RA_ATOLowClass : public RA_ATOClass
 {
 public:
+    byte Status;
 #ifdef ATO_LOW_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return !activestatus; }
 #else // RA_TOUCHDISPLAY
-    inline bool IsActive() { return digitalRead(lowATOPin); }
+    inline bool IsActive() { Status=digitalRead(lowATOPin); return digitalRead(lowATOPin); }
 #endif // RA_TOUCHDISPLAY
 #else // ATO_LOW_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
 #else // RA_TOUCHDISPLAY
-    inline bool IsActive() { return !digitalRead(lowATOPin); }
+    inline bool IsActive() { Status=!digitalRead(lowATOPin); return !digitalRead(lowATOPin); }
 #endif // RA_TOUCHDISPLAY
 #endif // ATO_LOW_REVERSE
 };
@@ -99,13 +101,14 @@ public:
 class RA_ATOALARMClass : public RA_ATOClass
 {
 public:
+    byte Status;
 #ifdef ATO_LOW_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return !activestatus; }
 #elif defined(__SAM3X8E__)
     inline bool IsActive() { return digitalRead(AlarmPin); }
 #else // RA_TOUCHDISPLAY
-    inline bool IsActive() { return (PINJ & (1<<PJ4)); }
+    inline bool IsActive() { Status=(PINJ & (1<<PJ4)); return (PINJ & (1<<PJ4)); }
 #endif // RA_TOUCHDISPLAY
 #else // ATO_LOW_REVERSE
 #ifdef RA_TOUCHDISPLAY
@@ -113,7 +116,7 @@ public:
 #elif defined(__SAM3X8E__)
     inline bool IsActive() { return !digitalRead(AlarmPin); }
 #else // RA_TOUCHDISPLAY
-    inline bool IsActive() { return !(PINJ & (1<<PJ4)); }
+    inline bool IsActive() { Status=!(PINJ & (1<<PJ4)); return !(PINJ & (1<<PJ4)); }
 #endif // RA_TOUCHDISPLAY
 #endif // ATO_LOW_REVERSE
 };

@@ -1865,21 +1865,21 @@ void RA_Wifi::SendPortal(char *username, char*key)
 {
   ReefAngel.Timer[PORTAL_TIMER].Start();
 #ifdef ETH_WIZ5100
-  Serial.println("Portal Call");
+  Serial.println(F("Portal Call"));
   if (!ReefAngel.Network.FoundIP) return;
   if (!ReefAngel.Network.PortalConnection)
   {
 	  ReefAngel.Network.PortalConnection=true;
 	  PortalWaiting=false;
 	  ReefAngel.Network.PortalConnect();
-	  Serial.println("Connecting...");
+	  Serial.println(F("Connecting..."));
   }
   else
   {
 	if (ReefAngel.Network.IsPortalConnected() && !PortalWaiting) // Check for connection established
 	{
 		PortalWaiting=true;
-		Serial.println("Connected");
+		Serial.println(F("Connected"));
 #endif
   PROGMEMprint(BannerGET);
   print(ReefAngel.Params.Temp[T1_PROBE], DEC);
@@ -1912,13 +1912,13 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerATOLOW);
   print(ReefAngel.LowATO.IsActive(), DEC);
   PROGMEMprint(BannerRelayData);
-  print("=");
+  print(F("="));
   print(ReefAngel.Relay.RelayData, DEC);
   PROGMEMprint(BannerRelayMaskOn);
-  print("=");
+  print(F("="));
   print(ReefAngel.Relay.RelayMaskOn, DEC);
   PROGMEMprint(BannerRelayMaskOff);
-  print("=");
+  print(F("="));
   print(ReefAngel.Relay.RelayMaskOff, DEC);
 
 #ifdef RelayExp
@@ -1926,15 +1926,15 @@ void RA_Wifi::SendPortal(char *username, char*key)
   {
     PROGMEMprint(BannerRelayData);
     print(x+1, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.Relay.RelayDataE[x], DEC);
     PROGMEMprint(BannerRelayMaskOn);
     print(x+1, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.Relay.RelayMaskOnE[x], DEC);
     PROGMEMprint(BannerRelayMaskOff);
     print(x+1, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.Relay.RelayMaskOffE[x], DEC);
   }  // for x
 #endif  // RelayExp
@@ -1972,8 +1972,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif
     PROGMEMprint(BannerPWME);
     print(EID, DEC);
-    print("O");
-    print("=");
+    print(F("O"));
+    print(F("="));
 #if defined(__SAM3X8E__)
     print(ReefAngel.VariableControl.GetChannelOverrideValue(EID), DEC);
 #else
@@ -1986,7 +1986,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
   {
     PROGMEMprint(BannerSCPWME);
     print(EID, DEC);
-    print("=");
+    print(F("="));
 #if defined(__SAM3X8E__)
     print(ReefAngel.VariableControl.Get16ChannelValue(EID), DEC);
 #else
@@ -1994,8 +1994,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif
     PROGMEMprint(BannerSCPWME);
     print(EID, DEC);
-    print("O");
-    print("=");
+    print(F("O"));
+    print(F("="));
 #if defined(__SAM3X8E__)
     print(ReefAngel.VariableControl.Get16ChannelOverrideValue(EID), DEC);
 #else
@@ -2045,13 +2045,13 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
   PROGMEMprint(BannerWL);
-  print("=");
+  print(F("="));
   print(ReefAngel.WaterLevel.GetLevel(), DEC);
   for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
   {
     PROGMEMprint(BannerWL);
     print(EID, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
   }
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -2121,9 +2121,9 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerConnectionClose);
   ReefAngel.Network.PortalTimeOut=millis();
 #endif // ETH_WIZ5100
-  println("\n\n");
+  println(F("\n\n"));
 #ifdef ETH_WIZ5100
-	Serial.println("Data Sent");
+	Serial.println(F("Data Sent"));
 	}
   }
 #endif // ETH_WIZ5100

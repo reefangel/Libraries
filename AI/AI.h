@@ -29,6 +29,8 @@ class AIClass
 {
 public:
 	AIClass();
+	byte AIChannels[AI_CHANNELS];
+	byte AIChannelsOverride[AI_CHANNELS];
 	int StreamDelay;
 	unsigned long AImillis;
 	void SetPort(byte portnum);
@@ -58,8 +60,6 @@ public:
 	
 private:
 	byte port;
-	byte AIChannels[AI_CHANNELS];
-	byte AIChannelsOverride[AI_CHANNELS];
 	void SWprint(byte data);
 };
 

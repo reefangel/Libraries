@@ -882,6 +882,7 @@ boolean ReefAngelClass::IsLeakDetected()
 	detect=iLeak>2000;
 #ifdef EMBEDDED_LEAK
 	detect|=analogRead(LeakPin)<400;
+	LeakValue=detect;
 #endif // EMBEDDED_LEAK
 #ifdef RA_TOUCHDISPLAY
 	detect=LeakStatus;

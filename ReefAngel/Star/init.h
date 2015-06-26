@@ -1,5 +1,5 @@
 // Star
-Serial.println("RA Init");
+Serial.println(F("RA Init"));
 TouchLCD.SetBacklight(0);
 Board=RAStar;
 wdt_enable(WDTO_2S);
@@ -30,9 +30,9 @@ PORTJ|=(1<<4); //PJ4 pull up
 DDRH|=(1<<2); // Port PH2 output (Exp Bus Power)
 cbi(PORTH,2); // Turn on exp bus power
 SPI.begin();
-Serial.println("SPI Init");
+Serial.println(F("SPI Init"));
 TouchLCD.Init();
-Serial.println("LCD Init");
+Serial.println(F("LCD Init"));
 SmallFont.SetFont(f8x8);
 Font.SetFont(f12x12);
 LargeFont.SetFont(ArialBold20);
@@ -41,9 +41,9 @@ setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 //EthernetDHCP.begin(NetMac, 1); // Start Ethernet with DHCP polling enabled
 //NetServer.begin();
 Network.Init();
-Serial.println("Network Init");
+Serial.println(F("Network Init"));
 TS.Init();
-Serial.println("Touch Init");
+Serial.println(F("Touch Init"));
 SetOrientation(orientation);
 Splash=true;
 TouchEnabled=true;
@@ -76,7 +76,7 @@ menu_button_functions2[5] = &ReefAngelClass::SetupTouchCalibrateWL;
 
 #if not defined NOSD
 SDFound=(PINJ & (1<<PJ3))==0;
-Serial.print("SD Found: ");
+Serial.print(F("SD Found: "));
 Serial.println(SDFound);
 #endif // NOSD
 if (SDFound)
@@ -84,7 +84,7 @@ if (SDFound)
 	wdt_reset();
 	SD.begin(SDPin);
 	wdt_reset();
-	Serial.println("SD Init");
+	Serial.println(F("SD Init"));
 	if (orientation%2==0)
 		TouchLCD.DrawSDRawImage("splash_l.raw",0,0,320,240);
 	else

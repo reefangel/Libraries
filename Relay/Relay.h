@@ -48,17 +48,20 @@ public:
 	boolean isMaskOn(byte ID);
 	boolean isMaskOff(byte ID);
 	void Override(byte ID, byte type);
+	byte RelayData;
+	byte RelayMaskOn;
+	byte RelayMaskOff;
+	
 #ifdef SaveRelaysPresent
 	boolean IsRelayPresent (byte module);
 	boolean RelayPresent;
 #endif  // SaveRelaysPresent
-	byte RelayData;
-	byte RelayMaskOn;
-	byte RelayMaskOff;
+	
 #ifdef RelayExp
 	byte RelayDataE[MAX_RELAY_EXPANSION_MODULES];
 	byte RelayMaskOnE[MAX_RELAY_EXPANSION_MODULES];
 	byte RelayMaskOffE[MAX_RELAY_EXPANSION_MODULES];
+	
 #ifdef RANET
 	byte RANetFallBackE[MAX_RELAY_EXPANSION_MODULES];
 #endif // RANET

@@ -28,11 +28,11 @@ class PARClass
 {
 public:
 	PARClass();
+	byte level;
 	int Read();
 	void Convert();
 	inline byte GetLevel() { return level; } ;
 private:
-	byte level;
 };
 
 #endif  // __PAR_H__

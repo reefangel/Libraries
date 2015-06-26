@@ -58,12 +58,15 @@ int EthernetClient::connect(IPAddress ip, uint16_t port) {
     _sock = MAX_SOCK_NUM;
     return 0;
   }
+  int timeout=0;
   while (status() != SnSR::ESTABLISHED) {
-  if (status() == SnSR::CLOSED) {
-    _sock = MAX_SOCK_NUM;
-    stop();
-    return 0;
-  }
+	  if (timeout++>1000) return 0;
+	  delay(1);
+	  if (status() == SnSR::CLOSED) {
+		_sock = MAX_SOCK_NUM;
+		stop();
+		return 0;
+	  }
   }
   return 1;
 }

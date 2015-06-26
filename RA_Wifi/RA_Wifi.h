@@ -195,6 +195,8 @@ const prog_char JSON_BOARDID[] PROGMEM = "BID";
 #ifdef DisplayLEDPWM
 const prog_char JSON_PWMA[] PROGMEM = "PWMA";
 const prog_char JSON_PWMD[] PROGMEM = "PWMD";
+const prog_char JSON_PWMAO[] PROGMEM = "PWMAO";
+const prog_char JSON_PWMDO[] PROGMEM = "PWMDO";
 #endif  // DisplayLEDPWM
 #ifdef ORPEXPANSION
 const prog_char JSON_ORP[] PROGMEM = "ORP";
@@ -207,6 +209,10 @@ const prog_char JSON_PHEXP[] PROGMEM = "PHE";
 #endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char JSON_WL[] PROGMEM = "WL";
+const prog_char JSON_WL1[] PROGMEM = "WL1";
+const prog_char JSON_WL2[] PROGMEM = "WL2";
+const prog_char JSON_WL3[] PROGMEM = "WL3";
+const prog_char JSON_WL4[] PROGMEM = "WL4";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
 const prog_char JSON_HUM[] PROGMEM = "HUM";
@@ -222,6 +228,19 @@ const prog_char JSON_DCT[] PROGMEM = "DCT";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
 const prog_char JSON_PWME[] PROGMEM = "PWME";
+const prog_char JSON_PWME0[] PROGMEM = "PWME0";
+const prog_char JSON_PWME1[] PROGMEM = "PWME1";
+const prog_char JSON_PWME2[] PROGMEM = "PWME2";
+const prog_char JSON_PWME3[] PROGMEM = "PWME3";
+const prog_char JSON_PWME4[] PROGMEM = "PWME4";
+const prog_char JSON_PWME5[] PROGMEM = "PWME5";
+const prog_char JSON_PWMEO[] PROGMEM = "PWMEO";
+const prog_char JSON_PWME0O[] PROGMEM = "PWME0O";
+const prog_char JSON_PWME1O[] PROGMEM = "PWME1O";
+const prog_char JSON_PWME2O[] PROGMEM = "PWME2O";
+const prog_char JSON_PWME3O[] PROGMEM = "PWME3O";
+const prog_char JSON_PWME4O[] PROGMEM = "PWME4O";
+const prog_char JSON_PWME5O[] PROGMEM = "PWME5O";
 #endif  // PWMEXPANSION
 #ifdef SIXTEENCHPWMEXPANSION
 const prog_char JSON_SCPWME[] PROGMEM = "SCPWME";
@@ -230,6 +249,9 @@ const prog_char JSON_SCPWME[] PROGMEM = "SCPWME";
 const prog_char JSON_AIW[] PROGMEM = "AIW";
 const prog_char JSON_AIB[] PROGMEM = "AIB";
 const prog_char JSON_AIRB[] PROGMEM = "AIRB";
+const prog_char JSON_AIWO[] PROGMEM = "AIWO";
+const prog_char JSON_AIBO[] PROGMEM = "AIBO";
+const prog_char JSON_AIRBO[] PROGMEM = "AIRBO";
 #endif  // AI_LED
 #ifdef RFEXPANSION
 const prog_char JSON_RFM[] PROGMEM = "RFM";
@@ -241,12 +263,26 @@ const prog_char JSON_RFR[] PROGMEM = "RFR";
 const prog_char JSON_RFG[] PROGMEM = "RFG";
 const prog_char JSON_RFB[] PROGMEM = "RFB";
 const prog_char JSON_RFI[] PROGMEM = "RFI";
+const prog_char JSON_RFWO[] PROGMEM = "RFWO";
+const prog_char JSON_RFRBO[] PROGMEM = "RFRBO";
+const prog_char JSON_RFRO[] PROGMEM = "RFRO";
+const prog_char JSON_RFGO[] PROGMEM = "RFGO";
+const prog_char JSON_RFBO[] PROGMEM = "RFBO";
+const prog_char JSON_RFIO[] PROGMEM = "RFIO";
 #endif  // RFEXPANSION
 #ifdef IOEXPANSION
 const prog_char JSON_IO[] PROGMEM = "IO";
 #endif  // IOEXPANSION
 #ifdef CUSTOM_VARIABLES
 const prog_char JSON_C[] PROGMEM = "C";
+const prog_char JSON_C0[] PROGMEM = "C0";
+const prog_char JSON_C1[] PROGMEM = "C1";
+const prog_char JSON_C2[] PROGMEM = "C2";
+const prog_char JSON_C3[] PROGMEM = "C3";
+const prog_char JSON_C4[] PROGMEM = "C4";
+const prog_char JSON_C5[] PROGMEM = "C5";
+const prog_char JSON_C6[] PROGMEM = "C6";
+const prog_char JSON_C7[] PROGMEM = "C7";
 #endif  // CUSTOM_VARIABLES
 #ifdef LEAKDETECTOREXPANSION
 const prog_char JSON_LEAK[] PROGMEM = "LEAK";
@@ -255,6 +291,8 @@ const prog_char JSON_LEAK[] PROGMEM = "LEAK";
 const prog_char JSON_ALARM[] PROGMEM = "ALARM";
 const prog_char JSON_PWMA2[] PROGMEM = "PWMA2";
 const prog_char JSON_PWMD2[] PROGMEM = "PWMD2";
+const prog_char JSON_PWMA2O[] PROGMEM = "PWMA2O";
+const prog_char JSON_PWMD2O[] PROGMEM = "PWMD2O";
 #endif  // RA_STAR
 const prog_char JSON_CLOSE[] PROGMEM = "}}";
 
