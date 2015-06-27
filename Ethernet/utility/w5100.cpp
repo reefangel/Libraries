@@ -33,6 +33,8 @@ void W5100Class::init(void)
   writeMR(1<<RST);
   writeTMSR(0x55);
   writeRMSR(0x55);
+  setRetransmissionTime(0x0BB8);
+  setRetransmissionCount(3);
 
   for (int i=0; i<MAX_SOCK_NUM; i++) {
     SBASE[i] = TXBUF_BASE + SSIZE * i;
