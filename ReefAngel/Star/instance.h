@@ -2,6 +2,7 @@
 
 ReefAngelClass::ReefAngelClass()
 {
+	orientation=4;
 }
 
 void ReefAngelClass::WDTReset()
