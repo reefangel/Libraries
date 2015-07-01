@@ -30,7 +30,21 @@ void RA_TS::Init()
 	X=0;Y=0;uX=0;uY=0;
 	orientation=1;
 	CalibrationNeeded=false;
+#ifdef TOUCHCAP
+	if ((readRegister8(FT6206_REG_VENDID) != 17) || (readRegister8(FT6206_REG_CHIPID) != 6))
+	{
+		Serial.println(F("Unknown Touch controller"));
+		return;
+	}
+	else
+	{
+		writeRegister8(FT6206_REG_THRESHOLD, FT6206_CUSTOM_THRESHOLD);
+		writeRegister8(FT6206_REG_G_MODE, FT6206_INT_POLLING);
+	}
+#else // TOUCHCAP
 	ApplyCalibration();
+#endif // TOUCHCAP
+
 #if defined(__SAM3X8E__)
 	pinMode(TPINTPin,INPUT); 
 	pinMode(TPCSPin,OUTPUT);
@@ -39,6 +53,7 @@ void RA_TS::Init()
 	DDRD|=(1<<7); //PD7 (Output) - TP Chip Select
 	PORTD|=(1<<7); //PD7 pull up
 #endif // defined(__SAM3X8E__)
+	
 }
 
 void RA_TS::ApplyCalibration()
@@ -75,6 +90,65 @@ void RA_TS::SaveCalibration()
 
 boolean RA_TS::GetTouch()
 {
+#ifdef TOUCHCAP
+	X = Y = 0;
+	uint8_t n = readRegister8(FT6206_REG_NUMTOUCHES);
+	if ((n == 0) || (n > 2)) return false;
+	
+	uint8_t i2cdat[16];
+	Wire.beginTransmission(FT6206_ADDR);
+	Wire.write((byte)0);  
+	Wire.endTransmission();
+	Wire.beginTransmission(FT6206_ADDR);
+	Wire.requestFrom((byte)FT6206_ADDR, (byte)32);
+	for (uint8_t i=0; i<16; i++)
+	i2cdat[i] = Wire.read();
+	Wire.endTransmission();  
+	touches = i2cdat[0x02];
+	
+	if ((touches == 0) || (touches > 2))
+	{
+		touches=0;
+		return false;
+	}
+	
+	for (uint8_t i=0; i<2; i++) {
+		touchX[i] = i2cdat[0x03 + i*6] & 0x0F;
+		touchX[i] <<= 8;
+		touchX[i] |= i2cdat[0x04 + i*6]; 
+		touchY[i] = i2cdat[0x05 + i*6] & 0x0F;
+		touchY[i] <<= 8;
+		touchY[i] |= i2cdat[0x06 + i*6];
+		touchID[i] = i2cdat[0x05 + i*6] >> 4;
+	}
+	uX = touchX[0];
+	uY = touchY[0];
+	switch (orientation)
+	{
+	case 1:
+		X=240-uX;
+		Y=320-uY;
+		break;
+	case 2:
+		X=320-uY;
+		Y=uX;
+		break;
+	case 3:
+		X=uX;
+		Y=uY;
+		break;
+	case 4:
+		X=uY;
+		Y=240-uX;
+		break;
+	}	
+	Serial.print(X);
+	Serial.print("-");
+	Serial.println(Y);
+	return true;
+	
+
+#else //TOUCHCAP
 	int a,b;
 	unsigned long averageX=0;
 	unsigned long averageY=0;
@@ -206,6 +280,8 @@ boolean RA_TS::GetTouch()
 	if (X <= 0) X = 0;
 	if (Y <= 0) Y = 0;
 	if (uX==0 && uY==0) return false; else return true;
+#endif //TOUCHCAP
+
 }
 
 boolean RA_TS::IsTouched()
@@ -214,9 +290,11 @@ boolean RA_TS::IsTouched()
 	boolean t=!digitalRead(okPin);
 #elif defined(__SAM3X8E__)
 	boolean t=!digitalRead(TPINTPin);
-#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY	
 	if (t) 
 		t=GetTouch();
+	else
+		X = Y = 0;
 	return t;
 }
 
@@ -243,3 +321,23 @@ void RA_TS::SetOrientation(byte o)
 {
 	orientation=o;
 }
+
+uint8_t RA_TS::readRegister8(uint8_t reg) {
+	uint8_t x ;
+	Wire.beginTransmission(FT6206_ADDR);
+	Wire.write((byte)reg);
+	Wire.endTransmission();
+	Wire.beginTransmission(FT6206_ADDR);
+	Wire.requestFrom((byte)FT6206_ADDR, (byte)1);
+	x = Wire.read();
+	Wire.endTransmission();
+	return x;
+}
+
+void RA_TS::writeRegister8(uint8_t reg, uint8_t val) {
+    Wire.beginTransmission(FT6206_ADDR);
+    Wire.write((byte)reg);
+    Wire.write((byte)val);
+    Wire.endTransmission();
+}
+
