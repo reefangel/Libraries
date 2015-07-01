@@ -1652,7 +1652,10 @@ void ReefAngelClass::ReDrawScreen()
 		if (DisplayedMenu==DEFAULT_MENU || DisplayedMenu==MAIN_MENU)
 		{
 			TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
-			TouchLCD.DrawFlags(StatusFlags, AlertFlags);
+			if (StatusFlags || AlertFlags)
+				TouchLCD.DrawBMP(twidth-16,7,ALERTICON);
+			else
+				TouchLCD.Clear(TOPBAR_BC,twidth-16,7,twidth,23);
 			if (DisplayedScreen==MAIN_SCREEN)
 			{
 				int x=0;
