@@ -57,7 +57,6 @@ Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
 Slider.SetPosition(0,50);
 Slider.Refresh();
 wdt_reset();
-InitCustomLabels();
 for(int a=0;a<6;a++)
 	PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");
 MenuFunctionPtr=&ReefAngelClass::Touch; // default pointer
