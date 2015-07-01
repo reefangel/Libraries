@@ -87,40 +87,6 @@ void ReefAngelClass::CalibrateTouchScreen()
 	TouchLCD.FullClear(COLOR_WHITE);
 }
 
-void ReefAngelClass::InitCustomLabels()
-{
-	for (int a=1;a<=8;a++)
-		CustomLabels[a-1]=String("Port " + String(a));
-#ifdef RelayExp
-	for (int a=1;a<=MAX_RELAY_EXPANSION_MODULES;a++)
-		for (int b=1;b<=8;b++)
-			CustomLabels[(a*8)+b-1]=String("Port "+ String(a) + String(b));
-#endif // RelayExp
-	for (int a=1;a<=3;a++)
-		CustomLabels[Temp1Label+a-1]=String("Temp " + String(a));
-	CustomLabels[PHLabel]="pH";
-	CustomLabels[ATOLowLabel]="ATO Low";
-	CustomLabels[ATOHighLabel]="ATO High";
-	CustomLabels[AlarmLabel]="Alarm";
-	CustomLabels[DaylightLabel]="Daylight";
-	CustomLabels[ActinicLabel]="Actinic";
-	CustomLabels[Daylight2Label]="Daylight 2";
-	CustomLabels[Actinic2Label]="Actinic 2";
-	for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
-		CustomLabels[DimmingChannel0Label+a]=String("Channel " + String(a));
-	for (int a=0;a<IO_EXPANSION_CHANNELS;a++)
-		CustomLabels[IOChannel0Label+a]=String("I/O Channel " + String(a));
-	CustomLabels[SalinityLabel]="Salinity";
-	CustomLabels[ORPLabel]="ORP";
-	CustomLabels[PHExpLabel]="pH Exp";
-	for (int a=0;a<5;a++)
-		CustomLabels[WaterLevelLabel+a]=String("WL " + String(a));
-	CustomLabels[HumidityLabel]="Humidity";
-	CustomLabels[LeakLabel]="Leak";
-	for (int a=0; a<8; a++)
-		CustomLabels[CustomVar0Label+a]=String("Cvar " + String(a));
-}
-
 void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 {
 	WDTReset();
@@ -150,7 +116,7 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 			{
 				for (int a=DisplayedScreen;a<MAX_SCREENS;a++)
 				{
-					if (a<12)
+					if (a<11)
 					{
 						if (bitRead(REM,a-3)) break;
 					}
@@ -171,7 +137,7 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 			{
 				for (int a=DisplayedScreen;a>=3;a--)
 				{
-					if (a<12)
+					if (a<11)
 					{
 						if (bitRead(REM,a-3)) break;
 					}
@@ -1686,7 +1652,7 @@ void ReefAngelClass::ReDrawScreen()
 		if (DisplayedMenu==DEFAULT_MENU || DisplayedMenu==MAIN_MENU)
 		{
 			TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
-			TouchLCD.DrawFlags(StatusFlags);
+			TouchLCD.DrawFlags(StatusFlags, AlertFlags);
 			if (DisplayedScreen==MAIN_SCREEN)
 			{
 				int x=0;
@@ -1731,22 +1697,22 @@ void ReefAngelClass::ReDrawScreen()
 						//Temperature
 						j=65+i;
 						Font.SetColor(COLOR_GOLD,BKCOLOR,true);								
-						Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
+						Font.DrawCenterTextP(x,j,LABEL_TEMP1);
 						x+=twidth*5/16;
-						Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
+						Font.DrawCenterTextP(x,j,LABEL_TEMP2);
 						x+=twidth*5/16;
-						Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
+						Font.DrawCenterTextP(x,j,LABEL_TEMP3);
 						
 						//pH
 						x=twidth*3/16;
 						j+=45+i;
-						Font.DrawCenterText(x,j,CustomLabels[PHLabel]);
+						Font.DrawCenterTextP(x,j,LABEL_PH);
 						x+=twidth*5/16;
 #ifdef SALINITYEXPANSION
 						//Salinity
 						if ((EM&(1<<3))!=0)
 						{
-							Font.DrawCenterText(x,j,CustomLabels[SalinityLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_SALINITY);
 							x+=twidth*5/16;
 						}
 #endif // SALINITYEXPANSION
@@ -1754,7 +1720,7 @@ void ReefAngelClass::ReDrawScreen()
 						//ORP
 						if ((EM&(1<<4))!=0)
 						{
-							Font.DrawCenterText(x,j,CustomLabels[ORPLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_ORP);
 							x+=twidth*5/16;
 						}
 #endif // ORPEXPANSION
@@ -1767,7 +1733,7 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/16;
 								j+=45+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[PHExpLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_PHEXP);
 							x+=twidth*5/16;
 						}
 #endif // PHEXPANSION
@@ -1780,7 +1746,7 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/16;
 								j+=45+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[HumidityLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_HUMIDITY);
 							x+=twidth*5/16;
 						}
 #endif // HUMIDITYEXPANSION								
@@ -1795,7 +1761,7 @@ void ReefAngelClass::ReDrawScreen()
 									x=twidth*3/16;
 									j+=45+i;
 								}
-								Font.DrawCenterText(x,j,CustomLabels[WaterLevelLabel+a]);
+								Font.DrawCenterTextP(x,j,(char * )pgm_read_word(&(LABEL_WL[a])));
 								x+=twidth*5/16;
 							}
 						}
@@ -1808,13 +1774,13 @@ void ReefAngelClass::ReDrawScreen()
 						if (numexp==0) i=7;
 						j=64+i;
 						Font.SetColor(COLOR_GOLD,BKCOLOR,true);
-						Font.DrawCenterText(x,j,CustomLabels[Temp1Label]);
+						Font.DrawCenterTextP(x,j,LABEL_TEMP1);
 						x+=twidth*5/21;
-						Font.DrawCenterText(x,j,CustomLabels[Temp2Label]);
+						Font.DrawCenterTextP(x,j,LABEL_TEMP2);
 						x+=twidth*5/21;
-						Font.DrawCenterText(x,j,CustomLabels[Temp3Label]);
+						Font.DrawCenterTextP(x,j,LABEL_TEMP3);
 						x+=twidth*5/21;
-						Font.DrawCenterText(x,j,CustomLabels[PHLabel]);
+						Font.DrawCenterTextP(x,j,LABEL_PH);
 						x+=twidth*5/21;
 
 #ifdef SALINITYEXPANSION
@@ -1826,7 +1792,7 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[SalinityLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_SALINITY);
 							x+=twidth*5/21;
 						}
 #endif // SALINITYEXPANSION
@@ -1839,7 +1805,7 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[ORPLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_ORP);
 							x+=twidth*5/21;
 						}
 #endif // ORPEXPANSION
@@ -1852,7 +1818,7 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[PHExpLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_PHEXP);
 							x+=twidth*5/21;
 						}
 #endif // PHEXPANSION
@@ -1865,7 +1831,7 @@ void ReefAngelClass::ReDrawScreen()
 								x=twidth*3/21;
 								j+=43+i;
 							}
-							Font.DrawCenterText(x,j,CustomLabels[HumidityLabel]);
+							Font.DrawCenterTextP(x,j,LABEL_HUMIDITY);
 							x+=twidth*5/21;
 						}
 #endif // HUMIDITYEXPANSION
@@ -1880,7 +1846,7 @@ void ReefAngelClass::ReDrawScreen()
 									x=twidth*3/21;
 									j+=43+i;
 								}
-								Font.DrawCenterText(x,j,CustomLabels[WaterLevelLabel+a]);
+								Font.DrawCenterTextP(x,j,(char * )pgm_read_word(&(LABEL_WL[a])));
 								x+=twidth*5/21;
 							}
 						}
@@ -2150,19 +2116,19 @@ void ReefAngelClass::ReDrawScreen()
 						x=(twidth/4)-25;
 					else
 						x=(twidth/2)-25;
-					Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[ATOHighLabel]);
+					Font.DrawTextP(COLOR_WHITE,COLOR_BLACK,x,j+3,LABEL_ATOHIGH);
 					j+=20+(i*2);
-					Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[ATOLowLabel]);
+					Font.DrawTextP(COLOR_WHITE,COLOR_BLACK,x,j+3,LABEL_ATOLOW);
 					if (Board==RAStar || bitRead(EM1,3))
 					{
 						j=40;
 						x=(twidth*3/4)-25;
-						Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[LeakLabel]);
+						Font.DrawTextP(COLOR_WHITE,COLOR_BLACK,x,j+3,LABEL_LEAK);
 					}
 					if (Board==RAStar)
 					{
 						j+=20+(i*2);
-						Font.DrawText(COLOR_WHITE,COLOR_BLACK,x,j+3,CustomLabels[AlarmLabel]);
+						Font.DrawTextP(COLOR_WHITE,COLOR_BLACK,x,j+3,LABEL_ALARM);
 					}
 					j+=25+i;
 					//Division
@@ -2210,7 +2176,7 @@ void ReefAngelClass::ReDrawScreen()
 				// Progress Bars
 				PB[0].SetPosition(10,j);
 				PB[0].SetColor(COLOR_ORANGE);
-				PB[0].SetLabel(CustomLabels[DaylightLabel]);
+				PB[0].SetLabelP(LABEL_DAYLIGHT);
 #if defined(__SAM3X8E__)
 				PB[0].SetCurrent(VariableControl.GetDaylightValue());
 #else
@@ -2220,7 +2186,7 @@ void ReefAngelClass::ReDrawScreen()
 				j+=30+i;
 				PB[1].SetPosition(10,j);
 				PB[1].SetColor(COLOR_ROYALBLUE);
-				PB[1].SetLabel(CustomLabels[ActinicLabel]);
+				PB[1].SetLabelP(LABEL_ACTINIC);
 #if defined(__SAM3X8E__)
 				PB[1].SetCurrent(VariableControl.GetActinicValue());
 #else
@@ -2232,7 +2198,7 @@ void ReefAngelClass::ReDrawScreen()
 				{
 					PB[2].SetPosition(10,j);
 					PB[2].SetColor(COLOR_ORANGE);
-					PB[2].SetLabel(CustomLabels[Daylight2Label]);
+					PB[2].SetLabelP(LABEL_DAYLIGHT2);
 #if defined(__SAM3X8E__)
 					PB[2].SetCurrent(VariableControl.GetDaylight2Value());
 #else
@@ -2242,7 +2208,7 @@ void ReefAngelClass::ReDrawScreen()
 					j+=30+i;
 					PB[3].SetPosition(10,j);
 					PB[3].SetColor(COLOR_ROYALBLUE);
-					PB[3].SetLabel(CustomLabels[Actinic2Label]);
+					PB[3].SetLabelP(LABEL_ACTINIC2);
 #if defined(__SAM3X8E__)
 					PB[3].SetCurrent(VariableControl.GetActinic2Value());
 #else
@@ -2283,14 +2249,41 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RELAYBOXLABELBAR/DisplayedScreen,a*3),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
+
+					// Relay Ports Status
+					j=36;
+					k=l*5/16;
+					rx=10;
+					if (i==0) // Orientation is landscape
+					{
+						j=42;
+						k=l/4;
+					}
+					for (int a=1;a<9;a++)
+					{
+						if (a==5)
+						{
+							j=36;
+							k=l*11/16;
+							if (i==0) // Orientation is landscape
+							{
+								j=42;
+								k=l*3/4;
+							}
+							rx=l-40;
+						}
+						if (i==12) j+=52; else j+=34;
+						Font.SetColor(COLOR_WHITE,BKCOLOR,true);
+						Font.DrawCenterTextP(k,j+3,(char * )pgm_read_word(&(LABEL_PORT[(a-1)+((DisplayedScreen-2)*8)])));
+					}					
 				}
 
 				// Relay Ports Status
@@ -2316,8 +2309,6 @@ void ReefAngelClass::ReDrawScreen()
 						rx=l-40;
 					}
 					if (i==12) j+=52; else j+=34;
-					Font.SetColor(COLOR_WHITE,BKCOLOR,true);
-					Font.DrawCenterText(k,j+3,CustomLabels[(a-1)+((DisplayedScreen-2)*8)]);
 					SmallFont.SetColor(COLOR_YELLOW,BKCOLOR,true);
 					if (bitRead(TempRelayOn,a-1) || !bitRead(TempRelayOff,a-1))
 						SmallFont.DrawCenterTextP(k,j+18,LABEL_OVERRIDE);
@@ -2337,13 +2328,13 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(PWMLABELBAR,a*4),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
 
 					for (int a=0;a<6;a++)
@@ -2358,7 +2349,7 @@ void ReefAngelClass::ReDrawScreen()
 					j+=22+i;
 					PB[a].SetPosition(10,j);
 					PB[a].SetColor(COLOR_GREEN);
-					PB[a].SetLabel(CustomLabels[DimmingChannel0Label+a]);
+					PB[a].SetLabelP((char * )pgm_read_word(&(LABEL_PWME[a])));
 #if defined(__SAM3X8E__)
 					PB[a].SetCurrent(VariableControl.GetChannelValue(a));
 #else
@@ -2379,13 +2370,13 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RFLABELBAR,a*4),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
 					j=60;
 					Font.SetColor(COLOR_GOLD,BKCOLOR,false);
@@ -2399,17 +2390,7 @@ void ReefAngelClass::ReDrawScreen()
 					j=27;
 					j+=40+(i*2);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					char temp[25];
-					char rf_mode[35];
-#if defined (__SAM3X8E__)
-					strcpy(temp,rf_items[RF.Mode]);
-#else
-					strcpy_P(temp,(char * )pgm_read_word(&(rf_items[RF.Mode])));
-#endif // (__SAM3X8E__)
-					strcpy(rf_mode,"   ");
-					strcat(rf_mode,temp);
-					strcat(rf_mode,"   ");
-					LargeFont.DrawCenterText((twidth/2),j,rf_mode);
+					LargeFont.DrawCenterTextP((twidth/2),j,(char * )pgm_read_word(&(RF_MODE[RF.Mode])));
 					j+=45+(i*2);
 					LargeFont.DrawCenterNumber((twidth/2),j,RF.Speed,0);
 					j+=45+(i*2);
@@ -2426,13 +2407,13 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(RFLABELBAR1,a*4),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
 					for (int a=0;a<6;a++)
 						PB[a].NeedsRedraw=true;
@@ -2443,16 +2424,9 @@ void ReefAngelClass::ReDrawScreen()
 				for (int a=0;a<6;a++)
 				{
 					j+=22+i;
-					char tempname[16];
-#if defined (__SAM3X8E__)
-					strcpy(tempname, LABEL_RF[a]);
-#else
-					int ptr = pgm_read_word(&(LABEL_RF[a]));
-					strcpy_P(tempname, (char *)ptr);
-#endif // (__SAM3X8E__)
 					PB[a].SetPosition(10,j);
 					PB[a].SetColor(rfcolor[a]);
-					PB[a].SetLabel(tempname);
+					PB[a].SetLabelP((char * )pgm_read_word(&(LABEL_RF[a])));
 					PB[a].SetCurrent(RF.GetChannel(a));
 					PB[a].Show();
 				}
@@ -2470,13 +2444,13 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(AILABELBAR,a*4),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
 					for (int a=0;a<3;a++)
 						PB[a].NeedsRedraw=true;
@@ -2488,16 +2462,9 @@ void ReefAngelClass::ReDrawScreen()
 				for (int a=0;a<3;a++)
 				{
 					j+=40+(i*2);
-					char tempname[16];
-#if defined (__SAM3X8E__)
-					strcpy(tempname, LABEL_AI[a]);
-#else
-					int ptr = pgm_read_word(&(LABEL_AI[a]));
-					strcpy_P(tempname, (char *)ptr);
-#endif // (__SAM3X8E__)
 					PB[a].SetPosition(10,j);
 					PB[a].SetColor(aicolor[a]);
-					PB[a].SetLabel(tempname);
+					PB[a].SetLabelP((char * )pgm_read_word(&(LABEL_AI[a])));
 					PB[a].SetCurrent(AI.GetChannel(a));
 					PB[a].Show();
 				}
@@ -2514,20 +2481,20 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(IOLABELBAR,a*4),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
 					Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
 					j=50+(i/2);
 					for (int a=0;a<6;a++)
 					{
 						j+=22+i;
-						Font.DrawCenterText((twidth/2)-10,j+5,CustomLabels[IOChannel0Label+a]);
+						Font.DrawCenterTextP((twidth/2)-10,j+5,(char * )pgm_read_word(&(LABEL_IO[a])));
 					}								
 				}
 				j=50+(i/2);
@@ -2554,13 +2521,13 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(DCLABELBAR,a*4),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
 					j=60;
 					Font.SetColor(COLOR_GOLD,BKCOLOR,false);
@@ -2574,17 +2541,7 @@ void ReefAngelClass::ReDrawScreen()
 					j=27;
 					j+=40+(i*2);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					char temp[25];
-					char rf_mode[35];
-#if defined (__SAM3X8E__)
-					strcpy(temp,rf_items[DCPump.Mode]);
-#else
-					strcpy_P(temp,(char * )pgm_read_word(&(rf_items[DCPump.Mode])));
-#endif // (__SAM3X8E__)
-					strcpy(rf_mode,"   ");
-					strcat(rf_mode,temp);
-					strcat(rf_mode,"   ");
-					LargeFont.DrawCenterText((twidth/2),j,rf_mode);
+					LargeFont.DrawCenterTextP((twidth/2),j,(char * )pgm_read_word(&(RF_MODE[DCPump.Mode])));
 					j+=45+(i*2);
 					LargeFont.DrawCenterNumber((twidth/2),j,DCPump.Speed,0);
 					j+=45+(i*2);
@@ -2603,20 +2560,20 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(CVARLABELBAR,a*4),0,40+a,twidth,40+a);
 					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
 #if defined (__SAM3X8E__)
-					LargeFont.DrawCenterText((twidth/2)+1,34,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterText((twidth/2),33,relay_items[DisplayedScreen-2]);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
 #else
-					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
-					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(relay_items[DisplayedScreen-2])));
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
 #endif // (__SAM3X8E__)
 					Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
 					j=53+(i/2);
 					for (int a=0;a<8;a++)
 					{
 						j+=16+(i/2);
-						Font.DrawText((twidth/8),j+5,CustomLabels[CustomVar0Label+a]);
+						Font.DrawTextP((twidth/8),j+5,(char * )pgm_read_word(&(LABEL_C[a])));
 					}								
 				}
 				j=53+(i/2);
@@ -2838,7 +2795,7 @@ void ReefAngelClass::ProcessTouch()
 						Slider.SetCurrent(PWM.GetDaylightValue());
 	#endif
 						Slider.SetOverrideID(OVERRIDE_DAYLIGHT);
-						Slider.SetLabel(CustomLabels[DaylightLabel]);
+						Slider.SetLabelP(LABEL_DAYLIGHT);
 					}
 					j+=30+i;
 					if (TS.IsTouchedInside(0,j,twidth,j+20))
@@ -2853,7 +2810,7 @@ void ReefAngelClass::ProcessTouch()
 						Slider.SetCurrent(PWM.GetActinicValue());
 	#endif
 						Slider.SetOverrideID(OVERRIDE_ACTINIC);
-						Slider.SetLabel(CustomLabels[ActinicLabel]);
+						Slider.SetLabelP(LABEL_ACTINIC);
 					}
 					j+=30+i;
 					if (TS.IsTouchedInside(0,j,twidth,j+20))
@@ -2868,7 +2825,7 @@ void ReefAngelClass::ProcessTouch()
 						Slider.SetCurrent(PWM.GetDaylight2Value());
 	#endif
 						Slider.SetOverrideID(OVERRIDE_DAYLIGHT2);
-						Slider.SetLabel(CustomLabels[Daylight2Label]);
+						Slider.SetLabelP(LABEL_DAYLIGHT2);
 					}
 					j+=30+i;
 					if (TS.IsTouchedInside(0,j,twidth,j+20))
@@ -2883,7 +2840,7 @@ void ReefAngelClass::ProcessTouch()
 						Slider.SetCurrent(PWM.GetActinic2Value());
 	#endif
 						Slider.SetOverrideID(OVERRIDE_ACTINIC2);
-						Slider.SetLabel(CustomLabels[Actinic2Label]);
+						Slider.SetLabelP(LABEL_ACTINIC2);
 					}
 				}
 				else if (DisplayedScreen>=RELAY_BOX && DisplayedScreen<=EXP_BOX_8)
@@ -3005,7 +2962,7 @@ void ReefAngelClass::ProcessTouch()
 							Slider.SetCurrent(PWM.GetChannelValue(a));
 	#endif
 							Slider.SetOverrideID(OVERRIDE_CHANNEL0+a);
-							Slider.SetLabel(CustomLabels[DimmingChannel0Label+a]);
+							Slider.SetLabelP((char * )pgm_read_word(&(LABEL_PWME[a])));
 						}
 					}
 				}
@@ -3041,13 +2998,7 @@ void ReefAngelClass::ProcessTouch()
 							Slider.SetColor(aicolor[a]);
 							Slider.SetCurrent(AI.GetChannel(a));
 							Slider.SetOverrideID(OVERRIDE_AI_WHITE+a);
-	#if defined (__SAM3X8E__)
-							strcpy(tempname, LABEL_AI[a]);
-	#else
-							int ptr = pgm_read_word(&(LABEL_AI[a]));
-							strcpy_P(tempname, (char *)ptr);
-	#endif // (__SAM3X8E__)
-							Slider.SetLabel(tempname);
+							Slider.SetLabelP((char * )pgm_read_word(&(LABEL_AI[a])));
 						}
 					}
 				}
@@ -3083,13 +3034,7 @@ void ReefAngelClass::ProcessTouch()
 							Slider.SetColor(rfcolor[a]);
 							Slider.SetCurrent(RF.GetChannel(a));
 							Slider.SetOverrideID(OVERRIDE_RF_WHITE+a);
-	#if defined (__SAM3X8E__)
-							strcpy(tempname, LABEL_RF[a]);
-	#else
-							int ptr = pgm_read_word(&(LABEL_RF[a]));
-							strcpy_P(tempname, (char *)ptr);
-	#endif // (__SAM3X8E__)
-							Slider.SetLabel(tempname);
+							Slider.SetLabelP((char * )pgm_read_word(&(LABEL_RF[a])));
 						}
 					}
 				}
@@ -3219,14 +3164,14 @@ ButtonClass::ButtonClass()
 	Ptr=0;
 }
 
-void ButtonClass::Create(int icolor, int itextcolor, char *istr)
+void ButtonClass::Create(int icolor, int itextcolor, const prog_char  *istr)
 {
 	color=icolor;
 	textcolor=itextcolor;
 	str=istr;
 }
 
-void ButtonClass::Create(int icolor, int itextcolor, char *istr, const prog_uchar *iPtr)
+void ButtonClass::Create(int icolor, int itextcolor, const prog_char  *istr, const prog_uchar *iPtr)
 {
 	Ptr=iPtr;
 	Create(icolor,itextcolor,istr);
@@ -3236,7 +3181,7 @@ void ButtonClass::Show()
 {
 	visible=true;
 	ReefAngel.Font.SetColor(COLOR_GRAY,COLOR_WHITE,true);
-	ReefAngel.Font.DrawText(x1+26,y1+9,str); // This drawing is just to calculate the width of str
+	ReefAngel.Font.DrawTextP(x1+26,y1+9,str); // This drawing is just to calculate the width of str
 	x2=ReefAngel.Font.GetX()+25; // we add 25px in each side of str
 	//	ReefAngel.TouchLCD.DrawRoundRect(RGB565(0xD0, 0xD0, 0xD0),x1+1,y1+1,x2+1,y1+41,10,false);
 	ReefAngel.TouchLCD.DrawRoundRect(COLOR_GRAY,x1,y1,x2,y1+26,8,false);
@@ -3244,9 +3189,9 @@ void ButtonClass::Show()
 	if (Ptr!=0)
 		ReefAngel.TouchLCD.DrawBMP(x1+5,y1+5,Ptr);
 	ReefAngel.Font.SetColor(COLOR_GRAY88,COLOR_WHITE,true);
-	ReefAngel.Font.DrawText(x1+26,y1+9,str);
+	ReefAngel.Font.DrawTextP(x1+26,y1+9,str);
 	ReefAngel.Font.SetColor(textcolor,COLOR_WHITE,true);
-	ReefAngel.Font.DrawText(x1+25,y1+8,str);
+	ReefAngel.Font.DrawTextP(x1+25,y1+8,str);
 }
 
 void ButtonClass::Hide(int bkcolor)

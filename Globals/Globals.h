@@ -89,6 +89,7 @@ void receiveEventMaster(int howMany);
 #define PAREXPANSION
 #define DCPUMPCONTROL
 #define CUSTOM_VARIABLES
+#define TOUCHCAP
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
@@ -1050,9 +1051,6 @@ typedef struct Compensation
 
 // Custom Labels
 
-const prog_char CustomLabelPort1Label[] PROGMEM = "Test";
-static PROGMEM const char *CustomLabelsArray[] = {CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label,CustomLabelPort1Label};
-
 #define Port1Label				0
 #define Port2Label				1
 #define Port3Label				2
@@ -1305,42 +1303,10 @@ const prog_char LABEL_AMPM[] PROGMEM = "AM/PM";
 const prog_char LABEL_MENU[] PROGMEM = "Menu";
 const prog_char LABEL_REEFANGEL[] PROGMEM = "Reef Angel";
 const prog_char LABEL_PERCENTAGE[] PROGMEM = "%   ";
-const prog_char LABEL_AI_WHITE[] PROGMEM = "White";
-const prog_char LABEL_AI_BLUE[] PROGMEM = "Blue";
-const prog_char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
-static PROGMEM const char *LABEL_AI[] = {LABEL_AI_WHITE, LABEL_AI_BLUE, LABEL_AI_ROYAL_BLUE};
-const prog_char LABEL_RF_WHITE[] PROGMEM = "White";
-const prog_char LABEL_RF_ROYAL_BLUE[] PROGMEM = "R. Blue";
-const prog_char LABEL_RF_RED[] PROGMEM = "Red";
-const prog_char LABEL_RF_BLUE[] PROGMEM = "Green";
-const prog_char LABEL_RF_GREEN[] PROGMEM = "Blue";
-const prog_char LABEL_RF_INTENSITY[] PROGMEM = "Intensity";
-static PROGMEM const char *LABEL_RF[] = {LABEL_RF_WHITE, LABEL_RF_ROYAL_BLUE, LABEL_RF_RED, LABEL_RF_BLUE, LABEL_RF_GREEN, LABEL_RF_INTENSITY};
 const prog_char LABEL_MODE[] PROGMEM = "Mode";
 const prog_char LABEL_DURATION[] PROGMEM = "Duration";
 const prog_char LABEL_SPEED[] PROGMEM = "Speed";
 const prog_char LABEL_OVERRIDE[] PROGMEM = "Override";
-
-// Headers
-const prog_char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";
-const prog_char EXP_RELAY_1_LABEL[] PROGMEM = "Exp. Relay Box 1";
-const prog_char EXP_RELAY_2_LABEL[] PROGMEM = "Exp. Relay Box 2";
-const prog_char EXP_RELAY_3_LABEL[] PROGMEM = "Exp. Relay Box 3";
-const prog_char EXP_RELAY_4_LABEL[] PROGMEM = "Exp. Relay Box 4";
-const prog_char EXP_RELAY_5_LABEL[] PROGMEM = "Exp. Relay Box 5";
-const prog_char EXP_RELAY_6_LABEL[] PROGMEM = "Exp. Relay Box 6";
-const prog_char EXP_RELAY_7_LABEL[] PROGMEM = "Exp. Relay Box 7";
-const prog_char EXP_RELAY_8_LABEL[] PROGMEM = "Exp. Relay Box 8";
-const prog_char PWM_EXPANSION_LABEL[] PROGMEM = "PWM Expansion";
-const prog_char SIXTEENCH_PWM_EXPANSION_LABEL[] PROGMEM = "16 Ch PWM Expansion";
-const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
-const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
-const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
-const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
-const prog_char DCPUMP_LABEL[] PROGMEM = "DC Pump";
-const prog_char CVAR_LABEL[] PROGMEM = "Custom Variables";
-
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -1354,7 +1320,7 @@ const prog_char RF_FEEDING[] PROGMEM = "Feeding";
 const prog_char RF_NIGHT[] PROGMEM = "Night";
 const prog_char RF_SLAVE[] PROGMEM = "Slave Check";
 //const prog_char RF_None[] PROGMEM = "None";
-static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
+static PROGMEM const char *RF_MODE[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
 
 const prog_char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
 const prog_char WATER_CHANGE_LABEL[] PROGMEM = "Water Change";
