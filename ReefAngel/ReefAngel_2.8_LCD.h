@@ -3050,6 +3050,7 @@ void ReefAngelClass::ProcessTouch()
 				{
 					bool bDone=false;
 					TS.GetTouch();
+					TouchEnabled=true;
 					byte oid=Slider.GetOverrideID();
 					byte ovalue=Slider.GetCurrent();
 					if (OkButton.IsPressed())
