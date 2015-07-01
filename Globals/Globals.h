@@ -777,6 +777,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
 #define DCLABELBAR					RGB565(0xA1, 0xC5, 0x59)
 #define CVARLABELBAR				RGB565(0xF6, 0x03, 0xFF)
+#define STATUSLABELBAR				RGB565(0x9F, 0xA3, 0xC2)
 #define PWMWHITE					COLOR_ORANGE
 #define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
 #define PWMRED						COLOR_RED
@@ -1196,7 +1197,8 @@ typedef struct Compensation
 #define IO_SCREEN			15
 #define DCPUMP_SCREEN		16
 #define CVAR_SCREEN			17
-#define MAX_SCREENS			18 // Highest ID for main screens
+#define STATUS_SCREEN		18
+#define MAX_SCREENS			19 // Highest ID for main screens
 #define DIMMING_OVERRIDE	127
 
 //Menu Screens
@@ -1307,6 +1309,12 @@ const prog_char LABEL_MODE[] PROGMEM = "Mode";
 const prog_char LABEL_DURATION[] PROGMEM = "Duration";
 const prog_char LABEL_SPEED[] PROGMEM = "Speed";
 const prog_char LABEL_OVERRIDE[] PROGMEM = "Override";
+const prog_char LABEL_LIBVER[] PROGMEM = "Libraries Version: ";
+const prog_char LABEL_IPADDRESS[] PROGMEM = "IP Address: ";
+const prog_char LABEL_MQTT[] PROGMEM = "MQTT Connection: ";
+const prog_char LABEL_MQTT_CONNECTED[] PROGMEM = "Connected";
+const prog_char LABEL_MQTT_DISCONNECTED[] PROGMEM = "Disconnected";
+
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";

@@ -351,6 +351,11 @@ boolean RA_Wiznet5100::IsPortalConnected()
 	return PortalClient.checkconnect()==0x17;
 }
 
+boolean RA_Wiznet5100::IsMQTTConnected()
+{
+	return MQTTClient.connected();
+}
+
 //size_t RA_Wiznet5100::write(uint8_t c) { if (RelayIndex) return RelayClient.write((uint8_t)c); else if (PortalConnection) return PortalClient.write((uint8_t)c); else return NetClient.write((uint8_t)c); }
 size_t RA_Wiznet5100::write(uint8_t c) { if (PortalConnection) return PortalClient.write((uint8_t)c); else return NetClient.write((uint8_t)c); }
 //size_t RA_Wiznet5100::write(unsigned long n) { if (RelayIndex) return RelayClient.write((uint8_t)n); else if (PortalConnection) return PortalClient.write((uint8_t)n); else return NetClient.write((uint8_t)n); }

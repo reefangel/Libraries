@@ -19,8 +19,8 @@
 
 static EthernetServer NetServer(2000);
 static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-//static byte MQTTServer[] = { 85, 119, 83, 194 }; // test.mosquitto.org
-static byte MQTTServer[] = { 212, 72, 74, 21 }; // broker.mqttdashboard.com
+static byte MQTTServer[] = { 85, 119, 83, 194 }; // test.mosquitto.org
+//static byte MQTTServer[] = { 212, 72, 74, 21 }; // broker.mqttdashboard.com
 //static byte MQTTServer[] = { 10, 1, 10, 130 }; // local test
 static IPAddress NetIP(192,168,1,200);
 //const IPAddress PortalServer(198,171,134,6); // www
@@ -59,6 +59,7 @@ public:
 	boolean FoundIP;
 	void PortalConnect();
 	boolean IsPortalConnected();
+	boolean IsMQTTConnected();
 
 private:
 //	boolean bIncomingR;

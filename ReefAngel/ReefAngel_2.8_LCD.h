@@ -129,6 +129,7 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 						if (a==15 && bitRead(EM,5)) break;
 						if (a==16 && bitRead(EM1,1)) break;
 						if (a==17 && cvarcheck) break;
+						if (a==18) break;
 					}
 					DisplayedScreen++;
 				}
@@ -150,6 +151,7 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 						if (a==15 && bitRead(EM,5)) break;
 						if (a==16 && bitRead(EM1,1)) break;
 						if (a==17 && cvarcheck) break;
+						if (a==18) break;
 					}
 					DisplayedScreen--;
 				}
@@ -2588,6 +2590,41 @@ void ReefAngelClass::ReDrawScreen()
 
 			}
 #endif //  CUSTOM_VARIABLES
+			else if(DisplayedScreen==STATUS_SCREEN)
+			{
+				if (NeedsRedraw)
+				{
+					NeedsRedraw=false;
+					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+					//Gray Bar
+					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(STATUSLABELBAR,a*4),0,40+a,twidth,40+a);
+					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+#if defined (__SAM3X8E__)
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
+#else
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
+#endif // (__SAM3X8E__)
+					Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
+					j=75;
+					Font.DrawTextP(30,j,LABEL_LIBVER);
+					Font.DrawText(ReefAngel_Version);
+					j+=20;
+					Font.DrawTextP(30,j,LABEL_IPADDRESS);
+					const byte* ipAddr=EthernetDHCP.ipAddress();
+					Font.DrawText(ip_to_str(ipAddr));
+					j+=20;
+					Font.DrawTextP(30,j,LABEL_MQTT);
+					if (Network.IsMQTTConnected())
+						Font.DrawTextP(LABEL_MQTT_CONNECTED);
+					else
+						Font.DrawTextP(LABEL_MQTT_DISCONNECTED);
+				}
+				
+			}
 			else if(DisplayedScreen==DIMMING_OVERRIDE)
 			{
 				if (NeedsRedraw)
