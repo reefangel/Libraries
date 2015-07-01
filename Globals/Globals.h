@@ -778,6 +778,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define DCLABELBAR					RGB565(0xA1, 0xC5, 0x59)
 #define CVARLABELBAR				RGB565(0xF6, 0x03, 0xFF)
 #define STATUSLABELBAR				RGB565(0x9F, 0xA3, 0xC2)
+#define ALERTLABELBAR				RGB565(0xFF, 0x33, 0x22)
 #define PWMWHITE					COLOR_ORANGE
 #define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
 #define PWMRED						COLOR_RED
@@ -1198,7 +1199,8 @@ typedef struct Compensation
 #define DCPUMP_SCREEN		16
 #define CVAR_SCREEN			17
 #define STATUS_SCREEN		18
-#define MAX_SCREENS			19 // Highest ID for main screens
+#define ALERT_SCREEN		19
+#define MAX_SCREENS			20 // Highest ID for main screens
 #define DIMMING_OVERRIDE	127
 
 //Menu Screens
@@ -1302,6 +1304,7 @@ const prog_char LABEL_MINUTE[] PROGMEM = "Minute";
 const prog_char LABEL_AMPM[] PROGMEM = "AM/PM";
 
 // Labels
+const prog_char LABEL_EMPTY[] PROGMEM = "           ";
 const prog_char LABEL_MENU[] PROGMEM = "Menu";
 const prog_char LABEL_REEFANGEL[] PROGMEM = "Reef Angel";
 const prog_char LABEL_PERCENTAGE[] PROGMEM = "%   ";
@@ -1311,9 +1314,12 @@ const prog_char LABEL_SPEED[] PROGMEM = "Speed";
 const prog_char LABEL_OVERRIDE[] PROGMEM = "Override";
 const prog_char LABEL_LIBVER[] PROGMEM = "Libraries Version: ";
 const prog_char LABEL_IPADDRESS[] PROGMEM = "IP Address: ";
-const prog_char LABEL_MQTT[] PROGMEM = "MQTT Connection: ";
-const prog_char LABEL_MQTT_CONNECTED[] PROGMEM = "Connected";
-const prog_char LABEL_MQTT_DISCONNECTED[] PROGMEM = "Disconnected";
+const prog_char LABEL_CLOUD[] PROGMEM = "Cloud Connection: ";
+const prog_char LABEL_CLOUD_CONNECTED[] PROGMEM = "Connected";
+const prog_char LABEL_CLOUD_DISCONNECTED[] PROGMEM = "Disconnected";
+const prog_char LABEL_SD[] PROGMEM = "SD Card: ";
+const prog_char LABEL_SD_INSERTED[] PROGMEM = "Inserted";
+const prog_char LABEL_SD_NOT_FOUND[] PROGMEM = "Not Found";
 
 
 // RF Modes

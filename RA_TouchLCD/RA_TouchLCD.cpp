@@ -594,28 +594,3 @@ char* RA_TouchLCD::ConvertDigitsNumber(int number)
 	strcat(text,temp);
 	return text;
 }
-
-void RA_TouchLCD::DrawAlertFlag(byte position, const prog_uchar *iPtr)
-{
-	if (now()%2==0)
-		DrawBMP(w-(16*position),7,iPtr);
-	else
-		Clear(TOPBAR_BC,w-(16*position),7,w+16-(16*position),23);
-}
-
-void RA_TouchLCD::DrawFlags(byte Flags)
-{
-	byte numflags=1;
-	for(byte i=0;i<8;i++,Flags>>=1)
-		if ((Flags & 1) == 1)
-		{
-			const prog_uchar **iptr=FLAGICONS;
-			const prog_uchar *arr1 = ( prog_uchar* ) pgm_read_word( iptr + i );
-//			Serial.println(pgm_read_byte(arr1));
-			DrawAlertFlag(numflags,arr1);
-			numflags++;
-		}
-		else
-			Clear(TOPBAR_BC,w-(16*numflags),7,w+16-(16*numflags),23);
-}
-

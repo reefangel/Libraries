@@ -116,20 +116,21 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 			{
 				for (int a=DisplayedScreen;a<MAX_SCREENS;a++)
 				{
-					if (a<11)
+					if (a<PWM_SCREEN)
 					{
 						if (bitRead(REM,a-3)) break;
 					}
 					else
 					{
-						if (a==11 && bitRead(EM,0)) break;
-						if (a==12 && bitRead(EM,1)) break;
-						if (a==13 && bitRead(EM,1)) break;
-						if (a==14 && bitRead(EM,2)) break;
-						if (a==15 && bitRead(EM,5)) break;
-						if (a==16 && bitRead(EM1,1)) break;
-						if (a==17 && cvarcheck) break;
-						if (a==18) break;
+						if (a==PWM_SCREEN && bitRead(EM,0)) break;
+						if (a==RF_SCREEN && bitRead(EM,1)) break;
+						if (a==RF_SCREEN1 && bitRead(EM,1)) break;
+						if (a==AI_SCREEN && bitRead(EM,2)) break;
+						if (a==IO_SCREEN && bitRead(EM,5)) break;
+						if (a==DCPUMP_SCREEN && bitRead(EM1,1)) break;
+						if (a==CVAR_SCREEN && cvarcheck) break;
+						if (a==STATUS_SCREEN) break;
+						if (a==ALERT_SCREEN) break;
 					}
 					DisplayedScreen++;
 				}
@@ -138,20 +139,21 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 			{
 				for (int a=DisplayedScreen;a>=3;a--)
 				{
-					if (a<11)
+					if (a<PWM_SCREEN)
 					{
 						if (bitRead(REM,a-3)) break;
 					}
 					else
 					{
-						if (a==11 && bitRead(EM,0)) break;
-						if (a==12 && bitRead(EM,1)) break;
-						if (a==13 && bitRead(EM,1)) break;
-						if (a==14 && bitRead(EM,2)) break;
-						if (a==15 && bitRead(EM,5)) break;
-						if (a==16 && bitRead(EM1,1)) break;
-						if (a==17 && cvarcheck) break;
-						if (a==18) break;
+						if (a==PWM_SCREEN && bitRead(EM,0)) break;
+						if (a==RF_SCREEN && bitRead(EM,1)) break;
+						if (a==RF_SCREEN1 && bitRead(EM,1)) break;
+						if (a==AI_SCREEN && bitRead(EM,2)) break;
+						if (a==IO_SCREEN && bitRead(EM,5)) break;
+						if (a==DCPUMP_SCREEN && bitRead(EM1,1)) break;
+						if (a==CVAR_SCREEN && cvarcheck) break;
+						if (a==STATUS_SCREEN) break;
+						if (a==ALERT_SCREEN) break;
 					}
 					DisplayedScreen--;
 				}
@@ -2617,13 +2619,62 @@ void ReefAngelClass::ReDrawScreen()
 					const byte* ipAddr=EthernetDHCP.ipAddress();
 					Font.DrawText(ip_to_str(ipAddr));
 					j+=20;
-					Font.DrawTextP(30,j,LABEL_MQTT);
+					Font.DrawTextP(30,j,LABEL_CLOUD);
 					if (Network.IsMQTTConnected())
-						Font.DrawTextP(LABEL_MQTT_CONNECTED);
+						Font.DrawTextP(LABEL_CLOUD_CONNECTED);
 					else
-						Font.DrawTextP(LABEL_MQTT_DISCONNECTED);
+						Font.DrawTextP(LABEL_CLOUD_DISCONNECTED);
+					j+=20;
+					Font.DrawTextP(30,j,LABEL_SD);
+					if (SDFound)
+						Font.DrawTextP(LABEL_SD_INSERTED);
+					else
+						Font.DrawTextP(LABEL_SD_NOT_FOUND);
+						
 				}
-				
+			}
+			else if(DisplayedScreen==ALERT_SCREEN)
+			{
+				if (NeedsRedraw)
+				{
+					NeedsRedraw=false;
+					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
+					//Gray Bar
+					for (int a=0;a<=25;a++) TouchLCD.DrawLine(alphaBlend(ALERTLABELBAR,a*4),0,40+a,twidth,40+a);
+					LargeFont.SetColor(COLOR_GOLD,BKCOLOR,true);
+#if defined (__SAM3X8E__)
+					LargeFont.DrawCenterText((twidth/2)+1,34,LABEL_RELAY[DisplayedScreen-2]);
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+					LargeFont.DrawCenterText((twidth/2),33,LABEL_RELAY[DisplayedScreen-2]);
+#else
+					LargeFont.DrawCenterTextP((twidth/2)+1,34,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
+					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,true);
+					LargeFont.DrawCenterTextP((twidth/2),33,(char * )pgm_read_word(&(LABEL_RELAY[DisplayedScreen-2])));
+#endif // (__SAM3X8E__)
+				}
+				Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
+				j=75;
+				if ((StatusFlags & 1) == 1)
+				{
+					const prog_uchar **iptr1=STATUSFLAGICONS;
+					const prog_uchar *arr2 = ( prog_uchar* ) pgm_read_word( iptr1 );
+					TouchLCD.DrawBMP(30,j,arr2);
+					Font.DrawTextP(56,j+3,ALERT_LIGHTS_ON_LABEL);
+					Font.DrawTextP(LABEL_EMPTY);
+					j+=20;
+				}
+				byte tempalert=AlertFlags;
+				for(byte i=0;i<8;i++,tempalert>>=1)
+					if ((tempalert & 1) == 1)
+					{
+						const prog_uchar **iptr=ALERTFLAGICONS;
+						const prog_uchar *arr1 = ( prog_uchar* ) pgm_read_word( iptr + i );
+						TouchLCD.DrawBMP(30,j,arr1);
+						Font.DrawTextP(56,j+3,(char * )pgm_read_word(&(LABEL_ALERT[i])));
+						Font.DrawTextP(LABEL_EMPTY);
+						j+=20;						
+					}
+				TouchLCD.Clear(BKCOLOR,30,j,twidth,theight-33);
 			}
 			else if(DisplayedScreen==DIMMING_OVERRIDE)
 			{
