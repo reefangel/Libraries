@@ -427,12 +427,6 @@ void ReefAngelClass::Refresh()
 		}
 		TouchLCD.FullClear(BKCOLOR);
 	}
-#if defined (__AVR_ATmega2560__)
-	if (PINJ&(1<<7)) // Check for bus lock
-		bitClear(AlertFlags,BusLockFlag);
-	else
-		bitSet(AlertFlags,BusLockFlag);
-#endif // (__AVR_ATmega2560__)
 #endif //  RA_TOUCH
 
 #if not defined RA_TOUCHDISPLAY
