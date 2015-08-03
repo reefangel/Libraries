@@ -3800,8 +3800,8 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
     {
         PHExpMin=map(PH_DEFAULT_RANGE[LOW], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
         PHExpMax=map(PH_DEFAULT_RANGE[HIGH], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
-        InternalMemory.PHMin_write(PHExpMin);
-        InternalMemory.PHMax_write(PHExpMax);
+        InternalMemory.PHExpMin_write(PHExpMin);
+        InternalMemory.PHExpMax_write(PHExpMax);
     }
 }
 #endif  // PHEXPANSION
