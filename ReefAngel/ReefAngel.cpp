@@ -708,25 +708,39 @@ void ReefAngelClass::Refresh()
 	Wire.write(0);
 	int a=Wire.endTransmission();
 	if (a==5)
-	{
-		LED.On();
-		delay(20);
-		LED.Off();
 		BusLocked=true;  // Bus is locked
-		bitSet(AlertFlags,BusLockFlag);
+	else
+		BusLocked=false;  // Bus is not locked
 #ifdef RA_STAR
-		sbi(PORTH,2); // Turn off exp bus power
-#endif // RA_STAR
+	if (!digitalRead(BusLockPin))
+	{
+		BusLocked=true;  // Bus is locked
+		digitalWrite(i2cEnable1,LOW);
+		digitalWrite(i2cEnable2,LOW);
+		digitalWrite(i2cEnable3,LOW);
 	}
 	else
 	{
 		BusLocked=false;  // Bus is not locked
-		bitClear(AlertFlags,BusLockFlag);
-#ifdef RA_STAR
-		cbi(PORTH,2); // Turn on exp bus power
-#endif // RA_STAR
+		digitalWrite(i2cEnable2,HIGH);
+		digitalWrite(i2cEnable3,HIGH);
 	}
-#endif
+#endif // RA_STAR
+	
+	if (BusLocked)
+	{
+		LED.On();
+		delay(20);
+		LED.Off();
+		bitSet(AlertFlags,BusLockFlag);
+		sbi(PORTH,2); // Turn off exp bus power
+	}
+	else
+	{
+		bitClear(AlertFlags,BusLockFlag);
+		cbi(PORTH,2); // Turn on exp bus power
+	}
+#endif // BUSCHECK
 }
 
 #ifdef RANET

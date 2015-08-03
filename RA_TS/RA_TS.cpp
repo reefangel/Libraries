@@ -96,6 +96,7 @@ boolean RA_TS::GetTouch()
 	if ((n == 0) || (n > 2)) return false;
 	
 	uint8_t i2cdat[16];
+	enableI2CChannel1();
 	Wire.beginTransmission(FT6206_ADDR);
 	Wire.write((byte)0);  
 	Wire.endTransmission();
@@ -104,6 +105,7 @@ boolean RA_TS::GetTouch()
 	for (uint8_t i=0; i<16; i++)
 	i2cdat[i] = Wire.read();
 	Wire.endTransmission();  
+	disableI2CChannel1();
 	touches = i2cdat[0x02];
 	
 	if ((touches == 0) || (touches > 2))
@@ -324,6 +326,7 @@ void RA_TS::SetOrientation(byte o)
 
 uint8_t RA_TS::readRegister8(uint8_t reg) {
 	uint8_t x ;
+	enableI2CChannel1();
 	Wire.beginTransmission(FT6206_ADDR);
 	Wire.write((byte)reg);
 	Wire.endTransmission();
@@ -331,13 +334,31 @@ uint8_t RA_TS::readRegister8(uint8_t reg) {
 	Wire.requestFrom((byte)FT6206_ADDR, (byte)1);
 	x = Wire.read();
 	Wire.endTransmission();
+    disableI2CChannel1();
 	return x;
 }
 
 void RA_TS::writeRegister8(uint8_t reg, uint8_t val) {
+	enableI2CChannel1();
     Wire.beginTransmission(FT6206_ADDR);
     Wire.write((byte)reg);
     Wire.write((byte)val);
     Wire.endTransmission();
+    disableI2CChannel1();
 }
+
+void RA_TS::enableI2CChannel1()
+{
+	digitalWrite(i2cEnable1,HIGH);
+	digitalWrite(i2cEnable2,LOW);
+	digitalWrite(i2cEnable3,LOW);
+}
+
+void RA_TS::disableI2CChannel1()
+{
+	digitalWrite(i2cEnable1,LOW);
+	digitalWrite(i2cEnable2,HIGH);
+	digitalWrite(i2cEnable3,HIGH);
+}
+
 

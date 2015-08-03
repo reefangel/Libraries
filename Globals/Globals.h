@@ -288,7 +288,14 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define BusLockPin          43
 #define HW_SPI_Pin			53
+#define RANetRXPin			50
+#define RANetTXPin			52
+#define i2cEnable1			39
+#define i2cEnable2			40
+#define i2cEnable3			41
+
 #if defined(__SAM3X8E__)
 #define SDPin				29
 #define AlarmPin          	30
@@ -307,8 +314,6 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
-#define RANetRXPin			50
-#define RANetTXPin			52
 #ifdef REEFANGEL_MINI
 #define ledPin              6
 #else

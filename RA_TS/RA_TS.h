@@ -85,6 +85,8 @@ class RA_TS
 #ifdef TOUCHCAP
 		void writeRegister8(uint8_t reg, uint8_t val);
 		uint8_t readRegister8(uint8_t reg);
+		void enableI2CChannel1();
+		void disableI2CChannel1();
 #endif // TOUCHCAP
 		
 	private:
