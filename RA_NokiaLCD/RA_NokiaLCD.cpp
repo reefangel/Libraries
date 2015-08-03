@@ -851,7 +851,7 @@ void RA_NokiaLCD::Init()
 		delay(120);
 
 		SendCMD(0x36); //Memory Access Control
-		SendData(0x08);
+		SendData(0xc8);
 
 		SendCMD(0x3A); //16 bit color mode
 		SendData(0x05);
