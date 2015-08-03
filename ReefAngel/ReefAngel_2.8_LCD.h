@@ -3154,7 +3154,7 @@ void ReefAngelClass::ProcessTouch()
 							ReefAngel.PWM.Override(oid,ovalue);
 #endif
 #ifdef AI_LED
-						if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
+						if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_ROYALBLUE)
 							ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,ovalue);
 #endif // AI_LED
 #ifdef RFEXPANSION
@@ -3175,7 +3175,7 @@ void ReefAngelClass::ProcessTouch()
 							ReefAngel.PWM.Override(oid,255);
 #endif
 #ifdef AI_LED
-						if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_BLUE)
+						if (oid>=OVERRIDE_AI_WHITE && oid<=OVERRIDE_AI_ROYALBLUE)
 							ReefAngel.AI.Override(oid-OVERRIDE_AI_WHITE,255);
 #endif // AI_LED
 #ifdef RFEXPANSION

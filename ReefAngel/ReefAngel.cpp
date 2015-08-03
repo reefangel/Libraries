@@ -2322,7 +2322,7 @@ void receiveEventMaster(int howMany)
 			{
 				if (d[1]<=OVERRIDE_CHANNEL5)
 					ReefAngel.PWM.Override(d[1],d[2]);
-				if (d[1]>=OVERRIDE_AI_WHITE && d[1]<=OVERRIDE_AI_BLUE)
+				if (d[1]>=OVERRIDE_AI_WHITE && d[1]<=OVERRIDE_AI_ROYALBLUE)
 					ReefAngel.AI.Override(d[1]-OVERRIDE_AI_WHITE,d[2]);
 				if (d[1]>=OVERRIDE_RF_WHITE && d[1]<=OVERRIDE_RF_INTENSITY)
 					ReefAngel.RF.Override(d[1]-OVERRIDE_RF_WHITE,d[2]);
