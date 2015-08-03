@@ -20,7 +20,7 @@
   */
 
 #include "Globals.h"
-#include "Math.h"
+#include "math.h"
 
 byte intlength(int intin)
 {
