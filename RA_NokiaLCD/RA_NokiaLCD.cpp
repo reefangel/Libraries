@@ -859,6 +859,10 @@ void RA_NokiaLCD::Init()
 		SendCMD(0x26); // Gamma
 		SendData(0x04);
 
+		SendCMD(0x37); // For some reason, the screen needs vertical scrolling
+		SendData(0x00);
+		SendData(0x1f);
+
 		Clear(DefaultBGColor,0,0,131,131);
 
 		SendCMD(0x29); //Display on
