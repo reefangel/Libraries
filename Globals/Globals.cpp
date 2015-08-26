@@ -171,7 +171,7 @@ int PWMSmoothRampHighRes(byte startHour, byte startMinute, byte endHour, byte en
     }
     else if ((end - current) < slopeLengthSecs)
     { // it's in the end slope down
-      smoothPhase = (((float)(current-start)/(float)slopeLengthSecs)*180.0);
+      smoothPhase = (((float)(end-current)/(float)slopeLengthSecs)*180.0);
       //smoothPhase = constrain(map(current, end-slopeLengthSecs, end, 0, 180), 0, 180);
     }
     return startPWMint + (int)(pwmDelta*((1.0+(cos(radians(smoothPhase))))/2.0));
