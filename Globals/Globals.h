@@ -288,13 +288,10 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
-#define BusLockPin          43
+#define i2cMuxEnable		43
 #define HW_SPI_Pin			53
 #define RANetRXPin			50
 #define RANetTXPin			52
-#define i2cEnable1			39
-#define i2cEnable2			40
-#define i2cEnable3			41
 
 #if defined(__SAM3X8E__)
 #define SDPin				29
@@ -345,7 +342,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CEEPROM2          0x54
 #define I2CHumidity			0x5c
 #define I2CClock            0x68
-
+#define i2cMux				0x70
 
 #ifdef __PLUS_SPECIAL_WIFI__
 #define WIFI_SERIAL Serial1

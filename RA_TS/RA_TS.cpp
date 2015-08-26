@@ -349,16 +349,16 @@ void RA_TS::writeRegister8(uint8_t reg, uint8_t val) {
 
 void RA_TS::enableI2CChannel1()
 {
-	digitalWrite(i2cEnable1,HIGH);
-	digitalWrite(i2cEnable2,LOW);
-	digitalWrite(i2cEnable3,LOW);
+	Wire.beginTransmission(i2cMux);
+	Wire.write(0x1);
+	Wire.endTransmission();
 }
 
 void RA_TS::disableI2CChannel1()
 {
-	digitalWrite(i2cEnable1,LOW);
-	digitalWrite(i2cEnable2,HIGH);
-	digitalWrite(i2cEnable3,HIGH);
+	Wire.beginTransmission(i2cMux);
+	Wire.write(0x6);
+	Wire.endTransmission();
 }
 
 

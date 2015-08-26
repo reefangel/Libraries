@@ -711,22 +711,6 @@ void ReefAngelClass::Refresh()
 		BusLocked=true;  // Bus is locked
 	else
 		BusLocked=false;  // Bus is not locked
-#ifdef RA_STAR
-	if (!digitalRead(BusLockPin))
-	{
-		BusLocked=true;  // Bus is locked
-		digitalWrite(i2cEnable1,LOW);
-		digitalWrite(i2cEnable2,LOW);
-		digitalWrite(i2cEnable3,LOW);
-	}
-	else
-	{
-		BusLocked=false;  // Bus is not locked
-		digitalWrite(i2cEnable2,HIGH);
-		digitalWrite(i2cEnable3,HIGH);
-	}
-#endif // RA_STAR
-	
 	if (BusLocked)
 	{
 		LED.On();

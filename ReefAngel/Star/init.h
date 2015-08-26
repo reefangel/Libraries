@@ -22,18 +22,16 @@ pinMode(actinic2PWMPin,OUTPUT);
 pinMode(daylight2PWMPin,OUTPUT);
 digitalWrite(actinic2PWMPin,LOW); //pull down resistor on actinicPWMPin
 digitalWrite(daylight2PWMPin,LOW); //pull down resistor on daylightPWMPin
-pinMode(i2cEnable1,OUTPUT); // I2C channel 1 for touch controller
-pinMode(i2cEnable2,OUTPUT); // I2C channel 2 for expansion channel 1
-pinMode(i2cEnable3,OUTPUT); // I2C channel 3 for expansion channel 2
-digitalWrite(i2cEnable1,LOW); // Disable I2C channel 1. We don't need to read touch right now.
-digitalWrite(i2cEnable2,HIGH); // Enable I2C channel 2
-digitalWrite(i2cEnable3,HIGH); // Enable I2C channel 3
 DDRJ&=(0<<3); //PJ3 as input (SD card detect pin)
 PORTJ|=(1<<3); //PJ3 pull up
 DDRJ&=(0<<4); //PJ4 as input (Alarm pin)
 PORTJ|=(1<<4); //PJ4 pull up
 DDRH|=(1<<2); // Port PH2 output (Exp Bus Power)
 cbi(PORTH,2); // Turn on exp bus power
+pinMode(i2cMuxEnable,OUTPUT);
+digitalWrite(i2cMuxEnable,LOW);
+delay(10);
+digitalWrite(i2cMuxEnable,HIGH);
 SPI.begin();
 Serial.println(F("SPI Init"));
 TouchLCD.Init();
@@ -105,6 +103,7 @@ BuzzerOff();
 TouchLCD.SetBacklight(100);
 if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 {
+	Serial.println(F("No Internal Memory"));
 	TouchLCD.FullClear(BKCOLOR);
 	char temptext[25];
 	while(1)
@@ -132,4 +131,7 @@ I2CCommand=0;
 Wire.onReceive(NULL);
 Wire.onRequest(NULL);
 Wire.begin();
+Wire.beginTransmission(i2cMux);
+Wire.write(0x6);
+Wire.endTransmission();
 #endif
