@@ -532,23 +532,23 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 }
 
 
-void RA_TouchLCD::DrawDateTime(int x, int y, boolean militarytime, FontClass Font)
+void RA_TouchLCD::DrawDateTime(unsigned int t, int x, int y, boolean militarytime, FontClass Font)
 {
 	char text[15];
 	
-	Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
-	sprintf(text,"%02d/%02d/%02d ",month(),day(),year()-2000);
+	//Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
+	sprintf(text,"%02d/%02d/%02d ",month(t),day(t),year(t)-2000);
 	Font.DrawText(x,y,text);
 	if (militarytime)
 	{
-		sprintf(text,"%02d:%02d:%02d ",hour(),minute(),second());
+		sprintf(text,"%02d:%02d:%02d ",hour(t),minute(t),second(t));
 	}
 	else
 	{
 		if(hour()>=12)
-			sprintf(text,"%02d:%02d:%02d PM",hour()-12,minute(),second());
+			sprintf(text,"%02d:%02d:%02d PM",hour(t)-12,minute(t),second(t));
 		else
-			sprintf(text,"%02d:%02d:%02d AM",hour(),minute(),second());
+			sprintf(text,"%02d:%02d:%02d AM",hour(t),minute(t),second(t));
 	}
 	Font.DrawText(text);
 }

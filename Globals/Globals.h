@@ -1322,6 +1322,7 @@ const prog_char LABEL_CLOUD_DISCONNECTED[] PROGMEM = "Disconnected";
 const prog_char LABEL_SD[] PROGMEM = "SD Card: ";
 const prog_char LABEL_SD_INSERTED[] PROGMEM = "Inserted";
 const prog_char LABEL_SD_NOT_FOUND[] PROGMEM = "Not Found";
+const prog_char LABEL_LAST_BOOT[] PROGMEM = "Last Boot: ";
 
 
 // RF Modes

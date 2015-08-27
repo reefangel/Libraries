@@ -1655,7 +1655,8 @@ void ReefAngelClass::ReDrawScreen()
 		}
 		if (DisplayedMenu==DEFAULT_MENU || DisplayedMenu==MAIN_MENU)
 		{
-			TouchLCD.DrawDateTime(38,9,MilitaryTime,Font);
+			Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
+			TouchLCD.DrawDateTime(now(),38,9,MilitaryTime,Font);
 			if (StatusFlags || AlertFlags)
 				TouchLCD.DrawBMP(twidth-16,7,ALERTICON);
 			else
@@ -2583,6 +2584,7 @@ void ReefAngelClass::ReDrawScreen()
 						Font.DrawTextP((twidth/8),j+5,(char * )pgm_read_word(&(LABEL_C[a])));
 					}								
 				}
+				Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
 				j=53+(i/2);
 				for (int a=0;a<8;a++)
 				{
@@ -2596,6 +2598,7 @@ void ReefAngelClass::ReDrawScreen()
 			{
 				if (NeedsRedraw)
 				{
+					int xstart=twidth/10;
 					NeedsRedraw=false;
 					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
 					//Gray Bar
@@ -2612,25 +2615,27 @@ void ReefAngelClass::ReDrawScreen()
 #endif // (__SAM3X8E__)
 					Font.SetColor(COLOR_WHITE,COLOR_BLACK,false);
 					j=75;
-					Font.DrawTextP(30,j,LABEL_LIBVER);
+					Font.DrawTextP(xstart,j,LABEL_LIBVER);
 					Font.DrawText(ReefAngel_Version);
 					j+=20;
-					Font.DrawTextP(30,j,LABEL_IPADDRESS);
+					Font.DrawTextP(xstart,j,LABEL_IPADDRESS);
 					const byte* ipAddr=EthernetDHCP.ipAddress();
 					Font.DrawText(ip_to_str(ipAddr));
 					j+=20;
-					Font.DrawTextP(30,j,LABEL_CLOUD);
+					Font.DrawTextP(xstart,j,LABEL_CLOUD);
 					if (Network.IsMQTTConnected())
 						Font.DrawTextP(LABEL_CLOUD_CONNECTED);
 					else
 						Font.DrawTextP(LABEL_CLOUD_DISCONNECTED);
 					j+=20;
-					Font.DrawTextP(30,j,LABEL_SD);
+					Font.DrawTextP(xstart,j,LABEL_SD);
 					if (SDFound)
 						Font.DrawTextP(LABEL_SD_INSERTED);
 					else
 						Font.DrawTextP(LABEL_SD_NOT_FOUND);
-						
+					j+=20;
+					Font.DrawTextP(xstart,j,LABEL_LAST_BOOT);
+					TouchLCD.DrawDateTime(RAStart,Font.GetX(),j,MilitaryTime,Font);
 				}
 			}
 			else if(DisplayedScreen==ALERT_SCREEN)
