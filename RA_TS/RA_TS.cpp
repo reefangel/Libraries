@@ -144,9 +144,6 @@ boolean RA_TS::GetTouch()
 		Y=240-uX;
 		break;
 	}	
-	Serial.print(X);
-	Serial.print("-");
-	Serial.println(Y);
 	return true;
 	
 
