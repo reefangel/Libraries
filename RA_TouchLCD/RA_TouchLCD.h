@@ -57,7 +57,7 @@ public:
 	void DrawBMP(int ix, int iy, const prog_uchar *iPtr, byte overridecolor_msb, byte overridecolor_lsb);
 	void DrawSDImage(char *bmp, int x, int y);
 	void DrawSDRawImage(char *bmp, int x, int y, int w, int h);
-	void DrawDateTime(unsigned int t, int x, int y, boolean militarytime, FontClass Font);
+	void DrawDateTime(unsigned long t, int x, int y, boolean militarytime, FontClass Font);
 	void DrawSetupDateTime(int x, int y, char *value, FontClass Font);
 	void DrawSetupDateTime(int x, int y, byte value, FontClass Font);
 	void DrawRelayStatus(int x, int y, boolean status);

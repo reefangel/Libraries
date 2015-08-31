@@ -532,7 +532,7 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 }
 
 
-void RA_TouchLCD::DrawDateTime(unsigned int t, int x, int y, boolean militarytime, FontClass Font)
+void RA_TouchLCD::DrawDateTime(unsigned long t, int x, int y, boolean militarytime, FontClass Font)
 {
 	char text[15];
 	
