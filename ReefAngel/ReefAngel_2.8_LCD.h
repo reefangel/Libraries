@@ -446,7 +446,6 @@ void ReefAngelClass::ShowTouchInterface()
 	PWM.GetActinicValue();
 	PWM.GetDaylight2Value();
 	PWM.GetActinic2Value();
-	IO.GetChannel();
 	
 	int twidth=TouchLCD.GetWidth();
 	int theight=TouchLCD.GetHeight();
@@ -1698,6 +1697,9 @@ void ReefAngelClass::ReDrawScreen()
 					for (int a=0; a<WATERLEVEL_CHANNELS; a++)
 						WaterLevel.LastLevel[a]=-1;
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+#ifdef PAREXPANSION
+					PAR.LastLevel=-1;
+#endif // PAREXPANSION
 
 					TouchLCD.Clear(COLOR_BLACK,0,34,twidth,theight-34);
 					if (i==12 || i==4) // Orientation is portrait
@@ -1776,6 +1778,19 @@ void ReefAngelClass::ReDrawScreen()
 							}
 						}
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+#ifdef PAREXPANSION
+						//PAR
+						if ((EM1&(1<<3))!=0)
+						{
+							if (x>twidth*14/16)
+							{
+								x=twidth*3/16;
+								j+=45+i;
+							}
+							Font.DrawCenterTextP(x,j,LABEL_PAR);
+							x+=twidth*5/16;
+						}
+#endif // PAREXPANSION								
 					}
 					else // Orientation is landscape
 					{
@@ -1833,7 +1848,7 @@ void ReefAngelClass::ReDrawScreen()
 						}
 #endif // PHEXPANSION
 #ifdef HUMIDITYEXPANSION
-						//pH Exp
+						//Humidity
 						if ((EM1&(1<<0))!=0)
 						{
 							if (x>twidth*18/21)
@@ -1861,6 +1876,19 @@ void ReefAngelClass::ReDrawScreen()
 							}
 						}
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+#ifdef PAREXPANSION
+						//PAR
+						if ((EM1&(1<<3))!=0)
+						{
+							if (x>twidth*18/21)
+							{
+								x=twidth*3/21;
+								j+=43+i;
+							}
+							Font.DrawCenterTextP(x,j,LABEL_PAR);
+							x+=twidth*5/21;
+						}
+#endif // PAREXPANSION
 					}
 				}
 				// Draw Parameter values
@@ -1915,7 +1943,7 @@ void ReefAngelClass::ReDrawScreen()
 					{
 						if (Params.ORP!=LastParams.ORP)
 						{
-							LargeFont.DrawCenterNumber(x,j,Params.ORP,1);
+							LargeFont.DrawCenterNumber(x,j,Params.ORP,0);
 							LastParams.ORP=Params.ORP;
 						}
 						x+=twidth*5/16;
@@ -1975,6 +2003,23 @@ void ReefAngelClass::ReDrawScreen()
 						}
 					}
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+#ifdef PAREXPANSION
+					//PAR
+					if ((EM1&(1<<3))!=0)
+					{
+						if (x>twidth*14/16)
+						{
+							x=twidth*3/16;
+							j+=45+i;
+						}
+						if (PAR.GetLevel()!=PAR.LastLevel)
+						{
+							LargeFont.DrawCenterNumber(x,j,PAR.GetLevel(),10);
+							PAR.LastLevel=PAR.GetLevel();
+						}
+						x+=twidth*5/16;
+					}
+#endif // PAREXPANSION							
 				}
 				else // Orientation is landscape
 				{
@@ -2095,6 +2140,23 @@ void ReefAngelClass::ReDrawScreen()
 						}
 					}
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
+#ifdef PAREXPANSION
+					//PAR
+					if ((EM1&(1<<3))!=0)
+					{
+						if (x>twidth*18/21)
+						{
+							x=twidth*3/21;
+							j+=43+i;
+						}
+						if (PAR.GetLevel()!=PAR.LastLevel)
+						{
+							LargeFont.DrawCenterNumber(x,j,PAR.GetLevel(),0);
+							PAR.LastLevel=PAR.GetLevel();
+						}
+						x+=twidth*5/21;
+					}
+#endif // PAREXPANSION
 				}
 
 				if (i==4) i=12;

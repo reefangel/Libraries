@@ -1233,6 +1233,7 @@ typedef struct Compensation
 
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 
+// Cloud
 #define MQTT_NONE	0
 #define MQTT_REQUESTALL	1
 #define MQTT_R	2
@@ -1241,9 +1242,31 @@ typedef struct Compensation
 #define MQTT_ALARM_ATO	5
 #define MQTT_ALARM_OVERHEAT	6
 #define MQTT_ALARM_LEAK	7
-#define MQTT_LIGHTSON	8
-#define MQTT_LIGHTSOFF	9
+#define MQTT_LIGHTS	8
+#define MQTT_REBOOT	9
+#define MQTT_SALINITY 10
+#define MQTT_PHEXP 11
+#define MQTT_ORP 12
+#define MQTT_IO 13
+#define MQTT_WL 14
+#define MQTT_MULTIWL1 15
+#define MQTT_MULTIWL2 16
+#define MQTT_MULTIWL3 17
+#define MQTT_MULTIWL4 18
+#define MQTT_LEAK 19
+#define MQTT_PAR 20
 
+
+
+// Cloud Expansion Bits ( CEM )
+#define CloudSalinityBit	0
+#define CloudpHExpBit		1
+#define CloudORPBit			2
+#define CloudIOBit			3
+#define CloudWLBit			4
+#define CloudMultiWLBit		5
+#define CloudLeakBit		6
+#define CloudPARBit			7
 
 void MQTTSubCallback(char* topic, byte* payload, unsigned int length);
 

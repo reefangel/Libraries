@@ -208,6 +208,7 @@ public:
 #endif
 	byte EM,EM1;
 	byte REM;
+	byte CEM;
 
 	/*
 	EM Bits

@@ -63,6 +63,7 @@ const prog_char LABEL_SALINITY[] PROGMEM = "Salinity";
 const prog_char LABEL_ORP[] PROGMEM = "ORP";
 const prog_char LABEL_PHEXP[] PROGMEM = "PH Exp";
 const prog_char LABEL_HUMIDITY[] PROGMEM = "Humidity";
+const prog_char LABEL_PAR[] PROGMEM = "PAR";
 
 const prog_char LABEL_WL0[] PROGMEM = "WL";
 const prog_char LABEL_WL1[] PROGMEM = "WL 1";

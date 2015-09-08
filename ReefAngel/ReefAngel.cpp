@@ -102,6 +102,7 @@ void ReefAngelClass::Init()
 	StatusFlags = 0;
 	Splash=true;
 	Relay.AllOff();
+	CEM=0;
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;
 #ifdef ENABLE_ATO_LOGGING
@@ -482,7 +483,8 @@ void ReefAngelClass::Refresh()
 #endif  // SIXTEENCHPWMEXPANSION
 
 #ifdef IOEXPANSION
-	IO.GetChannel();
+	if (bitRead(ReefAngel.CEM,CloudIOBit)==0)
+		IO.GetChannel();
 #endif  // IOEXPANSION
 #endif  // RA_TOUCHDISPLAY
 
@@ -648,46 +650,58 @@ void ReefAngelClass::Refresh()
 	TempSensor.RequestConversion();
 	RefreshScreen();
 #if defined SALINITYEXPANSION
-	unsigned long tempsal=0;
-	for (int a=0;a<20;a++)
+	if (bitRead(ReefAngel.CEM,CloudSalinityBit)==0)
 	{
-		tempsal+=Salinity.Read();
+		unsigned long tempsal=0;
+		for (int a=0;a<20;a++)
+		{
+			tempsal+=Salinity.Read();
+		}
+		Params.Salinity=tempsal/20;
+		ApplySalinityCompensation();
+		Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	}
-	Params.Salinity=tempsal/20;
-	ApplySalinityCompensation();
-	Params.Salinity=map(Params.Salinity, 0, SalMax, 60, 350); // apply the calibration to the sensor reading
 	RefreshScreen();
 #endif  // defined SALINITYEXPANSION
 #if defined ORPEXPANSION
-	unsigned long temporp=0;
-	for (int a=0;a<20;a++)
+	if (bitRead(ReefAngel.CEM,CloudORPBit)==0)
 	{
-		temporp+=ORP.Read();
-	}
-	Params.ORP=temporp/20;
-	if (Params.ORP!=0)
-	{
-		Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
-		Params.ORP=constrain(Params.ORP,0,550);
+		unsigned long temporp=0;
+		for (int a=0;a<20;a++)
+		{
+			temporp+=ORP.Read();
+		}
+		Params.ORP=temporp/20;
+		if (Params.ORP!=0)
+		{
+			Params.ORP=map(Params.ORP, ORPMin, ORPMax, 0, 470); // apply the calibration to the sensor reading
+			Params.ORP=constrain(Params.ORP,0,550);
+		}
 	}
 	RefreshScreen();
 #endif  // defined ORPEXPANSION
 #if defined PHEXPANSION
-	unsigned long tempph=0;
-	for (int a=0;a<5;a++)
+	if (bitRead(ReefAngel.CEM,CloudpHExpBit)==0)
 	{
-		tempph+=PH.Read();
-	}
-	Params.PHExp=tempph/5;
-	if (Params.PHExp!=0)
-	{
-		Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
-		Params.PHExp=constrain(Params.PHExp,100,1400);
+		unsigned long tempph=0;
+		for (int a=0;a<5;a++)
+		{
+			tempph+=PH.Read();
+		}
+		Params.PHExp=tempph/5;
+		if (Params.PHExp!=0)
+		{
+			Params.PHExp=map(Params.PHExp, PHExpMin, PHExpMax, 700, 1000); // apply the calibration to the sensor reading
+			Params.PHExp=constrain(Params.PHExp,100,1400);
+		}
 	}
 	RefreshScreen();
 #endif  // defined PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-	WaterLevel.Convert();
+	if (bitRead(ReefAngel.CEM,CloudWLBit)==0)
+		WaterLevel.Convert();
+	if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==0)
+		WaterLevel.ConvertMulti();
 	RefreshScreen();
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined HUMIDITYEXPANSION
@@ -700,7 +714,8 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 #endif  // LEAKDETECTOREXPANSION
 #if defined PAREXPANSION
-	PAR.Convert();
+	if (bitRead(ReefAngel.CEM,CloudPARBit)==0)
+		PAR.Convert();
 	RefreshScreen();
 #endif  // defined PAREXPANSION
 #ifdef BUSCHECK
@@ -863,23 +878,29 @@ boolean ReefAngelClass::isBusLock()
 boolean ReefAngelClass::IsLeakDetected()
 {
 	boolean detect=false;
-	int iLeak=0;
-	Wire.requestFrom(I2CLeak, 2);
-	if (Wire.available())
+	if (bitRead(ReefAngel.CEM,CloudLeakBit)==0)
 	{
-		iLeak = Wire.read();
-		iLeak = iLeak<<8;
-		iLeak += Wire.read();
+		int iLeak=0;
+		Wire.requestFrom(I2CLeak, 2);
+		if (Wire.available())
+		{
+			iLeak = Wire.read();
+			iLeak = iLeak<<8;
+			iLeak += Wire.read();
+		}
+		detect=iLeak>2000;
+	#ifdef EMBEDDED_LEAK
+		detect|=analogRead(LeakPin)<400;
+		LeakValue=detect;
+	#endif // EMBEDDED_LEAK
+	#ifdef RA_TOUCHDISPLAY
+		detect=LeakStatus;
+	#endif // RA_TOUCHDISPLAY
 	}
-	detect=iLeak>2000;
-#ifdef EMBEDDED_LEAK
-	detect|=analogRead(LeakPin)<400;
-	LeakValue=detect;
-#endif // EMBEDDED_LEAK
-#ifdef RA_TOUCHDISPLAY
-	detect=LeakStatus;
-#endif // RA_TOUCHDISPLAY
-
+	else
+	{
+		detect=LeakValue;
+	}
 	return detect;
 }
 
@@ -2474,8 +2495,19 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("mt", mqtt_sub)==0) mqtt_type=MQTT_ALARM_ATO;
 				else if (strcmp("mo", mqtt_sub)==0) mqtt_type=MQTT_ALARM_OVERHEAT;
 				else if (strcmp("ml", mqtt_sub)==0) mqtt_type=MQTT_ALARM_LEAK;
-				else if (strcmp("l1", mqtt_sub)==0) mqtt_type=MQTT_LIGHTSON;
-				else if (strcmp("l0", mqtt_sub)==0) mqtt_type=MQTT_LIGHTSOFF;
+				else if (strcmp("l", mqtt_sub)==0) mqtt_type=MQTT_LIGHTS;
+				else if (strcmp("boot", mqtt_sub)==0) mqtt_type=MQTT_REBOOT;
+				else if (strcmp("sal", mqtt_sub)==0) mqtt_type=MQTT_SALINITY;
+				else if (strcmp("orp", mqtt_sub)==0) mqtt_type=MQTT_ORP;
+				else if (strcmp("phexp", mqtt_sub)==0) mqtt_type=MQTT_PHEXP;
+				else if (strcmp("io", mqtt_sub)==0) mqtt_type=MQTT_IO;
+				else if (strcmp("wl0", mqtt_sub)==0) mqtt_type=MQTT_WL;
+				else if (strcmp("wl1", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL1;
+				else if (strcmp("wl2", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL2;
+				else if (strcmp("wl3", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL3;
+				else if (strcmp("wl4", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL4;
+				else if (strcmp("leak", mqtt_sub)==0) mqtt_type=MQTT_LEAK;
+				else if (strcmp("par", mqtt_sub)==0) mqtt_type=MQTT_PAR;
 			}
 		}
 		else
@@ -2540,14 +2572,83 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			ReefAngel.LeakClear();
 			break;
 		}
-		case MQTT_LIGHTSON:
+		case MQTT_LIGHTS:
 		{
-			ReefAngel.LightsOn();
+			if (mqtt_val==0)
+				ReefAngel.LightsOff();
+			else
+				ReefAngel.LightsOn();
 			break;
 		}
-		case MQTT_LIGHTSOFF:
+		case MQTT_REBOOT:
 		{
-			ReefAngel.LightsOff();
+			while(1);
+			break;
+		}
+		case MQTT_SALINITY:
+		{
+			ReefAngel.Params.Salinity=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudSalinityBit);
+			break;
+		}
+		case MQTT_PHEXP:
+		{
+			ReefAngel.Params.PHExp=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudpHExpBit);
+			break;
+		}
+		case MQTT_ORP:
+		{
+			ReefAngel.Params.ORP=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudORPBit);
+			break;
+		}
+		case MQTT_IO:
+		{
+			ReefAngel.IO.IOPorts=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudIOBit);
+			break;
+		}
+		case MQTT_WL:
+		{
+			ReefAngel.WaterLevel.level[0]=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudWLBit);
+			break;
+		}
+		case MQTT_MULTIWL1:
+		{
+			ReefAngel.WaterLevel.level[1]=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudMultiWLBit);
+			break;
+		}
+		case MQTT_MULTIWL2:
+		{
+			ReefAngel.WaterLevel.level[2]=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudMultiWLBit);
+			break;
+		}
+		case MQTT_MULTIWL3:
+		{
+			ReefAngel.WaterLevel.level[3]=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudMultiWLBit);
+			break;
+		}
+		case MQTT_MULTIWL4:
+		{
+			ReefAngel.WaterLevel.level[4]=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudMultiWLBit);
+			break;
+		}
+		case MQTT_LEAK:
+		{
+			ReefAngel.LeakValue=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudLeakBit);
+			break;
+		}
+		case MQTT_PAR:
+		{
+			ReefAngel.PAR.level=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudPARBit);
 			break;
 		}
 	}
