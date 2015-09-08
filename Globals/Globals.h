@@ -1233,6 +1233,20 @@ typedef struct Compensation
 
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 
+#define MQTT_NONE	0
+#define MQTT_REQUESTALL	1
+#define MQTT_R	2
+#define MQTT_MODE_FEEDING	3
+#define MQTT_MODE_WATERCHANGE	4
+#define MQTT_ALARM_ATO	5
+#define MQTT_ALARM_OVERHEAT	6
+#define MQTT_ALARM_LEAK	7
+#define MQTT_LIGHTSON	8
+#define MQTT_LIGHTSOFF	9
+
+
+void MQTTSubCallback(char* topic, byte* payload, unsigned int length);
+
 uint16_t read16(File f);
 uint32_t read32(File f);
 
@@ -1532,11 +1546,6 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 byte ElseMode(byte midPoint, byte offset, boolean waveSync);
 
 const char* ip_to_str(const uint8_t* ipAddr);
-
-static void callback(char* topic, byte* payload, unsigned int length) {
-  // handle message arrived
-}
-
 
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);

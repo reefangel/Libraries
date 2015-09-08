@@ -418,7 +418,7 @@ public:
 	void Portal(char *username, char *key);
 	void DDNS(char *subdomain);
 #endif
-
+	void CheckOverride(int option);
 private:
 	time_t menutimeout;
 	byte taddr;

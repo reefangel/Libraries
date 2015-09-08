@@ -526,11 +526,12 @@ void ReefAngelClass::ShowTouchInterface()
 		}
 
 		LastStart = now();  // Set the time normal mode is started
-		if ( TS.IsTouched() )
+		if ( TS.IsTouched() || ButtonPress > 0)
 		{
 			// screen was touched, so we stop the feeding mode
 			bDone = true;
 			TouchEnabled=false;
+			ButtonPress=0;
 		}
 		if ( bDone )
 		{
@@ -586,11 +587,12 @@ void ReefAngelClass::ShowTouchInterface()
 		LargeFont.SetColor(WARNING_TEXT, BKCOLOR,false);
 		LargeFont.DrawCenterTextP(twidth/2, 10+y, WATER_CHANGE_LABEL);
 		LastStart = now();  // Set the time normal mode is started
-		if ( TS.IsTouched() )
+		if ( TS.IsTouched() || ButtonPress > 0 )
 		{
 			// screen was touched, so we stop the feeding mode
 			bDone = true;
 			TouchEnabled=false;
+			ButtonPress=0;
 		}
 		if ( bDone )
 		{

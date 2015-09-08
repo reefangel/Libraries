@@ -246,72 +246,7 @@ void RA_Wifi::ProcessHTTP()
 		}  // REQ_WIFI
 		case REQ_RELAY:
 		{
-			if (weboption<10) break;
-			byte o_relay=weboption/10;
-			byte o_type=weboption%10;
-			if (o_type==0)  // Turn port off
-			{
-				if ( o_relay < 9 )
-				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
-				}
-#ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
-				{
-					byte EID = byte(o_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-			else if (o_type==1)  // Turn port on
-			{
-				if ( o_relay < 9 )
-				{
-					bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
-				}
-#ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
-				{
-					byte EID = byte(o_relay/10);
-					bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-			else if (o_type==2)  // Set port back to Auto
-			{
-				if ( o_relay < 9 )
-				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
-				}
-#ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
-				{
-					byte EID = byte(o_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-#ifdef OVERRIDE_PORTS
-			// Reset relay masks for ports we want always in their programmed states.
-			ReefAngel.Relay.RelayMaskOn &= ~ReefAngel.OverridePorts;
-			ReefAngel.Relay.RelayMaskOff |= ReefAngel.OverridePorts;
-#ifdef RelayExp
-				byte i;
-				for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-				{
-						ReefAngel.Relay.RelayMaskOnE[i] &= ~ReefAngel.OverridePortsE[i];
-						ReefAngel.Relay.RelayMaskOffE[i] |= ReefAngel.OverridePortsE[i];
-				}
-#endif  // RelayExp  
-#endif  // OVERRIDE_PORTS
-			ReefAngel.Relay.Write();
-			// Force update of the Portal after relay change
+			ReefAngel.CheckOverride(weboption);
 //				ReefAngel.Timer[PORTAL_TIMER].ForceTrigger();
 		}
 		case REQ_RA_STATUS:

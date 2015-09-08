@@ -259,6 +259,7 @@ Read	KEYWORD2
 
 #Network
 DirectAccess	KEYWORD2
+Cloud	KEYWORD2
 
 #WifiAlert
 SetDelay	KEYWORD2

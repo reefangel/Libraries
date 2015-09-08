@@ -2448,4 +2448,179 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 }
 #endif // DCPUMPCONTROL
 
+#ifdef RA_STAR
+void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
+  // handle message arrived
+	char mqtt_sub[10];
+	byte starti=0;
+	int mqtt_val=0;
+	byte mqtt_type=MQTT_NONE;
+	
+	for (int a=0;a<length;a++)
+	{
+		if (starti==0)
+		{
+			mqtt_sub[a]=payload[a];
+			if (payload[a]==58) // Let's look for a :
+			{
+				mqtt_sub[a]=0;
+				Serial.print(mqtt_sub);
+				Serial.print(F(":"));
+				starti=a;
+				if (strcmp("all", mqtt_sub)==0) mqtt_type=MQTT_REQUESTALL;
+				else if (strcmp("r", mqtt_sub)==0) mqtt_type=MQTT_R;
+				else if (strcmp("mf", mqtt_sub)==0) mqtt_type=MQTT_MODE_FEEDING;
+				else if (strcmp("mw", mqtt_sub)==0) mqtt_type=MQTT_MODE_WATERCHANGE;
+				else if (strcmp("mt", mqtt_sub)==0) mqtt_type=MQTT_ALARM_ATO;
+				else if (strcmp("mo", mqtt_sub)==0) mqtt_type=MQTT_ALARM_OVERHEAT;
+				else if (strcmp("ml", mqtt_sub)==0) mqtt_type=MQTT_ALARM_LEAK;
+				else if (strcmp("l1", mqtt_sub)==0) mqtt_type=MQTT_LIGHTSON;
+				else if (strcmp("l0", mqtt_sub)==0) mqtt_type=MQTT_LIGHTSOFF;
+			}
+		}
+		else
+		{
+			mqtt_val*=10;
+			mqtt_val+=(payload[a]-'0');
+		}
+	}
+	Serial.println(mqtt_val);
+	switch (mqtt_type)
+	{
+		case MQTT_R:
+			ReefAngel.CheckOverride(mqtt_val);
+			break;
+		case MQTT_REQUESTALL:
+			for (byte a=0; a<NumParamByte;a++)
+			{
+				ReefAngel.Network.OldParamArrayByte[a]=ReefAngel.Network.OldParamArrayByte[a]+1;
+				ReefAngel.Network.OldParamArrayInt[a]=ReefAngel.Network.OldParamArrayInt[a]+1;
+			}			
+			break;
+		case MQTT_MODE_FEEDING:
+		{
+			if (mqtt_val==1)
+			{
+				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU || ReefAngel.DisplayedMenu==MAIN_MENU || ReefAngel.DisplayedMenu==WATERCHANGE_MODE )
+					ReefAngel.ChangeMode=FEEDING_MODE;
+			}
+			else
+			{
+				if ( ReefAngel.DisplayedMenu == FEEDING_MODE )
+					ButtonPress++;
+			}
+			break;
+		}
+		case MQTT_MODE_WATERCHANGE:
+		{
+			if (mqtt_val==1)
+			{
+				if ( ReefAngel.DisplayedMenu == DEFAULT_MENU  || ReefAngel.DisplayedMenu==MAIN_MENU)
+					ReefAngel.ChangeMode=WATERCHANGE_MODE;
+			}
+			else
+			{
+				if ( ReefAngel.DisplayedMenu == WATERCHANGE_MODE )
+					ButtonPress++;
+			}
+			break;
+		}
+		case MQTT_ALARM_ATO:
+		{
+			ReefAngel.ATOClear();
+			break;
+		}
+		case MQTT_ALARM_OVERHEAT:
+		{
+			ReefAngel.OverheatClear();
+			break;
+		}
+		case MQTT_ALARM_LEAK:
+		{
+			ReefAngel.LeakClear();
+			break;
+		}
+		case MQTT_LIGHTSON:
+		{
+			ReefAngel.LightsOn();
+			break;
+		}
+		case MQTT_LIGHTSOFF:
+		{
+			ReefAngel.LightsOff();
+			break;
+		}
+	}
+}
+#endif // RA_STAR
+void ReefAngelClass::CheckOverride(int option)
+{
+	if (option<10) return;
+	byte o_relay=option/10;
+	byte o_type=option%10;
+	if (o_type==0)  // Turn port off
+	{
+		if ( o_relay < 9 )
+		{
+			bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+			bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+		}
+#ifdef RelayExp
+		if ( (o_relay > 10) && (o_relay < 89) )
+		{
+			byte EID = byte(o_relay/10);
+			bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+			bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+		}
+#endif  // RelayExp
+	}
+	else if (o_type==1)  // Turn port on
+	{
+		if ( o_relay < 9 )
+		{
+			bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+			bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+		}
+#ifdef RelayExp
+		if ( (o_relay > 10) && (o_relay < 89) )
+		{
+			byte EID = byte(o_relay/10);
+			bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+			bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+		}
+#endif  // RelayExp
+	}
+	else if (o_type==2)  // Set port back to Auto
+	{
+		if ( o_relay < 9 )
+		{
+			bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
+			bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
+		}
+#ifdef RelayExp
+		if ( (o_relay > 10) && (o_relay < 89) )
+		{
+			byte EID = byte(o_relay/10);
+			bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
+			bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
+		}
+#endif  // RelayExp
+	}
+#ifdef OVERRIDE_PORTS
+	// Reset relay masks for ports we want always in their programmed states.
+	ReefAngel.Relay.RelayMaskOn &= ~ReefAngel.OverridePorts;
+	ReefAngel.Relay.RelayMaskOff |= ReefAngel.OverridePorts;
+#ifdef RelayExp
+		byte i;
+		for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+		{
+				ReefAngel.Relay.RelayMaskOnE[i] &= ~ReefAngel.OverridePortsE[i];
+				ReefAngel.Relay.RelayMaskOffE[i] |= ReefAngel.OverridePortsE[i];
+		}
+#endif  // RelayExp  
+#endif  // OVERRIDE_PORTS
+	ReefAngel.Relay.Write();
+	// Force update of the Portal after relay change
+}
+
 ReefAngelClass ReefAngel = ReefAngelClass() ;

@@ -17,11 +17,15 @@
 #include <avr/wdt.h>
 #include <PubSubClient.h>
 
+//#define	MQTTPort	1883
+#define	MQTTPort	11233
+
 static EthernetServer NetServer(2000);
 static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-static byte MQTTServer[] = { 85, 119, 83, 194 }; // test.mosquitto.org
+//static byte MQTTServer[] = { 85, 119, 83, 194 }; // test.mosquitto.org
 //static byte MQTTServer[] = { 212, 72, 74, 21 }; // broker.mqttdashboard.com
 //static byte MQTTServer[] = { 10, 1, 10, 130 }; // local test
+static byte MQTTServer[] = { 107, 22, 157, 224 }; // m11.cloudmqtt.com
 static IPAddress NetIP(192,168,1,200);
 //const IPAddress PortalServer(198,171,134,6); // www
 //const IPAddress PortalServer(192,168,9,140); // local
@@ -34,13 +38,13 @@ static EthernetClient NetClient;
 //static EthernetClient RelayClient;
 static EthernetClient PortalClient;
 static EthernetClient ethClient;
-static PubSubClient MQTTClient(MQTTServer, 1883, callback, ethClient);
+static PubSubClient MQTTClient(MQTTServer, MQTTPort, MQTTSubCallback, ethClient);
 //static boolean RelayConnected;
 //static int RelayIndex;
 static boolean PortalWaiting;
 #define PORTAL_TIMEOUT  10000
 #define RETRY_COUNT  3
-#define NumParamByte	70
+#define NumParamByte	94
 #define NumParamInt		7
 
 class RA_Wiznet5100 : public RA_Wifi
@@ -53,6 +57,7 @@ public:
 //	void ProcessRelayEthernet();
 //	void DirectAccess(String uniqueid);
 	void Update();
+	void Cloud(char *username, char *password);
 	boolean PortalConnection;
 	boolean PortalDataReceived;
 	unsigned long PortalTimeOut;
@@ -60,6 +65,8 @@ public:
 	void PortalConnect();
 	boolean IsPortalConnected();
 	boolean IsMQTTConnected();
+	byte OldParamArrayByte[NumParamByte];
+	int OldParamArrayInt[NumParamInt];
 
 private:
 //	boolean bIncomingR;
@@ -68,8 +75,6 @@ private:
 //	String uid;
 	unsigned long MQTTReconnectmillis;
 	unsigned long MQTTSendmillis;
-	byte OldParamArrayByte[NumParamByte];
-	int OldParamArrayInt[NumParamInt];
 protected:
 	size_t write(uint8_t c);
 	size_t write(unsigned long n);
@@ -77,6 +82,7 @@ protected:
 	size_t write(unsigned int n);
 	size_t write(int n);
 };
+
 #endif  // ETH_WIZ5100
 #endif /* RA_WIZNET5100_H_ */
 
