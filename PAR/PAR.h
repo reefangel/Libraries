@@ -28,10 +28,11 @@ class PARClass
 {
 public:
 	PARClass();
-	byte level;
+	int level;
+	int LastLevel;
 	int Read();
 	void Convert();
-	inline byte GetLevel() { return level; } ;
+	inline int GetLevel() { return level; } ;
 private:
 };
 

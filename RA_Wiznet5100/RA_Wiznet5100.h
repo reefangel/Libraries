@@ -44,8 +44,8 @@ static PubSubClient MQTTClient(MQTTServer, MQTTPort, MQTTSubCallback, ethClient)
 static boolean PortalWaiting;
 #define PORTAL_TIMEOUT  10000
 #define RETRY_COUNT  3
-#define NumParamByte	94
-#define NumParamInt		7
+#define NumParamByte	93
+#define NumParamInt		8
 
 class RA_Wiznet5100 : public RA_Wifi
 {
