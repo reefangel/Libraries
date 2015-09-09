@@ -57,7 +57,8 @@ public:
 //	void ProcessRelayEthernet();
 //	void DirectAccess(String uniqueid);
 	void Update();
-	void Cloud(char *username, char *password);
+	void Cloud();
+	void CloudPublish(char* topic, char* message);
 	boolean PortalConnection;
 	boolean PortalDataReceived;
 	unsigned long PortalTimeOut;

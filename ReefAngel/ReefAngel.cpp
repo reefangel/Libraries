@@ -2475,18 +2475,19 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 	char mqtt_sub[10];
 	byte starti=0;
 	int mqtt_val=0;
+	long mqtt_val1=0;
 	byte mqtt_type=MQTT_NONE;
+	boolean foundchannel=false;
 	
 	for (int a=0;a<length;a++)
 	{
+		Serial.write(payload[a]);
 		if (starti==0)
 		{
 			mqtt_sub[a]=payload[a];
 			if (payload[a]==58) // Let's look for a :
 			{
 				mqtt_sub[a]=0;
-				Serial.print(mqtt_sub);
-				Serial.print(F(":"));
 				starti=a;
 				if (strcmp("all", mqtt_sub)==0) mqtt_type=MQTT_REQUESTALL;
 				else if (strcmp("r", mqtt_sub)==0) mqtt_type=MQTT_R;
@@ -2501,24 +2502,43 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("orp", mqtt_sub)==0) mqtt_type=MQTT_ORP;
 				else if (strcmp("phexp", mqtt_sub)==0) mqtt_type=MQTT_PHEXP;
 				else if (strcmp("io", mqtt_sub)==0) mqtt_type=MQTT_IO;
-				else if (strcmp("wl0", mqtt_sub)==0) mqtt_type=MQTT_WL;
-				else if (strcmp("wl1", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL1;
-				else if (strcmp("wl2", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL2;
-				else if (strcmp("wl3", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL3;
-				else if (strcmp("wl4", mqtt_sub)==0) mqtt_type=MQTT_MULTIWL4;
+				else if (strcmp("wl", mqtt_sub)==0) mqtt_type=MQTT_WL;
 				else if (strcmp("leak", mqtt_sub)==0) mqtt_type=MQTT_LEAK;
 				else if (strcmp("par", mqtt_sub)==0) mqtt_type=MQTT_PAR;
+				else if (strcmp("po", mqtt_sub)==0) mqtt_type=MQTT_OVERRIDE;
+				else if (strcmp("cvar", mqtt_sub)==0) mqtt_type=MQTT_CVAR;
+				else if (strcmp("mb", mqtt_sub)==0) mqtt_type=MQTT_MEM_BYTE;
+				else if (strcmp("mi", mqtt_sub)==0) mqtt_type=MQTT_MEM_INT;
+				else if (strcmp("cexp", mqtt_sub)==0) mqtt_type=MQTT_CUSTOM_EXP;
+				else if (strcmp("date", mqtt_sub)==0) mqtt_type=MQTT_DATE;
 			}
 		}
 		else
 		{
-			mqtt_val*=10;
-			mqtt_val+=(payload[a]-'0');
+			if (payload[a]==58) // Let's look for a :
+			{
+				foundchannel=true;
+			}
+			else
+			{
+				if (!foundchannel)
+				{
+					mqtt_val*=10;
+					mqtt_val+=(payload[a]-'0');
+				}
+				else
+				{
+					mqtt_val1*=10;
+					mqtt_val1+=(payload[a]-'0');
+				}
+			}
 		}
 	}
-	Serial.println(mqtt_val);
+	Serial.println();
 	switch (mqtt_type)
 	{
+		case MQTT_NONE:
+			break;
 		case MQTT_R:
 			ReefAngel.CheckOverride(mqtt_val);
 			break;
@@ -2611,32 +2631,11 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		}
 		case MQTT_WL:
 		{
-			ReefAngel.WaterLevel.level[0]=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudWLBit);
-			break;
-		}
-		case MQTT_MULTIWL1:
-		{
-			ReefAngel.WaterLevel.level[1]=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudMultiWLBit);
-			break;
-		}
-		case MQTT_MULTIWL2:
-		{
-			ReefAngel.WaterLevel.level[2]=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudMultiWLBit);
-			break;
-		}
-		case MQTT_MULTIWL3:
-		{
-			ReefAngel.WaterLevel.level[3]=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudMultiWLBit);
-			break;
-		}
-		case MQTT_MULTIWL4:
-		{
-			ReefAngel.WaterLevel.level[4]=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudMultiWLBit);
+			if (mqtt_val < 5) ReefAngel.WaterLevel.level[mqtt_val]=mqtt_val1;
+			if (mqtt_val==0)
+				bitSet(ReefAngel.CEM,CloudWLBit);
+			else
+				bitSet(ReefAngel.CEM,CloudMultiWLBit);
 			break;
 		}
 		case MQTT_LEAK:
@@ -2649,6 +2648,54 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		{
 			ReefAngel.PAR.level=mqtt_val;
 			bitSet(ReefAngel.CEM,CloudPARBit);
+			break;
+		}
+		case MQTT_OVERRIDE:
+		{
+			if (mqtt_val < OVERRIDE_CHANNELS) ReefAngel.DimmingOverride(mqtt_val1,mqtt_val);
+			break;
+		}
+		case MQTT_CVAR:
+		{
+			if (mqtt_val < 8) ReefAngel.CustomVar[mqtt_val]=mqtt_val1;		
+			break;
+		}
+		case MQTT_MEM_BYTE:
+		{
+			InternalMemory.write(mqtt_val, mqtt_val1);
+			break;
+		}
+		case MQTT_MEM_INT:
+		{
+			InternalMemory.write_int(mqtt_val, mqtt_val1);
+			break;
+		}
+		case MQTT_CUSTOM_EXP:
+		{
+			ReefAngel.CustomExpansionValue[mqtt_val]=mqtt_val1;
+			break;
+		}
+		case MQTT_DATE:
+		{
+			if (mqtt_val==1)
+			{
+				uint8_t dmon, dday, dyear, dhr, dmin;
+				dmon=mqtt_val1/100000000;
+				dyear=(mqtt_val1%1000000)/10000;
+				dday=(mqtt_val1%100000000)/1000000;
+				dhr=(mqtt_val1%10000)/100;
+				dmin=mqtt_val1%100;
+				setTime(dhr, dmin, 0, dday, dmon, dyear);
+				now();
+				RTC.set(now());
+			}
+			char buffer[16];
+			char username[16];
+			strcpy_P(username, CLOUD_USERNAME); 
+			char pub_buffer[sizeof(username)+5];
+			sprintf(buffer, "DATE:%02d%02d%02d%02d%02d", month(), day(), year()-2000, hour(), minute());
+			sprintf(pub_buffer, "%s/out", username);
+			ReefAngel.Network.CloudPublish(pub_buffer,buffer);
 			break;
 		}
 	}
@@ -2723,5 +2770,52 @@ void ReefAngelClass::CheckOverride(int option)
 	ReefAngel.Relay.Write();
 	// Force update of the Portal after relay change
 }
+
+void ReefAngelClass::DimmingOverride(int weboption, int weboption2 )
+{
+	// Override channel
+	// weboption2 is channel
+	// weboption is override value
+	// if channel is from an expansion module that is not enabled, the command will be accepted, but it will do nothing.
+#ifdef DisplayLEDPWM					
+#if defined(__SAM3X8E__)
+	if (weboption2==0) ReefAngel.VariableControl.SetDaylightOverride(weboption);
+	else if (weboption2==1) ReefAngel.VariableControl.SetActinicOverride(weboption);
+#else
+	if (weboption2==0) ReefAngel.PWM.SetDaylightOverride(weboption);
+	else if (weboption2==1) ReefAngel.PWM.SetActinicOverride(weboption);
+#endif
+#ifdef PWMEXPANSION
+#if defined(__SAM3X8E__)
+	if (weboption2>=OVERRIDE_CHANNEL0 && weboption2<=OVERRIDE_CHANNEL5) ReefAngel.VariableControl.SetChannelOverride(weboption2-OVERRIDE_CHANNEL0,weboption);
+#else
+	if (weboption2>=OVERRIDE_CHANNEL0 && weboption2<=OVERRIDE_CHANNEL5) ReefAngel.PWM.SetChannelOverride(weboption2-OVERRIDE_CHANNEL0,weboption);
+#endif
+#endif // PWMEXPANSION
+#ifdef AI_LED
+	if (weboption2>=OVERRIDE_AI_WHITE && weboption2<=OVERRIDE_AI_ROYALBLUE) ReefAngel.AI.SetChannelOverride(weboption2-OVERRIDE_AI_WHITE,weboption);
+#endif // AI_LED
+#ifdef RFEXPANSION
+	if (weboption2>=OVERRIDE_RF_WHITE && weboption2<=OVERRIDE_RF_INTENSITY) ReefAngel.RF.SetChannelOverride(weboption2-OVERRIDE_RF_WHITE,weboption);
+#endif // RFEXPANSION
+#if defined RA_STAR || defined RA_EVOLUTION
+#if defined(__SAM3X8E__)
+	if (weboption2==OVERRIDE_DAYLIGHT2) ReefAngel.VariableControl.SetDaylight2Override(weboption);
+	else if (weboption2==OVERRIDE_ACTINIC2) ReefAngel.VariableControl.SetActinic2Override(weboption);
+#else
+	if (weboption2==OVERRIDE_DAYLIGHT2) ReefAngel.PWM.SetDaylight2Override(weboption);
+	else if (weboption2==OVERRIDE_ACTINIC2) ReefAngel.PWM.SetActinic2Override(weboption);
+#endif
+#endif // RA_STAR
+#ifdef SIXTEENCHPWMEXPANSION
+#if defined(__SAM3X8E__)
+	if (weboption2>=OVERRIDE_16CH_CHANNEL0 && weboption2<=OVERRIDE_16CH_CHANNEL15) ReefAngel.VariableControl.Set16ChannelOverride(weboption2-OVERRIDE_16CH_CHANNEL0,weboption);
+#else
+	if (weboption2>=OVERRIDE_16CH_CHANNEL0 && weboption2<=OVERRIDE_16CH_CHANNEL15) ReefAngel.PWM.Set16ChannelOverride(weboption2-OVERRIDE_16CH_CHANNEL0,weboption);
+#endif
+#endif // SIXTEENCHPWMEXPANSION
+#endif // DisplayLEDPWM
+}
+
 
 ReefAngelClass ReefAngel = ReefAngelClass() ;

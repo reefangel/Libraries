@@ -541,50 +541,9 @@ void RA_Wifi::ProcessHTTP()
 		{
 			int s;
 
-			// weboption2 is channel
-			// weboption is override value
 			if ( bHasSecondValue && (weboption2 < OVERRIDE_CHANNELS) )
 			{
-				// Override channel
-				// if channel is from an expansion module that is not enabled, the command will be accepted, but it will do nothing.
-#ifdef DisplayLEDPWM					
-#if defined(__SAM3X8E__)
-				if (weboption2==0) ReefAngel.VariableControl.SetDaylightOverride(weboption);
-				else if (weboption2==1) ReefAngel.VariableControl.SetActinicOverride(weboption);
-#else
-				if (weboption2==0) ReefAngel.PWM.SetDaylightOverride(weboption);
-				else if (weboption2==1) ReefAngel.PWM.SetActinicOverride(weboption);
-#endif
-#ifdef PWMEXPANSION
-#if defined(__SAM3X8E__)
-				if (weboption2>=2 && weboption2<=7) ReefAngel.VariableControl.SetChannelOverride(weboption2-2,weboption);
-#else
-				if (weboption2>=2 && weboption2<=7) ReefAngel.PWM.SetChannelOverride(weboption2-2,weboption);
-#endif
-#endif // PWMEXPANSION
-#ifdef AI_LED
-				if (weboption2>=8 && weboption2<=10) ReefAngel.AI.SetChannelOverride(weboption2-8,weboption);
-#endif // AI_LED
-#ifdef RFEXPANSION
-				if (weboption2>=11 && weboption2<=16) ReefAngel.RF.SetChannelOverride(weboption2-11,weboption);
-#endif // RFEXPANSION
-#if defined RA_STAR || defined RA_EVOLUTION
-#if defined(__SAM3X8E__)
-				if (weboption2==17) ReefAngel.VariableControl.SetDaylight2Override(weboption);
-				else if (weboption2==18) ReefAngel.VariableControl.SetActinic2Override(weboption);
-#else
-				if (weboption2==17) ReefAngel.PWM.SetDaylight2Override(weboption);
-				else if (weboption2==18) ReefAngel.PWM.SetActinic2Override(weboption);
-#endif
-#endif // RA_STAR
-#ifdef SIXTEENCHPWMEXPANSION
-#if defined(__SAM3X8E__)
-				if (weboption2>=19 && weboption2<=34) ReefAngel.VariableControl.Set16ChannelOverride(weboption2-19,weboption);
-#else
-				if (weboption2>=19 && weboption2<=34) ReefAngel.PWM.Set16ChannelOverride(weboption2-19,weboption);
-#endif
-#endif // SIXTEENCHPWMEXPANSION
-#endif // DisplayLEDPWM
+				ReefAngel.DimmingOverride(weboption,weboption2);
 				s = 9;  // <P>OK</P>
 				// add in the channel, twice
 				s += (intlength(weboption2)*2);

@@ -17,6 +17,11 @@
 #ifndef __RA_CUSTOMLABELS_H__
 #define __RA_CUSTOMLABELS_H__
 
+// Cloud authentication
+// Max number of characters for username and password is 16
+const prog_char CLOUD_USERNAME[] PROGMEM = "reefangel";
+const prog_char CLOUD_PASSWORD[] PROGMEM = "testmqtt";
+
 // Headers
 const prog_char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";
 const prog_char EXP_RELAY_1_LABEL[] PROGMEM = "Exp. Relay Box 1";

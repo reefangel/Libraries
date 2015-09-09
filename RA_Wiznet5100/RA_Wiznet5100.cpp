@@ -304,13 +304,16 @@ boolean RA_Wiznet5100::IsMQTTConnected()
 	return MQTTClient.connected();
 }
 
-void RA_Wiznet5100::Cloud(char *username, char *password)
+void RA_Wiznet5100::Cloud()
 {
 	if (FoundIP)
 	{
-		// mosquitto_sub -v -t "reefangel/status" -h test.mosquitto.org
-		// mosquitto_sub -v -t "reefangel/status" -h broker.mqttdashboard.com
-		
+		char username[16];
+		char password[16];
+		strcpy_P(username, CLOUD_USERNAME); 
+		strcpy_P(password, CLOUD_PASSWORD);
+		char pub_buffer[sizeof(username)+5];
+		sprintf(pub_buffer, "%s/out", username);
 		MQTTClient.loop();
 		if (millis()-MQTTReconnectmillis>5000)
 		{
@@ -337,8 +340,6 @@ void RA_Wiznet5100::Cloud(char *username, char *password)
 		
 		if (millis()-MQTTSendmillis>1000 && MQTTClient.connected())
 		{
-			char pub_buffer[sizeof(username)+5];
-			sprintf(pub_buffer, "%s/out", username);
 			MQTTSendmillis=millis();
 			for (byte a=0; a<NumParamByte;a++)
 			{
@@ -347,7 +348,7 @@ void RA_Wiznet5100::Cloud(char *username, char *password)
 					char buffer[15];
 					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
 					sprintf(buffer, "%s:%d", buffer, *ParamArrayByte[a]);
-					MQTTClient.publish(pub_buffer,buffer);
+					CloudPublish(pub_buffer,buffer);
 					OldParamArrayByte[a]=*ParamArrayByte[a];
 				}
 			}
@@ -358,12 +359,17 @@ void RA_Wiznet5100::Cloud(char *username, char *password)
 					char buffer[15];
 					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
 					sprintf(buffer, "%s:%d", buffer, *ParamArrayInt[a]);
-					MQTTClient.publish(pub_buffer,buffer);
+					CloudPublish(pub_buffer,buffer);
 					OldParamArrayInt[a]=*ParamArrayInt[a];
 				}
 			}
 		}		
 	}
+}
+
+void RA_Wiznet5100::CloudPublish(char* topic, char* message)
+{
+	MQTTClient.publish(topic,message);
 }
 
 //size_t RA_Wiznet5100::write(uint8_t c) { if (RelayIndex) return RelayClient.write((uint8_t)c); else if (PortalConnection) return PortalClient.write((uint8_t)c); else return NetClient.write((uint8_t)c); }

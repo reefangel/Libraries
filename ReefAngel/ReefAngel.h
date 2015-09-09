@@ -420,6 +420,7 @@ public:
 	void DDNS(char *subdomain);
 #endif
 	void CheckOverride(int option);
+	void DimmingOverride(int weboption, int weboption2 );
 private:
 	time_t menutimeout;
 	byte taddr;

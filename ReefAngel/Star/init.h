@@ -101,6 +101,12 @@ BuzzerOn(0);
 delay(100);
 BuzzerOff();
 TouchLCD.SetBacklight(100);
+for (int a=0;a<8;a++)
+{
+	CustomExpansionValue[a]=0;
+	CustomExpansionDecimal[a]=0;
+	
+}
 if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 {
 	Serial.println(F("No Internal Memory"));

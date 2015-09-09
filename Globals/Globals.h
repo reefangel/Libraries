@@ -1249,14 +1249,14 @@ typedef struct Compensation
 #define MQTT_ORP 12
 #define MQTT_IO 13
 #define MQTT_WL 14
-#define MQTT_MULTIWL1 15
-#define MQTT_MULTIWL2 16
-#define MQTT_MULTIWL3 17
-#define MQTT_MULTIWL4 18
-#define MQTT_LEAK 19
-#define MQTT_PAR 20
-
-
+#define MQTT_LEAK 15
+#define MQTT_PAR 26
+#define MQTT_OVERRIDE 27
+#define MQTT_CVAR 28
+#define MQTT_MEM_BYTE	29
+#define MQTT_MEM_INT	30
+#define MQTT_CUSTOM_EXP	31
+#define MQTT_DATE	32
 
 // Cloud Expansion Bits ( CEM )
 #define CloudSalinityBit	0

@@ -20,6 +20,8 @@ FuncPtr menu_button_functions1[6];
 FuncPtr menu_button_functions2[6];
 FuncPtr menu_button_functions3[6];
 FuncPtr menu_button_functions4[6];
+int CustomExpansionValue[8];
+byte CustomExpansionDecimal[8];
 
 byte LastOrientation;
 boolean MilitaryTime;
