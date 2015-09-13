@@ -620,8 +620,16 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_PHEControlOn        VarsStart+165
 #define Mem_I_PHEControlOff       VarsStart+167
 #define Mem_B_TestMode			  VarsStart+169
+#define Mem_B_CustomExpansion0Decimal  VarsStart+170
+#define Mem_B_CustomExpansion1Decimal  VarsStart+171
+#define Mem_B_CustomExpansion2Decimal  VarsStart+172
+#define Mem_B_CustomExpansion3Decimal  VarsStart+173
+#define Mem_B_CustomExpansion4Decimal  VarsStart+174
+#define Mem_B_CustomExpansion5Decimal  VarsStart+175
+#define Mem_B_CustomExpansion6Decimal  VarsStart+176
+#define Mem_B_CustomExpansion7Decimal  VarsStart+177
 
-#define VarsEnd					  VarsStart+170
+#define VarsEnd					  VarsStart+178
 // Next value starts VarsStart+170
 
 
@@ -1183,26 +1191,27 @@ typedef struct Compensation
 
 //Main Screens
 #define MAIN_SCREEN			0
-#define DIMMING_ATO			1
-#define RELAY_BOX			2
-#define EXP_BOX_1			3
-#define EXP_BOX_2			4
-#define EXP_BOX_3			5
-#define EXP_BOX_4			6
-#define EXP_BOX_5			7
-#define EXP_BOX_6			8
-#define EXP_BOX_7			9
-#define EXP_BOX_8			10
-#define PWM_SCREEN			11
-#define RF_SCREEN			12
-#define RF_SCREEN1			13
-#define AI_SCREEN			14
-#define IO_SCREEN			15
-#define DCPUMP_SCREEN		16
-#define CVAR_SCREEN			17
-#define STATUS_SCREEN		18
-#define ALERT_SCREEN		19
-#define MAX_SCREENS			20 // Highest ID for main screens
+#define CUSTOM_EXP_SCREEN	1
+#define DIMMING_ATO			2
+#define RELAY_BOX			3
+#define EXP_BOX_1			4
+#define EXP_BOX_2			5
+#define EXP_BOX_3			6
+#define EXP_BOX_4			7
+#define EXP_BOX_5			8
+#define EXP_BOX_6			9
+#define EXP_BOX_7			10
+#define EXP_BOX_8			11
+#define PWM_SCREEN			12
+#define RF_SCREEN			13
+#define RF_SCREEN1			14
+#define AI_SCREEN			15
+#define IO_SCREEN			16
+#define DCPUMP_SCREEN		17
+#define CVAR_SCREEN			18
+#define STATUS_SCREEN		19
+#define ALERT_SCREEN		20
+#define MAX_SCREENS			21 // Highest ID for main screens
 #define DIMMING_OVERRIDE	127
 
 //Menu Screens

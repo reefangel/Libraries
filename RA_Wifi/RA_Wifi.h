@@ -317,6 +317,15 @@ const prog_char JSON_PWMA2[] PROGMEM = "PWMA2";
 const prog_char JSON_PWMD2[] PROGMEM = "PWMD2";
 const prog_char JSON_PWMA2O[] PROGMEM = "PWMA2O";
 const prog_char JSON_PWMD2O[] PROGMEM = "PWMD2O";
+const prog_char JSON_CEXP0[] PROGMEM = "CEXP0";
+const prog_char JSON_CEXP1[] PROGMEM = "CEXP1";
+const prog_char JSON_CEXP2[] PROGMEM = "CEXP2";
+const prog_char JSON_CEXP3[] PROGMEM = "CEXP3";
+const prog_char JSON_CEXP4[] PROGMEM = "CEXP4";
+const prog_char JSON_CEXP5[] PROGMEM = "CEXP5";
+const prog_char JSON_CEXP6[] PROGMEM = "CEXP6";
+const prog_char JSON_CEXP7[] PROGMEM = "CEXP7";
+
 #endif  // RA_STAR
 const prog_char JSON_CLOSE[] PROGMEM = "}}";
 
