@@ -118,7 +118,7 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 				{
 					if (a<PWM_SCREEN)
 					{
-						if (bitRead(REM,a-3)) break;
+						if (bitRead(REM,a-EXP_BOX_1)) break;
 					}
 					else
 					{
@@ -137,11 +137,11 @@ void ReefAngelClass::ChangeDisplayedScreen(signed char index)
 			}
 			else
 			{
-				for (int a=DisplayedScreen;a>=3;a--)
+				for (int a=DisplayedScreen;a>=EXP_BOX_1;a--)
 				{
 					if (a<PWM_SCREEN)
 					{
-						if (bitRead(REM,a-3)) break;
+						if (bitRead(REM,a-EXP_BOX_1)) break;
 					}
 					else
 					{
@@ -2389,9 +2389,9 @@ void ReefAngelClass::ReDrawScreen()
 				else
 				{
 #ifdef RelayExp
-					TempRelay=Relay.RelayDataE[DisplayedScreen-3];
-					TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-3];
-					TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-3];
+					TempRelay=Relay.RelayDataE[DisplayedScreen-EXP_BOX_1];
+					TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-EXP_BOX_1];
+					TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-EXP_BOX_1];
 #endif // RelayExp
 				}
 				TempRelay&=TempRelayOff;
@@ -3101,9 +3101,9 @@ void ReefAngelClass::ProcessTouch()
 					else
 					{
 	#ifdef RelayExp
-						TempRelay=Relay.RelayDataE[DisplayedScreen-3];
-						TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-3];
-						TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-3];
+						TempRelay=Relay.RelayDataE[DisplayedScreen-EXP_BOX_1];
+						TempRelayOn=Relay.RelayMaskOnE[DisplayedScreen-EXP_BOX_1];
+						TempRelayOff=Relay.RelayMaskOffE[DisplayedScreen-EXP_BOX_1];
 	#endif // RelayExp
 					}
 					TempRelay&=TempRelayOff;
