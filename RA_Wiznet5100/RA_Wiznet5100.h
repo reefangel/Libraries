@@ -17,15 +17,16 @@
 #include <avr/wdt.h>
 #include <PubSubClient.h>
 
-//#define	MQTTPort	1883
-#define	MQTTPort	11233
+#define	MQTTPort	1883
+//#define	MQTTPort	11233
 
 static EthernetServer NetServer(2000);
 static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 //static byte MQTTServer[] = { 85, 119, 83, 194 }; // test.mosquitto.org
 //static byte MQTTServer[] = { 212, 72, 74, 21 }; // broker.mqttdashboard.com
 //static byte MQTTServer[] = { 10, 1, 10, 130 }; // local test
-static byte MQTTServer[] = { 107, 22, 157, 224 }; // m11.cloudmqtt.com
+//static byte MQTTServer[] = { 107, 22, 157, 224 }; // m11.cloudmqtt.com
+static byte MQTTServer[] = { 69, 198, 171, 165 }; // forum.reefangel.com
 static IPAddress NetIP(192,168,1,200);
 //const IPAddress PortalServer(198,171,134,6); // www
 //const IPAddress PortalServer(192,168,9,140); // local
