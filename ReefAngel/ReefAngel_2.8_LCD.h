@@ -3019,7 +3019,7 @@ void ReefAngelClass::ProcessTouch()
 					ChangeDisplayedScreen(-1);
 				if (TS.X>twidth-50 && TS.Y>theight-30)
 					ChangeDisplayedScreen(1);
-				if (TS.X<twidth-80 && TS.X>80 && TS.Y>theight-30)
+				if (TS.X<(twidth/2+50) && TS.X>(twidth/2-50) && TS.Y>theight-30)
 					ShowTouchMenu();
 				
 				if(DisplayedScreen==DIMMING_ATO)
