@@ -2546,8 +2546,11 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			for (byte a=0; a<NumParamByte;a++)
 			{
 				ReefAngel.Network.OldParamArrayByte[a]=ReefAngel.Network.OldParamArrayByte[a]+1;
+			}
+			for (byte a=0; a<NumParamInt;a++)
+			{
 				ReefAngel.Network.OldParamArrayInt[a]=ReefAngel.Network.OldParamArrayInt[a]+1;
-			}			
+			}
 			break;
 		case MQTT_MODE_FEEDING:
 		{
