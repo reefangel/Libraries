@@ -234,6 +234,8 @@ class InternalEEPROMClass {
         void CustomExpansion6Decimal_write(const uint8_t value);
         uint8_t CustomExpansion7Decimal_read();
         void CustomExpansion7Decimal_write(const uint8_t value);
+        uint8_t Touch_Orientation_read();
+        void Touch_Orientation_write(const uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();

@@ -59,7 +59,7 @@ public:
 //	void DirectAccess(String uniqueid);
 	void Update();
 	void Cloud();
-	void CloudPublish(char* topic, char* message);
+	void CloudPublish(char* message);
 	boolean PortalConnection;
 	boolean PortalDataReceived;
 	unsigned long PortalTimeOut;

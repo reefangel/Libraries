@@ -1038,6 +1038,16 @@ void InternalEEPROMClass::CustomExpansion7Decimal_write(const uint8_t value)
     write(Mem_B_CustomExpansion7Decimal, value);
 }
 
+uint8_t InternalEEPROMClass::Touch_Orientation_read()
+{
+    return read(Mem_B_Touch_Orientation);
+}
+
+void InternalEEPROMClass::Touch_Orientation_write(const uint8_t value)
+{
+    write(Mem_B_Touch_Orientation, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {

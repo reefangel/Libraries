@@ -628,9 +628,10 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_CustomExpansion5Decimal  VarsStart+175
 #define Mem_B_CustomExpansion6Decimal  VarsStart+176
 #define Mem_B_CustomExpansion7Decimal  VarsStart+177
+#define Mem_B_Touch_Orientation  VarsStart+178
 
-#define VarsEnd					  VarsStart+178
-// Next value starts VarsStart+170
+#define VarsEnd					  VarsStart+179
+// Next value starts VarsStart+179
 
 
 // EEProm Pointers
@@ -738,7 +739,11 @@ When adding more variables, use the previous value plus 1 or 2
 #define SAL_CALIBRATE_MENU	246
 #define ORP_CALIBRATE_MENU	245
 #define PHE_CALIBRATE_MENU	244
-#define WL_CALIBRATE_MENU	243
+#define WL4_CALIBRATE_MENU	243
+#define WL3_CALIBRATE_MENU	242
+#define WL2_CALIBRATE_MENU	241
+#define WL1_CALIBRATE_MENU	240
+#define WL_CALIBRATE_MENU	239
 
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
@@ -1240,8 +1245,6 @@ typedef struct Compensation
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
-
 // Cloud
 #define MQTT_NONE	0
 #define MQTT_REQUESTALL	1
@@ -1266,16 +1269,19 @@ typedef struct Compensation
 #define MQTT_MEM_INT	30
 #define MQTT_CUSTOM_EXP	31
 #define MQTT_DATE	32
+#define MQTT_CALIBRATION 33
 
 // Cloud Expansion Bits ( CEM )
 #define CloudSalinityBit	0
-#define CloudpHExpBit		1
+#define CloudPHExpBit		1
 #define CloudORPBit			2
 #define CloudIOBit			3
 #define CloudWLBit			4
 #define CloudMultiWLBit		5
 #define CloudLeakBit		6
 #define CloudPARBit			7
+
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 
 void MQTTSubCallback(char* topic, byte* payload, unsigned int length);
 
@@ -1314,6 +1320,7 @@ const prog_char PH_CALI11[] PROGMEM = "with RO/DI water";
 const prog_char PH_CALI12[] PROGMEM = "Ready to save values";
 const prog_char PH_CALI13[] PROGMEM = "Proceed?";
 const prog_char PH_CALI14[] PROGMEM = "Calibration Completed";
+const prog_char PH_CALI15[] PROGMEM = "wait a few minutes";
 
 // Salinity Calibration
 const prog_char SAL_CALI1[] PROGMEM = "Please place the Salinity probe in";
@@ -1341,6 +1348,7 @@ const prog_char WL_CALI3[] PROGMEM = "Please immerse the PVC";
 const prog_char WL_CALI4[] PROGMEM = "pipe in water until";
 const prog_char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
 const prog_char WL_CALI6[] PROGMEM = "%";
+const prog_char WL_CALI7[] PROGMEM = "Channel ";
 const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
 
 // Date/Time
@@ -1355,6 +1363,7 @@ const prog_char LABEL_AMPM[] PROGMEM = "AM/PM";
 const prog_char LABEL_EMPTY[] PROGMEM = "           ";
 const prog_char LABEL_MENU[] PROGMEM = "Menu";
 const prog_char LABEL_REEFANGEL[] PROGMEM = "Reef Angel";
+const prog_char LABEL_REEFANGELCONTROLLER[] PROGMEM = "Reef Angel Controller";
 const prog_char LABEL_PERCENTAGE[] PROGMEM = "%   ";
 const prog_char LABEL_MODE[] PROGMEM = "Mode";
 const prog_char LABEL_DURATION[] PROGMEM = "Duration";
@@ -1398,19 +1407,28 @@ const prog_char MENU_BUTTON_MODE[] PROGMEM = "Mode";
 const prog_char MENU_BUTTON_CLEAR[] PROGMEM = "Clear";
 const prog_char MENU_BUTTON_ATOTIMEOUT[] PROGMEM = "ATO Timeout";
 const prog_char MENU_BUTTON_OVERHEAT[] PROGMEM = "Overheat";
+const prog_char MENU_BUTTON_LEAK[] PROGMEM = "Leak";
 const prog_char MENU_BUTTON_TURN[] PROGMEM = "Turn";
 const prog_char MENU_BUTTON_CANCEL[] PROGMEM = "Cancel";
 const prog_char MENU_BUTTON_LIGHTS[] PROGMEM = "Lights On";
 const prog_char MENU_BUTTON_EXIT[] PROGMEM = "Exit";
 const prog_char MENU_BUTTON_MENU[] PROGMEM = "Menu";
+const prog_char MENU_BUTTON_REBOOT[] PROGMEM = "Reboot";
+const prog_char MENU_BUTTON_SYSTEM[] PROGMEM = "System";
 const prog_char MENU_BUTTON_ADJUST[] PROGMEM = "Adjust";
 const prog_char MENU_BUTTON_DATETIME[] PROGMEM = "Date/Time";
+const prog_char MENU_BUTTON_CHANGE[] PROGMEM = "Change";
+const prog_char MENU_BUTTON_ORIENTATION[] PROGMEM = "Orientation";
 const prog_char MENU_BUTTON_PH[] PROGMEM = "pH";
 const prog_char MENU_BUTTON_CALIBRATION[] PROGMEM = "Calibration";
 const prog_char MENU_BUTTON_SALINITY[] PROGMEM = "Salinity";
 const prog_char MENU_BUTTON_ORP[] PROGMEM = "ORP";
 const prog_char MENU_BUTTON_PHE[] PROGMEM = "pH Expansion";
 const prog_char MENU_BUTTON_WL[] PROGMEM = "Water Level";
+const prog_char MENU_BUTTON_WL1[] PROGMEM = "Water Level 1";
+const prog_char MENU_BUTTON_WL2[] PROGMEM = "Water Level 2";
+const prog_char MENU_BUTTON_WL3[] PROGMEM = "Water Level 3";
+const prog_char MENU_BUTTON_WL4[] PROGMEM = "Water Level 4";
 const prog_char MENU_BUTTON_LIGHT[] PROGMEM = "Light";
 const prog_char MENU_BUTTON_SCHEDULE[] PROGMEM = "Schedule";
 const prog_char MENU_BUTTON_HEATER[] PROGMEM = "Heater";
@@ -1430,10 +1448,13 @@ const prog_char MENU_BUTTON_DELAYED[] PROGMEM = "Delayed";
 const prog_char MENU_BUTTON_START[] PROGMEM = "Start";
 
 
-static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_CLEAR, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
-static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION};
-static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
-static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
+static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_CHANGE, MENU_BUTTON_ORIENTATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_REBOOT, MENU_BUTTON_SYSTEM, MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_CLEAR, MENU_BUTTON_LEAK, MENU_BUTTON_CLEAR};
+static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
+
+//static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
+//static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
 
 #endif //  RA_TOUCH
 

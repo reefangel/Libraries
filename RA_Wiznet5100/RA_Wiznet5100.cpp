@@ -312,8 +312,6 @@ void RA_Wiznet5100::Cloud()
 		char password[16];
 		strcpy_P(username, CLOUD_USERNAME); 
 		strcpy_P(password, CLOUD_PASSWORD);
-		char pub_buffer[sizeof(username)+5];
-		sprintf(pub_buffer, "%s/out", username);
 		MQTTClient.loop();
 		if (millis()-MQTTReconnectmillis>5000)
 		{
@@ -348,7 +346,7 @@ void RA_Wiznet5100::Cloud()
 					char buffer[15];
 					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
 					sprintf(buffer, "%s:%d", buffer, *ParamArrayByte[a]);
-					CloudPublish(pub_buffer,buffer);
+					CloudPublish(buffer);
 					OldParamArrayByte[a]=*ParamArrayByte[a];
 				}
 			}
@@ -359,7 +357,7 @@ void RA_Wiznet5100::Cloud()
 					char buffer[15];
 					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
 					sprintf(buffer, "%s:%d", buffer, *ParamArrayInt[a]);
-					CloudPublish(pub_buffer,buffer);
+					CloudPublish(buffer);
 					OldParamArrayInt[a]=*ParamArrayInt[a];
 				}
 			}
@@ -367,9 +365,17 @@ void RA_Wiznet5100::Cloud()
 	}
 }
 
-void RA_Wiznet5100::CloudPublish(char* topic, char* message)
+void RA_Wiznet5100::CloudPublish(char* message)
 {
-	MQTTClient.publish(topic,message);
+	if (MQTTClient.connected())
+	{
+		char username[16];
+		strcpy_P(username, CLOUD_USERNAME); 
+		char pub_buffer[sizeof(username)+5];
+		sprintf(pub_buffer, "%s/out", username);
+		MQTTClient.publish(pub_buffer,message);
+
+	}
 }
 
 //size_t RA_Wiznet5100::write(uint8_t c) { if (RelayIndex) return RelayClient.write((uint8_t)c); else if (PortalConnection) return PortalClient.write((uint8_t)c); else return NetClient.write((uint8_t)c); }

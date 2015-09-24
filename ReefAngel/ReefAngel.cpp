@@ -248,8 +248,12 @@ void ReefAngelClass::Refresh()
 #endif // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
+	case WL1_CALIBRATE_MENU:
+	case WL2_CALIBRATE_MENU:
+	case WL3_CALIBRATE_MENU:
+	case WL4_CALIBRATE_MENU:
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
-		SetupTouchCalibrateWL();
+		SetupTouchCalibrateWL(ChangeMode-WL_CALIBRATE_MENU);
 #else
 		SetupCalibrateWaterLevel();
 #endif // RA_TOUCH
@@ -681,7 +685,7 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 #endif  // defined ORPEXPANSION
 #if defined PHEXPANSION
-	if (bitRead(ReefAngel.CEM,CloudpHExpBit)==0)
+	if (bitRead(ReefAngel.CEM,CloudPHExpBit)==0)
 	{
 		unsigned long tempph=0;
 		for (int a=0;a<5;a++)
@@ -740,6 +744,14 @@ void ReefAngelClass::Refresh()
 		cbi(PORTH,2); // Turn on exp bus power
 	}
 #endif // BUSCHECK
+}
+
+void ReefAngelClass::Reboot()
+{
+#ifdef RA_STAR
+	TouchLCD.FullClear(COLOR_WHITE); // Clear screen
+#endif
+	while(1);
 }
 
 #ifdef RANET
@@ -1735,7 +1747,7 @@ void ReefAngelClass::LightsOn()
 	Relay.Write();
 	bitSet(StatusFlags,LightsOnFlag);
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
-	menu_button_functions1[4] = &ReefAngelClass::LightsOff;
+	menu_button_functions1[2] = &ReefAngelClass::LightsOff;
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1768,7 +1780,7 @@ void ReefAngelClass::LightsOff()
 	Relay.Write();
 	bitClear(StatusFlags,LightsOnFlag);
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
-	menu_button_functions1[4] = &ReefAngelClass::LightsOn;
+	menu_button_functions1[2] = &ReefAngelClass::LightsOn;
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1788,6 +1800,7 @@ void ReefAngelClass::ExitMenu()
 	ClearScreen(DefaultBGColor);
 	Timer[LCD_TIMER].Start();
 	SetDisplayedMenu(DEFAULT_MENU);
+	DisplayedScreen=MAIN_SCREEN;
 	CheckDrawGraph();
 	redrawmenu=true;
 }
@@ -2499,10 +2512,14 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("l", mqtt_sub)==0) mqtt_type=MQTT_LIGHTS;
 				else if (strcmp("boot", mqtt_sub)==0) mqtt_type=MQTT_REBOOT;
 				else if (strcmp("sal", mqtt_sub)==0) mqtt_type=MQTT_SALINITY;
+				else if (strcmp("salc", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
 				else if (strcmp("orp", mqtt_sub)==0) mqtt_type=MQTT_ORP;
-				else if (strcmp("phexp", mqtt_sub)==0) mqtt_type=MQTT_PHEXP;
+				else if (strcmp("orpc", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
+				else if (strcmp("phe", mqtt_sub)==0) mqtt_type=MQTT_PHEXP;
+				else if (strcmp("phec", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
 				else if (strcmp("io", mqtt_sub)==0) mqtt_type=MQTT_IO;
 				else if (strcmp("wl", mqtt_sub)==0) mqtt_type=MQTT_WL;
+				else if (strcmp("wlc", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
 				else if (strcmp("leak", mqtt_sub)==0) mqtt_type=MQTT_LEAK;
 				else if (strcmp("par", mqtt_sub)==0) mqtt_type=MQTT_PAR;
 				else if (strcmp("po", mqtt_sub)==0) mqtt_type=MQTT_OVERRIDE;
@@ -2614,10 +2631,13 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			bitSet(ReefAngel.CEM,CloudSalinityBit);
 			break;
 		}
+		case MQTT_CALIBRATION:
+			ReefAngel.CloudCalVal=mqtt_val;
+			break;
 		case MQTT_PHEXP:
 		{
 			ReefAngel.Params.PHExp=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudpHExpBit);
+			bitSet(ReefAngel.CEM,CloudPHExpBit);
 			break;
 		}
 		case MQTT_ORP:
@@ -2693,12 +2713,8 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				RTC.set(now());
 			}
 			char buffer[16];
-			char username[16];
-			strcpy_P(username, CLOUD_USERNAME); 
-			char pub_buffer[sizeof(username)+5];
 			sprintf(buffer, "DATE:%02d%02d%02d%02d%02d", month(), day(), year()-2000, hour(), minute());
-			sprintf(pub_buffer, "%s/out", username);
-			ReefAngel.Network.CloudPublish(pub_buffer,buffer);
+			ReefAngel.Network.CloudPublish(buffer);
 			break;
 		}
 	}

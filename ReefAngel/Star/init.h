@@ -6,6 +6,7 @@ wdt_enable(WDTO_2S);
 EM=0;
 EM1=0;
 REM=0;
+orientation=InternalMemory.Touch_Orientation_read();
 LastOrientation=orientation;
 MilitaryTime=false;
 NeedsRedraw=true;
@@ -65,16 +66,27 @@ for(int a=0;a<6;a++)
 MenuFunctionPtr=&ReefAngelClass::Touch; // default pointer
 menu_button_functions1[0] = &ReefAngelClass::FeedingModeStart;
 menu_button_functions1[1] = &ReefAngelClass::WaterChangeModeStart;
-menu_button_functions1[2] = &ReefAngelClass::ATOClear;
-menu_button_functions1[3] = &ReefAngelClass::OverheatClear;
-menu_button_functions1[4] = &ReefAngelClass::LightsOn;
-menu_button_functions1[5] = &ReefAngelClass::MainScreen;
-menu_button_functions2[0] = &ReefAngelClass::SetupTouchDateTime;
-menu_button_functions2[1] = &ReefAngelClass::SetupTouchCalibratePH;
-menu_button_functions2[2] = &ReefAngelClass::SetupTouchCalibrateSal;
-menu_button_functions2[3] = &ReefAngelClass::SetupTouchCalibrateORP;
-menu_button_functions2[4] = &ReefAngelClass::SetupTouchCalibratePHExp;
-menu_button_functions2[5] = &ReefAngelClass::SetupTouchCalibrateWL;
+menu_button_functions1[2] = &ReefAngelClass::LightsOn;
+menu_button_functions1[3] = &ReefAngelClass::ChangeOrientation;
+menu_button_functions1[4] = &ReefAngelClass::MainScreen;
+
+menu_button_functions2[0] = &ReefAngelClass::Reboot;
+menu_button_functions2[1] = &ReefAngelClass::SetupTouchDateTime;
+menu_button_functions2[2] = &ReefAngelClass::ATOClear;
+menu_button_functions2[3] = &ReefAngelClass::OverheatClear;
+menu_button_functions2[4] = &ReefAngelClass::LeakClear;
+
+menu_button_functions3[0] = &ReefAngelClass::SetupTouchCalibratePH;
+menu_button_functions3[1] = &ReefAngelClass::SetupTouchCalibrateSal;
+menu_button_functions3[2] = &ReefAngelClass::SetupTouchCalibrateORP;
+menu_button_functions3[3] = &ReefAngelClass::SetupTouchCalibratePHExp;
+menu_button_functions3[4] = &ReefAngelClass::MainScreen;
+
+menu_button_functions4[0] = &ReefAngelClass::SetupTouchCalibrateWL0;
+menu_button_functions4[1] = &ReefAngelClass::SetupTouchCalibrateWL1;
+menu_button_functions4[2] = &ReefAngelClass::SetupTouchCalibrateWL2;
+menu_button_functions4[3] = &ReefAngelClass::SetupTouchCalibrateWL3;
+menu_button_functions4[4] = &ReefAngelClass::SetupTouchCalibrateWL4;
 
 #if not defined NOSD
 SDFound=(PINJ & (1<<PJ3))==0;
@@ -95,7 +107,7 @@ if (SDFound)
 else
 {
 	TouchLCD.FullClear(BKCOLOR);	
-	Font.DrawText(85,110,"Reef Angel Controller");
+	Font.DrawCenterTextP(TouchLCD.GetWidth()/2,TouchLCD.GetHeight()/2,LABEL_REEFANGELCONTROLLER);
 }
 BuzzerOn(0);
 delay(100);

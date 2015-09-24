@@ -274,6 +274,7 @@ public:
 	void CheckDrawGraph();
 	void CheckFeedingDrawing();
 	void CheckWaterChangeDrawing();
+	void Reboot();
 #ifdef RANET
 	void RANetTrigger(byte TriggerValue);
 #endif // RANET
