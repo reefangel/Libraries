@@ -174,6 +174,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
+#define CUSTOM_EXP_MODULES				8
 #ifndef EXTRA_TEMP_PROBES
 #define TEMP_PROBES						3
 #else

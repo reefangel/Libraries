@@ -1800,7 +1800,9 @@ void ReefAngelClass::ExitMenu()
 	ClearScreen(DefaultBGColor);
 	Timer[LCD_TIMER].Start();
 	SetDisplayedMenu(DEFAULT_MENU);
+#ifdef RA_STAR
 	DisplayedScreen=MAIN_SCREEN;
+#endif
 	CheckDrawGraph();
 	redrawmenu=true;
 }

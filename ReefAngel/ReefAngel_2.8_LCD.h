@@ -2317,7 +2317,7 @@ void ReefAngelClass::ReDrawScreen()
 						i=4;
 						j=65+i;
 						Font.SetColor(COLOR_GOLD,BKCOLOR,true);		
-						for (int a=0;a<8;a++)
+						for (int a=0;a<CUSTOM_EXP_MODULES;a++)
 						{
 							CustomExpansionLastValue[a]=-1;
 							Font.DrawCenterTextP(x,j,(char * )pgm_read_word(&(LABEL_CUSTOM_EXP[a])));
@@ -2334,7 +2334,7 @@ void ReefAngelClass::ReDrawScreen()
 						x=twidth*3/21;
 						j=64+i;
 						Font.SetColor(COLOR_GOLD,BKCOLOR,true);
-						for (int a=0;a<8;a++)
+						for (int a=0;a<CUSTOM_EXP_MODULES;a++)
 						{
 							CustomExpansionLastValue[a]=-1;
 							Font.DrawCenterTextP(x,j,(char * )pgm_read_word(&(LABEL_CUSTOM_EXP[a])));
@@ -2354,7 +2354,7 @@ void ReefAngelClass::ReDrawScreen()
 					x=twidth*3/16;
 					j=31+i;
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					for (int a=0;a<8;a++)
+					for (int a=0;a<CUSTOM_EXP_MODULES;a++)
 					{
 						if (CustomExpansionValue[a]!=CustomExpansionLastValue[a])
 						{
@@ -2369,7 +2369,7 @@ void ReefAngelClass::ReDrawScreen()
 					x=twidth*3/21;
 					j=32+i;
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					for (int a=0;a<8;a++)
+					for (int a=0;a<CUSTOM_EXP_MODULES;a++)
 					{
 						if (CustomExpansionValue[a]!=CustomExpansionLastValue[a])
 						{
