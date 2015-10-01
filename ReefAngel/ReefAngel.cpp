@@ -2519,6 +2519,8 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("orpc", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
 				else if (strcmp("phe", mqtt_sub)==0) mqtt_type=MQTT_PHEXP;
 				else if (strcmp("phec", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
+				else if (strcmp("cexp", mqtt_sub)==0) mqtt_type=MQTT_CUSTOM_EXP;
+				else if (strcmp("cexpc", mqtt_sub)==0) mqtt_type=MQTT_CUSTOM_CALIBRATION;
 				else if (strcmp("io", mqtt_sub)==0) mqtt_type=MQTT_IO;
 				else if (strcmp("wl", mqtt_sub)==0) mqtt_type=MQTT_WL;
 				else if (strcmp("wlc", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
@@ -2528,7 +2530,6 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("cvar", mqtt_sub)==0) mqtt_type=MQTT_CVAR;
 				else if (strcmp("mb", mqtt_sub)==0) mqtt_type=MQTT_MEM_BYTE;
 				else if (strcmp("mi", mqtt_sub)==0) mqtt_type=MQTT_MEM_INT;
-				else if (strcmp("cexp", mqtt_sub)==0) mqtt_type=MQTT_CUSTOM_EXP;
 				else if (strcmp("date", mqtt_sub)==0) mqtt_type=MQTT_DATE;
 			}
 		}
@@ -2537,6 +2538,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			if (payload[a]==58) // Let's look for a :
 			{
 				foundchannel=true;
+				mqtt_val=0;
 			}
 			else
 			{
@@ -2635,6 +2637,9 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		}
 		case MQTT_CALIBRATION:
 			ReefAngel.CloudCalVal=mqtt_val;
+			break;
+		case MQTT_CUSTOM_CALIBRATION:
+			ReefAngel.CloudCalVal=mqtt_val1;
 			break;
 		case MQTT_PHEXP:
 		{

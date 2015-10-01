@@ -745,6 +745,14 @@ When adding more variables, use the previous value plus 1 or 2
 #define WL2_CALIBRATE_MENU	241
 #define WL1_CALIBRATE_MENU	240
 #define WL_CALIBRATE_MENU	239
+#define CUSTOM8_CALIBRATE_MENU	238
+#define CUSTOM7_CALIBRATE_MENU	237
+#define CUSTOM6_CALIBRATE_MENU	236
+#define CUSTOM5_CALIBRATE_MENU	235
+#define CUSTOM4_CALIBRATE_MENU	234
+#define CUSTOM3_CALIBRATE_MENU	233
+#define CUSTOM2_CALIBRATE_MENU	232
+#define CUSTOM1_CALIBRATE_MENU	231
 
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
@@ -1222,8 +1230,9 @@ typedef struct Compensation
 
 //Menu Screens
 #define MAIN_MENU_SCREEN	0
-#define SETUP_MENU_SCREEN	1
-#define MAX_MENU_SCREENS	2 // Highest ID for menu screens
+#define CALIBRATE_MENU_SCREEN	1
+#define CALIBRATE_CUSTOM_MENU_SCREEN	2
+#define MAX_MENU_SCREENS	3 // Highest ID for menu screens
 
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
@@ -1271,6 +1280,7 @@ typedef struct Compensation
 #define MQTT_CUSTOM_EXP	31
 #define MQTT_DATE	32
 #define MQTT_CALIBRATION 33
+#define MQTT_CUSTOM_CALIBRATION 34
 
 // Cloud Expansion Bits ( CEM )
 #define CloudSalinityBit	0
@@ -1307,7 +1317,7 @@ const prog_char CALI3[] PROGMEM = "Please touch";
 const prog_char CALI4[] PROGMEM = "the red circle";
 
 // pH Calibration
-const prog_char PH_CALI1[] PROGMEM = "Please place the pH probe in";
+const prog_char PH_CALI1[] PROGMEM = "Please place the probe in";
 const prog_char PH_CALI2[] PROGMEM = "calibration solution";
 const prog_char PH_CALI3[] PROGMEM = "and touch Ok button";
 const prog_char PH_CALI4[] PROGMEM = "Calibrating";
@@ -1316,7 +1326,7 @@ const prog_char PH_CALI6[] PROGMEM = "Calculating Calibration...";
 const prog_char PH_CALI7[] PROGMEM = "Your calibration value is";
 const prog_char PH_CALI8[] PROGMEM = "Please write it down";
 const prog_char PH_CALI9[] PROGMEM = "for your records";
-const prog_char PH_CALI10[] PROGMEM = "Please rinse the pH probe";
+const prog_char PH_CALI10[] PROGMEM = "Please rinse the probe";
 const prog_char PH_CALI11[] PROGMEM = "with RO/DI water";
 const prog_char PH_CALI12[] PROGMEM = "Ready to save values";
 const prog_char PH_CALI13[] PROGMEM = "Proceed?";
@@ -1324,23 +1334,14 @@ const prog_char PH_CALI14[] PROGMEM = "Calibration Completed";
 const prog_char PH_CALI15[] PROGMEM = "wait a few minutes";
 
 // Salinity Calibration
-const prog_char SAL_CALI1[] PROGMEM = "Please place the Salinity probe in";
 const prog_char SAL_CALI2[] PROGMEM = "ppt";
-const prog_char NO_SAL1[] PROGMEM = "No Salinity Expansion";
-const prog_char NO_SAL2[] PROGMEM = "Module Found";
 
 // ORP Calibration
 const prog_char ORP_CALI1[] PROGMEM = "Please connect the terminator";
-const prog_char ORP_CALI2[] PROGMEM = "Please place the ORP probe in";
 const prog_char ORP_CALI3[] PROGMEM = "mV";
 const prog_char ORP_CALI4[] PROGMEM = "Please disconnect the";
 const prog_char ORP_CALI5[] PROGMEM = "terminator and connect";
-const prog_char ORP_CALI6[] PROGMEM = "ORP probe";
-
-const prog_char NO_ORP1[] PROGMEM = "No ORP Expansion";
-
-// pHExp Calibration
-const prog_char NO_PHE1[] PROGMEM = "No pH Expansion";
+const prog_char ORP_CALI6[] PROGMEM = "the ORP probe";
 
 // WL Calibration
 const prog_char WL_CALI1[] PROGMEM = "Please hold the PVC";
@@ -1350,7 +1351,14 @@ const prog_char WL_CALI4[] PROGMEM = "pipe in water until";
 const prog_char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
 const prog_char WL_CALI6[] PROGMEM = "%";
 const prog_char WL_CALI7[] PROGMEM = "Channel ";
-const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
+
+// Custom Expansion
+const prog_char CUSTOM_CALI1[] PROGMEM = "the first";
+const prog_char CUSTOM_CALI2[] PROGMEM = "the second";
+const prog_char CUSTOM_CALI3[] PROGMEM = "Module ";
+const prog_char CUSTOM_CALI4[] PROGMEM = "1st solution";
+const prog_char CUSTOM_CALI5[] PROGMEM = "2nd solution";
+
 
 // Date/Time
 const prog_char LABEL_MONTH[] PROGMEM = "Month";
@@ -1430,6 +1438,15 @@ const prog_char MENU_BUTTON_WL1[] PROGMEM = "Water Level 1";
 const prog_char MENU_BUTTON_WL2[] PROGMEM = "Water Level 2";
 const prog_char MENU_BUTTON_WL3[] PROGMEM = "Water Level 3";
 const prog_char MENU_BUTTON_WL4[] PROGMEM = "Water Level 4";
+const prog_char MENU_BUTTON_CEXP[] PROGMEM = "Custom Expansion";
+const prog_char MENU_BUTTON_CEXP1[] PROGMEM = "Custom Expansion 1";
+const prog_char MENU_BUTTON_CEXP2[] PROGMEM = "Custom Expansion 2";
+const prog_char MENU_BUTTON_CEXP3[] PROGMEM = "Custom Expansion 3";
+const prog_char MENU_BUTTON_CEXP4[] PROGMEM = "Custom Expansion 4";
+const prog_char MENU_BUTTON_CEXP5[] PROGMEM = "Custom Expansion 5";
+const prog_char MENU_BUTTON_CEXP6[] PROGMEM = "Custom Expansion 6";
+const prog_char MENU_BUTTON_CEXP7[] PROGMEM = "Custom Expansion 7";
+const prog_char MENU_BUTTON_CEXP8[] PROGMEM = "Custom Expansion 8";
 const prog_char MENU_BUTTON_LIGHT[] PROGMEM = "Light";
 const prog_char MENU_BUTTON_SCHEDULE[] PROGMEM = "Schedule";
 const prog_char MENU_BUTTON_HEATER[] PROGMEM = "Heater";
@@ -1453,6 +1470,8 @@ static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUT
 static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_REBOOT, MENU_BUTTON_SYSTEM, MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_CLEAR, MENU_BUTTON_LEAK, MENU_BUTTON_CLEAR};
 static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
 static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
+static PROGMEM const char *menu_button_items5[] = {MENU_BUTTON_CEXP1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP4, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items6[] = {MENU_BUTTON_CEXP5, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP6, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP7, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP8, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
 
 //static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
 //static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};

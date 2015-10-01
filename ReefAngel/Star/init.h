@@ -88,6 +88,18 @@ menu_button_functions4[2] = &ReefAngelClass::SetupTouchCalibrateWL2;
 menu_button_functions4[3] = &ReefAngelClass::SetupTouchCalibrateWL3;
 menu_button_functions4[4] = &ReefAngelClass::SetupTouchCalibrateWL4;
 
+menu_button_functions5[0] = &ReefAngelClass::SetupTouchCalibrateCustom1;
+menu_button_functions5[1] = &ReefAngelClass::SetupTouchCalibrateCustom2;
+menu_button_functions5[2] = &ReefAngelClass::SetupTouchCalibrateCustom3;
+menu_button_functions5[3] = &ReefAngelClass::SetupTouchCalibrateCustom4;
+menu_button_functions5[4] = &ReefAngelClass::MainScreen;
+
+menu_button_functions6[0] = &ReefAngelClass::SetupTouchCalibrateCustom5;
+menu_button_functions6[1] = &ReefAngelClass::SetupTouchCalibrateCustom6;
+menu_button_functions6[2] = &ReefAngelClass::SetupTouchCalibrateCustom7;
+menu_button_functions6[3] = &ReefAngelClass::SetupTouchCalibrateCustom8;
+menu_button_functions6[4] = &ReefAngelClass::SetupTouchCalibrateCustom1;
+
 #if not defined NOSD
 SDFound=(PINJ & (1<<PJ3))==0;
 Serial.print(F("SD Found: "));
