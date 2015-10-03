@@ -13,14 +13,17 @@ Sleeping=false;
 pinMode(53,OUTPUT);
 digitalWrite(53,HIGH); // Pull up resistor on hardware SS SPI
 SPI.begin();
+Serial.println("SPI Begin");
 wdt_reset();
 TouchLCD.Init();
+Serial.println("Touch Init");
 SmallFont.SetFont(f8x8);
 Font.SetFont(f12x12);
 LargeFont.SetFont(ArialBold20);
 setSyncProvider(RTC.get);   // the function to get the time from the RTC
 setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 TS.Init();
+Serial.println("TS Init");
 wdt_reset();
 OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Ok",OKBUTTON);
 CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,"Cancel",CANCELBUTTON);
@@ -28,9 +31,12 @@ Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");
 Slider.SetPosition(0,50);
 Slider.Refresh();
 wdt_reset();
+Serial.println("Slider Init");
 InitCustomLabels();
+Serial.println("Labels Init");
 for(int a=0;a<6;a++)
 	PB[a].Create(COLOR_BLACK,COLOR_WHITE,COLOR_BLACK,"");
+Serial.println("Buttons Init");
 MenuFunctionPtr=&ReefAngelClass::Touch; // default pointer
 menu_button_functions1[0] = &ReefAngelClass::FeedingModeStart;
 menu_button_functions1[1] = &ReefAngelClass::WaterChangeModeStart;
@@ -45,6 +51,8 @@ menu_button_functions2[3] = &ReefAngelClass::SetupTouchCalibrateORP;
 menu_button_functions2[4] = &ReefAngelClass::SetupTouchCalibratePHExp;
 menu_button_functions2[5] = &ReefAngelClass::SetupTouchCalibrateWL;
 
+Serial.println("Skipping Tilt");
+
 #if not defined NOTILT
 Tilt.Init();
 Tilt.Refresh();
@@ -54,11 +62,18 @@ SetOrientation(Tilt.GetOrientation());
 // make sure that the default chip select pin is set to
 // output, even if you don't use it:
 #if not defined NOSD
-SDFound=SD.begin(SDPin);
+wdt_reset();
+Serial.println("SD Check");
+SDFound=(PINJ & (1<<PJ3))==0;
+Serial.println(SDFound);
 #endif // NOSD
 Splash=true;
 if (SDFound)
 {
+	wdt_reset();
+	SD.begin(SDPin);
+	wdt_reset();
+	Serial.println("SD Init");
 	if (orientation%2==0)
 		TouchLCD.DrawSDRawImage("splash_l.raw",0,0,320,240);
 	else
@@ -68,7 +83,7 @@ else
 {
 	TouchLCD.FullClear(BKCOLOR);	
 }
-TouchLCD.SetBacklight(100);
+TouchLCD.SetBacklight(10);
 //0x5241494D
 //0xCF06A31E
 if (InternalMemory.IMCheck_read()!=0xCF06A31E)
@@ -88,6 +103,7 @@ if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 		Font.DrawTextP(10,180,NoIMLine4);
 		Font.DrawTextP(10,195,NoIMLine5);
 		wdt_reset();
+		Serial.println("No Internal Memory");
 	}
 }
 #ifdef RA_TOUCHDISPLAY

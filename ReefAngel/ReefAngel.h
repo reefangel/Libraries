@@ -43,7 +43,7 @@
 #include <DCPump.h>
 #endif  // DCPUMPCONTROL
 #include <DS1307RTC.h>
-#if defined wifi || defined RA_STAR
+#if defined wifi
 #include <RA_Wifi.h>
 #endif  // wifi
 #if defined ORPEXPANSION
@@ -93,6 +93,8 @@ public:
 	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
+	ParamsStruct OldParams;
+	byte OldTempRelay, OldDaylight, OldActinic;
 	byte AlertFlags,StatusFlags;
 	bool BusLocked;
 	unsigned long LastFeedingMode;
@@ -206,6 +208,7 @@ public:
 #endif
 	byte EM,EM1;
 	byte REM;
+	byte CEM;
 
 	/*
 	EM Bits
@@ -271,6 +274,7 @@ public:
 	void CheckDrawGraph();
 	void CheckFeedingDrawing();
 	void CheckWaterChangeDrawing();
+	void Reboot();
 #ifdef RANET
 	void RANetTrigger(byte TriggerValue);
 #endif // RANET
@@ -336,6 +340,7 @@ public:
 	void LeakCheck();
 	void LeakClear();
 	boolean isLeak();
+	byte LeakValue;
 #endif  // LEAKDETECTOREXPANSION
 
 	boolean isATOTimeOut();
@@ -415,7 +420,8 @@ public:
 	void Portal(char *username, char *key);
 	void DDNS(char *subdomain);
 #endif
-
+	void CheckOverride(int option);
+	void DimmingOverride(int weboption, int weboption2 );
 private:
 	time_t menutimeout;
 	byte taddr;

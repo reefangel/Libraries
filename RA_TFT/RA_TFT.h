@@ -24,18 +24,18 @@
 
 #include <Globals.h>
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 
-#define CS0 cbi(PORTL,1)
-#define CS1 sbi(PORTL,1)
-#define RS0 cbi(PORTL,2)
-#define RS1 sbi(PORTL,2)
-#define WR0 cbi(PORTL,3)
-#define WR1 sbi(PORTL,3)
-#define RST0 cbi(PORTL,6)
-#define RST1 sbi(PORTL,6)
-#define BL0 cbi(PORTL,5)
-#define BL1 sbi(PORTL,5)
+#define CS0 cbi(PORTE,5)
+#define CS1 sbi(PORTE,5)
+#define RS0 cbi(PORTE,3)
+#define RS1 sbi(PORTE,3)
+#define WR0 cbi(PORTE,6)
+#define WR1 sbi(PORTE,6)
+#define RST0 cbi(PORTH,3)
+#define RST1 sbi(PORTH,3)
+#define BL0 cbi(PORTE,4)
+#define BL1 sbi(PORTE,4)
 #define LED0 cbi(PORTH, 4)
 #define LED1 sbi(PORTH, 4)
 

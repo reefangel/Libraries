@@ -95,6 +95,7 @@ private:
 	void SendCMD(const byte data);
 	void SendData(const byte data);
 	void SendColor12Bit(const byte &color);
+	void SendColor16Bit(const byte &color);
 	void DrawTextLine(byte fcolor, byte bcolor, byte x, byte y, char c);
 #if defined FONT_8x8 || defined FONT_8x16 || defined FONT_12x16 || defined NUMBERS_8x8 || defined NUMBERS_8x16 || defined NUMBERS_12x16
 	void DrawLargeTextLine(byte fcolor, byte bcolor, byte x, byte y, uint16_t c, byte height);

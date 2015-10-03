@@ -958,6 +958,96 @@ void InternalEEPROMClass::PWMSlopeDurationA2_write(const uint8_t value)
     write(Mem_B_PWMSlopeDurationA2, value);
 }
 
+uint8_t InternalEEPROMClass::CustomExpansion0Decimal_read()
+{
+    return read(Mem_B_CustomExpansion0Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion0Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion0Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::CustomExpansion1Decimal_read()
+{
+    return read(Mem_B_CustomExpansion1Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion1Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion1Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::CustomExpansion2Decimal_read()
+{
+    return read(Mem_B_CustomExpansion2Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion2Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion2Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::CustomExpansion3Decimal_read()
+{
+    return read(Mem_B_CustomExpansion3Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion3Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion3Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::CustomExpansion4Decimal_read()
+{
+    return read(Mem_B_CustomExpansion4Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion4Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion4Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::CustomExpansion5Decimal_read()
+{
+    return read(Mem_B_CustomExpansion5Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion5Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion5Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::CustomExpansion6Decimal_read()
+{
+    return read(Mem_B_CustomExpansion6Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion6Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion6Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::CustomExpansion7Decimal_read()
+{
+    return read(Mem_B_CustomExpansion7Decimal);
+}
+
+void InternalEEPROMClass::CustomExpansion7Decimal_write(const uint8_t value)
+{
+    write(Mem_B_CustomExpansion7Decimal, value);
+}
+
+uint8_t InternalEEPROMClass::Touch_Orientation_read()
+{
+    return read(Mem_B_Touch_Orientation);
+}
+
+void InternalEEPROMClass::Touch_Orientation_write(const uint8_t value)
+{
+    write(Mem_B_Touch_Orientation, value);
+}
+
 // Int Functions
 int InternalEEPROMClass::WM1Timer_read()
 {

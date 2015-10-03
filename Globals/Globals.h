@@ -66,14 +66,30 @@ void receiveEventMaster(int howMany);
 #endif //  RA_TOUCH
 
 #if defined RA_STAR
+#include <SD.h>
 #undef RA_PLUS
 #undef wifi
+#define DisplayLEDPWM
 #define ETH_WIZ5100
+#define LEAKDETECTOREXPANSION
 #define EMBEDDED_LEAK
-#define DIGITAL_JOYSTICK
-#define HWSPILCD
-#define MAIN_2014
-#define FONT_8x8
+#define RANET
+#define NOTILT
+#define PWMEXPANSION
+#define IOEXPANSION
+#define RFEXPANSION
+#define SALINITYEXPANSION
+#define ORPEXPANSION
+#define RelayExp
+#define PHEXPANSION
+#define WATERLEVELEXPANSION
+#define MULTIWATERLEVELEXPANSION
+#define AI_LED
+#define HUMIDITYEXPANSION
+#define PAREXPANSION
+#define DCPUMPCONTROL
+#define CUSTOM_VARIABLES
+#define TOUCHCAP
 #endif //  RA_STAR
 
 #if defined(__SAM3X8E__)
@@ -105,6 +121,7 @@ void receiveEventMaster(int howMany);
 #endif // RA_TOUCHDISPLAY
 
 #if defined RA_TOUCH || defined DCPUMPCONTROL
+#define NOTILT
 #endif // RA_TOUCH
 
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
@@ -157,6 +174,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
+#define CUSTOM_EXP_MODULES				8
 #ifndef EXTRA_TEMP_PROBES
 #define TEMP_PROBES						3
 #else
@@ -271,7 +289,11 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define i2cMuxEnable		43
 #define HW_SPI_Pin			53
+#define RANetRXPin			50
+#define RANetTXPin			52
+
 #if defined(__SAM3X8E__)
 #define SDPin				29
 #define AlarmPin          	30
@@ -285,13 +307,11 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define TPCSPin				28
 #define TouchBL				3
 #else //
-#define TouchBL				44
+#define TouchBL				2
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
-#define RANetRXPin			50
-#define RANetTXPin			52
 #ifdef REEFANGEL_MINI
 #define ledPin              6
 #else
@@ -323,7 +343,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CEEPROM2          0x54
 #define I2CHumidity			0x5c
 #define I2CClock            0x68
-
+#define i2cMux				0x70
 
 #ifdef __PLUS_SPECIAL_WIFI__
 #define WIFI_SERIAL Serial1
@@ -375,23 +395,23 @@ static SoftwareSerial RANetSerial(RANetRXPin,RANetTXPin);
 // PWM Override IDs
 #define OVERRIDE_DAYLIGHT		0
 #define OVERRIDE_ACTINIC		1
-#define OVERRIDE_CHANNEL0		2
-#define OVERRIDE_CHANNEL1		3
-#define OVERRIDE_CHANNEL2		4
-#define OVERRIDE_CHANNEL3		5
-#define OVERRIDE_CHANNEL4		6
-#define OVERRIDE_CHANNEL5		7
-#define OVERRIDE_AI_WHITE		8
-#define OVERRIDE_AI_ROYALBLUE	9
-#define OVERRIDE_AI_BLUE		10
-#define OVERRIDE_RF_WHITE		11
-#define OVERRIDE_RF_ROYALBLUE	12
-#define OVERRIDE_RF_RED			13
-#define OVERRIDE_RF_GREEN		14
-#define OVERRIDE_RF_BLUE		15
-#define OVERRIDE_RF_INTENSITY	16
-#define OVERRIDE_DAYLIGHT2		17
-#define OVERRIDE_ACTINIC2		18
+#define OVERRIDE_DAYLIGHT2		2
+#define OVERRIDE_ACTINIC2		3
+#define OVERRIDE_CHANNEL0		4
+#define OVERRIDE_CHANNEL1		5
+#define OVERRIDE_CHANNEL2		6
+#define OVERRIDE_CHANNEL3		7
+#define OVERRIDE_CHANNEL4		8
+#define OVERRIDE_CHANNEL5		9
+#define OVERRIDE_AI_WHITE		10
+#define OVERRIDE_AI_BLUE		11
+#define OVERRIDE_AI_ROYALBLUE	12
+#define OVERRIDE_RF_WHITE		13
+#define OVERRIDE_RF_ROYALBLUE	14
+#define OVERRIDE_RF_RED			15
+#define OVERRIDE_RF_GREEN		16
+#define OVERRIDE_RF_BLUE		17
+#define OVERRIDE_RF_INTENSITY	18
 #define OVERRIDE_16CH_CHANNEL0		19
 #define OVERRIDE_16CH_CHANNEL1		20
 #define OVERRIDE_16CH_CHANNEL2		21
@@ -601,9 +621,18 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_I_PHEControlOn        VarsStart+165
 #define Mem_I_PHEControlOff       VarsStart+167
 #define Mem_B_TestMode			  VarsStart+169
+#define Mem_B_CustomExpansion0Decimal  VarsStart+170
+#define Mem_B_CustomExpansion1Decimal  VarsStart+171
+#define Mem_B_CustomExpansion2Decimal  VarsStart+172
+#define Mem_B_CustomExpansion3Decimal  VarsStart+173
+#define Mem_B_CustomExpansion4Decimal  VarsStart+174
+#define Mem_B_CustomExpansion5Decimal  VarsStart+175
+#define Mem_B_CustomExpansion6Decimal  VarsStart+176
+#define Mem_B_CustomExpansion7Decimal  VarsStart+177
+#define Mem_B_Touch_Orientation  VarsStart+178
 
-#define VarsEnd					  VarsStart+170
-// Next value starts VarsStart+170
+#define VarsEnd					  VarsStart+179
+// Next value starts VarsStart+179
 
 
 // EEProm Pointers
@@ -711,7 +740,19 @@ When adding more variables, use the previous value plus 1 or 2
 #define SAL_CALIBRATE_MENU	246
 #define ORP_CALIBRATE_MENU	245
 #define PHE_CALIBRATE_MENU	244
-#define WL_CALIBRATE_MENU	243
+#define WL4_CALIBRATE_MENU	243
+#define WL3_CALIBRATE_MENU	242
+#define WL2_CALIBRATE_MENU	241
+#define WL1_CALIBRATE_MENU	240
+#define WL_CALIBRATE_MENU	239
+#define CUSTOM8_CALIBRATE_MENU	238
+#define CUSTOM7_CALIBRATE_MENU	237
+#define CUSTOM6_CALIBRATE_MENU	236
+#define CUSTOM5_CALIBRATE_MENU	235
+#define CUSTOM4_CALIBRATE_MENU	234
+#define CUSTOM3_CALIBRATE_MENU	233
+#define CUSTOM2_CALIBRATE_MENU	232
+#define CUSTOM1_CALIBRATE_MENU	231
 
 #define DEFAULT_MENU_ITEM   0     // default menu item, first item on menu
 #define MAIN_MENU           0
@@ -726,7 +767,7 @@ When adding more variables, use the previous value plus 1 or 2
 
 #ifndef COLORS_PDE
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 // Reef Touch Colors
 #define COLOR_BLACK                 RGB565(0x00, 0x00, 0x00)
 #define COLOR_WHITE                 RGB565(0xFF, 0xFF, 0xFF)
@@ -760,6 +801,8 @@ When adding more variables, use the previous value plus 1 or 2
 #define RELAYGREEN                  RGB565(0x00, 0xAA, 0x00)
 #define DCLABELBAR					RGB565(0xA1, 0xC5, 0x59)
 #define CVARLABELBAR				RGB565(0xF6, 0x03, 0xFF)
+#define STATUSLABELBAR				RGB565(0x9F, 0xA3, 0xC2)
+#define ALERTLABELBAR				RGB565(0xFF, 0x33, 0x22)
 #define PWMWHITE					COLOR_ORANGE
 #define PWMROYALBLUE				RGB565(0x0, 0x66, 0xCC)
 #define PWMRED						COLOR_RED
@@ -1162,30 +1205,34 @@ typedef struct Compensation
 
 //Main Screens
 #define MAIN_SCREEN			0
-#define DIMMING_ATO			1
-#define RELAY_BOX			2
-#define EXP_BOX_1			3
-#define EXP_BOX_2			4
-#define EXP_BOX_3			5
-#define EXP_BOX_4			6
-#define EXP_BOX_5			7
-#define EXP_BOX_6			8
-#define EXP_BOX_7			9
-#define EXP_BOX_8			10
-#define PWM_SCREEN			11
-#define RF_SCREEN			12
-#define RF_SCREEN1			13
-#define AI_SCREEN			14
-#define IO_SCREEN			15
-#define DCPUMP_SCREEN		16
-#define CVAR_SCREEN			17
-#define MAX_SCREENS			18 // Highest ID for main screens
+#define CUSTOM_EXP_SCREEN	1
+#define DIMMING_ATO			2
+#define RELAY_BOX			3
+#define EXP_BOX_1			4
+#define EXP_BOX_2			5
+#define EXP_BOX_3			6
+#define EXP_BOX_4			7
+#define EXP_BOX_5			8
+#define EXP_BOX_6			9
+#define EXP_BOX_7			10
+#define EXP_BOX_8			11
+#define PWM_SCREEN			12
+#define RF_SCREEN			13
+#define RF_SCREEN1			14
+#define AI_SCREEN			15
+#define IO_SCREEN			16
+#define DCPUMP_SCREEN		17
+#define CVAR_SCREEN			18
+#define STATUS_SCREEN		19
+#define ALERT_SCREEN		20
+#define MAX_SCREENS			21 // Highest ID for main screens
 #define DIMMING_OVERRIDE	127
 
 //Menu Screens
 #define MAIN_MENU_SCREEN	0
-#define SETUP_MENU_SCREEN	1
-#define MAX_MENU_SCREENS	2 // Highest ID for menu screens
+#define CALIBRATE_MENU_SCREEN	1
+#define CALIBRATE_CUSTOM_MENU_SCREEN	2
+#define MAX_MENU_SCREENS	3 // Highest ID for menu screens
 
 #define TT_SENSITIVITY					30
 #define MAX_APP_BUFFER 					768
@@ -1208,7 +1255,46 @@ typedef struct Compensation
 #define TS_CALIBRATION_DELTA			800
 #define CALIBRATION_TIMER				3
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+// Cloud
+#define MQTT_NONE	0
+#define MQTT_REQUESTALL	1
+#define MQTT_R	2
+#define MQTT_MODE_FEEDING	3
+#define MQTT_MODE_WATERCHANGE	4
+#define MQTT_ALARM_ATO	5
+#define MQTT_ALARM_OVERHEAT	6
+#define MQTT_ALARM_LEAK	7
+#define MQTT_LIGHTS	8
+#define MQTT_REBOOT	9
+#define MQTT_SALINITY 10
+#define MQTT_PHEXP 11
+#define MQTT_ORP 12
+#define MQTT_IO 13
+#define MQTT_WL 14
+#define MQTT_LEAK 15
+#define MQTT_PAR 26
+#define MQTT_OVERRIDE 27
+#define MQTT_CVAR 28
+#define MQTT_MEM_BYTE	29
+#define MQTT_MEM_INT	30
+#define MQTT_CUSTOM_EXP	31
+#define MQTT_DATE	32
+#define MQTT_CALIBRATION 33
+#define MQTT_CUSTOM_CALIBRATION 34
+
+// Cloud Expansion Bits ( CEM )
+#define CloudSalinityBit	0
+#define CloudPHExpBit		1
+#define CloudORPBit			2
+#define CloudIOBit			3
+#define CloudWLBit			4
+#define CloudMultiWLBit		5
+#define CloudLeakBit		6
+#define CloudPARBit			7
+
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
+
+void MQTTSubCallback(char* topic, byte* payload, unsigned int length);
 
 uint16_t read16(File f);
 uint32_t read32(File f);
@@ -1231,7 +1317,7 @@ const prog_char CALI3[] PROGMEM = "Please touch";
 const prog_char CALI4[] PROGMEM = "the red circle";
 
 // pH Calibration
-const prog_char PH_CALI1[] PROGMEM = "Please place the pH probe in";
+const prog_char PH_CALI1[] PROGMEM = "Please place the probe in";
 const prog_char PH_CALI2[] PROGMEM = "calibration solution";
 const prog_char PH_CALI3[] PROGMEM = "and touch Ok button";
 const prog_char PH_CALI4[] PROGMEM = "Calibrating";
@@ -1240,30 +1326,22 @@ const prog_char PH_CALI6[] PROGMEM = "Calculating Calibration...";
 const prog_char PH_CALI7[] PROGMEM = "Your calibration value is";
 const prog_char PH_CALI8[] PROGMEM = "Please write it down";
 const prog_char PH_CALI9[] PROGMEM = "for your records";
-const prog_char PH_CALI10[] PROGMEM = "Please rinse the pH probe";
+const prog_char PH_CALI10[] PROGMEM = "Please rinse the probe";
 const prog_char PH_CALI11[] PROGMEM = "with RO/DI water";
 const prog_char PH_CALI12[] PROGMEM = "Ready to save values";
 const prog_char PH_CALI13[] PROGMEM = "Proceed?";
 const prog_char PH_CALI14[] PROGMEM = "Calibration Completed";
+const prog_char PH_CALI15[] PROGMEM = "wait a few minutes";
 
 // Salinity Calibration
-const prog_char SAL_CALI1[] PROGMEM = "Please place the Salinity probe in";
 const prog_char SAL_CALI2[] PROGMEM = "ppt";
-const prog_char NO_SAL1[] PROGMEM = "No Salinity Expansion";
-const prog_char NO_SAL2[] PROGMEM = "Module Found";
 
 // ORP Calibration
 const prog_char ORP_CALI1[] PROGMEM = "Please connect the terminator";
-const prog_char ORP_CALI2[] PROGMEM = "Please place the ORP probe in";
 const prog_char ORP_CALI3[] PROGMEM = "mV";
 const prog_char ORP_CALI4[] PROGMEM = "Please disconnect the";
 const prog_char ORP_CALI5[] PROGMEM = "terminator and connect";
-const prog_char ORP_CALI6[] PROGMEM = "ORP probe";
-
-const prog_char NO_ORP1[] PROGMEM = "No ORP Expansion";
-
-// pHExp Calibration
-const prog_char NO_PHE1[] PROGMEM = "No pH Expansion";
+const prog_char ORP_CALI6[] PROGMEM = "the ORP probe";
 
 // WL Calibration
 const prog_char WL_CALI1[] PROGMEM = "Please hold the PVC";
@@ -1272,45 +1350,44 @@ const prog_char WL_CALI3[] PROGMEM = "Please immerse the PVC";
 const prog_char WL_CALI4[] PROGMEM = "pipe in water until";
 const prog_char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
 const prog_char WL_CALI6[] PROGMEM = "%";
-const prog_char NO_WL1[] PROGMEM = "No Water Level Expansion";
+const prog_char WL_CALI7[] PROGMEM = "Channel ";
+
+// Custom Expansion
+const prog_char CUSTOM_CALI1[] PROGMEM = "the first";
+const prog_char CUSTOM_CALI2[] PROGMEM = "the second";
+const prog_char CUSTOM_CALI3[] PROGMEM = "Module ";
+const prog_char CUSTOM_CALI4[] PROGMEM = "1st solution";
+const prog_char CUSTOM_CALI5[] PROGMEM = "2nd solution";
+
+
+// Date/Time
+const prog_char LABEL_MONTH[] PROGMEM = "Month";
+const prog_char LABEL_DAY[] PROGMEM = "Day";
+const prog_char LABEL_YEAR[] PROGMEM = "Year";
+const prog_char LABEL_HOUR[] PROGMEM = "Hour";
+const prog_char LABEL_MINUTE[] PROGMEM = "Minute";
+const prog_char LABEL_AMPM[] PROGMEM = "AM/PM";
 
 // Labels
-const prog_char LABEL_AI_WHITE[] PROGMEM = "White";
-const prog_char LABEL_AI_BLUE[] PROGMEM = "Blue";
-const prog_char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
-static PROGMEM const char *LABEL_AI[] = {LABEL_AI_WHITE, LABEL_AI_BLUE, LABEL_AI_ROYAL_BLUE};
-const prog_char LABEL_RF_WHITE[] PROGMEM = "White";
-const prog_char LABEL_RF_ROYAL_BLUE[] PROGMEM = "R. Blue";
-const prog_char LABEL_RF_RED[] PROGMEM = "Red";
-const prog_char LABEL_RF_BLUE[] PROGMEM = "Green";
-const prog_char LABEL_RF_GREEN[] PROGMEM = "Blue";
-const prog_char LABEL_RF_INTENSITY[] PROGMEM = "Intensity";
-static PROGMEM const char *LABEL_RF[] = {LABEL_RF_WHITE, LABEL_RF_ROYAL_BLUE, LABEL_RF_RED, LABEL_RF_BLUE, LABEL_RF_GREEN, LABEL_RF_INTENSITY};
+const prog_char LABEL_EMPTY[] PROGMEM = "           ";
+const prog_char LABEL_MENU[] PROGMEM = "Menu";
+const prog_char LABEL_REEFANGEL[] PROGMEM = "Reef Angel";
+const prog_char LABEL_REEFANGELCONTROLLER[] PROGMEM = "Reef Angel Controller";
+const prog_char LABEL_PERCENTAGE[] PROGMEM = "%   ";
 const prog_char LABEL_MODE[] PROGMEM = "Mode";
 const prog_char LABEL_DURATION[] PROGMEM = "Duration";
 const prog_char LABEL_SPEED[] PROGMEM = "Speed";
 const prog_char LABEL_OVERRIDE[] PROGMEM = "Override";
+const prog_char LABEL_LIBVER[] PROGMEM = "Libraries Version: ";
+const prog_char LABEL_IPADDRESS[] PROGMEM = "IP Address: ";
+const prog_char LABEL_CLOUD[] PROGMEM = "Cloud Connection: ";
+const prog_char LABEL_CLOUD_CONNECTED[] PROGMEM = "Connected";
+const prog_char LABEL_CLOUD_DISCONNECTED[] PROGMEM = "Disconnected";
+const prog_char LABEL_SD[] PROGMEM = "SD Card: ";
+const prog_char LABEL_SD_INSERTED[] PROGMEM = "Inserted";
+const prog_char LABEL_SD_NOT_FOUND[] PROGMEM = "Not Found";
+const prog_char LABEL_LAST_BOOT[] PROGMEM = "Last Boot: ";
 
-// Headers
-const prog_char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";
-const prog_char EXP_RELAY_1_LABEL[] PROGMEM = "Exp. Relay Box 1";
-const prog_char EXP_RELAY_2_LABEL[] PROGMEM = "Exp. Relay Box 2";
-const prog_char EXP_RELAY_3_LABEL[] PROGMEM = "Exp. Relay Box 3";
-const prog_char EXP_RELAY_4_LABEL[] PROGMEM = "Exp. Relay Box 4";
-const prog_char EXP_RELAY_5_LABEL[] PROGMEM = "Exp. Relay Box 5";
-const prog_char EXP_RELAY_6_LABEL[] PROGMEM = "Exp. Relay Box 6";
-const prog_char EXP_RELAY_7_LABEL[] PROGMEM = "Exp. Relay Box 7";
-const prog_char EXP_RELAY_8_LABEL[] PROGMEM = "Exp. Relay Box 8";
-const prog_char PWM_EXPANSION_LABEL[] PROGMEM = "PWM Expansion";
-const prog_char SIXTEENCH_PWM_EXPANSION_LABEL[] PROGMEM = "16 Ch PWM Expansion";
-const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
-const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
-const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
-const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
-const prog_char DCPUMP_LABEL[] PROGMEM = "DC Pump";
-const prog_char CVAR_LABEL[] PROGMEM = "Custom Variables";
-
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, SIXTEENCH_PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -1323,8 +1400,8 @@ const prog_char RF_TSM[] PROGMEM = "Tidal Swell";
 const prog_char RF_FEEDING[] PROGMEM = "Feeding";
 const prog_char RF_NIGHT[] PROGMEM = "Night";
 const prog_char RF_SLAVE[] PROGMEM = "Slave Check";
-const prog_char RF_None[] PROGMEM = "None";
-static PROGMEM const char *rf_items[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
+//const prog_char RF_None[] PROGMEM = "None";
+static PROGMEM const char *RF_MODE[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
 
 const prog_char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
 const prog_char WATER_CHANGE_LABEL[] PROGMEM = "Water Change";
@@ -1339,19 +1416,37 @@ const prog_char MENU_BUTTON_MODE[] PROGMEM = "Mode";
 const prog_char MENU_BUTTON_CLEAR[] PROGMEM = "Clear";
 const prog_char MENU_BUTTON_ATOTIMEOUT[] PROGMEM = "ATO Timeout";
 const prog_char MENU_BUTTON_OVERHEAT[] PROGMEM = "Overheat";
+const prog_char MENU_BUTTON_LEAK[] PROGMEM = "Leak";
 const prog_char MENU_BUTTON_TURN[] PROGMEM = "Turn";
 const prog_char MENU_BUTTON_CANCEL[] PROGMEM = "Cancel";
 const prog_char MENU_BUTTON_LIGHTS[] PROGMEM = "Lights On";
 const prog_char MENU_BUTTON_EXIT[] PROGMEM = "Exit";
 const prog_char MENU_BUTTON_MENU[] PROGMEM = "Menu";
+const prog_char MENU_BUTTON_REBOOT[] PROGMEM = "Reboot";
+const prog_char MENU_BUTTON_SYSTEM[] PROGMEM = "System";
 const prog_char MENU_BUTTON_ADJUST[] PROGMEM = "Adjust";
 const prog_char MENU_BUTTON_DATETIME[] PROGMEM = "Date/Time";
+const prog_char MENU_BUTTON_CHANGE[] PROGMEM = "Change";
+const prog_char MENU_BUTTON_ORIENTATION[] PROGMEM = "Orientation";
 const prog_char MENU_BUTTON_PH[] PROGMEM = "pH";
 const prog_char MENU_BUTTON_CALIBRATION[] PROGMEM = "Calibration";
 const prog_char MENU_BUTTON_SALINITY[] PROGMEM = "Salinity";
 const prog_char MENU_BUTTON_ORP[] PROGMEM = "ORP";
 const prog_char MENU_BUTTON_PHE[] PROGMEM = "pH Expansion";
 const prog_char MENU_BUTTON_WL[] PROGMEM = "Water Level";
+const prog_char MENU_BUTTON_WL1[] PROGMEM = "Water Level 1";
+const prog_char MENU_BUTTON_WL2[] PROGMEM = "Water Level 2";
+const prog_char MENU_BUTTON_WL3[] PROGMEM = "Water Level 3";
+const prog_char MENU_BUTTON_WL4[] PROGMEM = "Water Level 4";
+const prog_char MENU_BUTTON_CEXP[] PROGMEM = "Custom Expansion";
+const prog_char MENU_BUTTON_CEXP1[] PROGMEM = "Custom Expansion 1";
+const prog_char MENU_BUTTON_CEXP2[] PROGMEM = "Custom Expansion 2";
+const prog_char MENU_BUTTON_CEXP3[] PROGMEM = "Custom Expansion 3";
+const prog_char MENU_BUTTON_CEXP4[] PROGMEM = "Custom Expansion 4";
+const prog_char MENU_BUTTON_CEXP5[] PROGMEM = "Custom Expansion 5";
+const prog_char MENU_BUTTON_CEXP6[] PROGMEM = "Custom Expansion 6";
+const prog_char MENU_BUTTON_CEXP7[] PROGMEM = "Custom Expansion 7";
+const prog_char MENU_BUTTON_CEXP8[] PROGMEM = "Custom Expansion 8";
 const prog_char MENU_BUTTON_LIGHT[] PROGMEM = "Light";
 const prog_char MENU_BUTTON_SCHEDULE[] PROGMEM = "Schedule";
 const prog_char MENU_BUTTON_HEATER[] PROGMEM = "Heater";
@@ -1371,10 +1466,15 @@ const prog_char MENU_BUTTON_DELAYED[] PROGMEM = "Delayed";
 const prog_char MENU_BUTTON_START[] PROGMEM = "Start";
 
 
-static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_CLEAR, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
-static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION};
-static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
-static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
+static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_CHANGE, MENU_BUTTON_ORIENTATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_REBOOT, MENU_BUTTON_SYSTEM, MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_CLEAR, MENU_BUTTON_LEAK, MENU_BUTTON_CLEAR};
+static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
+static PROGMEM const char *menu_button_items5[] = {MENU_BUTTON_CEXP1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP4, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char *menu_button_items6[] = {MENU_BUTTON_CEXP5, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP6, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP7, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP8, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
+
+//static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
+//static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};
 
 #endif //  RA_TOUCH
 
@@ -1517,6 +1617,8 @@ byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDura
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 byte ElseMode(byte midPoint, byte offset, boolean waveSync);
+
+const char* ip_to_str(const uint8_t* ipAddr);
 
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);

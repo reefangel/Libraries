@@ -58,9 +58,17 @@ RA_PWMClass::RA_PWMClass()
 byte RA_PWMClass::GetActinicValue()
 {
 	if (ActinicPWMOverride<=100)
+	{
 		return ActinicPWMOverride;
+	}
 	else
-		return (byte)(((float)ActinicPWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+	{
+		byte value=(byte)(((float)ActinicPWMValue/40.95)+0.5); // cast to float, then divide, then add 0.5 in order to round correctly
+#ifdef RA_STAR
+		ActinicPercentage=value;
+#endif // RA_STAR
+		return value;
+	}
 }
 
 int RA_PWMClass::GetActinicValueRaw()
@@ -74,9 +82,17 @@ int RA_PWMClass::GetActinicValueRaw()
 byte RA_PWMClass::GetDaylightValue()
 {
 	if (DaylightPWMOverride<=100)
+	{
 		return DaylightPWMOverride;
+	}
 	else
-		return (byte)(((float)DaylightPWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+	{
+		byte value=(byte)(((float)DaylightPWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+#ifdef RA_STAR
+		DaylightPercentage=value;
+#endif // RA_STAR
+		return value;
+	}
 }
 
 int RA_PWMClass::GetDaylightValueRaw()
@@ -416,9 +432,17 @@ void RA_PWMClass::Override(byte Channel, byte Value)
 byte RA_PWMClass::GetActinic2Value()
 {
 	if (Actinic2PWMOverride<=100)
+	{
 		return Actinic2PWMOverride;
+	}
 	else
-		return (byte)(((float)Actinic2PWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+	{
+		byte value=(byte)(((float)Actinic2PWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+#ifdef RA_STAR
+		Actinic2Percentage=value;
+#endif // RA_STAR
+		return value;
+	}
 }
 
 int RA_PWMClass::GetActinic2ValueRaw()
@@ -432,9 +456,17 @@ int RA_PWMClass::GetActinic2ValueRaw()
 byte RA_PWMClass::GetDaylight2Value()
 {
 	if (Daylight2PWMOverride<=100)
+	{
 		return Daylight2PWMOverride;
+	}
 	else
-		return (byte)(((float)Daylight2PWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+	{
+		byte value=(byte)(((float)Daylight2PWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+#ifdef RA_STAR
+		Daylight2Percentage=value;
+#endif // RA_STAR
+		return value;
+	}
 }
 
 int RA_PWMClass::GetDaylight2ValueRaw()
@@ -825,9 +857,15 @@ void RA_PWMClass::ExpansionWrite()
 byte RA_PWMClass::GetChannelValue(byte Channel)
 {
 	if (ExpansionChannelOverride[Channel]<=100)
+	{
 		return ExpansionChannelOverride[Channel];
+	}
 	else
-		return (byte)(((float)ExpansionChannel[Channel]/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+	{
+		byte value=(byte)(((float)ExpansionChannel[Channel]/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
+		ExpansionPercentage[Channel]=value;
+		return value;
+	}
 }
 
 int RA_PWMClass::GetChannelValueRaw(byte Channel)

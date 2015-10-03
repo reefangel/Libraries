@@ -1,84 +1,81 @@
 // Star
 
 DS1307RTC RTC;
-RA_NokiaLCD LCD;
-RA_JoystickClass Joystick;
+RA_TouchLCD TouchLCD;
+RA_TFT TFT;
+FontClass SmallFont;
+FontClass Font;
+FontClass LargeFont;
+RA_TS TS;
+ButtonClass OkButton;
+ButtonClass CancelButton;
+ProgressBarClass PB[6];
+SliderClass Slider;
 RA_ATOALARMClass AlarmInput;
 
+ParamsStruct LastParams;
+typedef void (ReefAngelClass::* FuncPtr) (); // declare function pointers
+FuncPtr MenuFunctionPtr;
+FuncPtr menu_button_functions1[6];
+FuncPtr menu_button_functions2[6];
+FuncPtr menu_button_functions3[6];
+FuncPtr menu_button_functions4[6];
+FuncPtr menu_button_functions5[6];
+FuncPtr menu_button_functions6[6];
+int CustomExpansionValue[8];
+int CustomExpansionLastValue[8];
+
+byte LastOrientation;
+boolean MilitaryTime;
+signed char DisplayedScreen;
+signed char RecallScreen;
+bool NeedsRedraw;
+bool TouchEnabled;
+bool Sleeping;
+byte orientation;
+//byte LongTouch;
 bool SDFound;
+time_t newnow;
+int CalVal1, CalVal2;
+int CloudCalVal;
+byte CalStep;
+unsigned long lastRedraw; 
+unsigned long lastDisplayChange; 
 
-void ShowInterface();
-void DrawStandardMain();
-void StoreGraphData();
-void CheckScreenSaver();
-void DisplayFeedingMode();
-void DisplayWaterChangeMode();
-void PrepMenuScreen();
-void DisplayMenu();
-void DisplayMenuHeading();
-void DisplayMenuEntry(char *text);
-void ProcessButtonPress();
-// Nested Menu Functions
-#ifdef CUSTOM_MENU
-void InitMenu(int ptr, byte qty);
-void ProcessButtonPressCustom();
-#else
-void InitMenus();
-void ProcessButtonPressMain();
-
-#ifndef SIMPLE_MENU
-void ProcessButtonPressSetup();
-#ifndef RemoveAllLights
-void ProcessButtonPressLights();
-#endif  // RemoveAllLights
-void ProcessButtonPressTemps();
-#if defined SetupExtras || defined ATOSetup
-void ProcessButtonPressTimeouts();
-#endif  // if defined SetupExtras || defined ATOSetup
-
-// Setup Screens
-bool SetupOption(int &v, int &y, int rangemin, int rangemax, byte maxdigits,
-		char* unit, char* subunit, char* title,
-		char* prefix1, char* prefix2);
-void SetupLightsOptionDisplay(bool bMetalHalide);
-#endif  // SIMPLE_MENU
-#endif  // CUSTOM_MENU
-
-#if defined ORPEXPANSION
-void SetupCalibrateORP();
-#endif  // defined ORPEXPANSION
-#if defined SALINITYEXPANSION
+void ChangeOrientation();
+void SetOrientation(byte o);
+void CalibrateTouchScreen();
+void ChangeDisplayedScreen(signed char index);
+void MainScreen();
+void ResetScreenSaver();
+void SetupTouchDateTime();
+void SetupTouchCalibratePH();
+void SetupTouchCalibrateSal();
+void SetupTouchCalibrateORP();
+void SetupTouchCalibratePHExp();
+void SetupTouchCalibrateWL(byte channel);
+void SetupTouchCalibrateCustom(byte index);
+inline void SetupTouchCalibrateWL0() { SetupTouchCalibrateWL(0); };
+inline void SetupTouchCalibrateWL1() { SetupTouchCalibrateWL(1); };
+inline void SetupTouchCalibrateWL2() { SetupTouchCalibrateWL(2); };
+inline void SetupTouchCalibrateWL3() { SetupTouchCalibrateWL(3); };
+inline void SetupTouchCalibrateWL4() { SetupTouchCalibrateWL(4); };
+inline void SetupTouchCalibrateCustom1() { SetupTouchCalibrateCustom(0); };
+inline void SetupTouchCalibrateCustom2() { SetupTouchCalibrateCustom(1); };
+inline void SetupTouchCalibrateCustom3() { SetupTouchCalibrateCustom(2); };
+inline void SetupTouchCalibrateCustom4() { SetupTouchCalibrateCustom(3); };
+inline void SetupTouchCalibrateCustom5() { SetupTouchCalibrateCustom(4); };
+inline void SetupTouchCalibrateCustom6() { SetupTouchCalibrateCustom(5); };
+inline void SetupTouchCalibrateCustom7() { SetupTouchCalibrateCustom(6); };
+inline void SetupTouchCalibrateCustom8() { SetupTouchCalibrateCustom(7); };
 void ApplySalinityCompensation();
-void StartSetupCalibrateSalinity();
-void DisplaySetupCalibrateSalinity();
-inline void SetupCalibrateSalinity() { StartSetupCalibrateSalinity(); }
-#endif  // defined SALINITYEXPANSION
-#if defined PHEXPANSION
-void StartSetupCalibrateChoicePHExp();
-void DisplaySetupCalibrateChoicePHExp();
-inline void SetupCalibratePHExp() { StartSetupCalibrateChoicePHExp(); }
-#endif  // defined PHEXPANSION
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-void SetupCalibrateWaterLevel();
-#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-
-#if defined DateTimeSetup
-#ifdef DATETIME24
-void StartSetupDateTime24();
-void DisplaySetupDateTime24();
-inline void SetupDateTime24() { StartSetupDateTime24(); }
-#else
-void StartSetupDateTime();
-void DisplaySetupDateTime();
-inline void SetupDateTime() { StartSetupDateTime(); }
-#endif  // DATETIME24
-#endif  // DateTimeSetup
-
-#if !defined SIMPLE_MENU && !defined CUSTOM_MENU
-#ifdef DosingPumpSetup
-void SetupDosingPump();
-#endif  // DosingPumpSetup
-#endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
+void CheckMenuTimeout();
+inline void ShowTouchMenu() { ShowTouchMenu(MAIN_MENU_SCREEN); };
+void ShowTouchMenu(byte index);
+void ShowTouchInterface();	
+void ReDrawScreen();
+void ProcessTouch();
+void CheckTouch();
 
 void BuzzerOn(byte style=0);
 void BuzzerOff();

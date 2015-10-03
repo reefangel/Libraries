@@ -246,72 +246,7 @@ void RA_Wifi::ProcessHTTP()
 		}  // REQ_WIFI
 		case REQ_RELAY:
 		{
-			if (weboption<10) break;
-			byte o_relay=weboption/10;
-			byte o_type=weboption%10;
-			if (o_type==0)  // Turn port off
-			{
-				if ( o_relay < 9 )
-				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitClear(ReefAngel.Relay.RelayMaskOff,o_relay-1);
-				}
-#ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
-				{
-					byte EID = byte(o_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitClear(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-			else if (o_type==1)  // Turn port on
-			{
-				if ( o_relay < 9 )
-				{
-					bitSet(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
-				}
-#ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
-				{
-					byte EID = byte(o_relay/10);
-					bitSet(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-			else if (o_type==2)  // Set port back to Auto
-			{
-				if ( o_relay < 9 )
-				{
-					bitClear(ReefAngel.Relay.RelayMaskOn,o_relay-1);
-					bitSet(ReefAngel.Relay.RelayMaskOff,o_relay-1);
-				}
-#ifdef RelayExp
-				if ( (o_relay > 10) && (o_relay < 89) )
-				{
-					byte EID = byte(o_relay/10);
-					bitClear(ReefAngel.Relay.RelayMaskOnE[EID-1],(o_relay%10)-1);
-					bitSet(ReefAngel.Relay.RelayMaskOffE[EID-1],(o_relay%10)-1);
-				}
-#endif  // RelayExp
-			}
-#ifdef OVERRIDE_PORTS
-			// Reset relay masks for ports we want always in their programmed states.
-			ReefAngel.Relay.RelayMaskOn &= ~ReefAngel.OverridePorts;
-			ReefAngel.Relay.RelayMaskOff |= ReefAngel.OverridePorts;
-#ifdef RelayExp
-				byte i;
-				for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-				{
-						ReefAngel.Relay.RelayMaskOnE[i] &= ~ReefAngel.OverridePortsE[i];
-						ReefAngel.Relay.RelayMaskOffE[i] |= ReefAngel.OverridePortsE[i];
-				}
-#endif  // RelayExp  
-#endif  // OVERRIDE_PORTS
-			ReefAngel.Relay.Write();
-			// Force update of the Portal after relay change
+			ReefAngel.CheckOverride(weboption);
 //				ReefAngel.Timer[PORTAL_TIMER].ForceTrigger();
 		}
 		case REQ_RA_STATUS:
@@ -606,50 +541,9 @@ void RA_Wifi::ProcessHTTP()
 		{
 			int s;
 
-			// weboption2 is channel
-			// weboption is override value
 			if ( bHasSecondValue && (weboption2 < OVERRIDE_CHANNELS) )
 			{
-				// Override channel
-				// if channel is from an expansion module that is not enabled, the command will be accepted, but it will do nothing.
-#ifdef DisplayLEDPWM					
-#if defined(__SAM3X8E__)
-				if (weboption2==0) ReefAngel.VariableControl.SetDaylightOverride(weboption);
-				else if (weboption2==1) ReefAngel.VariableControl.SetActinicOverride(weboption);
-#else
-				if (weboption2==0) ReefAngel.PWM.SetDaylightOverride(weboption);
-				else if (weboption2==1) ReefAngel.PWM.SetActinicOverride(weboption);
-#endif
-#ifdef PWMEXPANSION
-#if defined(__SAM3X8E__)
-				if (weboption2>=2 && weboption2<=7) ReefAngel.VariableControl.SetChannelOverride(weboption2-2,weboption);
-#else
-				if (weboption2>=2 && weboption2<=7) ReefAngel.PWM.SetChannelOverride(weboption2-2,weboption);
-#endif
-#endif // PWMEXPANSION
-#ifdef AI_LED
-				if (weboption2>=8 && weboption2<=10) ReefAngel.AI.SetChannelOverride(weboption2-8,weboption);
-#endif // AI_LED
-#ifdef RFEXPANSION
-				if (weboption2>=11 && weboption2<=16) ReefAngel.RF.SetChannelOverride(weboption2-11,weboption);
-#endif // RFEXPANSION
-#if defined RA_STAR || defined RA_EVOLUTION
-#if defined(__SAM3X8E__)
-				if (weboption2==17) ReefAngel.VariableControl.SetDaylight2Override(weboption);
-				else if (weboption2==18) ReefAngel.VariableControl.SetActinic2Override(weboption);
-#else
-				if (weboption2==17) ReefAngel.PWM.SetDaylight2Override(weboption);
-				else if (weboption2==18) ReefAngel.PWM.SetActinic2Override(weboption);
-#endif
-#endif // RA_STAR
-#ifdef SIXTEENCHPWMEXPANSION
-#if defined(__SAM3X8E__)
-				if (weboption2>=19 && weboption2<=34) ReefAngel.VariableControl.Set16ChannelOverride(weboption2-19,weboption);
-#else
-				if (weboption2>=19 && weboption2<=34) ReefAngel.PWM.Set16ChannelOverride(weboption2-19,weboption);
-#endif
-#endif // SIXTEENCHPWMEXPANSION
-#endif // DisplayLEDPWM
+				ReefAngel.DimmingOverride(weboption,weboption2);
 				s = 9;  // <P>OK</P>
 				// add in the channel, twice
 				s += (intlength(weboption2)*2);
@@ -1865,21 +1759,21 @@ void RA_Wifi::SendPortal(char *username, char*key)
 {
   ReefAngel.Timer[PORTAL_TIMER].Start();
 #ifdef ETH_WIZ5100
-  Serial.println("Portal Call");
+  Serial.println(F("Portal Call"));
   if (!ReefAngel.Network.FoundIP) return;
   if (!ReefAngel.Network.PortalConnection)
   {
 	  ReefAngel.Network.PortalConnection=true;
 	  PortalWaiting=false;
 	  ReefAngel.Network.PortalConnect();
-	  Serial.println("Connecting...");
+	  Serial.println(F("Connecting..."));
   }
   else
   {
 	if (ReefAngel.Network.IsPortalConnected() && !PortalWaiting) // Check for connection established
 	{
 		PortalWaiting=true;
-		Serial.println("Connected");
+		Serial.println(F("Connected"));
 #endif
   PROGMEMprint(BannerGET);
   print(ReefAngel.Params.Temp[T1_PROBE], DEC);
@@ -1912,13 +1806,13 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerATOLOW);
   print(ReefAngel.LowATO.IsActive(), DEC);
   PROGMEMprint(BannerRelayData);
-  print("=");
+  print(F("="));
   print(ReefAngel.Relay.RelayData, DEC);
   PROGMEMprint(BannerRelayMaskOn);
-  print("=");
+  print(F("="));
   print(ReefAngel.Relay.RelayMaskOn, DEC);
   PROGMEMprint(BannerRelayMaskOff);
-  print("=");
+  print(F("="));
   print(ReefAngel.Relay.RelayMaskOff, DEC);
 
 #ifdef RelayExp
@@ -1926,15 +1820,15 @@ void RA_Wifi::SendPortal(char *username, char*key)
   {
     PROGMEMprint(BannerRelayData);
     print(x+1, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.Relay.RelayDataE[x], DEC);
     PROGMEMprint(BannerRelayMaskOn);
     print(x+1, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.Relay.RelayMaskOnE[x], DEC);
     PROGMEMprint(BannerRelayMaskOff);
     print(x+1, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.Relay.RelayMaskOffE[x], DEC);
   }  // for x
 #endif  // RelayExp
@@ -1972,8 +1866,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif
     PROGMEMprint(BannerPWME);
     print(EID, DEC);
-    print("O");
-    print("=");
+    print(F("O"));
+    print(F("="));
 #if defined(__SAM3X8E__)
     print(ReefAngel.VariableControl.GetChannelOverrideValue(EID), DEC);
 #else
@@ -1986,7 +1880,7 @@ void RA_Wifi::SendPortal(char *username, char*key)
   {
     PROGMEMprint(BannerSCPWME);
     print(EID, DEC);
-    print("=");
+    print(F("="));
 #if defined(__SAM3X8E__)
     print(ReefAngel.VariableControl.Get16ChannelValue(EID), DEC);
 #else
@@ -1994,8 +1888,8 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif
     PROGMEMprint(BannerSCPWME);
     print(EID, DEC);
-    print("O");
-    print("=");
+    print(F("O"));
+    print(F("="));
 #if defined(__SAM3X8E__)
     print(ReefAngel.VariableControl.Get16ChannelOverrideValue(EID), DEC);
 #else
@@ -2045,13 +1939,13 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
   PROGMEMprint(BannerWL);
-  print("=");
+  print(F("="));
   print(ReefAngel.WaterLevel.GetLevel(), DEC);
   for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
   {
     PROGMEMprint(BannerWL);
     print(EID, DEC);
-    print("=");
+    print(F("="));
     print(ReefAngel.WaterLevel.GetLevel(EID), DEC);
   }
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -2121,9 +2015,9 @@ void RA_Wifi::SendPortal(char *username, char*key)
   PROGMEMprint(BannerConnectionClose);
   ReefAngel.Network.PortalTimeOut=millis();
 #endif // ETH_WIZ5100
-  println("\n\n");
+  println(F("\n\n"));
 #ifdef ETH_WIZ5100
-	Serial.println("Data Sent");
+	Serial.println(F("Data Sent"));
 	}
   }
 #endif // ETH_WIZ5100

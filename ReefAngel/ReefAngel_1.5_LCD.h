@@ -1218,8 +1218,8 @@ void ReefAngelClass::Draw2014Main()
 	byte offset;
 	byte x,y,w;
 	char buf[16];
-	String PUMP_MODES[] = {"Constant","Lagoon","ReefCrest","Short Pulse","Long Pulse","Nutrient Trans.","Tidal Swell","Feeding","","Night","Custom"};
-	byte PUMP_COLORS[] = {COLOR_DARKGREEN,COLOR_DARKGOLDENROD,COLOR_DARKGOLDENROD,COLOR_NAVY,COLOR_MEDIUMPURPLE,COLOR_HOTPINK,COLOR_HOTPINK,COLOR_SLATEGREY,COLOR_SLATEGREY,COLOR_INDIANRED};
+	String PUMP_MODES[] = {"Constant","Lagoon","ReefCrest","Short Pulse","Long Pulse","Nutrient Trans.","Tidal Swell","Feeding","","Night","","Custom","Else","Sine","Gyre"};
+	byte PUMP_COLORS[] = {COLOR_DARKGREEN,COLOR_DARKGOLDENROD,COLOR_DARKGOLDENROD,COLOR_NAVY,COLOR_MEDIUMPURPLE,COLOR_HOTPINK,COLOR_HOTPINK,COLOR_SLATEGREY,COLOR_BLACK,COLOR_INDIANRED,COLOR_BLACK,COLOR_INDIGO,COLOR_SLATEGREY,COLOR_SLATEGREY,COLOR_SLATEGREY};
 
 	if (Joystick.IsLeft())
 	{
@@ -1882,7 +1882,8 @@ void ReefAngelClass::Draw2014Main()
 		for (int a=0; a<8; a++)
 		{
 			ConvertNumToString(text, CustomVar[a], 1);
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,text);
+			LCD.DrawLargeText(COLOR_BLACK,DefaultBGColor,x,y,"   ");
+			LCD.DrawLargeText(COLOR_BLACK,DefaultBGColor,x,y,text);
 			y+=12;
 		}
 		break;
@@ -1906,15 +1907,35 @@ void ReefAngelClass::DrawStandardMain()
 	LCD.DrawDate(6, 112);
 #endif // DATETIME24
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
-	LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
+	if (Params.Temp[T1_PROBE]!=OldParams.Temp[T1_PROBE] || Params.Temp[T2_PROBE]!=OldParams.Temp[T2_PROBE] || Params.Temp[T3_PROBE]!=OldParams.Temp[T3_PROBE] || Params.PH!=OldParams.PH || PWM.GetDaylightValue()!=OldDaylight || PWM.GetActinicValue()!=OldActinic)
+	{
+		OldParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
+		OldParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
+		OldParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
+		OldParams.PH=Params.PH;
+		OldDaylight=PWM.GetDaylightValue();
+		OldActinic=PWM.GetActinicValue();
+		LCD.DrawMonitor(15, 60, Params, PWM.GetDaylightValue(), PWM.GetActinicValue());
+	}
 #else  // defined DisplayLEDPWM && ! defined RemoveAllLights
-	LCD.DrawMonitor(15, 60, Params);
+	if (Params.Temp[T1_PROBE]!=OldParams.Temp[T1_PROBE] || Params.Temp[T2_PROBE]!=OldParams.Temp[T2_PROBE] || Params.Temp[T3_PROBE]!=OldParams.Temp[T3_PROBE] || Params.PH!=OldParams.PH)
+	{
+		OldParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
+		OldParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
+		OldParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
+		OldParams.PH=Params.PH;
+		LCD.DrawMonitor(15, 60, Params);
+	}
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 
 	byte TempRelay = Relay.RelayData;
 	TempRelay &= Relay.RelayMaskOff;
 	TempRelay |= Relay.RelayMaskOn;
-	LCD.DrawOutletBox(12, 93, TempRelay);
+	if (TempRelay!=OldTempRelay)
+	{
+		OldTempRelay=TempRelay;
+		LCD.DrawOutletBox(12, 93, TempRelay);
+	}
 }
 
 void ReefAngelClass::StoreGraphData()
@@ -3780,8 +3801,8 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
     {
         PHExpMin=map(PH_DEFAULT_RANGE[LOW], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
         PHExpMax=map(PH_DEFAULT_RANGE[HIGH], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
-        InternalMemory.PHMin_write(PHExpMin);
-        InternalMemory.PHMax_write(PHExpMax);
+        InternalMemory.PHExpMin_write(PHExpMin);
+        InternalMemory.PHExpMax_write(PHExpMax);
     }
 }
 #endif  // PHEXPANSION

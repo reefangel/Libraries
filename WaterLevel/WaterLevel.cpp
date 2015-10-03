@@ -79,7 +79,11 @@ void WaterLevelClass::Convert()
 		t=constrain(map(t, InternalMemory.WaterLevelMin_read(), InternalMemory.WaterLevelMax_read(), 0, 100),0,255); // apply the calibration to the sensor reading
 	}
 	level[0] = t;
+}
 
+void WaterLevelClass::ConvertMulti()
+{
+	unsigned long t=0;
 	t=Read(1);
 	if (t!=0)
 	{

@@ -20,7 +20,7 @@
   */
 
 #include "Globals.h"
-#include "Math.h"
+#include "math.h"
 
 byte intlength(int intin)
 {
@@ -489,7 +489,7 @@ int alphaBlend(int fgcolor, int bgcolor, byte a)
 	return RGB565(r,g,b);
 }
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 /*********************************************/
 // These read data from the SD card file and convert them to big endian 
 // (the data is stored in little endian format!)
@@ -911,6 +911,13 @@ byte ElseMode( byte midPoint, byte offset, boolean waveSync )
   {
     return constrain(antiSpeed,0,100);
   }
+}
+
+const char* ip_to_str(const uint8_t* ipAddr)
+{
+  static char buf[16];
+  sprintf(buf, "%d.%d.%d.%d\0", ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
+  return buf;
 }
 
 // for pure virtual functions

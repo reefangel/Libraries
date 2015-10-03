@@ -59,11 +59,12 @@ int EthernetClient::connect(IPAddress ip, uint16_t port) {
     return 0;
   }
   while (status() != SnSR::ESTABLISHED) {
-  if (status() == SnSR::CLOSED) {
-    _sock = MAX_SOCK_NUM;
-    stop();
-    return 0;
-  }
+	  wdt_reset();
+	  if (status() == SnSR::CLOSED) {
+		_sock = MAX_SOCK_NUM;
+		stop();
+		return 0;
+	  }
   }
   return 1;
 }

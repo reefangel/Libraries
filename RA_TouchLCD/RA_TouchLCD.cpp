@@ -23,19 +23,23 @@
 
 RA_TouchLCD::RA_TouchLCD()
 {
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
-	DDRL=0xff; //PORTL (Control Pins Output)
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	DDRA=0xff; //PORTA (Data Output - D8-15)
 	DDRC=0xff; //PORTC (Data Output - D0-7)
 	PORTA=0xff; //PORTA pull up
 	PORTC=0xff; //PORTC pull up
-	PORTL=0xdf; //PORTL pull up
-	DDRD&=(0<<5); //PD5 (Input) - TP Interrupt
-	PORTD|=(1<<5); //PD5 pull up
-	DDRD|=(1<<7); //PD7 (Output) - TP Chip Select
-	PORTD|=(1<<7); //PD7 pull up
-	DDRL|=(1<<4); //PL4 (Output) - RD
-	PORTL|=(1<<4); //PL4 pull up
+	DDRE|=(1<<3); //PE3 (Output) - LDC Data/Command
+	PORTE|=(1<<3); //PE3 pull up
+	DDRE|=(1<<4); //PE4 (Output) - LDC Backlight
+	PORTE&=~(1<<4); //PE4 pull down
+	DDRE|=(1<<5); //PE5 (Output) - LDC Chip Select
+	PORTE|=(1<<5); //PE5 pull up
+	DDRE|=(1<<6); //PE6 (Output) - LDC Write
+	PORTE|=(1<<6); //PE6 pull up
+	DDRE|=(1<<7); //PE7 (Output) - LDC Read
+	PORTE|=(1<<7); //PE7 pull up
+	DDRH|=(1<<3); //PH3 (Output) - LDC Reset
+	PORTH|=(1<<3); //PH3 pull up
 #elif defined(__SAM3X8E__)
 //	PIOC->PIO_OER |= 0x001FFFFE;
 //	PIOC->PIO_OWER = 0x0001FFFE;
@@ -444,7 +448,7 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 				  for (i=0; i< bmpHeight; i++) 
 				  {
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 					  wdt_reset();
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 					  for (j=0; j<bmpWidth; j++) 
@@ -505,7 +509,7 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 			// read more pixels
 			if (buffidx >= 2*BUFFPIXEL) 
 			{
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 					  wdt_reset();
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 				dataFile.read(sdbuffer, 2*BUFFPIXEL);
@@ -513,7 +517,7 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 			}
 			// write out the 16 bits of color
 			// RA_TFT::SendData(sdbuffer[buffidx++],sdbuffer[buffidx++]);
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 			PORTA=sdbuffer[buffidx++];
 			PORTC=sdbuffer[buffidx++];
 #elif defined(__SAM3X8E__)
@@ -528,23 +532,23 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 }
 
 
-void RA_TouchLCD::DrawDateTime(int x, int y, boolean militarytime, FontClass Font)
+void RA_TouchLCD::DrawDateTime(unsigned long t, int x, int y, boolean militarytime, FontClass Font)
 {
 	char text[15];
 	
-	Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
-	sprintf(text,"%02d/%02d/%02d ",month(),day(),year()-2000);
+	//Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
+	sprintf(text,"%02d/%02d/%02d ",month(t),day(t),year(t)-2000);
 	Font.DrawText(x,y,text);
 	if (militarytime)
 	{
-		sprintf(text,"%02d:%02d:%02d ",hour(),minute(),second());
+		sprintf(text,"%02d:%02d:%02d ",hour(t),minute(t),second(t));
 	}
 	else
 	{
 		if(hour()>=12)
-			sprintf(text,"%02d:%02d:%02d PM",hour()-12,minute(),second());
+			sprintf(text,"%02d:%02d:%02d PM",hour(t)-12,minute(t),second(t));
 		else
-			sprintf(text,"%02d:%02d:%02d AM",hour(),minute(),second());
+			sprintf(text,"%02d:%02d:%02d AM",hour(t),minute(t),second(t));
 	}
 	Font.DrawText(text);
 }
@@ -590,28 +594,3 @@ char* RA_TouchLCD::ConvertDigitsNumber(int number)
 	strcat(text,temp);
 	return text;
 }
-
-void RA_TouchLCD::DrawAlertFlag(byte position, const prog_uchar *iPtr)
-{
-	if (now()%2==0)
-		DrawBMP(w-(16*position),7,iPtr);
-	else
-		Clear(TOPBAR_BC,w-(16*position),7,w+16-(16*position),23);
-}
-
-void RA_TouchLCD::DrawFlags(byte Flags)
-{
-	byte numflags=1;
-	for(byte i=0;i<8;i++,Flags>>=1)
-		if ((Flags & 1) == 1)
-		{
-			const prog_uchar **iptr=FLAGICONS;
-			const prog_uchar *arr1 = ( prog_uchar* ) pgm_read_word( iptr + i );
-//			Serial.println(pgm_read_byte(arr1));
-			DrawAlertFlag(numflags,arr1);
-			numflags++;
-		}
-		else
-			Clear(TOPBAR_BC,w-(16*numflags),7,w+16-(16*numflags),23);
-}
-

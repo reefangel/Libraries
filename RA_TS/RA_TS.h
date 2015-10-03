@@ -24,12 +24,40 @@
 
 #include <Globals.h>
 #include <SPI.h>
+#include <Wire.h>
 #include <InternalEEPROM.h>
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 
 #include <avr/eeprom.h>
 #define TP0	cbi(PORTD, 7)
 #define TP1 sbi(PORTD, 7)
+
+// Capacitive Touch FT6206
+
+#define FT6206_ADDR           0x38
+#define FT6206_G_FT5201ID     0xA8
+#define FT6206_REG_NUMTOUCHES 0x02
+
+#define FT6206_NUM_X             0x33
+#define FT6206_NUM_Y             0x34
+
+#define FT6206_INT_POLLING	0x00
+#define FT6206_INT_TRIGGER	0x01
+
+#define FT6206_REG_MODE 0x00
+#define FT6206_REG_GEST_ID 0x01
+#define FT6206_REG_CALIBRATE 0x02
+#define FT6206_REG_WORKMODE 0x00
+#define FT6206_REG_FACTORYMODE 0x40
+#define FT6206_REG_THRESHOLD 0x80
+#define FT6206_REG_POINTRATE 0x88
+#define FT6206_REG_FIRMVERS 0xA6
+#define FT6206_REG_CHIPID 0xA3
+#define FT6206_REG_G_MODE 0xA4
+#define FT6206_REG_VENDID 0xA8
+
+#define FT6206_DEFAULT_THRESHOLD 128
+#define FT6206_CUSTOM_THRESHOLD 40
 
 #elif defined(__SAM3X8E__)
 
@@ -54,10 +82,21 @@ class RA_TS
 		int FirstX, FirstY;
 		signed char SlideIndex;
 		void SetOrientation(byte o);
+#ifdef TOUCHCAP
+		void writeRegister8(uint8_t reg, uint8_t val);
+		uint8_t readRegister8(uint8_t reg);
+		void enableI2CChannel1();
+		void disableI2CChannel1();
+#endif // TOUCHCAP
+		
 	private:
 		boolean CalibrationNeeded;
 		void ApplyCalibration();
 		byte orientation;
 		boolean touchinsideenabled;
+#ifdef TOUCHCAP
+		  uint8_t touches;
+		  uint16_t touchX[2], touchY[2], touchID[2];
+#endif // TOUCHCAP	
 };
 #endif // __RA_TS_H__

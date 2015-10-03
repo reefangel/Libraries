@@ -29,6 +29,16 @@ class RA_PWMClass
 {
 public:
 	RA_PWMClass();
+	byte DaylightPWMOverride;
+	byte ActinicPWMOverride;
+#ifdef RA_STAR
+	byte DaylightPercentage;
+	byte ActinicPercentage;
+	byte Daylight2Percentage;
+	byte Actinic2Percentage;
+	byte Daylight2PWMOverride;
+	byte Actinic2PWMOverride;
+#endif // RA_STAR
 	void inline SetActinicRaw(int value) { ActinicPWMValue = value; };
 	void inline SetDaylightRaw(int value) { DaylightPWMValue = value; };
 	void inline SetActinic(byte value) { ActinicPWMValue = (int)value*40.95; };
@@ -118,7 +128,7 @@ public:
 #endif
 	
 #ifdef PWMEXPANSION
-        boolean NewExpansion;
+    byte ExpansionPercentage[PWM_EXPANSION_CHANNELS];
 	int ExpansionChannel[PWM_EXPANSION_CHANNELS];
 	byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
 	void inline SetChannelRaw(byte Channel, int Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
@@ -253,13 +263,9 @@ private:
 	byte lastcrc;
 	int ActinicPWMValue;
 	int DaylightPWMValue;
-	byte ActinicPWMOverride;
-	byte DaylightPWMOverride;
 #if defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
 	int Actinic2PWMValue;
 	int Daylight2PWMValue;
-	byte Actinic2PWMOverride;
-	byte Daylight2PWMOverride;
 #endif
 };
 

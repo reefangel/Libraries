@@ -218,6 +218,24 @@ class InternalEEPROMClass {
         void PWMSlopeEndA2_write(const uint8_t value);
         uint8_t PWMSlopeDurationA2_read();
         void PWMSlopeDurationA2_write(const uint8_t value);
+        uint8_t CustomExpansion0Decimal_read();
+        void CustomExpansion0Decimal_write(const uint8_t value);
+        uint8_t CustomExpansion1Decimal_read();
+        void CustomExpansion1Decimal_write(const uint8_t value);
+        uint8_t CustomExpansion2Decimal_read();
+        void CustomExpansion2Decimal_write(const uint8_t value);
+        uint8_t CustomExpansion3Decimal_read();
+        void CustomExpansion3Decimal_write(const uint8_t value);
+        uint8_t CustomExpansion4Decimal_read();
+        void CustomExpansion4Decimal_write(const uint8_t value);
+        uint8_t CustomExpansion5Decimal_read();
+        void CustomExpansion5Decimal_write(const uint8_t value);
+        uint8_t CustomExpansion6Decimal_read();
+        void CustomExpansion6Decimal_write(const uint8_t value);
+        uint8_t CustomExpansion7Decimal_read();
+        void CustomExpansion7Decimal_write(const uint8_t value);
+        uint8_t Touch_Orientation_read();
+        void Touch_Orientation_write(const uint8_t value);
         
         // Functions that read/write an int
         int WM1Timer_read();
