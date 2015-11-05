@@ -179,6 +179,42 @@ int PWMSmoothRampHighRes(byte startHour, byte startMinute, byte endHour, byte en
   }
 }
 
+int PWMSmoothRampHighestRes(byte startHour, byte startMinute, byte endHour, byte endMinute, int startPWMint, int endPWMint, byte slopeLength, int oldValue)
+{
+  LightsOverride=true;
+  int current_hour = hour();
+  long current_millis = millis();
+  long start = NumMins(startHour, startMinute)*600L;
+  long end = NumMins(endHour, endMinute)*600L;
+  long slopeLengthTenthSecs = slopeLength*600L;
+
+  if (start > end) // Start is greater than End so it is over midnight
+  {
+    if (current_hour < endHour) start -= 1440L*600L; // past midnight
+    if (current_hour >= startHour) end += 1440L*600L; // before midnight
+  }
+  long current = NumMins(current_hour, minute())*600L + second()*10L + (current_millis%1000 - current_millis%100)/100L;
+  if (slopeLengthTenthSecs > ((end-start)/2) ) slopeLengthTenthSecs = (end-start)/2; // don't allow a slope length greater than half the total period
+  if (current <= start || current >= end) 
+    return oldValue; // it's before the start or after the end, return the default
+  else
+  { // do the slope calculation
+    int pwmDelta = endPWMint - startPWMint;
+    float smoothPhase;
+    if ((current > (start + slopeLengthTenthSecs)) && (current < (end - slopeLengthTenthSecs))) 
+      return endPWMint; // if it's in the middle of the slope, return the high level
+    else if ((current - start) < slopeLengthTenthSecs) 
+    {  // it's in the beginning slope up
+      smoothPhase = (((float)(current-start)/(float)slopeLengthTenthSecs)*180.0) + 180.0;
+    }
+    else if ((end - current) < slopeLengthTenthSecs)
+    { // it's in the end slope down
+      smoothPhase = (((float)(end-current)/(float)slopeLengthTenthSecs)*180.0) + 180.0;
+    }
+    return startPWMint + (int)(pwmDelta*((1.0+(cos(radians(smoothPhase))))/2.0));
+  }
+}
+
 int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue)
 {
   LightsOverride=true;
