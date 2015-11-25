@@ -19,8 +19,8 @@
 
 // Cloud authentication
 // Max number of characters for username and password is 16
-const prog_char CLOUD_USERNAME[] PROGMEM = "mqttuser";
-const prog_char CLOUD_PASSWORD[] PROGMEM = "testmqtt";
+const prog_char CLOUD_USERNAME[] PROGMEM = "cloudtest";
+const prog_char CLOUD_PASSWORD[] PROGMEM = "123456";
 
 // Headers
 const prog_char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";

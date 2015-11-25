@@ -289,6 +289,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define lowATOPin           11
 #define highATOPin          12
 #define okPin               13
+#define i2cEnable1			39
+#define i2cEnable2			40
 #define i2cMuxEnable		43
 #define HW_SPI_Pin			53
 #define RANetRXPin			50
@@ -1281,6 +1283,9 @@ typedef struct Compensation
 #define MQTT_DATE	32
 #define MQTT_CALIBRATION 33
 #define MQTT_CUSTOM_CALIBRATION 34
+#define MQTT_VERSION	35
+#define MQTT_MEM_RAW	36
+
 
 // Cloud Expansion Bits ( CEM )
 #define CloudSalinityBit	0
