@@ -1805,6 +1805,8 @@ void ReefAngelClass::ExitMenu()
 #endif
 	CheckDrawGraph();
 	redrawmenu=true;
+	OldTempRelay=Relay.RelayData-1;
+	OldParams.PH=Params.PH-1;
 }
 
 void ReefAngelClass::SetDisplayedMenu(byte value)
