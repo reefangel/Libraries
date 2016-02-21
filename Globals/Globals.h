@@ -1623,6 +1623,8 @@ byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDura
 byte TidalSwellMode(byte WaveMaxSpeed, boolean PulseSync);
 byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset);
 byte ElseMode(byte midPoint, byte offset, boolean waveSync);
+byte StormMode(byte VSpeed, byte VTimer, boolean waveSync);
+
 
 const char* ip_to_str(const uint8_t* ipAddr);
 

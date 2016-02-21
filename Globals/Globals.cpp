@@ -949,6 +949,46 @@ byte ElseMode( byte midPoint, byte offset, boolean waveSync )
   }
 }
 
+byte StormMode(byte VSpeed, byte VTimer, boolean waveSync)
+{
+  static unsigned long lastmillis=millis();
+  static int WavePhase;
+  static byte sync_speed;
+  static byte anti_speed;
+
+  if ((millis()-lastmillis) > (VTimer*100))
+	{
+    WavePhase++;
+    if (WavePhase>12)
+    {
+      WavePhase=0;
+      sync_speed=0;
+      anti_speed=0;
+    }
+    if (WavePhase<=7 && WavePhase>0)
+    {
+      if (sync_speed==0)
+      {
+        sync_speed=VSpeed; 
+      }
+      else sync_speed=0;
+    }
+    if (WavePhase==1) anti_speed=VSpeed;
+    if (WavePhase>6) 
+    {
+      if (anti_speed==0) 
+      {
+        anti_speed=VSpeed; 
+      }
+      else anti_speed=0;
+    }
+    lastmillis=millis();
+  }
+    if (waveSync) return(constrain(sync_speed,0,100));
+    else
+      return(constrain(anti_speed,0,100));
+  
+}   
 const char* ip_to_str(const uint8_t* ipAddr)
 {
   static char buf[16];
