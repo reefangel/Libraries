@@ -866,7 +866,7 @@ void RA_NokiaLCD::Init()
 		Clear(DefaultBGColor,0,0,131,131);
 
 		SendCMD(0x29); //Display on
-
+ 
     }
     else if (LCDID==2)
     {

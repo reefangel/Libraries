@@ -1805,6 +1805,8 @@ void ReefAngelClass::ExitMenu()
 #endif
 	CheckDrawGraph();
 	redrawmenu=true;
+	OldTempRelay=Relay.RelayData-1;
+	OldParams.PH=Params.PH-1;
 }
 
 void ReefAngelClass::SetDisplayedMenu(byte value)
@@ -2531,6 +2533,8 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("mb", mqtt_sub)==0) mqtt_type=MQTT_MEM_BYTE;
 				else if (strcmp("mi", mqtt_sub)==0) mqtt_type=MQTT_MEM_INT;
 				else if (strcmp("date", mqtt_sub)==0) mqtt_type=MQTT_DATE;
+				else if (strcmp("v", mqtt_sub)==0) mqtt_type=MQTT_VERSION;
+				else if (strcmp("mr", mqtt_sub)==0) mqtt_type=MQTT_MEM_RAW;
 			}
 		}
 		else
@@ -2538,7 +2542,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			if (payload[a]==58) // Let's look for a :
 			{
 				foundchannel=true;
-				mqtt_val=0;
+				//mqtt_val=0;
 			}
 			else
 			{
@@ -2693,11 +2697,17 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		case MQTT_MEM_BYTE:
 		{
 			InternalMemory.write(mqtt_val, mqtt_val1);
+			char buffer[16];
+			sprintf(buffer, "MBOK:%d", mqtt_val);
+			ReefAngel.Network.CloudPublish(buffer);
 			break;
 		}
 		case MQTT_MEM_INT:
 		{
 			InternalMemory.write_int(mqtt_val, mqtt_val1);
+			char buffer[16];
+			sprintf(buffer, "MIOK:%d", mqtt_val);
+			ReefAngel.Network.CloudPublish(buffer);
 			break;
 		}
 		case MQTT_CUSTOM_EXP:
@@ -2707,14 +2717,16 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		}
 		case MQTT_DATE:
 		{
+			Serial.println(mqtt_val);
+			Serial.println(mqtt_val1);
 			if (mqtt_val==1)
 			{
 				uint8_t dmon, dday, dyear, dhr, dmin;
-				dmon=mqtt_val1/100000000;
-				dyear=(mqtt_val1%1000000)/10000;
-				dday=(mqtt_val1%100000000)/1000000;
-				dhr=(mqtt_val1%10000)/100;
-				dmin=mqtt_val1%100;
+				dhr=mqtt_val1/100000000;
+				dmin=(mqtt_val1%100000000)/1000000;
+				dmon=(mqtt_val1%1000000)/10000;
+				dday=(mqtt_val1%10000)/100;
+				dyear=mqtt_val1%100;
 				setTime(dhr, dmin, 0, dday, dmon, dyear);
 				now();
 				RTC.set(now());
@@ -2723,6 +2735,25 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			sprintf(buffer, "DATE:%02d%02d%02d%02d%02d", month(), day(), year()-2000, hour(), minute());
 			ReefAngel.Network.CloudPublish(buffer);
 			break;
+		}
+		case MQTT_VERSION:
+		{
+			char buffer[16];
+			sprintf(buffer, "V:%s", ReefAngel_Version);
+			ReefAngel.Network.CloudPublish(buffer);
+			break;
+		}
+		case MQTT_MEM_RAW:
+		{
+			int mindex=0;
+			char buffer[21];
+			while ((VarsEnd-VarsStart-mindex)>8)
+			{
+				sprintf(buffer,"MR%02d:%02x%02x%02x%02x%02x%02x%02x%02x",mindex/8,InternalMemory.read(VarsStart+mindex+0),InternalMemory.read(VarsStart+mindex+1),InternalMemory.read(VarsStart+mindex+2),InternalMemory.read(VarsStart+mindex+3),InternalMemory.read(VarsStart+mindex+4),InternalMemory.read(VarsStart+mindex+5),InternalMemory.read(VarsStart+mindex+6),InternalMemory.read(VarsStart+mindex+7));
+				ReefAngel.Network.CloudPublish(buffer);
+				Serial.println(buffer);
+				mindex+=8;
+			}
 		}
 	}
 }

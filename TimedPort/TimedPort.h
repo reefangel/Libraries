@@ -33,47 +33,49 @@ class TimedPort
 {
 public:
 	TimedPort();
-	byte ID;
-	byte Delay;
-	int Time;
-	int Offset;
-	int Repeat;	
-	int StartTime;
-	int StopTime;
-    double Scale;
+	byte ID; // Port (i.e. Box1_Port2);
+	byte Delay; // For use as a DelayedOn port
+	int Offset; // Timer offset
+	int Repeat;	 // 0 for disabled - Must be larger than Time
+	int Time; // Scheduled runtime
+	int StartTime; // How long to run triggered from Start();
+	int StopTime; // How long to run triggered from Stop();
+    double Scale; // Default is seconds (for minutes use 60, hours use 3600);
 
+	void Init();
+
+	// These are just like the corresponding Relay functions
 	void On(); 
 	void Off(); 
     void Auto();
 	void DelayedOn();
 	void DelayedOn(byte delay);
     void Override(byte type);
-	void Set(bool status);
     void Toggle();
-	  
-	void Init();
+	void Set(bool status);
 	inline void Write() { ReefAngel.Relay.Write(); }
 	inline bool Status() { return ReefAngel.Relay.Status(ID); }
 	inline bool isMaskOn() { return ReefAngel.Relay.isMaskOn(ID); }
     inline bool isMaskOff() { return ReefAngel.Relay.isMaskOff(ID); }
+
 	inline bool IsRunning() { return running; }
 	inline bool IsStarted() { return started; }
 	inline bool IsStopped() { return stopped; }
     inline bool IsActive() { return activestatus; };
-
   	inline void Pause() { activestatus=false; }
 	inline void Resume() { activestatus=true; }
 	inline void SetActive(bool status) { activestatus=status; }
 	void Run(); // Run Schedule + manual timers  
 	void Osc(); // Ignore timers run schedule
-	void Run(int offset, int ontime, int offtime, bool status); 
-	void Osc(int offset, int ontime, int offtime, bool status); 
-
 	void Start(); // Start now for OnTime seconds
 	void Stop(); // Disable for OffTime seconds
+
+	void Run(int offset, int ontime, int offtime, bool status); 
+	void Osc(int offset, int ontime, int offtime, bool status); 
 	void Start(int time); // Start now for specified seconds
 	void Stop(int time); // Disable for specified seconds
 	
+	// Starting variable location to initialize or save a ports settings
 	void Load(int memStart);
 	void Save(int memStart);
   

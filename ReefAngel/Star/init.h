@@ -21,6 +21,9 @@ digitalWrite(SDPin,HIGH);
 pinMode(BuzzerPin,OUTPUT);
 pinMode(actinic2PWMPin,OUTPUT);
 pinMode(daylight2PWMPin,OUTPUT);
+pinMode(i2cMuxEnable,OUTPUT);
+pinMode(i2cEnable1,OUTPUT);
+pinMode(i2cEnable2,OUTPUT);
 digitalWrite(actinic2PWMPin,LOW); //pull down resistor on actinicPWMPin
 digitalWrite(daylight2PWMPin,LOW); //pull down resistor on daylightPWMPin
 DDRJ&=(0<<3); //PJ3 as input (SD card detect pin)
@@ -29,10 +32,11 @@ DDRJ&=(0<<4); //PJ4 as input (Alarm pin)
 PORTJ|=(1<<4); //PJ4 pull up
 DDRH|=(1<<2); // Port PH2 output (Exp Bus Power)
 cbi(PORTH,2); // Turn on exp bus power
-pinMode(i2cMuxEnable,OUTPUT);
 digitalWrite(i2cMuxEnable,LOW);
 delay(10);
 digitalWrite(i2cMuxEnable,HIGH);
+digitalWrite(i2cEnable1,HIGH);
+digitalWrite(i2cEnable2,HIGH);
 SPI.begin();
 Serial.println(F("SPI Init"));
 TouchLCD.Init();

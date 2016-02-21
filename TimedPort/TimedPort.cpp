@@ -30,20 +30,20 @@ TimedPort::TimedPort()
 
 void TimedPort::Init() 
 {
-	ID = 0;
-	Delay = 0;
-	Repeat = 0;
-	Offset = 0;
-	Time = 0;
-  StartTime = 0;
-  StopTime = 0;
-	Scale=1;
+	ID = 0; // Port (i.e. Box1_Port2);
+	Delay = 0; // For use as a DelayedOn port
+	Offset = 0; // Timer offset
+	Repeat = 0; // 0 for disabled - Must be larger than Time
+	Time = 0; // Scheduled runtime
+	StartTime = 0; // How long to run triggered from Start();
+	StopTime = 0; // How long to stop triggered from Stop();
+	Scale=1; // Default is seconds (for minutes use 60, hours use 3600)
 	
-	activestatus = true;
-	started = false;
-	stopped = false;
-	running = false;
-  timer = 0;
+	activestatus = true; // Port can be enabled/disabled
+	started = false; // did we use Start();
+	stopped = false; // did we use Stop();
+	running = false; // are we running?
+	timer = 0; // timer variable
 }
 
 void TimedPort::On()
@@ -100,18 +100,21 @@ void TimedPort::Run() {
 
 void TimedPort::Run(int offset, int ontime, int offtime, bool status)
 {
+  // Start with our normal schedule
   Osc(offset, ontime, offtime, status);
+
+  // If we're not paused
   if (activestatus) {
-    if (now()<timer) {
+    if (now()<timer) { // A timer has been triggered
       if (started) {
     	  On();
       } 
       if (stopped) {
         Off();
       } 
-    } else {
+    } else { // Timer is over so let's reset the flags
       if (started) {
-        started = false;
+        started = false; 
       } 
       if (stopped) {
         stopped = false;
@@ -130,14 +133,21 @@ void TimedPort::Osc()
 // Currently in seconds instead of minute:seconds
 void TimedPort::Osc(int offset, int ontime, int offtime, bool status)
 {
-  time_t o = offset*Scale;
-  time_t t = ontime*Scale;
-  time_t f = offtime*Scale;
+	if (offtime<=0) { // Because modulus 0 can lead to undefined behavior
+		running=false;
+    } else {
+		time_t o = offset*Scale;
+		time_t t = ontime*Scale;
+		time_t f = offtime*Scale;
 	
-	running=((now()+o)%(t+f))<t;
+		running=((now()+o)%(t+f))<t;
+	}
 
+	// If status is false we reverse the behavior
 	if (!status) running=!running;
-  ReefAngel.Relay.Set(ID, running);  
+
+	ReefAngel.Relay.Set(ID, running);  
+    running=ReefAngel.Relay.Status(ID);;
 }
 
 void TimedPort::Start() 

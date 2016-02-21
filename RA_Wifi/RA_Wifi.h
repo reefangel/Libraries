@@ -168,7 +168,7 @@ const prog_char XML_MODE_CLOSE[] PROGMEM = "</MODE>";
 const prog_char XML_OK[] PROGMEM = "OK";
 const prog_char XML_ERR[] PROGMEM = "ERR";
 
-const prog_char SERVER_HEADER1[] PROGMEM = "HTTP/1.1 200 OK\r\nServer: ReefAngel\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nConnection: close\r\nContent-Type: text/";
+const prog_char SERVER_HEADER1[] PROGMEM = "HTTP/1.1 200 OK\r\nServer: ReefAngel\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET\r\nConnection: close\r\nContent-Type: text/";
 const prog_char SERVER_HEADER2[] PROGMEM = "\r\nContent-Length: ";
 const prog_char SERVER_DENY[] PROGMEM = "HTTP/1.1 401 Access Denied\r\nWWW-Authenticate: Basic realm=Reef Angel Controller\r\nContent-Length: 0\r\n";
 const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server</h1>";
@@ -362,7 +362,7 @@ const prog_char JSON_CLOSE[] PROGMEM = "}}";
 
 #define P(name)   static const prog_char name[] PROGMEM
 //const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
-const prog_char SERVER_RA[] PROGMEM = "<!DOCTYPE html><script src='http://www.reefangel.com/wifi/ra2.js'></script>";
+const prog_char SERVER_RA[] PROGMEM = "<object type=text/html data=http://www.reefangel.com/wifi3/content.html width=100% height=98%></object>";
 const prog_char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 const prog_char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
 const prog_char BannerHTTP11[] PROGMEM = " HTTP/1.1\r\n";
