@@ -998,7 +998,7 @@ void ReefAngelClass::StandardHeater(byte Probe, byte HeaterRelay, int LowTemp, i
 
 void ReefAngelClass::StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp)
 {
-	StandardHeater(T1_PROBE, HeaterRelay, LowTemp, HighTemp);
+	StandardHeater(TempProbe, HeaterRelay, LowTemp, HighTemp);
 }
 
 void ReefAngelClass::StandardHeater2(byte HeaterRelay, int LowTemp, int HighTemp)
