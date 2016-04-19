@@ -28,7 +28,7 @@
 #if not defined(__SAM3X8E__)
 
 extern "C" {
-   #include <wiring.h>
+   #include <Arduino.h>
    #include <utility/EthernetUtil.h>
 }
 

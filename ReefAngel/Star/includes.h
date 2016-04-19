@@ -49,18 +49,18 @@ class ButtonClass
 {
 	public:
 		ButtonClass();
-		void Create(int color, int textcolor, const prog_char *str);
-		void Create(int color, int textcolor, const prog_char *str, const prog_uchar *Ptr);
+		void Create(int color, int textcolor, const char *str);
+		void Create(int color, int textcolor, const char *str, const unsigned char *Ptr);
 		void inline SetPosition(int ix1, int iy1) { x1=ix1; y1=iy1; };
 //		void inline SetLabel(char *value) { str=value; Serial.println(str);};
-//		void inline SetLabelP(const prog_char *value) { char buff[16]; byte index=0; while( buff[index++] = pgm_read_byte(value++)); strcpy(str,buff); Serial.println(str);};
+//		void inline SetLabelP(const char *value) { char buff[16]; byte index=0; while( buff[index++] = pgm_read_byte(value++)); strcpy(str,buff); Serial.println(str);};
 		void Show();
 		void Hide(int bkcolor=BKCOLOR);
 		boolean IsPressed();
 	private:
 		int color, x1, x2, y1, textcolor;
-		const prog_char *str;
-		const prog_uchar *Ptr;
+		const char *str;
+		const unsigned char *Ptr;
 		boolean visible;
 };
 
@@ -74,7 +74,7 @@ class ProgressBarClass
 		int inline GetCurrent() { return current; };
 		void inline SetLabel(char *value) { str=value; };
 		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); }; 
-		void inline SetLabelP(const prog_char *value) { char buff[16]; byte index=0; while( buff[index++] = pgm_read_byte(value++)); strcpy(str,buff); };
+		void inline SetLabelP(const char *value) { char buff[16]; byte index=0; while( buff[index++] = pgm_read_byte(value++)); strcpy(str,buff); };
  		void inline SetColor(int value) { color=value; };
 		void inline SetBackColor(int value) { bkcolor=value; };
 		void inline SetTextColor(int value) { textcolor=value; };
@@ -106,7 +106,7 @@ class SliderClass
 		void inline SetColor(int value) { color=value; };
 		void inline SetLabel(char *value) { str=value; };
 		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); };
-		void inline SetLabelP(const prog_char *value) { char buff[16]; byte index=0; while( buff[index++] = pgm_read_byte(value++)); strcpy(str,buff); };
+		void inline SetLabelP(const char *value) { char buff[16]; byte index=0; while( buff[index++] = pgm_read_byte(value++)); strcpy(str,buff); };
 		void DrawMarker();
 		void Show();
 		void Hide();

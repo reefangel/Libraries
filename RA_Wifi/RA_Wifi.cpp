@@ -51,7 +51,7 @@ RA_Wifi::RA_Wifi()
   usingAuth=false;
 }
 
-void RA_Wifi::WebResponse (const prog_char *response, long strsize)
+void RA_Wifi::WebResponse (const char *response, long strsize)
 {
 //  P(WebHeaderMsg) = SERVER_HEADER_HTML;
 //  printP(WebHeaderMsg);
@@ -1634,7 +1634,7 @@ void RA_Wifi::SendJSONData()
 	PROGMEMprint(JSON_CLOSE);
 }
 
-void RA_Wifi::SendSingleJSON(const prog_char str[], int value, char* suffix)
+void RA_Wifi::SendSingleJSON(const char str[], int value, char* suffix)
 {
 	print(",\"");
 	PROGMEMprint(str);
@@ -1645,7 +1645,7 @@ void RA_Wifi::SendSingleJSON(const prog_char str[], int value, char* suffix)
 	print("\"");
 }
 
-void RA_Wifi::SendSingleJSON(const prog_char str[], char* value)
+void RA_Wifi::SendSingleJSON(const char str[], char* value)
 {
 	print("\"");
 	PROGMEMprint(str);
@@ -1689,7 +1689,7 @@ void RA_Wifi::ReceiveData()
   if ( _wifiSerial->available() > 0 ) ProcessSerial();
 }
 
-void RA_Wifi::PROGMEMprint(const prog_char str[])
+void RA_Wifi::PROGMEMprint(const char str[])
 {
     char c;
     if(!str) return;

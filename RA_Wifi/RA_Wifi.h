@@ -28,306 +28,306 @@
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 
-const prog_char XML_ID[] PROGMEM = "<RA><ID>";
-const prog_char XML_T1[] PROGMEM = "</ID><T1>";
-const prog_char XML_T2[] PROGMEM = "</T1><T2>";
-const prog_char XML_T3[] PROGMEM = "</T2><T3>";
-const prog_char XML_PH[] PROGMEM = "</T3><PH>";
-const prog_char XML_R[] PROGMEM = "</PH><R>";
-const prog_char XML_RON[] PROGMEM = "</R><RON>";
-const prog_char XML_ROFF[] PROGMEM = "</RON><ROFF>";
-const prog_char XML_RE_OPEN[] PROGMEM = "<R";
-const prog_char XML_RE_CLOSE[] PROGMEM = "</R";
-const prog_char XML_RE_ON[] PROGMEM = "ON";
-const prog_char XML_RE_OFF[] PROGMEM = "OFF";
-const prog_char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
-const prog_char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
-const prog_char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
-const prog_char XML_EM1[] PROGMEM = "</EM><EM1>";
-const prog_char XML_REM[] PROGMEM = "</EM1><REM>";
-const prog_char XML_BOARDID[] PROGMEM = "</REM><BID>";
-const prog_char XML_ALERTFLAG[] PROGMEM = "</BID><AF>";
-const prog_char XML_STATUSFLAG[] PROGMEM = "</AF><SF>";
-const prog_char XML_STATUSFLAG_END[] PROGMEM = "</SF>";
+const char XML_ID[] PROGMEM = "<RA><ID>";
+const char XML_T1[] PROGMEM = "</ID><T1>";
+const char XML_T2[] PROGMEM = "</T1><T2>";
+const char XML_T3[] PROGMEM = "</T2><T3>";
+const char XML_PH[] PROGMEM = "</T3><PH>";
+const char XML_R[] PROGMEM = "</PH><R>";
+const char XML_RON[] PROGMEM = "</R><RON>";
+const char XML_ROFF[] PROGMEM = "</RON><ROFF>";
+const char XML_RE_OPEN[] PROGMEM = "<R";
+const char XML_RE_CLOSE[] PROGMEM = "</R";
+const char XML_RE_ON[] PROGMEM = "ON";
+const char XML_RE_OFF[] PROGMEM = "OFF";
+const char XML_ATOLOW[] PROGMEM = "<ATOLOW>";
+const char XML_ATOHIGH[] PROGMEM = "</ATOLOW><ATOHIGH>";
+const char XML_EM[] PROGMEM = "</ATOHIGH><EM>";
+const char XML_EM1[] PROGMEM = "</EM><EM1>";
+const char XML_REM[] PROGMEM = "</EM1><REM>";
+const char XML_BOARDID[] PROGMEM = "</REM><BID>";
+const char XML_ALERTFLAG[] PROGMEM = "</BID><AF>";
+const char XML_STATUSFLAG[] PROGMEM = "</AF><SF>";
+const char XML_STATUSFLAG_END[] PROGMEM = "</SF>";
 
 #ifdef DisplayLEDPWM
-const prog_char XML_PWMA[] PROGMEM = "<PWMA>";
-const prog_char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
-const prog_char XML_PWMAO[] PROGMEM = "</PWMD><PWMAO>";
-const prog_char XML_PWMDO[] PROGMEM = "</PWMAO><PWMDO>";
-const prog_char XML_PWMDO_END[] PROGMEM = "</PWMDO>";
+const char XML_PWMA[] PROGMEM = "<PWMA>";
+const char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
+const char XML_PWMAO[] PROGMEM = "</PWMD><PWMAO>";
+const char XML_PWMDO[] PROGMEM = "</PWMAO><PWMDO>";
+const char XML_PWMDO_END[] PROGMEM = "</PWMDO>";
 #endif  // DisplayLEDPWM
 #ifdef ORPEXPANSION
-const prog_char XML_ORP[] PROGMEM = "<ORP>";
-const prog_char XML_ORP_END[] PROGMEM = "</ORP>";
+const char XML_ORP[] PROGMEM = "<ORP>";
+const char XML_ORP_END[] PROGMEM = "</ORP>";
 #endif  // ORPEXPANSION
 #ifdef SALINITYEXPANSION
-const prog_char XML_SAL[] PROGMEM = "<SAL>";
-const prog_char XML_SAL_END[] PROGMEM = "</SAL>";
+const char XML_SAL[] PROGMEM = "<SAL>";
+const char XML_SAL_END[] PROGMEM = "</SAL>";
 #endif  // SALINITYEXPANSION
 #ifdef PHEXPANSION
-const prog_char XML_PHEXP[] PROGMEM = "<PHE>";
-const prog_char XML_PHEXP_END[] PROGMEM = "</PHE>";
+const char XML_PHEXP[] PROGMEM = "<PHE>";
+const char XML_PHEXP_END[] PROGMEM = "</PHE>";
 #endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-const prog_char XML_WL[] PROGMEM = "<WL";
-const prog_char XML_WL_END[] PROGMEM = "</WL";
+const char XML_WL[] PROGMEM = "<WL";
+const char XML_WL_END[] PROGMEM = "</WL";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
-const prog_char XML_HUM[] PROGMEM = "<HUM>";
-const prog_char XML_HUM_END[] PROGMEM = "</HUM>";
+const char XML_HUM[] PROGMEM = "<HUM>";
+const char XML_HUM_END[] PROGMEM = "</HUM>";
 #endif  // HUMIDITYEXPANSION
 #ifdef PAREXPANSION
-const prog_char XML_PAR[] PROGMEM = "<PAR>";
-const prog_char XML_PAR_END[] PROGMEM = "</PAR>";
+const char XML_PAR[] PROGMEM = "<PAR>";
+const char XML_PAR_END[] PROGMEM = "</PAR>";
 #endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
-const prog_char XML_DCM[] PROGMEM = "<DCM>";
-const prog_char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
-const prog_char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
-const prog_char XML_DCD_END[] PROGMEM = "</DCD><DCT>";
-const prog_char XML_DCT_END[] PROGMEM = "</DCT>";
+const char XML_DCM[] PROGMEM = "<DCM>";
+const char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
+const char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
+const char XML_DCD_END[] PROGMEM = "</DCD><DCT>";
+const char XML_DCT_END[] PROGMEM = "</DCT>";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
-const prog_char XML_PWME[] PROGMEM = "<PWME";
-const prog_char XML_PWME_END[] PROGMEM = "</PWME";
+const char XML_PWME[] PROGMEM = "<PWME";
+const char XML_PWME_END[] PROGMEM = "</PWME";
 #endif  // PWMEXPANSION
 #ifdef SIXTEENCHPWMEXPANSION
-const prog_char XML_SCPWME[] PROGMEM = "<SCPWME";
-const prog_char XML_SCPWME_END[] PROGMEM = "</SCPWME";
+const char XML_SCPWME[] PROGMEM = "<SCPWME";
+const char XML_SCPWME_END[] PROGMEM = "</SCPWME";
 #endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
-const prog_char XML_AIW[] PROGMEM = "<AIW>";
-const prog_char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
-const prog_char XML_AIB_END[] PROGMEM = "</AIB><AIRB>";
-const prog_char XML_AIRB_END[] PROGMEM = "</AIRB><AIWO>";
-const prog_char XML_AIWO_END[] PROGMEM = "</AIWO><AIBO>";
-const prog_char XML_AIBO_END[] PROGMEM = "</AIBO><AIRBO>";
-const prog_char XML_AIRBO_END[] PROGMEM = "</AIRBO>";
+const char XML_AIW[] PROGMEM = "<AIW>";
+const char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
+const char XML_AIB_END[] PROGMEM = "</AIB><AIRB>";
+const char XML_AIRB_END[] PROGMEM = "</AIRB><AIWO>";
+const char XML_AIWO_END[] PROGMEM = "</AIWO><AIBO>";
+const char XML_AIBO_END[] PROGMEM = "</AIBO><AIRBO>";
+const char XML_AIRBO_END[] PROGMEM = "</AIRBO>";
 #endif  // AI_LED
 #ifdef RFEXPANSION
-const prog_char XML_RFM[] PROGMEM = "<RFM>";
-const prog_char XML_RFM_END[] PROGMEM = "</RFM><RFS>";
-const prog_char XML_RFS_END[] PROGMEM = "</RFS><RFD>";
-const prog_char XML_RFD_END[] PROGMEM = "</RFD><RFW>";
-const prog_char XML_RFW_END[] PROGMEM = "</RFW><RFRB>";
-const prog_char XML_RFRB_END[] PROGMEM = "</RFRB><RFR>";
-const prog_char XML_RFR_END[] PROGMEM = "</RFR><RFG>";
-const prog_char XML_RFG_END[] PROGMEM = "</RFG><RFB>";
-const prog_char XML_RFB_END[] PROGMEM = "</RFB><RFI>";
-const prog_char XML_RFI_END[] PROGMEM = "</RFI><RFWO>";
-const prog_char XML_RFWO_END[] PROGMEM = "</RFWO><RFRBO>";
-const prog_char XML_RFRBO_END[] PROGMEM = "</RFRBO><RFRO>";
-const prog_char XML_RFRO_END[] PROGMEM = "</RFRO><RFGO>";
-const prog_char XML_RFGO_END[] PROGMEM = "</RFGO><RFBO>";
-const prog_char XML_RFBO_END[] PROGMEM = "</RFBO><RFIO>";
-const prog_char XML_RFIO_END[] PROGMEM = "</RFIO>";
+const char XML_RFM[] PROGMEM = "<RFM>";
+const char XML_RFM_END[] PROGMEM = "</RFM><RFS>";
+const char XML_RFS_END[] PROGMEM = "</RFS><RFD>";
+const char XML_RFD_END[] PROGMEM = "</RFD><RFW>";
+const char XML_RFW_END[] PROGMEM = "</RFW><RFRB>";
+const char XML_RFRB_END[] PROGMEM = "</RFRB><RFR>";
+const char XML_RFR_END[] PROGMEM = "</RFR><RFG>";
+const char XML_RFG_END[] PROGMEM = "</RFG><RFB>";
+const char XML_RFB_END[] PROGMEM = "</RFB><RFI>";
+const char XML_RFI_END[] PROGMEM = "</RFI><RFWO>";
+const char XML_RFWO_END[] PROGMEM = "</RFWO><RFRBO>";
+const char XML_RFRBO_END[] PROGMEM = "</RFRBO><RFRO>";
+const char XML_RFRO_END[] PROGMEM = "</RFRO><RFGO>";
+const char XML_RFGO_END[] PROGMEM = "</RFGO><RFBO>";
+const char XML_RFBO_END[] PROGMEM = "</RFBO><RFIO>";
+const char XML_RFIO_END[] PROGMEM = "</RFIO>";
 #endif  // RFEXPANSION
 #ifdef IOEXPANSION
-const prog_char XML_IO[] PROGMEM = "<IO>";
-const prog_char XML_IO_END[] PROGMEM = "</IO>";
+const char XML_IO[] PROGMEM = "<IO>";
+const char XML_IO_END[] PROGMEM = "</IO>";
 #endif  // IOEXPANSION
 #ifdef CUSTOM_VARIABLES
-const prog_char XML_C[] PROGMEM = "<C";
-const prog_char XML_C_END[] PROGMEM = "</C";
+const char XML_C[] PROGMEM = "<C";
+const char XML_C_END[] PROGMEM = "</C";
 #endif  // CUSTOM_VARIABLES
 #ifdef LEAKDETECTOREXPANSION
-const prog_char XML_LEAK[] PROGMEM = "<LEAK>";
-const prog_char XML_LEAK_END[] PROGMEM = "</LEAK>";
+const char XML_LEAK[] PROGMEM = "<LEAK>";
+const char XML_LEAK_END[] PROGMEM = "</LEAK>";
 #endif  // LEAKDETECTOREXPANSION
 #if defined RA_STAR || defined RA_EVOLUTION
-const prog_char XML_ALARM[] PROGMEM = "<ALARM>";
-const prog_char XML_ALARM_END[] PROGMEM = "</ALARM>";
-const prog_char XML_PWMA2[] PROGMEM = "<PWMA2>";
-const prog_char XML_PWMD2[] PROGMEM = "</PWMA2><PWMD2>";
-const prog_char XML_PWMA2O[] PROGMEM = "</PWMD2><PWMA2O>";
-const prog_char XML_PWMD2O[] PROGMEM = "</PWMA2O><PWMD2O>";
-const prog_char XML_PWMD2O_END[] PROGMEM = "</PWMD2O>";
+const char XML_ALARM[] PROGMEM = "<ALARM>";
+const char XML_ALARM_END[] PROGMEM = "</ALARM>";
+const char XML_PWMA2[] PROGMEM = "<PWMA2>";
+const char XML_PWMD2[] PROGMEM = "</PWMA2><PWMD2>";
+const char XML_PWMA2O[] PROGMEM = "</PWMD2><PWMA2O>";
+const char XML_PWMD2O[] PROGMEM = "</PWMA2O><PWMD2O>";
+const char XML_PWMD2O_END[] PROGMEM = "</PWMD2O>";
 #endif  // RA_STAR
 
 #ifdef ENABLE_ATO_LOGGING
-const prog_char XML_ATOLOW_LOG_OPEN[] PROGMEM = "<AL";
-const prog_char XML_ATOLOW_LOG_CLOSE[] PROGMEM = "</AL";
-const prog_char XML_ATOHIGH_LOG_OPEN[] PROGMEM = "<AH";
-const prog_char XML_ATOHIGH_LOG_CLOSE[] PROGMEM = "</AH";
+const char XML_ATOLOW_LOG_OPEN[] PROGMEM = "<AL";
+const char XML_ATOLOW_LOG_CLOSE[] PROGMEM = "</AL";
+const char XML_ATOHIGH_LOG_OPEN[] PROGMEM = "<AH";
+const char XML_ATOHIGH_LOG_CLOSE[] PROGMEM = "</AH";
 #endif  // ENABLE_ATO_LOGGING
-const prog_char XML_END[] PROGMEM = "</RA>";
-const prog_char XML_CLOSE_TAG[] PROGMEM = ">";
+const char XML_END[] PROGMEM = "</RA>";
+const char XML_CLOSE_TAG[] PROGMEM = ">";
 
 
-const prog_char XML_P_OPEN[] PROGMEM = "<P";
-const prog_char XML_P_CLOSE[] PROGMEM = "</P";
-const prog_char XML_M_OPEN[] PROGMEM = "<M";
-const prog_char XML_M_CLOSE[] PROGMEM = "</M";
-const prog_char XML_MEM_OPEN[] PROGMEM = "<MEM>";
-const prog_char XML_MEM_CLOSE[] PROGMEM = "</MEM>";
-const prog_char XML_DATE_OPEN[] PROGMEM = "<D>";
-const prog_char XML_DATE_CLOSE[] PROGMEM = "</D>";
-const prog_char XML_MODE_OPEN[] PROGMEM = "<MODE>";
-const prog_char XML_MODE_CLOSE[] PROGMEM = "</MODE>";
-const prog_char XML_OK[] PROGMEM = "OK";
-const prog_char XML_ERR[] PROGMEM = "ERR";
+const char XML_P_OPEN[] PROGMEM = "<P";
+const char XML_P_CLOSE[] PROGMEM = "</P";
+const char XML_M_OPEN[] PROGMEM = "<M";
+const char XML_M_CLOSE[] PROGMEM = "</M";
+const char XML_MEM_OPEN[] PROGMEM = "<MEM>";
+const char XML_MEM_CLOSE[] PROGMEM = "</MEM>";
+const char XML_DATE_OPEN[] PROGMEM = "<D>";
+const char XML_DATE_CLOSE[] PROGMEM = "</D>";
+const char XML_MODE_OPEN[] PROGMEM = "<MODE>";
+const char XML_MODE_CLOSE[] PROGMEM = "</MODE>";
+const char XML_OK[] PROGMEM = "OK";
+const char XML_ERR[] PROGMEM = "ERR";
 
-const prog_char SERVER_HEADER1[] PROGMEM = "HTTP/1.1 200 OK\r\nServer: ReefAngel\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET\r\nConnection: close\r\nContent-Type: text/";
-const prog_char SERVER_HEADER2[] PROGMEM = "\r\nContent-Length: ";
-const prog_char SERVER_DENY[] PROGMEM = "HTTP/1.1 401 Access Denied\r\nWWW-Authenticate: Basic realm=Reef Angel Controller\r\nContent-Length: 0\r\n";
-const prog_char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server</h1>";
+const char SERVER_HEADER1[] PROGMEM = "HTTP/1.1 200 OK\r\nServer: ReefAngel\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET\r\nConnection: close\r\nContent-Type: text/";
+const char SERVER_HEADER2[] PROGMEM = "\r\nContent-Length: ";
+const char SERVER_DENY[] PROGMEM = "HTTP/1.1 401 Access Denied\r\nWWW-Authenticate: Basic realm=Reef Angel Controller\r\nContent-Length: 0\r\n";
+const char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server</h1>";
 
 #ifndef RA_STANDARD
-const prog_char JSON_OPEN[] PROGMEM = "{\"json\":{";
-const prog_char JSON_ID[] PROGMEM = "ID";
-const prog_char JSON_T1[] PROGMEM = "T1";
-const prog_char JSON_T2[] PROGMEM = "T2";
-const prog_char JSON_T3[] PROGMEM = "T3";
-const prog_char JSON_PH[] PROGMEM = "PH";
-const prog_char JSON_R[] PROGMEM = "R";
-const prog_char JSON_RON[] PROGMEM = "RON";
-const prog_char JSON_ROFF[] PROGMEM = "ROFF";
-const prog_char JSON_R1[] PROGMEM = "R1";
-const prog_char JSON_RON1[] PROGMEM = "RON1";
-const prog_char JSON_ROFF1[] PROGMEM = "ROFF1";
-const prog_char JSON_R2[] PROGMEM = "R2";
-const prog_char JSON_RON2[] PROGMEM = "RON2";
-const prog_char JSON_ROFF2[] PROGMEM = "ROFF2";
-const prog_char JSON_R3[] PROGMEM = "R3";
-const prog_char JSON_RON3[] PROGMEM = "RON3";
-const prog_char JSON_ROFF3[] PROGMEM = "ROFF3";
-const prog_char JSON_R4[] PROGMEM = "R4";
-const prog_char JSON_RON4[] PROGMEM = "RON4";
-const prog_char JSON_ROFF4[] PROGMEM = "ROFF4";
-const prog_char JSON_R5[] PROGMEM = "R5";
-const prog_char JSON_RON5[] PROGMEM = "RON5";
-const prog_char JSON_ROFF5[] PROGMEM = "ROFF5";
-const prog_char JSON_R6[] PROGMEM = "R6";
-const prog_char JSON_RON6[] PROGMEM = "RON6";
-const prog_char JSON_ROFF6[] PROGMEM = "ROFF6";
-const prog_char JSON_R7[] PROGMEM = "R7";
-const prog_char JSON_RON7[] PROGMEM = "RON7";
-const prog_char JSON_ROFF7[] PROGMEM = "ROFF7";
-const prog_char JSON_R8[] PROGMEM = "R8";
-const prog_char JSON_RON8[] PROGMEM = "RON8";
-const prog_char JSON_ROFF8[] PROGMEM = "ROFF8";
-const prog_char JSON_ATOLOW[] PROGMEM = "ATOLOW";
-const prog_char JSON_ATOHIGH[] PROGMEM = "ATOHIGH";
-const prog_char JSON_EM[] PROGMEM = "EM";
-const prog_char JSON_EM1[] PROGMEM = "EM1";
-const prog_char JSON_REM[] PROGMEM = "REM";
-const prog_char JSON_ALERTFLAG[] PROGMEM = "AF";
-const prog_char JSON_STATUSFLAG[] PROGMEM = "SF";
-const prog_char JSON_BOARDID[] PROGMEM = "BID";
+const char JSON_OPEN[] PROGMEM = "{\"json\":{";
+const char JSON_ID[] PROGMEM = "ID";
+const char JSON_T1[] PROGMEM = "T1";
+const char JSON_T2[] PROGMEM = "T2";
+const char JSON_T3[] PROGMEM = "T3";
+const char JSON_PH[] PROGMEM = "PH";
+const char JSON_R[] PROGMEM = "R";
+const char JSON_RON[] PROGMEM = "RON";
+const char JSON_ROFF[] PROGMEM = "ROFF";
+const char JSON_R1[] PROGMEM = "R1";
+const char JSON_RON1[] PROGMEM = "RON1";
+const char JSON_ROFF1[] PROGMEM = "ROFF1";
+const char JSON_R2[] PROGMEM = "R2";
+const char JSON_RON2[] PROGMEM = "RON2";
+const char JSON_ROFF2[] PROGMEM = "ROFF2";
+const char JSON_R3[] PROGMEM = "R3";
+const char JSON_RON3[] PROGMEM = "RON3";
+const char JSON_ROFF3[] PROGMEM = "ROFF3";
+const char JSON_R4[] PROGMEM = "R4";
+const char JSON_RON4[] PROGMEM = "RON4";
+const char JSON_ROFF4[] PROGMEM = "ROFF4";
+const char JSON_R5[] PROGMEM = "R5";
+const char JSON_RON5[] PROGMEM = "RON5";
+const char JSON_ROFF5[] PROGMEM = "ROFF5";
+const char JSON_R6[] PROGMEM = "R6";
+const char JSON_RON6[] PROGMEM = "RON6";
+const char JSON_ROFF6[] PROGMEM = "ROFF6";
+const char JSON_R7[] PROGMEM = "R7";
+const char JSON_RON7[] PROGMEM = "RON7";
+const char JSON_ROFF7[] PROGMEM = "ROFF7";
+const char JSON_R8[] PROGMEM = "R8";
+const char JSON_RON8[] PROGMEM = "RON8";
+const char JSON_ROFF8[] PROGMEM = "ROFF8";
+const char JSON_ATOLOW[] PROGMEM = "ATOLOW";
+const char JSON_ATOHIGH[] PROGMEM = "ATOHIGH";
+const char JSON_EM[] PROGMEM = "EM";
+const char JSON_EM1[] PROGMEM = "EM1";
+const char JSON_REM[] PROGMEM = "REM";
+const char JSON_ALERTFLAG[] PROGMEM = "AF";
+const char JSON_STATUSFLAG[] PROGMEM = "SF";
+const char JSON_BOARDID[] PROGMEM = "BID";
 
 #ifdef DisplayLEDPWM
-const prog_char JSON_PWMA[] PROGMEM = "PWMA";
-const prog_char JSON_PWMD[] PROGMEM = "PWMD";
-const prog_char JSON_PWMAO[] PROGMEM = "PWMAO";
-const prog_char JSON_PWMDO[] PROGMEM = "PWMDO";
+const char JSON_PWMA[] PROGMEM = "PWMA";
+const char JSON_PWMD[] PROGMEM = "PWMD";
+const char JSON_PWMAO[] PROGMEM = "PWMAO";
+const char JSON_PWMDO[] PROGMEM = "PWMDO";
 #endif  // DisplayLEDPWM
 #ifdef ORPEXPANSION
-const prog_char JSON_ORP[] PROGMEM = "ORP";
+const char JSON_ORP[] PROGMEM = "ORP";
 #endif  // ORPEXPANSION
 #ifdef SALINITYEXPANSION
-const prog_char JSON_SAL[] PROGMEM = "SAL";
+const char JSON_SAL[] PROGMEM = "SAL";
 #endif  // SALINITYEXPANSION
 #ifdef PHEXPANSION
-const prog_char JSON_PHEXP[] PROGMEM = "PHE";
+const char JSON_PHEXP[] PROGMEM = "PHE";
 #endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-const prog_char JSON_WL[] PROGMEM = "WL";
-const prog_char JSON_WL1[] PROGMEM = "WL1";
-const prog_char JSON_WL2[] PROGMEM = "WL2";
-const prog_char JSON_WL3[] PROGMEM = "WL3";
-const prog_char JSON_WL4[] PROGMEM = "WL4";
+const char JSON_WL[] PROGMEM = "WL";
+const char JSON_WL1[] PROGMEM = "WL1";
+const char JSON_WL2[] PROGMEM = "WL2";
+const char JSON_WL3[] PROGMEM = "WL3";
+const char JSON_WL4[] PROGMEM = "WL4";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef HUMIDITYEXPANSION
-const prog_char JSON_HUM[] PROGMEM = "HUM";
+const char JSON_HUM[] PROGMEM = "HUM";
 #endif  // HUMIDITYEXPANSION
 #ifdef PAREXPANSION
-const prog_char JSON_PAR[] PROGMEM = "PAR";
+const char JSON_PAR[] PROGMEM = "PAR";
 #endif  // PAREXPANSION
 #ifdef DCPUMPCONTROL
-const prog_char JSON_DCM[] PROGMEM = "DCM";
-const prog_char JSON_DCS[] PROGMEM = "DCS";
-const prog_char JSON_DCD[] PROGMEM = "DCD";
-const prog_char JSON_DCT[] PROGMEM = "DCT";
+const char JSON_DCM[] PROGMEM = "DCM";
+const char JSON_DCS[] PROGMEM = "DCS";
+const char JSON_DCD[] PROGMEM = "DCD";
+const char JSON_DCT[] PROGMEM = "DCT";
 #endif  // DCPUMPCONTROL
 #ifdef PWMEXPANSION
-const prog_char JSON_PWME[] PROGMEM = "PWME";
-const prog_char JSON_PWME0[] PROGMEM = "PWME0";
-const prog_char JSON_PWME1[] PROGMEM = "PWME1";
-const prog_char JSON_PWME2[] PROGMEM = "PWME2";
-const prog_char JSON_PWME3[] PROGMEM = "PWME3";
-const prog_char JSON_PWME4[] PROGMEM = "PWME4";
-const prog_char JSON_PWME5[] PROGMEM = "PWME5";
-const prog_char JSON_PWMEO[] PROGMEM = "PWMEO";
-const prog_char JSON_PWME0O[] PROGMEM = "PWME0O";
-const prog_char JSON_PWME1O[] PROGMEM = "PWME1O";
-const prog_char JSON_PWME2O[] PROGMEM = "PWME2O";
-const prog_char JSON_PWME3O[] PROGMEM = "PWME3O";
-const prog_char JSON_PWME4O[] PROGMEM = "PWME4O";
-const prog_char JSON_PWME5O[] PROGMEM = "PWME5O";
+const char JSON_PWME[] PROGMEM = "PWME";
+const char JSON_PWME0[] PROGMEM = "PWME0";
+const char JSON_PWME1[] PROGMEM = "PWME1";
+const char JSON_PWME2[] PROGMEM = "PWME2";
+const char JSON_PWME3[] PROGMEM = "PWME3";
+const char JSON_PWME4[] PROGMEM = "PWME4";
+const char JSON_PWME5[] PROGMEM = "PWME5";
+const char JSON_PWMEO[] PROGMEM = "PWMEO";
+const char JSON_PWME0O[] PROGMEM = "PWME0O";
+const char JSON_PWME1O[] PROGMEM = "PWME1O";
+const char JSON_PWME2O[] PROGMEM = "PWME2O";
+const char JSON_PWME3O[] PROGMEM = "PWME3O";
+const char JSON_PWME4O[] PROGMEM = "PWME4O";
+const char JSON_PWME5O[] PROGMEM = "PWME5O";
 #endif  // PWMEXPANSION
 #ifdef SIXTEENCHPWMEXPANSION
-const prog_char JSON_SCPWME[] PROGMEM = "SCPWME";
+const char JSON_SCPWME[] PROGMEM = "SCPWME";
 #endif  // SIXTEENCHPWMEXPANSION
 #ifdef AI_LED
-const prog_char JSON_AIW[] PROGMEM = "AIW";
-const prog_char JSON_AIB[] PROGMEM = "AIB";
-const prog_char JSON_AIRB[] PROGMEM = "AIRB";
-const prog_char JSON_AIWO[] PROGMEM = "AIWO";
-const prog_char JSON_AIBO[] PROGMEM = "AIBO";
-const prog_char JSON_AIRBO[] PROGMEM = "AIRBO";
+const char JSON_AIW[] PROGMEM = "AIW";
+const char JSON_AIB[] PROGMEM = "AIB";
+const char JSON_AIRB[] PROGMEM = "AIRB";
+const char JSON_AIWO[] PROGMEM = "AIWO";
+const char JSON_AIBO[] PROGMEM = "AIBO";
+const char JSON_AIRBO[] PROGMEM = "AIRBO";
 #endif  // AI_LED
 #ifdef RFEXPANSION
-const prog_char JSON_RFM[] PROGMEM = "RFM";
-const prog_char JSON_RFS[] PROGMEM = "RFS";
-const prog_char JSON_RFD[] PROGMEM = "RFD";
-const prog_char JSON_RFW[] PROGMEM = "RFW";
-const prog_char JSON_RFRB[] PROGMEM = "RFRB";
-const prog_char JSON_RFR[] PROGMEM = "RFR";
-const prog_char JSON_RFG[] PROGMEM = "RFG";
-const prog_char JSON_RFB[] PROGMEM = "RFB";
-const prog_char JSON_RFI[] PROGMEM = "RFI";
-const prog_char JSON_RFWO[] PROGMEM = "RFWO";
-const prog_char JSON_RFRBO[] PROGMEM = "RFRBO";
-const prog_char JSON_RFRO[] PROGMEM = "RFRO";
-const prog_char JSON_RFGO[] PROGMEM = "RFGO";
-const prog_char JSON_RFBO[] PROGMEM = "RFBO";
-const prog_char JSON_RFIO[] PROGMEM = "RFIO";
+const char JSON_RFM[] PROGMEM = "RFM";
+const char JSON_RFS[] PROGMEM = "RFS";
+const char JSON_RFD[] PROGMEM = "RFD";
+const char JSON_RFW[] PROGMEM = "RFW";
+const char JSON_RFRB[] PROGMEM = "RFRB";
+const char JSON_RFR[] PROGMEM = "RFR";
+const char JSON_RFG[] PROGMEM = "RFG";
+const char JSON_RFB[] PROGMEM = "RFB";
+const char JSON_RFI[] PROGMEM = "RFI";
+const char JSON_RFWO[] PROGMEM = "RFWO";
+const char JSON_RFRBO[] PROGMEM = "RFRBO";
+const char JSON_RFRO[] PROGMEM = "RFRO";
+const char JSON_RFGO[] PROGMEM = "RFGO";
+const char JSON_RFBO[] PROGMEM = "RFBO";
+const char JSON_RFIO[] PROGMEM = "RFIO";
 #endif  // RFEXPANSION
 #ifdef IOEXPANSION
-const prog_char JSON_IO[] PROGMEM = "IO";
+const char JSON_IO[] PROGMEM = "IO";
 #endif  // IOEXPANSION
 #ifdef CUSTOM_VARIABLES
-const prog_char JSON_C[] PROGMEM = "C";
-const prog_char JSON_C0[] PROGMEM = "C0";
-const prog_char JSON_C1[] PROGMEM = "C1";
-const prog_char JSON_C2[] PROGMEM = "C2";
-const prog_char JSON_C3[] PROGMEM = "C3";
-const prog_char JSON_C4[] PROGMEM = "C4";
-const prog_char JSON_C5[] PROGMEM = "C5";
-const prog_char JSON_C6[] PROGMEM = "C6";
-const prog_char JSON_C7[] PROGMEM = "C7";
+const char JSON_C[] PROGMEM = "C";
+const char JSON_C0[] PROGMEM = "C0";
+const char JSON_C1[] PROGMEM = "C1";
+const char JSON_C2[] PROGMEM = "C2";
+const char JSON_C3[] PROGMEM = "C3";
+const char JSON_C4[] PROGMEM = "C4";
+const char JSON_C5[] PROGMEM = "C5";
+const char JSON_C6[] PROGMEM = "C6";
+const char JSON_C7[] PROGMEM = "C7";
 #endif  // CUSTOM_VARIABLES
 #ifdef LEAKDETECTOREXPANSION
-const prog_char JSON_LEAK[] PROGMEM = "LEAK";
+const char JSON_LEAK[] PROGMEM = "LEAK";
 #endif  // LEAKDETECTOREXPANSION
 #if defined RA_STAR || defined RA_EVOLUTION
-const prog_char JSON_ALARM[] PROGMEM = "ALARM";
-const prog_char JSON_PWMA2[] PROGMEM = "PWMA2";
-const prog_char JSON_PWMD2[] PROGMEM = "PWMD2";
-const prog_char JSON_PWMA2O[] PROGMEM = "PWMA2O";
-const prog_char JSON_PWMD2O[] PROGMEM = "PWMD2O";
-const prog_char JSON_CEXP0[] PROGMEM = "CEXP0";
-const prog_char JSON_CEXP1[] PROGMEM = "CEXP1";
-const prog_char JSON_CEXP2[] PROGMEM = "CEXP2";
-const prog_char JSON_CEXP3[] PROGMEM = "CEXP3";
-const prog_char JSON_CEXP4[] PROGMEM = "CEXP4";
-const prog_char JSON_CEXP5[] PROGMEM = "CEXP5";
-const prog_char JSON_CEXP6[] PROGMEM = "CEXP6";
-const prog_char JSON_CEXP7[] PROGMEM = "CEXP7";
+const char JSON_ALARM[] PROGMEM = "ALARM";
+const char JSON_PWMA2[] PROGMEM = "PWMA2";
+const char JSON_PWMD2[] PROGMEM = "PWMD2";
+const char JSON_PWMA2O[] PROGMEM = "PWMA2O";
+const char JSON_PWMD2O[] PROGMEM = "PWMD2O";
+const char JSON_CEXP0[] PROGMEM = "CEXP0";
+const char JSON_CEXP1[] PROGMEM = "CEXP1";
+const char JSON_CEXP2[] PROGMEM = "CEXP2";
+const char JSON_CEXP3[] PROGMEM = "CEXP3";
+const char JSON_CEXP4[] PROGMEM = "CEXP4";
+const char JSON_CEXP5[] PROGMEM = "CEXP5";
+const char JSON_CEXP6[] PROGMEM = "CEXP6";
+const char JSON_CEXP7[] PROGMEM = "CEXP7";
 
 #endif  // RA_STAR
-const prog_char JSON_CLOSE[] PROGMEM = "}}";
+const char JSON_CLOSE[] PROGMEM = "}}";
 
 #endif // RA_STANDARD
 
@@ -360,208 +360,208 @@ const prog_char JSON_CLOSE[] PROGMEM = "}}";
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
-#define P(name)   static const prog_char name[] PROGMEM
-//const prog_char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
-const prog_char SERVER_RA[] PROGMEM = "<object type=text/html data=http://www.reefangel.com/wifi3/content.html width=100% height=98%></object>";
-const prog_char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
-const prog_char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
-const prog_char BannerHTTP11[] PROGMEM = " HTTP/1.1\r\n";
-const prog_char BannerHost[] PROGMEM = "Host: forum.reefangel.com\r\n";
-const prog_char BannerConnectionClose[] PROGMEM = "Connection: close\r\n";
-const prog_char BannerT2[] PROGMEM = "&t2=";
-const prog_char BannerT3[] PROGMEM = "&t3=";
-const prog_char BannerPH[] PROGMEM = "&ph=";
-const prog_char BannerATOHIGH[] PROGMEM = "&atohigh=";
-const prog_char BannerATOLOW[] PROGMEM = "&atolow=";
-const prog_char BannerRelayData[] PROGMEM = "&r";
-const prog_char BannerRelayMaskOn[] PROGMEM = "&ron";
-const prog_char BannerRelayMaskOff[] PROGMEM = "&roff";
-const prog_char BannerID[] PROGMEM = "&id=";
-const prog_char BannerEM[] PROGMEM = "&em=";
-const prog_char BannerEM1[] PROGMEM = "&em1=";
-const prog_char BannerREM[] PROGMEM = "&rem=";
-const prog_char BannerCustom[] PROGMEM = "&c";
-const prog_char BannerKey[] PROGMEM = "&key=";
-const prog_char BannerAlertFlag[] PROGMEM = "&af=";
-const prog_char BannerStatusFlag[] PROGMEM = "&sf=";
-const prog_char BannerBoardID[] PROGMEM = "&bid=";
-const prog_char BannerSubdomain[] PROGMEM = "&ddns=";
+#define P(name)   static const char name[] PROGMEM
+//const char SERVER_RA[] PROGMEM = "<script language='javascript' src='http://www.reefangel.com/wifi/ra1.js'></script>";
+const char SERVER_RA[] PROGMEM = "<object type=text/html data=http://www.reefangel.com/wifi3/content.html width=100% height=98%></object>";
+const char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
+const char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
+const char BannerHTTP11[] PROGMEM = " HTTP/1.1\r\n";
+const char BannerHost[] PROGMEM = "Host: forum.reefangel.com\r\n";
+const char BannerConnectionClose[] PROGMEM = "Connection: close\r\n";
+const char BannerT2[] PROGMEM = "&t2=";
+const char BannerT3[] PROGMEM = "&t3=";
+const char BannerPH[] PROGMEM = "&ph=";
+const char BannerATOHIGH[] PROGMEM = "&atohigh=";
+const char BannerATOLOW[] PROGMEM = "&atolow=";
+const char BannerRelayData[] PROGMEM = "&r";
+const char BannerRelayMaskOn[] PROGMEM = "&ron";
+const char BannerRelayMaskOff[] PROGMEM = "&roff";
+const char BannerID[] PROGMEM = "&id=";
+const char BannerEM[] PROGMEM = "&em=";
+const char BannerEM1[] PROGMEM = "&em1=";
+const char BannerREM[] PROGMEM = "&rem=";
+const char BannerCustom[] PROGMEM = "&c";
+const char BannerKey[] PROGMEM = "&key=";
+const char BannerAlertFlag[] PROGMEM = "&af=";
+const char BannerStatusFlag[] PROGMEM = "&sf=";
+const char BannerBoardID[] PROGMEM = "&bid=";
+const char BannerSubdomain[] PROGMEM = "&ddns=";
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
-	const prog_char BannerPWMA[] PROGMEM = "&pwma=";
-	const prog_char BannerPWMD[] PROGMEM = "&pwmd=";
-	const prog_char BannerPWMAO[] PROGMEM = "&pwmao=";
-	const prog_char BannerPWMDO[] PROGMEM = "&pwmdo=";
+	const char BannerPWMA[] PROGMEM = "&pwma=";
+	const char BannerPWMD[] PROGMEM = "&pwmd=";
+	const char BannerPWMAO[] PROGMEM = "&pwmao=";
+	const char BannerPWMDO[] PROGMEM = "&pwmdo=";
 #endif  // DisplayLEDPWM && ! defined RemoveAllLights
 
 #ifdef PWMEXPANSION
-	const prog_char BannerPWME[] PROGMEM = "&pwme";
+	const char BannerPWME[] PROGMEM = "&pwme";
 #endif  // PWMEXPANSION
 
 #ifdef SIXTEENCHPWMEXPANSION
-	const prog_char BannerSCPWME[] PROGMEM = "&scpwme";
+	const char BannerSCPWME[] PROGMEM = "&scpwme";
 #endif  // SIXTEENCHPWMEXPANSION
 
 #ifdef RFEXPANSION
-	const prog_char BannerRFM[] PROGMEM = "&rfm=";
-	const prog_char BannerRFS[] PROGMEM = "&rfs=";
-	const prog_char BannerRFD[] PROGMEM = "&rfd=";
-	const prog_char BannerRFW[] PROGMEM = "&rfw=";
-	const prog_char BannerRFRB[] PROGMEM = "&rfrb=";
-	const prog_char BannerRFR[] PROGMEM = "&rfr=";
-	const prog_char BannerRFG[] PROGMEM = "&rfg=";
-	const prog_char BannerRFB[] PROGMEM = "&rfb=";
-	const prog_char BannerRFI[] PROGMEM = "&rfi=";
+	const char BannerRFM[] PROGMEM = "&rfm=";
+	const char BannerRFS[] PROGMEM = "&rfs=";
+	const char BannerRFD[] PROGMEM = "&rfd=";
+	const char BannerRFW[] PROGMEM = "&rfw=";
+	const char BannerRFRB[] PROGMEM = "&rfrb=";
+	const char BannerRFR[] PROGMEM = "&rfr=";
+	const char BannerRFG[] PROGMEM = "&rfg=";
+	const char BannerRFB[] PROGMEM = "&rfb=";
+	const char BannerRFI[] PROGMEM = "&rfi=";
 #endif  // RFEXPANSION
 
 #ifdef AI_LED
-	const prog_char BannerAIW[] PROGMEM = "&aiw=";
-	const prog_char BannerAIB[] PROGMEM = "&aib=";
-	const prog_char BannerAIRB[] PROGMEM = "&airb=";
+	const char BannerAIW[] PROGMEM = "&aiw=";
+	const char BannerAIB[] PROGMEM = "&aib=";
+	const char BannerAIRB[] PROGMEM = "&airb=";
 #endif  // AI_LED
 
 #ifdef SALINITYEXPANSION
-	const prog_char BannerSal[] PROGMEM = "&sal=";
+	const char BannerSal[] PROGMEM = "&sal=";
 #endif  // SALINITYEXPANSION
 
 #ifdef ORPEXPANSION
-	const prog_char BannerORP[] PROGMEM = "&orp=";
+	const char BannerORP[] PROGMEM = "&orp=";
 #endif  // ORPEXPANSION
 
 #ifdef IOEXPANSION
-	const prog_char BannerIO[] PROGMEM = "&io=";
+	const char BannerIO[] PROGMEM = "&io=";
 #endif  // IOEXPANSION
 
 #ifdef PHEXPANSION
-	const prog_char BannerPHE[] PROGMEM = "&phe=";
+	const char BannerPHE[] PROGMEM = "&phe=";
 #endif  // PHEXPANSION
 
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-	const prog_char BannerWL[] PROGMEM = "&wl";
+	const char BannerWL[] PROGMEM = "&wl";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 
 #ifdef HUMIDITYEXPANSION
-	const prog_char BannerHumidity[] PROGMEM = "&hum=";
+	const char BannerHumidity[] PROGMEM = "&hum=";
 #endif  // HUMIDITYEXPANSION
 
 #ifdef PAREXPANSION
-	const prog_char BannerPAR[] PROGMEM = "&par=";
+	const char BannerPAR[] PROGMEM = "&par=";
 #endif  // PAREXPANSION
 
 #ifdef DCPUMPCONTROL
-	const prog_char BannerDCM[] PROGMEM = "&dcm=";
-	const prog_char BannerDCS[] PROGMEM = "&dcs=";
-	const prog_char BannerDCD[] PROGMEM = "&dcd=";
-	const prog_char BannerDCT[] PROGMEM = "&dct=";
+	const char BannerDCM[] PROGMEM = "&dcm=";
+	const char BannerDCS[] PROGMEM = "&dcs=";
+	const char BannerDCD[] PROGMEM = "&dcd=";
+	const char BannerDCT[] PROGMEM = "&dct=";
 #endif  // DCPUMPCONTROL
 
 #ifdef CUSTOM_VARIABLES
-	const prog_char BannerCustomVar[] PROGMEM = "&c";
+	const char BannerCustomVar[] PROGMEM = "&c";
 #endif //CUSTOM_VARIABLES
 
 #ifdef LEAKDETECTOREXPANSION
-	const prog_char BannerLeak[] PROGMEM = "&leak=";
+	const char BannerLeak[] PROGMEM = "&leak=";
 #endif  // LEAKDETECTOREXPANSION
 
 #if defined RA_STAR || defined RA_EVOLUTION
-	const prog_char BannerAlarm[] PROGMEM = "&alarm=";
-	const prog_char BannerPWMA2[] PROGMEM = "&pwma2=";
-	const prog_char BannerPWMD2[] PROGMEM = "&pwmd2=";
-	const prog_char BannerPWMA2O[] PROGMEM = "&pwma2o=";
-	const prog_char BannerPWMD2O[] PROGMEM = "&pwmd2o=";
+	const char BannerAlarm[] PROGMEM = "&alarm=";
+	const char BannerPWMA2[] PROGMEM = "&pwma2=";
+	const char BannerPWMD2[] PROGMEM = "&pwmd2=";
+	const char BannerPWMA2O[] PROGMEM = "&pwma2o=";
+	const char BannerPWMD2O[] PROGMEM = "&pwmd2o=";
 #endif  // RA_STAR
 
-//const prog_char probe1_tag[] PROGMEM = "t1n";
-//const prog_char probe2_tag[] PROGMEM = "t2n";
-//const prog_char probe3_tag[] PROGMEM = "t3n";
-//const prog_char relay1_tag[] PROGMEM = "r1n";
-//const prog_char relay2_tag[] PROGMEM = "r2n";
-//const prog_char relay3_tag[] PROGMEM = "r3n";
-//const prog_char relay4_tag[] PROGMEM = "r4n";
-//const prog_char relay5_tag[] PROGMEM = "r5n";
-//const prog_char relay6_tag[] PROGMEM = "r6n";
-//const prog_char relay7_tag[] PROGMEM = "r7n";
-//const prog_char relay8_tag[] PROGMEM = "r8n";
+//const char probe1_tag[] PROGMEM = "t1n";
+//const char probe2_tag[] PROGMEM = "t2n";
+//const char probe3_tag[] PROGMEM = "t3n";
+//const char relay1_tag[] PROGMEM = "r1n";
+//const char relay2_tag[] PROGMEM = "r2n";
+//const char relay3_tag[] PROGMEM = "r3n";
+//const char relay4_tag[] PROGMEM = "r4n";
+//const char relay5_tag[] PROGMEM = "r5n";
+//const char relay6_tag[] PROGMEM = "r6n";
+//const char relay7_tag[] PROGMEM = "r7n";
+//const char relay8_tag[] PROGMEM = "r8n";
 //#ifdef RelayExp
 //#if InstalledRelayExpansionModules >= 1
-//const prog_char relay11_tag[] PROGMEM = "r11n";
-//const prog_char relay12_tag[] PROGMEM = "r12n";
-//const prog_char relay13_tag[] PROGMEM = "r13n";
-//const prog_char relay14_tag[] PROGMEM = "r14n";
-//const prog_char relay15_tag[] PROGMEM = "r15n";
-//const prog_char relay16_tag[] PROGMEM = "r16n";
-//const prog_char relay17_tag[] PROGMEM = "r17n";
-//const prog_char relay18_tag[] PROGMEM = "r18n";
+//const char relay11_tag[] PROGMEM = "r11n";
+//const char relay12_tag[] PROGMEM = "r12n";
+//const char relay13_tag[] PROGMEM = "r13n";
+//const char relay14_tag[] PROGMEM = "r14n";
+//const char relay15_tag[] PROGMEM = "r15n";
+//const char relay16_tag[] PROGMEM = "r16n";
+//const char relay17_tag[] PROGMEM = "r17n";
+//const char relay18_tag[] PROGMEM = "r18n";
 //#endif  // InstalledRelayExpansionModules >= 1
 //#if InstalledRelayExpansionModules >= 2
-//const prog_char relay21_tag[] PROGMEM = "r21n";
-//const prog_char relay22_tag[] PROGMEM = "r22n";
-//const prog_char relay23_tag[] PROGMEM = "r23n";
-//const prog_char relay24_tag[] PROGMEM = "r24n";
-//const prog_char relay25_tag[] PROGMEM = "r25n";
-//const prog_char relay26_tag[] PROGMEM = "r26n";
-//const prog_char relay27_tag[] PROGMEM = "r27n";
-//const prog_char relay28_tag[] PROGMEM = "r28n";
+//const char relay21_tag[] PROGMEM = "r21n";
+//const char relay22_tag[] PROGMEM = "r22n";
+//const char relay23_tag[] PROGMEM = "r23n";
+//const char relay24_tag[] PROGMEM = "r24n";
+//const char relay25_tag[] PROGMEM = "r25n";
+//const char relay26_tag[] PROGMEM = "r26n";
+//const char relay27_tag[] PROGMEM = "r27n";
+//const char relay28_tag[] PROGMEM = "r28n";
 //#endif  // InstalledRelayExpansionModules >= 2
 //#if InstalledRelayExpansionModules >= 3
-//const prog_char relay31_tag[] PROGMEM = "r31n";
-//const prog_char relay32_tag[] PROGMEM = "r32n";
-//const prog_char relay33_tag[] PROGMEM = "r33n";
-//const prog_char relay34_tag[] PROGMEM = "r34n";
-//const prog_char relay35_tag[] PROGMEM = "r35n";
-//const prog_char relay36_tag[] PROGMEM = "r36n";
-//const prog_char relay37_tag[] PROGMEM = "r37n";
-//const prog_char relay38_tag[] PROGMEM = "r38n";
+//const char relay31_tag[] PROGMEM = "r31n";
+//const char relay32_tag[] PROGMEM = "r32n";
+//const char relay33_tag[] PROGMEM = "r33n";
+//const char relay34_tag[] PROGMEM = "r34n";
+//const char relay35_tag[] PROGMEM = "r35n";
+//const char relay36_tag[] PROGMEM = "r36n";
+//const char relay37_tag[] PROGMEM = "r37n";
+//const char relay38_tag[] PROGMEM = "r38n";
 //#endif  // InstalledRelayExpansionModules >= 3
 //#if InstalledRelayExpansionModules >= 4
-//const prog_char relay41_tag[] PROGMEM = "r41n";
-//const prog_char relay42_tag[] PROGMEM = "r42n";
-//const prog_char relay43_tag[] PROGMEM = "r43n";
-//const prog_char relay44_tag[] PROGMEM = "r44n";
-//const prog_char relay45_tag[] PROGMEM = "r45n";
-//const prog_char relay46_tag[] PROGMEM = "r46n";
-//const prog_char relay47_tag[] PROGMEM = "r47n";
-//const prog_char relay48_tag[] PROGMEM = "r48n";
+//const char relay41_tag[] PROGMEM = "r41n";
+//const char relay42_tag[] PROGMEM = "r42n";
+//const char relay43_tag[] PROGMEM = "r43n";
+//const char relay44_tag[] PROGMEM = "r44n";
+//const char relay45_tag[] PROGMEM = "r45n";
+//const char relay46_tag[] PROGMEM = "r46n";
+//const char relay47_tag[] PROGMEM = "r47n";
+//const char relay48_tag[] PROGMEM = "r48n";
 //#endif  // InstalledRelayExpansionModules >= 4
 //#if InstalledRelayExpansionModules >= 5
-//const prog_char relay51_tag[] PROGMEM = "r51n";
-//const prog_char relay52_tag[] PROGMEM = "r52n";
-//const prog_char relay53_tag[] PROGMEM = "r53n";
-//const prog_char relay54_tag[] PROGMEM = "r54n";
-//const prog_char relay55_tag[] PROGMEM = "r55n";
-//const prog_char relay56_tag[] PROGMEM = "r56n";
-//const prog_char relay57_tag[] PROGMEM = "r57n";
-//const prog_char relay58_tag[] PROGMEM = "r58n";
+//const char relay51_tag[] PROGMEM = "r51n";
+//const char relay52_tag[] PROGMEM = "r52n";
+//const char relay53_tag[] PROGMEM = "r53n";
+//const char relay54_tag[] PROGMEM = "r54n";
+//const char relay55_tag[] PROGMEM = "r55n";
+//const char relay56_tag[] PROGMEM = "r56n";
+//const char relay57_tag[] PROGMEM = "r57n";
+//const char relay58_tag[] PROGMEM = "r58n";
 //#endif  // InstalledRelayExpansionModules >= 5
 //#if InstalledRelayExpansionModules >= 6
-//const prog_char relay61_tag[] PROGMEM = "r61n";
-//const prog_char relay62_tag[] PROGMEM = "r62n";
-//const prog_char relay63_tag[] PROGMEM = "r63n";
-//const prog_char relay64_tag[] PROGMEM = "r64n";
-//const prog_char relay65_tag[] PROGMEM = "r65n";
-//const prog_char relay66_tag[] PROGMEM = "r66n";
-//const prog_char relay67_tag[] PROGMEM = "r67n";
-//const prog_char relay68_tag[] PROGMEM = "r68n";
+//const char relay61_tag[] PROGMEM = "r61n";
+//const char relay62_tag[] PROGMEM = "r62n";
+//const char relay63_tag[] PROGMEM = "r63n";
+//const char relay64_tag[] PROGMEM = "r64n";
+//const char relay65_tag[] PROGMEM = "r65n";
+//const char relay66_tag[] PROGMEM = "r66n";
+//const char relay67_tag[] PROGMEM = "r67n";
+//const char relay68_tag[] PROGMEM = "r68n";
 //#endif  // InstalledRelayExpansionModules >= 6
 //#if InstalledRelayExpansionModules >= 7
-//const prog_char relay71_tag[] PROGMEM = "r71n";
-//const prog_char relay72_tag[] PROGMEM = "r72n";
-//const prog_char relay73_tag[] PROGMEM = "r73n";
-//const prog_char relay74_tag[] PROGMEM = "r74n";
-//const prog_char relay75_tag[] PROGMEM = "r75n";
-//const prog_char relay76_tag[] PROGMEM = "r76n";
-//const prog_char relay77_tag[] PROGMEM = "r77n";
-//const prog_char relay78_tag[] PROGMEM = "r78n";
+//const char relay71_tag[] PROGMEM = "r71n";
+//const char relay72_tag[] PROGMEM = "r72n";
+//const char relay73_tag[] PROGMEM = "r73n";
+//const char relay74_tag[] PROGMEM = "r74n";
+//const char relay75_tag[] PROGMEM = "r75n";
+//const char relay76_tag[] PROGMEM = "r76n";
+//const char relay77_tag[] PROGMEM = "r77n";
+//const char relay78_tag[] PROGMEM = "r78n";
 //#endif  // InstalledRelayExpansionModules >= 7
 //#if InstalledRelayExpansionModules >= 8
-//const prog_char relay81_tag[] PROGMEM = "r81n";
-//const prog_char relay82_tag[] PROGMEM = "r82n";
-//const prog_char relay83_tag[] PROGMEM = "r83n";
-//const prog_char relay84_tag[] PROGMEM = "r84n";
-//const prog_char relay85_tag[] PROGMEM = "r85n";
-//const prog_char relay86_tag[] PROGMEM = "r86n";
-//const prog_char relay87_tag[] PROGMEM = "r87n";
-//const prog_char relay88_tag[] PROGMEM = "r88n";
+//const char relay81_tag[] PROGMEM = "r81n";
+//const char relay82_tag[] PROGMEM = "r82n";
+//const char relay83_tag[] PROGMEM = "r83n";
+//const char relay84_tag[] PROGMEM = "r84n";
+//const char relay85_tag[] PROGMEM = "r85n";
+//const char relay86_tag[] PROGMEM = "r86n";
+//const char relay87_tag[] PROGMEM = "r87n";
+//const char relay88_tag[] PROGMEM = "r88n";
 //#endif  // InstalledRelayExpansionModules >= 8
 //#endif  // RelayExp
 //static PROGMEM const char *webbanner_tags[] = {
@@ -600,7 +600,7 @@ class RA_Wifi: public Print
 {
   public:
 	  RA_Wifi();
-    void WebResponse (const prog_char* response, long strsize);
+    void WebResponse (const char* response, long strsize);
     void ModeResponse(bool fOk);
     void PushBuffer(byte inStr);
     void PrintHeader(int s, byte type);
@@ -610,13 +610,13 @@ class RA_Wifi: public Print
     void SendXMLData(bool fAtoLog = false);
 #ifndef RA_STANDARD
     void SendJSONData();
-    void SendSingleJSON(const prog_char str[], int value, char* suffix="");
-    void SendSingleJSON(const prog_char str[], char* value);
+    void SendSingleJSON(const char str[], int value, char* suffix="");
+    void SendSingleJSON(const char str[], char* value);
 #endif // RA_STANDARD
     void ProcessHTTP();
     void ProcessSerial();
     void ReceiveData();
-    void PROGMEMprint(const prog_char str[]);
+    void PROGMEMprint(const char str[]);
     void LoadWebBanner(int pointer, byte qty);
     void Portal(char* username);
     void Portal(char* username, char* key);

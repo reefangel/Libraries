@@ -12,7 +12,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
-#include <YalerEthernetServer.h>
 #include <RA_Wifi.h>
 #include <avr/wdt.h>
 #include <PubSubClient.h>

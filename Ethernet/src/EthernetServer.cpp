@@ -1,5 +1,5 @@
-#include "w5100.h"
-#include "socket.h"
+#include "utility/w5100.h"
+#include "utility/socket.h"
 extern "C" {
 #include "string.h"
 }
@@ -23,7 +23,7 @@ void EthernetServer::begin()
       EthernetClass::_server_port[sock] = _port;
       break;
     }
-  }
+  }  
 }
 
 void EthernetServer::accept()
@@ -36,11 +36,11 @@ void EthernetServer::accept()
     if (EthernetClass::_server_port[sock] == _port) {
       if (client.status() == SnSR::LISTEN) {
         listening = 1;
-      }
+      } 
       else if (client.status() == SnSR::CLOSE_WAIT && !client.available()) {
         client.stop();
       }
-    }
+    } 
   }
 
   if (!listening) {
@@ -54,12 +54,13 @@ EthernetClient EthernetServer::available()
 
   for (int sock = 0; sock < MAX_SOCK_NUM; sock++) {
     EthernetClient client(sock);
-    if (EthernetClass::_server_port[sock] == _port &&
-        (client.status() == SnSR::ESTABLISHED ||
-         client.status() == SnSR::CLOSE_WAIT)) {
-      if (client.available()) {
-        // XXX: don't always pick the lowest numbered socket.
-        return client;
+    if (EthernetClass::_server_port[sock] == _port) {
+      uint8_t s = client.status();
+      if (s == SnSR::ESTABLISHED || s == SnSR::CLOSE_WAIT) {
+        if (client.available()) {
+          // XXX: don't always pick the lowest numbered socket.
+          return client;
+        }
       }
     }
   }
@@ -67,15 +68,15 @@ EthernetClient EthernetServer::available()
   return EthernetClient(MAX_SOCK_NUM);
 }
 
-size_t EthernetServer::write(uint8_t b)
+size_t EthernetServer::write(uint8_t b) 
 {
   return write(&b, 1);
 }
 
-size_t EthernetServer::write(const uint8_t *buffer, size_t size)
+size_t EthernetServer::write(const uint8_t *buffer, size_t size) 
 {
   size_t n = 0;
-
+  
   accept();
 
   for (int sock = 0; sock < MAX_SOCK_NUM; sock++) {
@@ -86,6 +87,6 @@ size_t EthernetServer::write(const uint8_t *buffer, size_t size)
       n += client.write(buffer, size);
     }
   }
-
+  
   return n;
 }

@@ -124,8 +124,8 @@ void receiveEventMaster(int howMany);
 #define NOTILT
 #endif // RA_TOUCH
 
-const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
-const prog_char NoIMCheck1[] PROGMEM = "Found";
+const char NoIMCheck[] PROGMEM = "No Internal Memory";
+const char NoIMCheck1[] PROGMEM = "Found";
 
 // Board ids
 #define RA				0
@@ -1308,175 +1308,175 @@ uint32_t read32(File f);
 //#define HX8347D
 //#define HX8347G
 
-const prog_char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
-const prog_char NoIMLine2[] PROGMEM = "File";
-const prog_char NoIMLine3[] PROGMEM = "Sketchbook";
-const prog_char NoIMLine4[] PROGMEM = "Example Codes";
-const prog_char NoIMLine5[] PROGMEM = "InitialInternalMemory";
+const char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
+const char NoIMLine2[] PROGMEM = "File";
+const char NoIMLine3[] PROGMEM = "Sketchbook";
+const char NoIMLine4[] PROGMEM = "Example Codes";
+const char NoIMLine5[] PROGMEM = "InitialInternalMemory";
 
 // Touch PROGMEM Strings
 // TouchScreen Calibration
-const prog_char CALI1[] PROGMEM = "Touch Screen";
-const prog_char CALI2[] PROGMEM = "Calibration";
-const prog_char CALI3[] PROGMEM = "Please touch";
-const prog_char CALI4[] PROGMEM = "the red circle";
+const char CALI1[] PROGMEM = "Touch Screen";
+const char CALI2[] PROGMEM = "Calibration";
+const char CALI3[] PROGMEM = "Please touch";
+const char CALI4[] PROGMEM = "the red circle";
 
 // pH Calibration
-const prog_char PH_CALI1[] PROGMEM = "Please place the probe in";
-const prog_char PH_CALI2[] PROGMEM = "calibration solution";
-const prog_char PH_CALI3[] PROGMEM = "and touch Ok button";
-const prog_char PH_CALI4[] PROGMEM = "Calibrating";
-const prog_char PH_CALI5[] PROGMEM = "Please wait...";
-const prog_char PH_CALI6[] PROGMEM = "Calculating Calibration...";
-const prog_char PH_CALI7[] PROGMEM = "Your calibration value is";
-const prog_char PH_CALI8[] PROGMEM = "Please write it down";
-const prog_char PH_CALI9[] PROGMEM = "for your records";
-const prog_char PH_CALI10[] PROGMEM = "Please rinse the probe";
-const prog_char PH_CALI11[] PROGMEM = "with RO/DI water";
-const prog_char PH_CALI12[] PROGMEM = "Ready to save values";
-const prog_char PH_CALI13[] PROGMEM = "Proceed?";
-const prog_char PH_CALI14[] PROGMEM = "Calibration Completed";
-const prog_char PH_CALI15[] PROGMEM = "wait a few minutes";
+const char PH_CALI1[] PROGMEM = "Please place the probe in";
+const char PH_CALI2[] PROGMEM = "calibration solution";
+const char PH_CALI3[] PROGMEM = "and touch Ok button";
+const char PH_CALI4[] PROGMEM = "Calibrating";
+const char PH_CALI5[] PROGMEM = "Please wait...";
+const char PH_CALI6[] PROGMEM = "Calculating Calibration...";
+const char PH_CALI7[] PROGMEM = "Your calibration value is";
+const char PH_CALI8[] PROGMEM = "Please write it down";
+const char PH_CALI9[] PROGMEM = "for your records";
+const char PH_CALI10[] PROGMEM = "Please rinse the probe";
+const char PH_CALI11[] PROGMEM = "with RO/DI water";
+const char PH_CALI12[] PROGMEM = "Ready to save values";
+const char PH_CALI13[] PROGMEM = "Proceed?";
+const char PH_CALI14[] PROGMEM = "Calibration Completed";
+const char PH_CALI15[] PROGMEM = "wait a few minutes";
 
 // Salinity Calibration
-const prog_char SAL_CALI2[] PROGMEM = "ppt";
+const char SAL_CALI2[] PROGMEM = "ppt";
 
 // ORP Calibration
-const prog_char ORP_CALI1[] PROGMEM = "Please connect the terminator";
-const prog_char ORP_CALI3[] PROGMEM = "mV";
-const prog_char ORP_CALI4[] PROGMEM = "Please disconnect the";
-const prog_char ORP_CALI5[] PROGMEM = "terminator and connect";
-const prog_char ORP_CALI6[] PROGMEM = "the ORP probe";
+const char ORP_CALI1[] PROGMEM = "Please connect the terminator";
+const char ORP_CALI3[] PROGMEM = "mV";
+const char ORP_CALI4[] PROGMEM = "Please disconnect the";
+const char ORP_CALI5[] PROGMEM = "terminator and connect";
+const char ORP_CALI6[] PROGMEM = "the ORP probe";
 
 // WL Calibration
-const prog_char WL_CALI1[] PROGMEM = "Please hold the PVC";
-const prog_char WL_CALI2[] PROGMEM = "pipe out of the water";
-const prog_char WL_CALI3[] PROGMEM = "Please immerse the PVC";
-const prog_char WL_CALI4[] PROGMEM = "pipe in water until";
-const prog_char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
-const prog_char WL_CALI6[] PROGMEM = "%";
-const prog_char WL_CALI7[] PROGMEM = "Channel ";
+const char WL_CALI1[] PROGMEM = "Please hold the PVC";
+const char WL_CALI2[] PROGMEM = "pipe out of the water";
+const char WL_CALI3[] PROGMEM = "Please immerse the PVC";
+const char WL_CALI4[] PROGMEM = "pipe in water until";
+const char WL_CALI5[] PROGMEM = "it reaches the PVC adapter";
+const char WL_CALI6[] PROGMEM = "%";
+const char WL_CALI7[] PROGMEM = "Channel ";
 
 // Custom Expansion
-const prog_char CUSTOM_CALI1[] PROGMEM = "the first";
-const prog_char CUSTOM_CALI2[] PROGMEM = "the second";
-const prog_char CUSTOM_CALI3[] PROGMEM = "Module ";
-const prog_char CUSTOM_CALI4[] PROGMEM = "1st solution";
-const prog_char CUSTOM_CALI5[] PROGMEM = "2nd solution";
+const char CUSTOM_CALI1[] PROGMEM = "the first";
+const char CUSTOM_CALI2[] PROGMEM = "the second";
+const char CUSTOM_CALI3[] PROGMEM = "Module ";
+const char CUSTOM_CALI4[] PROGMEM = "1st solution";
+const char CUSTOM_CALI5[] PROGMEM = "2nd solution";
 
 
 // Date/Time
-const prog_char LABEL_MONTH[] PROGMEM = "Month";
-const prog_char LABEL_DAY[] PROGMEM = "Day";
-const prog_char LABEL_YEAR[] PROGMEM = "Year";
-const prog_char LABEL_HOUR[] PROGMEM = "Hour";
-const prog_char LABEL_MINUTE[] PROGMEM = "Minute";
-const prog_char LABEL_AMPM[] PROGMEM = "AM/PM";
+const char LABEL_MONTH[] PROGMEM = "Month";
+const char LABEL_DAY[] PROGMEM = "Day";
+const char LABEL_YEAR[] PROGMEM = "Year";
+const char LABEL_HOUR[] PROGMEM = "Hour";
+const char LABEL_MINUTE[] PROGMEM = "Minute";
+const char LABEL_AMPM[] PROGMEM = "AM/PM";
 
 // Labels
-const prog_char LABEL_EMPTY[] PROGMEM = "           ";
-const prog_char LABEL_MENU[] PROGMEM = "Menu";
-const prog_char LABEL_REEFANGEL[] PROGMEM = "Reef Angel";
-const prog_char LABEL_REEFANGELCONTROLLER[] PROGMEM = "Reef Angel Controller";
-const prog_char LABEL_PERCENTAGE[] PROGMEM = "%   ";
-const prog_char LABEL_MODE[] PROGMEM = "Mode";
-const prog_char LABEL_DURATION[] PROGMEM = "Duration";
-const prog_char LABEL_SPEED[] PROGMEM = "Speed";
-const prog_char LABEL_OVERRIDE[] PROGMEM = "Override";
-const prog_char LABEL_LIBVER[] PROGMEM = "Libraries Version: ";
-const prog_char LABEL_IPADDRESS[] PROGMEM = "IP Address: ";
-const prog_char LABEL_CLOUD[] PROGMEM = "Cloud Connection: ";
-const prog_char LABEL_CLOUD_CONNECTED[] PROGMEM = "Connected";
-const prog_char LABEL_CLOUD_DISCONNECTED[] PROGMEM = "Disconnected";
-const prog_char LABEL_SD[] PROGMEM = "SD Card: ";
-const prog_char LABEL_SD_INSERTED[] PROGMEM = "Inserted";
-const prog_char LABEL_SD_NOT_FOUND[] PROGMEM = "Not Found";
-const prog_char LABEL_LAST_BOOT[] PROGMEM = "Last Boot: ";
+const char LABEL_EMPTY[] PROGMEM = "           ";
+const char LABEL_MENU[] PROGMEM = "Menu";
+const char LABEL_REEFANGEL[] PROGMEM = "Reef Angel";
+const char LABEL_REEFANGELCONTROLLER[] PROGMEM = "Reef Angel Controller";
+const char LABEL_PERCENTAGE[] PROGMEM = "%   ";
+const char LABEL_MODE[] PROGMEM = "Mode";
+const char LABEL_DURATION[] PROGMEM = "Duration";
+const char LABEL_SPEED[] PROGMEM = "Speed";
+const char LABEL_OVERRIDE[] PROGMEM = "Override";
+const char LABEL_LIBVER[] PROGMEM = "Libraries Version: ";
+const char LABEL_IPADDRESS[] PROGMEM = "IP Address: ";
+const char LABEL_CLOUD[] PROGMEM = "Cloud Connection: ";
+const char LABEL_CLOUD_CONNECTED[] PROGMEM = "Connected";
+const char LABEL_CLOUD_DISCONNECTED[] PROGMEM = "Disconnected";
+const char LABEL_SD[] PROGMEM = "SD Card: ";
+const char LABEL_SD_INSERTED[] PROGMEM = "Inserted";
+const char LABEL_SD_NOT_FOUND[] PROGMEM = "Not Found";
+const char LABEL_LAST_BOOT[] PROGMEM = "Last Boot: ";
 
 
 // RF Modes
-const prog_char RF_CONSTANT[] PROGMEM = "Constant";
-const prog_char RF_LAGOONAL[] PROGMEM = "Lagoonal";
-const prog_char RF_REEFCREST[] PROGMEM = "Reef Crest";
-const prog_char RF_SHORTWAVE[] PROGMEM = "Short Wave";
-const prog_char RF_LONGWAVE[] PROGMEM = "Long Wave";
-const prog_char RF_NTM[] PROGMEM = "Nutrient Transport";
-const prog_char RF_TSM[] PROGMEM = "Tidal Swell";
-const prog_char RF_FEEDING[] PROGMEM = "Feeding";
-const prog_char RF_NIGHT[] PROGMEM = "Night";
-const prog_char RF_SLAVE[] PROGMEM = "Slave Check";
-//const prog_char RF_None[] PROGMEM = "None";
-static PROGMEM const char *RF_MODE[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
+const char RF_CONSTANT[] PROGMEM = "Constant";
+const char RF_LAGOONAL[] PROGMEM = "Lagoonal";
+const char RF_REEFCREST[] PROGMEM = "Reef Crest";
+const char RF_SHORTWAVE[] PROGMEM = "Short Wave";
+const char RF_LONGWAVE[] PROGMEM = "Long Wave";
+const char RF_NTM[] PROGMEM = "Nutrient Transport";
+const char RF_TSM[] PROGMEM = "Tidal Swell";
+const char RF_FEEDING[] PROGMEM = "Feeding";
+const char RF_NIGHT[] PROGMEM = "Night";
+const char RF_SLAVE[] PROGMEM = "Slave Check";
+//const char RF_None[] PROGMEM = "None";
+static PROGMEM const char * const RF_MODE[] = {RF_CONSTANT, RF_LAGOONAL, RF_REEFCREST, RF_SHORTWAVE, RF_LONGWAVE, RF_NTM, RF_TSM, RF_FEEDING, RF_FEEDING, RF_NIGHT};
 
-const prog_char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
-const prog_char WATER_CHANGE_LABEL[] PROGMEM = "Water Change";
-const prog_char TOUCH_END_LABEL[] PROGMEM = "Touch screen to quit";
+const char FEEDING_LABEL[] PROGMEM = "Feeding Mode";
+const char WATER_CHANGE_LABEL[] PROGMEM = "Water Change";
+const char TOUCH_END_LABEL[] PROGMEM = "Touch screen to quit";
 
-const prog_char PWM_OVERRIDE_LABEL1[] PROGMEM = "Adjust and press Ok to override";
-const prog_char PWM_OVERRIDE_LABEL2[] PROGMEM = "To disable override, press Cancel";
+const char PWM_OVERRIDE_LABEL1[] PROGMEM = "Adjust and press Ok to override";
+const char PWM_OVERRIDE_LABEL2[] PROGMEM = "To disable override, press Cancel";
 
-const prog_char MENU_BUTTON_FEEDING[] PROGMEM = "Feeding";
-const prog_char MENU_BUTTON_WATERCHANGE[] PROGMEM = "Water Change";
-const prog_char MENU_BUTTON_MODE[] PROGMEM = "Mode";
-const prog_char MENU_BUTTON_CLEAR[] PROGMEM = "Clear";
-const prog_char MENU_BUTTON_ATOTIMEOUT[] PROGMEM = "ATO Timeout";
-const prog_char MENU_BUTTON_OVERHEAT[] PROGMEM = "Overheat";
-const prog_char MENU_BUTTON_LEAK[] PROGMEM = "Leak";
-const prog_char MENU_BUTTON_TURN[] PROGMEM = "Turn";
-const prog_char MENU_BUTTON_CANCEL[] PROGMEM = "Cancel";
-const prog_char MENU_BUTTON_LIGHTS[] PROGMEM = "Lights On";
-const prog_char MENU_BUTTON_EXIT[] PROGMEM = "Exit";
-const prog_char MENU_BUTTON_MENU[] PROGMEM = "Menu";
-const prog_char MENU_BUTTON_REBOOT[] PROGMEM = "Reboot";
-const prog_char MENU_BUTTON_SYSTEM[] PROGMEM = "System";
-const prog_char MENU_BUTTON_ADJUST[] PROGMEM = "Adjust";
-const prog_char MENU_BUTTON_DATETIME[] PROGMEM = "Date/Time";
-const prog_char MENU_BUTTON_CHANGE[] PROGMEM = "Change";
-const prog_char MENU_BUTTON_ORIENTATION[] PROGMEM = "Orientation";
-const prog_char MENU_BUTTON_PH[] PROGMEM = "pH";
-const prog_char MENU_BUTTON_CALIBRATION[] PROGMEM = "Calibration";
-const prog_char MENU_BUTTON_SALINITY[] PROGMEM = "Salinity";
-const prog_char MENU_BUTTON_ORP[] PROGMEM = "ORP";
-const prog_char MENU_BUTTON_PHE[] PROGMEM = "pH Expansion";
-const prog_char MENU_BUTTON_WL[] PROGMEM = "Water Level";
-const prog_char MENU_BUTTON_WL1[] PROGMEM = "Water Level 1";
-const prog_char MENU_BUTTON_WL2[] PROGMEM = "Water Level 2";
-const prog_char MENU_BUTTON_WL3[] PROGMEM = "Water Level 3";
-const prog_char MENU_BUTTON_WL4[] PROGMEM = "Water Level 4";
-const prog_char MENU_BUTTON_CEXP[] PROGMEM = "Custom Expansion";
-const prog_char MENU_BUTTON_CEXP1[] PROGMEM = "Custom Expansion 1";
-const prog_char MENU_BUTTON_CEXP2[] PROGMEM = "Custom Expansion 2";
-const prog_char MENU_BUTTON_CEXP3[] PROGMEM = "Custom Expansion 3";
-const prog_char MENU_BUTTON_CEXP4[] PROGMEM = "Custom Expansion 4";
-const prog_char MENU_BUTTON_CEXP5[] PROGMEM = "Custom Expansion 5";
-const prog_char MENU_BUTTON_CEXP6[] PROGMEM = "Custom Expansion 6";
-const prog_char MENU_BUTTON_CEXP7[] PROGMEM = "Custom Expansion 7";
-const prog_char MENU_BUTTON_CEXP8[] PROGMEM = "Custom Expansion 8";
-const prog_char MENU_BUTTON_LIGHT[] PROGMEM = "Light";
-const prog_char MENU_BUTTON_SCHEDULE[] PROGMEM = "Schedule";
-const prog_char MENU_BUTTON_HEATER[] PROGMEM = "Heater";
-const prog_char MENU_BUTTON_TEMPERATURE[] PROGMEM = "Temperature";
-const prog_char MENU_BUTTON_FAN[] PROGMEM = "Fan/Chiller";
-const prog_char MENU_BUTTON_CO2[] PROGMEM = "CO2";
-const prog_char MENU_BUTTON_CONTROL[] PROGMEM = "Control";
-const prog_char MENU_BUTTON_WM[] PROGMEM = "Wavemaker";
-const prog_char MENU_BUTTON_CYCLE[] PROGMEM = "Cycle";
-const prog_char MENU_BUTTON_ATO[] PROGMEM = "ATO";
-const prog_char MENU_BUTTON_TIMEOUT[] PROGMEM = "Timeout";
-const prog_char MENU_BUTTON_DOSING[] PROGMEM = "Dosing";
-const prog_char MENU_BUTTON_PUMP1[] PROGMEM = "Pump 1";
-const prog_char MENU_BUTTON_PUMP2[] PROGMEM = "Pump 2";
-const prog_char MENU_BUTTON_PUMP3[] PROGMEM = "Pump 3";
-const prog_char MENU_BUTTON_DELAYED[] PROGMEM = "Delayed";
-const prog_char MENU_BUTTON_START[] PROGMEM = "Start";
+const char MENU_BUTTON_FEEDING[] PROGMEM = "Feeding";
+const char MENU_BUTTON_WATERCHANGE[] PROGMEM = "Water Change";
+const char MENU_BUTTON_MODE[] PROGMEM = "Mode";
+const char MENU_BUTTON_CLEAR[] PROGMEM = "Clear";
+const char MENU_BUTTON_ATOTIMEOUT[] PROGMEM = "ATO Timeout";
+const char MENU_BUTTON_OVERHEAT[] PROGMEM = "Overheat";
+const char MENU_BUTTON_LEAK[] PROGMEM = "Leak";
+const char MENU_BUTTON_TURN[] PROGMEM = "Turn";
+const char MENU_BUTTON_CANCEL[] PROGMEM = "Cancel";
+const char MENU_BUTTON_LIGHTS[] PROGMEM = "Lights On";
+const char MENU_BUTTON_EXIT[] PROGMEM = "Exit";
+const char MENU_BUTTON_MENU[] PROGMEM = "Menu";
+const char MENU_BUTTON_REBOOT[] PROGMEM = "Reboot";
+const char MENU_BUTTON_SYSTEM[] PROGMEM = "System";
+const char MENU_BUTTON_ADJUST[] PROGMEM = "Adjust";
+const char MENU_BUTTON_DATETIME[] PROGMEM = "Date/Time";
+const char MENU_BUTTON_CHANGE[] PROGMEM = "Change";
+const char MENU_BUTTON_ORIENTATION[] PROGMEM = "Orientation";
+const char MENU_BUTTON_PH[] PROGMEM = "pH";
+const char MENU_BUTTON_CALIBRATION[] PROGMEM = "Calibration";
+const char MENU_BUTTON_SALINITY[] PROGMEM = "Salinity";
+const char MENU_BUTTON_ORP[] PROGMEM = "ORP";
+const char MENU_BUTTON_PHE[] PROGMEM = "pH Expansion";
+const char MENU_BUTTON_WL[] PROGMEM = "Water Level";
+const char MENU_BUTTON_WL1[] PROGMEM = "Water Level 1";
+const char MENU_BUTTON_WL2[] PROGMEM = "Water Level 2";
+const char MENU_BUTTON_WL3[] PROGMEM = "Water Level 3";
+const char MENU_BUTTON_WL4[] PROGMEM = "Water Level 4";
+const char MENU_BUTTON_CEXP[] PROGMEM = "Custom Expansion";
+const char MENU_BUTTON_CEXP1[] PROGMEM = "Custom Expansion 1";
+const char MENU_BUTTON_CEXP2[] PROGMEM = "Custom Expansion 2";
+const char MENU_BUTTON_CEXP3[] PROGMEM = "Custom Expansion 3";
+const char MENU_BUTTON_CEXP4[] PROGMEM = "Custom Expansion 4";
+const char MENU_BUTTON_CEXP5[] PROGMEM = "Custom Expansion 5";
+const char MENU_BUTTON_CEXP6[] PROGMEM = "Custom Expansion 6";
+const char MENU_BUTTON_CEXP7[] PROGMEM = "Custom Expansion 7";
+const char MENU_BUTTON_CEXP8[] PROGMEM = "Custom Expansion 8";
+const char MENU_BUTTON_LIGHT[] PROGMEM = "Light";
+const char MENU_BUTTON_SCHEDULE[] PROGMEM = "Schedule";
+const char MENU_BUTTON_HEATER[] PROGMEM = "Heater";
+const char MENU_BUTTON_TEMPERATURE[] PROGMEM = "Temperature";
+const char MENU_BUTTON_FAN[] PROGMEM = "Fan/Chiller";
+const char MENU_BUTTON_CO2[] PROGMEM = "CO2";
+const char MENU_BUTTON_CONTROL[] PROGMEM = "Control";
+const char MENU_BUTTON_WM[] PROGMEM = "Wavemaker";
+const char MENU_BUTTON_CYCLE[] PROGMEM = "Cycle";
+const char MENU_BUTTON_ATO[] PROGMEM = "ATO";
+const char MENU_BUTTON_TIMEOUT[] PROGMEM = "Timeout";
+const char MENU_BUTTON_DOSING[] PROGMEM = "Dosing";
+const char MENU_BUTTON_PUMP1[] PROGMEM = "Pump 1";
+const char MENU_BUTTON_PUMP2[] PROGMEM = "Pump 2";
+const char MENU_BUTTON_PUMP3[] PROGMEM = "Pump 3";
+const char MENU_BUTTON_DELAYED[] PROGMEM = "Delayed";
+const char MENU_BUTTON_START[] PROGMEM = "Start";
 
 
-static PROGMEM const char *menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_CHANGE, MENU_BUTTON_ORIENTATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
-static PROGMEM const char *menu_button_items2[] = {MENU_BUTTON_REBOOT, MENU_BUTTON_SYSTEM, MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_CLEAR, MENU_BUTTON_LEAK, MENU_BUTTON_CLEAR};
-static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
-static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
-static PROGMEM const char *menu_button_items5[] = {MENU_BUTTON_CEXP1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP4, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
-static PROGMEM const char *menu_button_items6[] = {MENU_BUTTON_CEXP5, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP6, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP7, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP8, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
+static PROGMEM const char * const menu_button_items1[] = {MENU_BUTTON_FEEDING, MENU_BUTTON_MODE, MENU_BUTTON_WATERCHANGE, MENU_BUTTON_MODE, MENU_BUTTON_TURN, MENU_BUTTON_LIGHTS, MENU_BUTTON_CHANGE, MENU_BUTTON_ORIENTATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char * const menu_button_items2[] = {MENU_BUTTON_REBOOT, MENU_BUTTON_SYSTEM, MENU_BUTTON_ADJUST, MENU_BUTTON_DATETIME, MENU_BUTTON_ATOTIMEOUT, MENU_BUTTON_CLEAR, MENU_BUTTON_OVERHEAT, MENU_BUTTON_CLEAR, MENU_BUTTON_LEAK, MENU_BUTTON_CLEAR};
+static PROGMEM const char * const menu_button_items3[] = {MENU_BUTTON_PH, MENU_BUTTON_CALIBRATION, MENU_BUTTON_SALINITY, MENU_BUTTON_CALIBRATION, MENU_BUTTON_ORP, MENU_BUTTON_CALIBRATION, MENU_BUTTON_PHE, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char * const menu_button_items4[] = {MENU_BUTTON_WL, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
+static PROGMEM const char * const menu_button_items5[] = {MENU_BUTTON_CEXP1, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP2, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP3, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP4, MENU_BUTTON_CALIBRATION, MENU_BUTTON_EXIT, MENU_BUTTON_MENU};
+static PROGMEM const char * const menu_button_items6[] = {MENU_BUTTON_CEXP5, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP6, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP7, MENU_BUTTON_CALIBRATION, MENU_BUTTON_CEXP8, MENU_BUTTON_CALIBRATION, MENU_BUTTON_WL4, MENU_BUTTON_CALIBRATION};
 
 //static PROGMEM const char *menu_button_items3[] = {MENU_BUTTON_LIGHT, MENU_BUTTON_SCHEDULE, MENU_BUTTON_HEATER, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_FAN, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_OVERHEAT, MENU_BUTTON_TEMPERATURE, MENU_BUTTON_CO2, MENU_BUTTON_CONTROL, MENU_BUTTON_PH, MENU_BUTTON_CONTROL};
 //static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_CYCLE, MENU_BUTTON_ATO, MENU_BUTTON_TIMEOUT, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP1, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP2, MENU_BUTTON_DOSING, MENU_BUTTON_PUMP3, MENU_BUTTON_DELAYED, MENU_BUTTON_START};

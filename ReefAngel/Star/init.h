@@ -41,9 +41,9 @@ SPI.begin();
 Serial.println(F("SPI Init"));
 TouchLCD.Init();
 Serial.println(F("LCD Init"));
-SmallFont.SetFont(f8x8);
-Font.SetFont(f12x12);
-LargeFont.SetFont(ArialBold20);
+SmallFont.SetFont((unsigned char *)f8x8);
+Font.SetFont((unsigned char *)f12x12);
+LargeFont.SetFont((unsigned char *)ArialBold20);
 setSyncProvider(RTC.get);   // the function to get the time from the RTC
 setSyncInterval(SECS_PER_HOUR*6);  // Changed to sync every 6 hours.
 //EthernetDHCP.begin(NetMac, 1); // Start Ethernet with DHCP polling enabled

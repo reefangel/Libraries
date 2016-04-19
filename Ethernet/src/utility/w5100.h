@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 by Cristian Maglie <c.maglie@bug.st>
+ * Copyright (c) 2010 by Arduino LLC. All rights reserved.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of either the GNU General Public License version 2
@@ -10,8 +10,9 @@
 #ifndef	W5100_H_INCLUDED
 #define	W5100_H_INCLUDED
 
-#include <avr/pgmspace.h>
 #include <SPI.h>
+
+#define ETHERNET_SHIELD_SPI_CS 10
 
 #define MAX_SOCK_NUM 4
 
@@ -133,16 +134,16 @@ public:
 
   /**
    * @brief	This function is being used for copy the data form Receive buffer of the chip to application buffer.
-   *
+   * 
    * It calculate the actual physical address where one has to read
    * the data from Receive buffer. Here also take care of the condition while it exceed
    * the Rx memory uper-bound of socket.
    */
-  void read_data(SOCKET s, volatile uint8_t * src, volatile uint8_t * dst, uint16_t len);
-
+  void read_data(SOCKET s, volatile uint16_t src, volatile uint8_t * dst, uint16_t len);
+  
   /**
-   * @brief	 This function is being called by send() and sendto() function also.
-   *
+   * @brief	 This function is being called by send() and sendto() function also. 
+   * 
    * This function read the Tx write pointer register and after copy the data in buffer update the Tx write pointer
    * register. User should read upper byte first and lower byte later to get proper value.
    */
@@ -162,7 +163,7 @@ public:
 
   /**
    * @brief	This function is being called by recv() also.
-   *
+   * 
    * This function read the Rx read pointer register
    * and after copy the data from receive buffer update the Rx write pointer register.
    * User should read upper byte first and lower byte later to get proper value.
@@ -185,10 +186,10 @@ public:
   inline void setRetransmissionCount(uint8_t _retry);
 
   void execCmdSn(SOCKET s, SockCMD _cmd);
-
+  
   uint16_t getTXFreeSize(SOCKET s);
   uint16_t getRXReceivedSize(SOCKET s);
-
+  
 
   // W5100 Registers
   // ---------------
@@ -197,7 +198,7 @@ private:
   static uint16_t write(uint16_t addr, const uint8_t *buf, uint16_t len);
   static uint8_t read(uint16_t addr);
   static uint16_t read(uint16_t addr, uint8_t *buf, uint16_t len);
-
+  
 #define __GP_REGISTER8(name, address)             \
   static inline void write##name(uint8_t _data) { \
     write(address, _data);                        \
@@ -240,7 +241,7 @@ public:
   __GP_REGISTER8 (PMAGIC, 0x0029);    // PPP LCP Magic Number
   __GP_REGISTER_N(UIPR,   0x002A, 4); // Unreachable IP address in UDP mode
   __GP_REGISTER16(UPORT,  0x002E);    // Unreachable Port address in UDP mode
-
+  
 #undef __GP_REGISTER8
 #undef __GP_REGISTER16
 #undef __GP_REGISTER_N
@@ -283,7 +284,7 @@ private:
   static uint16_t read##name(SOCKET _s, uint8_t *_buff) {    \
     return readSn(_s, address, _buff, size);                 \
   }
-
+  
 public:
   __SOCKET_REGISTER8(SnMR,        0x0000)        // Mode
   __SOCKET_REGISTER8(SnCR,        0x0001)        // Command
@@ -303,7 +304,7 @@ public:
   __SOCKET_REGISTER16(SnRX_RSR,   0x0026)        // RX Free Size
   __SOCKET_REGISTER16(SnRX_RD,    0x0028)        // RX Read Pointer
   __SOCKET_REGISTER16(SnRX_WR,    0x002A)        // RX Write Pointer (supported?)
-
+  
 #undef __SOCKET_REGISTER8
 #undef __SOCKET_REGISTER16
 #undef __SOCKET_REGISTER_N
@@ -323,24 +324,41 @@ private:
   uint16_t RBASE[SOCKETS]; // Rx buffer base address
 
 private:
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-  inline static void initSS()    { DDRB  |=  _BV(0); };
-  inline static void setSS()     { PORTB &= ~_BV(0); };
-  inline static void resetSS()   { PORTB |=  _BV(0); };
-#elif defined(__AVR_ATmega32U4__)
-  inline static void initSS()    { DDRB  |=  _BV(6); };
-  inline static void setSS()     { PORTB &= ~_BV(6); };
-  inline static void resetSS()   { PORTB |=  _BV(6); };
-#elif defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB162__)
-  inline static void initSS()    { DDRB  |=  _BV(0); };
-  inline static void setSS()     { PORTB &= ~_BV(0); };
-  inline static void resetSS()   { PORTB |=  _BV(0); };
+#if !defined(SPI_HAS_EXTENDED_CS_PIN_HANDLING)
+  #define SPI_ETHERNET_SETTINGS SPISettings(4000000, MSBFIRST, SPI_MODE0)
+  #if defined(ARDUINO_ARCH_AVR)
+    #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+      inline static void initSS()    { DDRB  |=  _BV(0); };
+      inline static void setSS()     { PORTB &= ~_BV(0); };
+      inline static void resetSS()   { PORTB |=  _BV(0); };
+    #elif defined(__AVR_ATmega32U4__)
+      inline static void initSS()    { DDRB  |=  _BV(6); };
+      inline static void setSS()     { PORTB &= ~_BV(6); };
+      inline static void resetSS()   { PORTB |=  _BV(6); };
+    #elif defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB162__)
+      inline static void initSS()    { DDRB  |=  _BV(0); };
+      inline static void setSS()     { PORTB &= ~_BV(0); };
+      inline static void resetSS()   { PORTB |=  _BV(0); };
+    #else
+      inline static void initSS()    { DDRB  |=  _BV(2); };
+      inline static void setSS()     { PORTB &= ~_BV(2); };
+      inline static void resetSS()   { PORTB |=  _BV(2); };
+    #endif
+  #else
+    inline static void initSS() {
+      *portModeRegister(digitalPinToPort(ETHERNET_SHIELD_SPI_CS)) |= digitalPinToBitMask(ETHERNET_SHIELD_SPI_CS);
+    }
+    inline static void setSS()   {
+      *portOutputRegister(digitalPinToPort(ETHERNET_SHIELD_SPI_CS)) &= ~digitalPinToBitMask(ETHERNET_SHIELD_SPI_CS);
+    }
+    inline static void resetSS() {
+      *portOutputRegister(digitalPinToPort(ETHERNET_SHIELD_SPI_CS)) |= digitalPinToBitMask(ETHERNET_SHIELD_SPI_CS);
+    }
+  #endif
 #else
-  inline static void initSS()    { DDRB  |=  _BV(2); };
-  inline static void setSS()     { PORTB &= ~_BV(2); };
-  inline static void resetSS()   { PORTB |=  _BV(2); };
+  #define SPI_ETHERNET_SETTINGS ETHERNET_SHIELD_SPI_CS,SPISettings(4000000, MSBFIRST, SPI_MODE0)
+  // initSS(), setSS(), resetSS() not needed with EXTENDED_CS_PIN_HANDLING
 #endif
-
 };
 
 extern W5100Class W5100;

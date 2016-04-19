@@ -3150,8 +3150,8 @@ void ReefAngelClass::ReDrawScreen()
 				j=75;
 				if ((StatusFlags & 1) == 1)
 				{
-					const prog_uchar **iptr1=STATUSFLAGICONS;
-					const prog_uchar *arr2 = ( prog_uchar* ) pgm_read_word( iptr1 );
+					const unsigned char * const *iptr1=STATUSFLAGICONS;
+					const unsigned char *arr2 = ( unsigned char* ) pgm_read_word( iptr1 );
 					TouchLCD.DrawBMP(30,j,arr2);
 					Font.DrawTextP(56,j+3,ALERT_LIGHTS_ON_LABEL);
 					Font.DrawTextP(LABEL_EMPTY);
@@ -3161,8 +3161,8 @@ void ReefAngelClass::ReDrawScreen()
 				for(byte i=0;i<8;i++,tempalert>>=1)
 					if ((tempalert & 1) == 1)
 					{
-						const prog_uchar **iptr=ALERTFLAGICONS;
-						const prog_uchar *arr1 = ( prog_uchar* ) pgm_read_word( iptr + i );
+						const unsigned char * const *iptr=ALERTFLAGICONS;
+						const unsigned char *arr1 = ( unsigned char* ) pgm_read_word( iptr + i );
 						TouchLCD.DrawBMP(30,j,arr1);
 						Font.DrawTextP(56,j+3,(char * )pgm_read_word(&(LABEL_ALERT[i])));
 						Font.DrawTextP(LABEL_EMPTY);
@@ -3732,14 +3732,14 @@ ButtonClass::ButtonClass()
 	Ptr=0;
 }
 
-void ButtonClass::Create(int icolor, int itextcolor, const prog_char  *istr)
+void ButtonClass::Create(int icolor, int itextcolor, const char  *istr)
 {
 	color=icolor;
 	textcolor=itextcolor;
 	str=istr;
 }
 
-void ButtonClass::Create(int icolor, int itextcolor, const prog_char  *istr, const prog_uchar *iPtr)
+void ButtonClass::Create(int icolor, int itextcolor, const char  *istr, const unsigned char *iPtr)
 {
 	Ptr=iPtr;
 	Create(icolor,itextcolor,istr);

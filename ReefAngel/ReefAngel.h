@@ -429,6 +429,7 @@ private:
 	// Nested Menu variables
 	int menusptr[Total_Menus];
 	byte menuqtysptr[Total_Menus];
+	int custom_items[10];
 	byte PreviousMenu;
 	bool redrawmenu;
 	void CheckOffset(byte &x, byte &y);
