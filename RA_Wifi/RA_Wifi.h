@@ -49,54 +49,32 @@ const char XML_BOARDID[] PROGMEM = "</REM><BID>";
 const char XML_ALERTFLAG[] PROGMEM = "</BID><AF>";
 const char XML_STATUSFLAG[] PROGMEM = "</AF><SF>";
 const char XML_STATUSFLAG_END[] PROGMEM = "</SF>";
-
-#ifdef DisplayLEDPWM
 const char XML_PWMA[] PROGMEM = "<PWMA>";
 const char XML_PWMD[] PROGMEM = "</PWMA><PWMD>";
 const char XML_PWMAO[] PROGMEM = "</PWMD><PWMAO>";
 const char XML_PWMDO[] PROGMEM = "</PWMAO><PWMDO>";
 const char XML_PWMDO_END[] PROGMEM = "</PWMDO>";
-#endif  // DisplayLEDPWM
-#ifdef ORPEXPANSION
 const char XML_ORP[] PROGMEM = "<ORP>";
 const char XML_ORP_END[] PROGMEM = "</ORP>";
-#endif  // ORPEXPANSION
-#ifdef SALINITYEXPANSION
 const char XML_SAL[] PROGMEM = "<SAL>";
 const char XML_SAL_END[] PROGMEM = "</SAL>";
-#endif  // SALINITYEXPANSION
-#ifdef PHEXPANSION
 const char XML_PHEXP[] PROGMEM = "<PHE>";
 const char XML_PHEXP_END[] PROGMEM = "</PHE>";
-#endif  // PHEXPANSION
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const char XML_WL[] PROGMEM = "<WL";
 const char XML_WL_END[] PROGMEM = "</WL";
-#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-#ifdef HUMIDITYEXPANSION
 const char XML_HUM[] PROGMEM = "<HUM>";
 const char XML_HUM_END[] PROGMEM = "</HUM>";
-#endif  // HUMIDITYEXPANSION
-#ifdef PAREXPANSION
 const char XML_PAR[] PROGMEM = "<PAR>";
 const char XML_PAR_END[] PROGMEM = "</PAR>";
-#endif  // PAREXPANSION
-#ifdef DCPUMPCONTROL
 const char XML_DCM[] PROGMEM = "<DCM>";
 const char XML_DCM_END[] PROGMEM = "</DCM><DCS>";
 const char XML_DCS_END[] PROGMEM = "</DCS><DCD>";
 const char XML_DCD_END[] PROGMEM = "</DCD><DCT>";
 const char XML_DCT_END[] PROGMEM = "</DCT>";
-#endif  // DCPUMPCONTROL
-#ifdef PWMEXPANSION
 const char XML_PWME[] PROGMEM = "<PWME";
 const char XML_PWME_END[] PROGMEM = "</PWME";
-#endif  // PWMEXPANSION
-#ifdef SIXTEENCHPWMEXPANSION
 const char XML_SCPWME[] PROGMEM = "<SCPWME";
 const char XML_SCPWME_END[] PROGMEM = "</SCPWME";
-#endif  // SIXTEENCHPWMEXPANSION
-#ifdef AI_LED
 const char XML_AIW[] PROGMEM = "<AIW>";
 const char XML_AIW_END[] PROGMEM = "</AIW><AIB>";
 const char XML_AIB_END[] PROGMEM = "</AIB><AIRB>";
@@ -104,8 +82,6 @@ const char XML_AIRB_END[] PROGMEM = "</AIRB><AIWO>";
 const char XML_AIWO_END[] PROGMEM = "</AIWO><AIBO>";
 const char XML_AIBO_END[] PROGMEM = "</AIBO><AIRBO>";
 const char XML_AIRBO_END[] PROGMEM = "</AIRBO>";
-#endif  // AI_LED
-#ifdef RFEXPANSION
 const char XML_RFM[] PROGMEM = "<RFM>";
 const char XML_RFM_END[] PROGMEM = "</RFM><RFS>";
 const char XML_RFS_END[] PROGMEM = "</RFS><RFD>";
@@ -122,20 +98,12 @@ const char XML_RFRO_END[] PROGMEM = "</RFRO><RFGO>";
 const char XML_RFGO_END[] PROGMEM = "</RFGO><RFBO>";
 const char XML_RFBO_END[] PROGMEM = "</RFBO><RFIO>";
 const char XML_RFIO_END[] PROGMEM = "</RFIO>";
-#endif  // RFEXPANSION
-#ifdef IOEXPANSION
 const char XML_IO[] PROGMEM = "<IO>";
 const char XML_IO_END[] PROGMEM = "</IO>";
-#endif  // IOEXPANSION
-#ifdef CUSTOM_VARIABLES
 const char XML_C[] PROGMEM = "<C";
 const char XML_C_END[] PROGMEM = "</C";
-#endif  // CUSTOM_VARIABLES
-#ifdef LEAKDETECTOREXPANSION
 const char XML_LEAK[] PROGMEM = "<LEAK>";
 const char XML_LEAK_END[] PROGMEM = "</LEAK>";
-#endif  // LEAKDETECTOREXPANSION
-#if defined RA_STAR || defined RA_EVOLUTION
 const char XML_ALARM[] PROGMEM = "<ALARM>";
 const char XML_ALARM_END[] PROGMEM = "</ALARM>";
 const char XML_PWMA2[] PROGMEM = "<PWMA2>";
@@ -143,18 +111,12 @@ const char XML_PWMD2[] PROGMEM = "</PWMA2><PWMD2>";
 const char XML_PWMA2O[] PROGMEM = "</PWMD2><PWMA2O>";
 const char XML_PWMD2O[] PROGMEM = "</PWMA2O><PWMD2O>";
 const char XML_PWMD2O_END[] PROGMEM = "</PWMD2O>";
-#endif  // RA_STAR
-
-#ifdef ENABLE_ATO_LOGGING
 const char XML_ATOLOW_LOG_OPEN[] PROGMEM = "<AL";
 const char XML_ATOLOW_LOG_CLOSE[] PROGMEM = "</AL";
 const char XML_ATOHIGH_LOG_OPEN[] PROGMEM = "<AH";
 const char XML_ATOHIGH_LOG_CLOSE[] PROGMEM = "</AH";
-#endif  // ENABLE_ATO_LOGGING
 const char XML_END[] PROGMEM = "</RA>";
 const char XML_CLOSE_TAG[] PROGMEM = ">";
-
-
 const char XML_P_OPEN[] PROGMEM = "<P";
 const char XML_P_CLOSE[] PROGMEM = "</P";
 const char XML_M_OPEN[] PROGMEM = "<M";
@@ -215,42 +177,24 @@ const char JSON_REM[] PROGMEM = "REM";
 const char JSON_ALERTFLAG[] PROGMEM = "AF";
 const char JSON_STATUSFLAG[] PROGMEM = "SF";
 const char JSON_BOARDID[] PROGMEM = "BID";
-
-#ifdef DisplayLEDPWM
 const char JSON_PWMA[] PROGMEM = "PWMA";
 const char JSON_PWMD[] PROGMEM = "PWMD";
 const char JSON_PWMAO[] PROGMEM = "PWMAO";
 const char JSON_PWMDO[] PROGMEM = "PWMDO";
-#endif  // DisplayLEDPWM
-#ifdef ORPEXPANSION
 const char JSON_ORP[] PROGMEM = "ORP";
-#endif  // ORPEXPANSION
-#ifdef SALINITYEXPANSION
 const char JSON_SAL[] PROGMEM = "SAL";
-#endif  // SALINITYEXPANSION
-#ifdef PHEXPANSION
 const char JSON_PHEXP[] PROGMEM = "PHE";
-#endif  // PHEXPANSION
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const char JSON_WL[] PROGMEM = "WL";
 const char JSON_WL1[] PROGMEM = "WL1";
 const char JSON_WL2[] PROGMEM = "WL2";
 const char JSON_WL3[] PROGMEM = "WL3";
 const char JSON_WL4[] PROGMEM = "WL4";
-#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-#ifdef HUMIDITYEXPANSION
 const char JSON_HUM[] PROGMEM = "HUM";
-#endif  // HUMIDITYEXPANSION
-#ifdef PAREXPANSION
 const char JSON_PAR[] PROGMEM = "PAR";
-#endif  // PAREXPANSION
-#ifdef DCPUMPCONTROL
 const char JSON_DCM[] PROGMEM = "DCM";
 const char JSON_DCS[] PROGMEM = "DCS";
 const char JSON_DCD[] PROGMEM = "DCD";
 const char JSON_DCT[] PROGMEM = "DCT";
-#endif  // DCPUMPCONTROL
-#ifdef PWMEXPANSION
 const char JSON_PWME[] PROGMEM = "PWME";
 const char JSON_PWME0[] PROGMEM = "PWME0";
 const char JSON_PWME1[] PROGMEM = "PWME1";
@@ -265,19 +209,13 @@ const char JSON_PWME2O[] PROGMEM = "PWME2O";
 const char JSON_PWME3O[] PROGMEM = "PWME3O";
 const char JSON_PWME4O[] PROGMEM = "PWME4O";
 const char JSON_PWME5O[] PROGMEM = "PWME5O";
-#endif  // PWMEXPANSION
-#ifdef SIXTEENCHPWMEXPANSION
 const char JSON_SCPWME[] PROGMEM = "SCPWME";
-#endif  // SIXTEENCHPWMEXPANSION
-#ifdef AI_LED
 const char JSON_AIW[] PROGMEM = "AIW";
 const char JSON_AIB[] PROGMEM = "AIB";
 const char JSON_AIRB[] PROGMEM = "AIRB";
 const char JSON_AIWO[] PROGMEM = "AIWO";
 const char JSON_AIBO[] PROGMEM = "AIBO";
 const char JSON_AIRBO[] PROGMEM = "AIRBO";
-#endif  // AI_LED
-#ifdef RFEXPANSION
 const char JSON_RFM[] PROGMEM = "RFM";
 const char JSON_RFS[] PROGMEM = "RFS";
 const char JSON_RFD[] PROGMEM = "RFD";
@@ -293,11 +231,7 @@ const char JSON_RFRO[] PROGMEM = "RFRO";
 const char JSON_RFGO[] PROGMEM = "RFGO";
 const char JSON_RFBO[] PROGMEM = "RFBO";
 const char JSON_RFIO[] PROGMEM = "RFIO";
-#endif  // RFEXPANSION
-#ifdef IOEXPANSION
 const char JSON_IO[] PROGMEM = "IO";
-#endif  // IOEXPANSION
-#ifdef CUSTOM_VARIABLES
 const char JSON_C[] PROGMEM = "C";
 const char JSON_C0[] PROGMEM = "C0";
 const char JSON_C1[] PROGMEM = "C1";
@@ -307,11 +241,7 @@ const char JSON_C4[] PROGMEM = "C4";
 const char JSON_C5[] PROGMEM = "C5";
 const char JSON_C6[] PROGMEM = "C6";
 const char JSON_C7[] PROGMEM = "C7";
-#endif  // CUSTOM_VARIABLES
-#ifdef LEAKDETECTOREXPANSION
 const char JSON_LEAK[] PROGMEM = "LEAK";
-#endif  // LEAKDETECTOREXPANSION
-#if defined RA_STAR || defined RA_EVOLUTION
 const char JSON_ALARM[] PROGMEM = "ALARM";
 const char JSON_PWMA2[] PROGMEM = "PWMA2";
 const char JSON_PWMD2[] PROGMEM = "PWMD2";
@@ -325,8 +255,6 @@ const char JSON_CEXP4[] PROGMEM = "CEXP4";
 const char JSON_CEXP5[] PROGMEM = "CEXP5";
 const char JSON_CEXP6[] PROGMEM = "CEXP6";
 const char JSON_CEXP7[] PROGMEM = "CEXP7";
-
-#endif  // RA_STAR
 const char JSON_CLOSE[] PROGMEM = "}}";
 
 #endif // RA_STANDARD
@@ -386,90 +314,42 @@ const char BannerAlertFlag[] PROGMEM = "&af=";
 const char BannerStatusFlag[] PROGMEM = "&sf=";
 const char BannerBoardID[] PROGMEM = "&bid=";
 const char BannerSubdomain[] PROGMEM = "&ddns=";
-
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
-	const char BannerPWMA[] PROGMEM = "&pwma=";
-	const char BannerPWMD[] PROGMEM = "&pwmd=";
-	const char BannerPWMAO[] PROGMEM = "&pwmao=";
-	const char BannerPWMDO[] PROGMEM = "&pwmdo=";
-#endif  // DisplayLEDPWM && ! defined RemoveAllLights
-
-#ifdef PWMEXPANSION
-	const char BannerPWME[] PROGMEM = "&pwme";
-#endif  // PWMEXPANSION
-
-#ifdef SIXTEENCHPWMEXPANSION
-	const char BannerSCPWME[] PROGMEM = "&scpwme";
-#endif  // SIXTEENCHPWMEXPANSION
-
-#ifdef RFEXPANSION
-	const char BannerRFM[] PROGMEM = "&rfm=";
-	const char BannerRFS[] PROGMEM = "&rfs=";
-	const char BannerRFD[] PROGMEM = "&rfd=";
-	const char BannerRFW[] PROGMEM = "&rfw=";
-	const char BannerRFRB[] PROGMEM = "&rfrb=";
-	const char BannerRFR[] PROGMEM = "&rfr=";
-	const char BannerRFG[] PROGMEM = "&rfg=";
-	const char BannerRFB[] PROGMEM = "&rfb=";
-	const char BannerRFI[] PROGMEM = "&rfi=";
-#endif  // RFEXPANSION
-
-#ifdef AI_LED
-	const char BannerAIW[] PROGMEM = "&aiw=";
-	const char BannerAIB[] PROGMEM = "&aib=";
-	const char BannerAIRB[] PROGMEM = "&airb=";
-#endif  // AI_LED
-
-#ifdef SALINITYEXPANSION
-	const char BannerSal[] PROGMEM = "&sal=";
-#endif  // SALINITYEXPANSION
-
-#ifdef ORPEXPANSION
-	const char BannerORP[] PROGMEM = "&orp=";
-#endif  // ORPEXPANSION
-
-#ifdef IOEXPANSION
-	const char BannerIO[] PROGMEM = "&io=";
-#endif  // IOEXPANSION
-
-#ifdef PHEXPANSION
-	const char BannerPHE[] PROGMEM = "&phe=";
-#endif  // PHEXPANSION
-
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-	const char BannerWL[] PROGMEM = "&wl";
-#endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-
-#ifdef HUMIDITYEXPANSION
-	const char BannerHumidity[] PROGMEM = "&hum=";
-#endif  // HUMIDITYEXPANSION
-
-#ifdef PAREXPANSION
-	const char BannerPAR[] PROGMEM = "&par=";
-#endif  // PAREXPANSION
-
-#ifdef DCPUMPCONTROL
-	const char BannerDCM[] PROGMEM = "&dcm=";
-	const char BannerDCS[] PROGMEM = "&dcs=";
-	const char BannerDCD[] PROGMEM = "&dcd=";
-	const char BannerDCT[] PROGMEM = "&dct=";
-#endif  // DCPUMPCONTROL
-
-#ifdef CUSTOM_VARIABLES
-	const char BannerCustomVar[] PROGMEM = "&c";
-#endif //CUSTOM_VARIABLES
-
-#ifdef LEAKDETECTOREXPANSION
-	const char BannerLeak[] PROGMEM = "&leak=";
-#endif  // LEAKDETECTOREXPANSION
-
-#if defined RA_STAR || defined RA_EVOLUTION
-	const char BannerAlarm[] PROGMEM = "&alarm=";
-	const char BannerPWMA2[] PROGMEM = "&pwma2=";
-	const char BannerPWMD2[] PROGMEM = "&pwmd2=";
-	const char BannerPWMA2O[] PROGMEM = "&pwma2o=";
-	const char BannerPWMD2O[] PROGMEM = "&pwmd2o=";
-#endif  // RA_STAR
+const char BannerPWMA[] PROGMEM = "&pwma=";
+const char BannerPWMD[] PROGMEM = "&pwmd=";
+const char BannerPWMAO[] PROGMEM = "&pwmao=";
+const char BannerPWMDO[] PROGMEM = "&pwmdo=";
+const char BannerPWME[] PROGMEM = "&pwme";
+const char BannerSCPWME[] PROGMEM = "&scpwme";
+const char BannerRFM[] PROGMEM = "&rfm=";
+const char BannerRFS[] PROGMEM = "&rfs=";
+const char BannerRFD[] PROGMEM = "&rfd=";
+const char BannerRFW[] PROGMEM = "&rfw=";
+const char BannerRFRB[] PROGMEM = "&rfrb=";
+const char BannerRFR[] PROGMEM = "&rfr=";
+const char BannerRFG[] PROGMEM = "&rfg=";
+const char BannerRFB[] PROGMEM = "&rfb=";
+const char BannerRFI[] PROGMEM = "&rfi=";
+const char BannerAIW[] PROGMEM = "&aiw=";
+const char BannerAIB[] PROGMEM = "&aib=";
+const char BannerAIRB[] PROGMEM = "&airb=";
+const char BannerSal[] PROGMEM = "&sal=";
+const char BannerORP[] PROGMEM = "&orp=";
+const char BannerIO[] PROGMEM = "&io=";
+const char BannerPHE[] PROGMEM = "&phe=";
+const char BannerWL[] PROGMEM = "&wl";
+const char BannerHumidity[] PROGMEM = "&hum=";
+const char BannerPAR[] PROGMEM = "&par=";
+const char BannerDCM[] PROGMEM = "&dcm=";
+const char BannerDCS[] PROGMEM = "&dcs=";
+const char BannerDCD[] PROGMEM = "&dcd=";
+const char BannerDCT[] PROGMEM = "&dct=";
+const char BannerCustomVar[] PROGMEM = "&c";
+const char BannerLeak[] PROGMEM = "&leak=";
+const char BannerAlarm[] PROGMEM = "&alarm=";
+const char BannerPWMA2[] PROGMEM = "&pwma2=";
+const char BannerPWMD2[] PROGMEM = "&pwmd2=";
+const char BannerPWMA2O[] PROGMEM = "&pwma2o=";
+const char BannerPWMD2O[] PROGMEM = "&pwmd2o=";
 
 //const char probe1_tag[] PROGMEM = "t1n";
 //const char probe2_tag[] PROGMEM = "t2n";

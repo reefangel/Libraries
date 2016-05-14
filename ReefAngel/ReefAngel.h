@@ -73,6 +73,7 @@
 #if defined PAREXPANSION
 #include <PAR.h>
 #endif  // defined PAREXPANSION
+#include <RA_CustomLabels.h>
 
 #ifdef RA_STANDARD
 #include <Standard/includes.h>
@@ -251,6 +252,11 @@ public:
 #ifdef LEAKDETECTOREXPANSION
 	time_t Leakmillis;
 #endif  // LEAKDETECTOREXPANSION
+#ifdef CLOUD_WIFI
+	byte CloudDummyByte;
+	int CloudDummyInt;
+	unsigned long LastCloudCheck;
+#endif
 
 	void Init();
 	void Refresh();
@@ -286,6 +292,102 @@ public:
 	byte CustomVar[8];
 #endif //CUSTOM_VARIABLES
 
+#if defined wifi || defined CLOUD_WIFI || defined ETH_WIZ5100
+	byte* ParamArrayByte[NumParamByte] = {&LowATO.Status,&HighATO.Status,&EM,&EM1,&REM,&Board,&AlertFlags,&StatusFlags,
+
+#if defined DisplayLEDPWM && ! defined RemoveAllLights || defined DCPUMPCONTROL
+	&PWM.DaylightPercentage,&PWM.ActinicPercentage,&PWM.DaylightPWMOverride,&PWM.ActinicPWMOverride,
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#ifdef RelayExp
+	&Relay.RelayDataE[0],&Relay.RelayMaskOffE[0],&Relay.RelayMaskOnE[0],&Relay.RelayDataE[1],&Relay.RelayMaskOffE[1],&Relay.RelayMaskOnE[1],&Relay.RelayDataE[2],&Relay.RelayMaskOffE[2],&Relay.RelayMaskOnE[2],&Relay.RelayDataE[3],&Relay.RelayMaskOffE[3],&Relay.RelayMaskOnE[3],&Relay.RelayDataE[4],&Relay.RelayMaskOffE[4],&Relay.RelayMaskOnE[4],&Relay.RelayDataE[5],&Relay.RelayMaskOffE[5],&Relay.RelayMaskOnE[5],&Relay.RelayDataE[6],&Relay.RelayMaskOffE[6],&Relay.RelayMaskOnE[6],&Relay.RelayDataE[7],&Relay.RelayMaskOffE[7],&Relay.RelayMaskOnE[7],
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#ifdef RA_STAR
+	&AlarmInput.Status,&PWM.Daylight2Percentage,&PWM.Actinic2Percentage,&PWM.Daylight2PWMOverride,&PWM.Actinic2PWMOverride,
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
+	&WaterLevel.level[0],&WaterLevel.level[1],&WaterLevel.level[2],&WaterLevel.level[3],&WaterLevel.level[4],
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#ifdef HUMIDITYEXPANSION
+	&Humidity.level,
+#else
+	&CloudDummyByte,
+#endif
+#ifdef DCPUMPCONTROL
+	&DCPump.Mode,&DCPump.Speed,&DCPump.Duration,&DCPump.Threshold,
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#ifdef PWMEXPANSION
+	&PWM.ExpansionPercentage[0],&PWM.ExpansionPercentage[1],&PWM.ExpansionPercentage[2],&PWM.ExpansionPercentage[3],&PWM.ExpansionPercentage[4],&PWM.ExpansionPercentage[5],&PWM.ExpansionChannelOverride[0],&PWM.ExpansionChannelOverride[1],&PWM.ExpansionChannelOverride[2],&PWM.ExpansionChannelOverride[3],&PWM.ExpansionChannelOverride[4],&PWM.ExpansionChannelOverride[5],
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#ifdef AI_LED
+	&AI.AIChannels[0],&AI.AIChannels[1],&AI.AIChannels[2],
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#ifdef RFEXPANSION
+	&RF.Mode,&RF.Speed,&RF.Duration,&RF.RadionChannels[0],&RF.RadionChannels[1],&RF.RadionChannels[2],&RF.RadionChannels[3],&RF.RadionChannels[4],&RF.RadionChannels[5],&RF.RadionChannelsOverride[0],&RF.RadionChannelsOverride[1],&RF.RadionChannelsOverride[2],&RF.RadionChannelsOverride[3],&RF.RadionChannelsOverride[4],&RF.RadionChannelsOverride[5],
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+#endif
+#ifdef IOEXPANSION
+	&IO.IOPorts,
+#else
+	&CloudDummyByte,
+#endif
+#if defined LEAKDETECTOREXPANSION || defined RA_STAR
+	&LeakValue,
+#else
+	&CloudDummyByte,
+#endif
+#ifdef CUSTOM_VARIABLES
+	&CustomVar[0],&CustomVar[1],&CustomVar[2],&CustomVar[3],&CustomVar[4],&CustomVar[5],&CustomVar[6],&CustomVar[7]
+#else
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte
+#endif
+	};
+	
+	int* ParamArrayInt[NumParamInt] = {&Params.Temp[T1_PROBE],&Params.Temp[T2_PROBE],&Params.Temp[T3_PROBE],&Params.PH,
+#ifdef ORPEXPANSION
+	&Params.ORP,
+#else
+	&CloudDummyInt,
+#endif
+#ifdef SALINITYEXPANSION
+	&Params.Salinity,
+#else
+	&CloudDummyInt,
+#endif
+#ifdef PHEXPANSION
+	&Params.PHExp,
+#else
+	&CloudDummyInt,
+#endif
+#ifdef PAREXPANSION
+	&PAR.level,
+#else
+	&CloudDummyInt,
+#endif
+#ifdef RA_STAR
+	&CustomExpansionValue[0],&CustomExpansionValue[1],&CustomExpansionValue[2],&CustomExpansionValue[3],&CustomExpansionValue[4],&CustomExpansionValue[5],&CustomExpansionValue[6],&CustomExpansionValue[7]
+#else
+	&CloudDummyInt,&CloudDummyInt,&CloudDummyInt,&CloudDummyInt,&CloudDummyInt,&CloudDummyInt,&CloudDummyInt,&CloudDummyInt
+#endif
+	};
+	byte OldParamArrayByte[NumParamByte];
+	int OldParamArrayInt[NumParamInt];
+#endif // wifi	
+	
 #ifdef I2CMASTER
 #define MASTERARRAYSIZE	100
 	byte olddata[MASTERARRAYSIZE];
@@ -305,6 +407,7 @@ public:
 	void inline AddPARExpansion() {};
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
+	void inline AddCloudWifi() {};
 	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
@@ -418,6 +521,7 @@ public:
 #if defined wifi || defined RA_STAR
 	void Portal(char *username);
 	void Portal(char *username, char *key);
+	void CloudPortal();
 	void DDNS(char *subdomain);
 #endif
 	void CheckOverride(int option);

@@ -52,6 +52,7 @@ AddHumidityExpansion	KEYWORD2
 AddPARExpansion	KEYWORD2
 AddStandardMenu	KEYWORD2
 AddWifi	KEYWORD2
+AddCloudWifi	KEYWORD2
 AddRANet	KEYWORD2
 AddSPILCD	KEYWORD2
 StandardLights	KEYWORD2
@@ -98,6 +99,7 @@ DisplayVersion	KEYWORD2
 ClearScreen	KEYWORD2
 MoonlightPWM	KEYWORD2
 Portal	KEYWORD2
+CloudPortal	KEYWORD2
 FeedingModeStart	KEYWORD2
 WaterChangeModeStart	KEYWORD2
 ATOClear	KEYWORD2

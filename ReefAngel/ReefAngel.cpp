@@ -196,6 +196,11 @@ void ReefAngelClass::Init()
 		CustomVar[EID]=0;
 	}
 #endif //CUSTOM_VARIABLES
+#ifdef CLOUD_WIFI
+	CloudDummyByte=0;
+	CloudDummyInt=0;
+	LastCloudCheck=millis();
+#endif
 #ifdef RA_TOUCHDISPLAY
 	SendMaster(MESSAGE_RESEND_ALL,0,0);
 #endif // RA_TOUCHDISPLAY
@@ -1828,6 +1833,55 @@ void ReefAngelClass::Portal(char *username, char *key)
 	Network.Portal(username,key);
 }
 
+void ReefAngelClass::CloudPortal()
+{
+	char cloudusername[16];
+	char cloudpassword[16];
+	strcpy_P(cloudusername, CLOUD_USERNAME); 
+	strcpy_P(cloudpassword, CLOUD_PASSWORD); 
+	Network.Portal(cloudusername);
+	if (millis()-LastCloudCheck>1000)
+	{
+		LastCloudCheck=millis();
+		for (byte a=0; a<NumParamByte;a++)
+		{
+			if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
+			{
+				char buffer[15];
+				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
+				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
+				Serial.print(a);
+				Serial.print(F("cloud:"));
+				Serial.print(cloudusername);
+				Serial.print(F(":"));
+				Serial.print(cloudpassword);
+				Serial.print(F(":"));
+				Serial.println(buffer);
+				ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
+			}
+		}
+		for (byte a=0; a<NumParamInt;a++)
+		{
+			if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
+			{
+				char buffer[15];
+				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
+				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
+				Serial.print(a);
+				Serial.print(F("cloud:"));
+				Serial.print(cloudusername);
+				Serial.print(F(":"));
+				Serial.print(cloudpassword);
+				Serial.print(F(":"));
+				Serial.println(buffer);
+				ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
+			}
+		}
+	}		
+
+
+}
+
 void ReefAngelClass::DDNS(char *subdomain)
 {
 	Network.DDNS(subdomain);
@@ -2570,11 +2624,11 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		case MQTT_REQUESTALL:
 			for (byte a=0; a<NumParamByte;a++)
 			{
-				ReefAngel.Network.OldParamArrayByte[a]=ReefAngel.Network.OldParamArrayByte[a]+1;
+				ReefAngel.OldParamArrayByte[a]=ReefAngel.OldParamArrayByte[a]+1;
 			}
 			for (byte a=0; a<NumParamInt;a++)
 			{
-				ReefAngel.Network.OldParamArrayInt[a]=ReefAngel.Network.OldParamArrayInt[a]+1;
+				ReefAngel.OldParamArrayInt[a]=ReefAngel.OldParamArrayInt[a]+1;
 			}
 			break;
 		case MQTT_MODE_FEEDING:
