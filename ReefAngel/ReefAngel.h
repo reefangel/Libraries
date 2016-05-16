@@ -252,7 +252,7 @@ public:
 #ifdef LEAKDETECTOREXPANSION
 	time_t Leakmillis;
 #endif  // LEAKDETECTOREXPANSION
-#ifdef CLOUD_WIFI
+#if defined wifi || defined CLOUD_WIFI || defined ETH_WIZ5100
 	byte CloudDummyByte;
 	int CloudDummyInt;
 	unsigned long LastCloudCheck;

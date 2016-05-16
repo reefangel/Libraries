@@ -64,9 +64,7 @@ byte RA_PWMClass::GetActinicValue()
 	else
 	{
 		byte value=(byte)(((float)ActinicPWMValue/40.95)+0.5); // cast to float, then divide, then add 0.5 in order to round correctly
-#ifdef RA_STAR
 		ActinicPercentage=value;
-#endif // RA_STAR
 		return value;
 	}
 }
@@ -88,9 +86,7 @@ byte RA_PWMClass::GetDaylightValue()
 	else
 	{
 		byte value=(byte)(((float)DaylightPWMValue/40.95)+0.5);// cast to float, then divide, then add 0.5 in order to round correctly
-#ifdef RA_STAR
 		DaylightPercentage=value;
-#endif // RA_STAR
 		return value;
 	}
 }

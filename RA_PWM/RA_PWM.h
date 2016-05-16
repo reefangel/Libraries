@@ -31,9 +31,9 @@ public:
 	RA_PWMClass();
 	byte DaylightPWMOverride;
 	byte ActinicPWMOverride;
-#ifdef RA_STAR
 	byte DaylightPercentage;
 	byte ActinicPercentage;
+#ifdef RA_STAR
 	byte Daylight2Percentage;
 	byte Actinic2Percentage;
 	byte Daylight2PWMOverride;
