@@ -143,6 +143,21 @@ DrawCircleOutletBoxHorizontal	KEYWORD2
 DrawSingleMonitor	KEYWORD2
 DrawSingleMonitorAlarm	KEYWORD2
 
+#Font
+SetColor	KEYWORD2
+SetPosition	KEYWORD2
+SetFont	KEYWORD2
+CharWidth	KEYWORD2
+TextWidth	KEYWORD2
+TextWidthP	KEYWORD2
+DrawChar	KEYWORD2
+DrawTextP	KEYWORD2
+DrawCenterText	KEYWORD2
+DrawCenterTextP	KEYWORD2
+DrawCenterNumber	KEYWORD2
+GetX	KEYWORD2
+GetY	KEYWORD2
+
 #PWM
 
 SetActinic	KEYWORD2
@@ -177,8 +192,8 @@ ExpansionWrite	KEYWORD2
 GetChannelValue	KEYWORD2
 GetActinicValue	KEYWORD2
 GetDaylightValue	KEYWORD2
-GetActinicValue2	KEYWORD2
-GetDaylightValue2	KEYWORD2
+GetActinic2Value	KEYWORD2
+GetDaylight2Value	KEYWORD2
 Channel0PWMSlope	KEYWORD2
 Channel1PWMSlope	KEYWORD2
 Channel2PWMSlope	KEYWORD2

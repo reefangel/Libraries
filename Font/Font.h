@@ -58,6 +58,7 @@ class FontClass
 		void DrawCenterTextP(int ix, int iy, const char *str);
 		void DrawCenterNumber(int ix, int iy, long n, byte decimal);
 		int inline GetX() { return x; }
+		int inline GetY() { return y; }
 
 	private:
 		uint8_t *Ptr;
