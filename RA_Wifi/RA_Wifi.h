@@ -496,7 +496,7 @@ class RA_Wifi: public Print
     void ProcessHTTP();
     void ProcessSerial();
     void ReceiveData();
-    void PROGMEMprint(const char str[]);
+    void PROGMEMprint(const char *str);
     void LoadWebBanner(int pointer, byte qty);
     void Portal(char* username);
     void Portal(char* username, char* key);

@@ -2713,13 +2713,17 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		}
 		case MQTT_IO:
 		{
+#ifdef IOEXPANSION
 			ReefAngel.IO.IOPorts=mqtt_val;
+#endif // IOEXPANSION
 			bitSet(ReefAngel.CEM,CloudIOBit);
 			break;
 		}
 		case MQTT_WL:
 		{
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION 
 			if (mqtt_val < 5) ReefAngel.WaterLevel.level[mqtt_val]=mqtt_val1;
+#endif
 			if (mqtt_val==0)
 				bitSet(ReefAngel.CEM,CloudWLBit);
 			else
@@ -2734,7 +2738,9 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		}
 		case MQTT_PAR:
 		{
+#ifdef PAREXPANSION
 			ReefAngel.PAR.level=mqtt_val;
+#endif // PAREXPANSION
 			bitSet(ReefAngel.CEM,CloudPARBit);
 			break;
 		}
@@ -2745,7 +2751,9 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		}
 		case MQTT_CVAR:
 		{
-			if (mqtt_val < 8) ReefAngel.CustomVar[mqtt_val]=mqtt_val1;		
+#ifdef CUSTOM_VARIABLES
+			if (mqtt_val < 8) ReefAngel.CustomVar[mqtt_val]=mqtt_val1;
+#endif // CUSTOM_VARIABLES
 			break;
 		}
 		case MQTT_MEM_BYTE:

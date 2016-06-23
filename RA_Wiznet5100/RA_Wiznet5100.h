@@ -29,7 +29,7 @@ static byte MQTTServer[] = { 23, 24, 193, 9 }; // forum.reefangel.com
 static IPAddress NetIP(192,168,1,200);
 //const IPAddress PortalServer(198,171,134,6); // www
 //const IPAddress PortalServer(192,168,9,140); // local
-const IPAddress PortalServer(69,198,171,165); // forum
+const IPAddress PortalServer(23, 24, 193, 9); // forum
 //const IPAddress RelayServer(46,137,106,125); // try.yaler.net
 //const IPAddress RelayServer(10,1,10,130); // local test
 //static YalerEthernetServer RelayServer("try.yaler.net", 80, "reefangel");

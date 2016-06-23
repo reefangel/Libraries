@@ -57,8 +57,10 @@ Splash=true;
 TouchEnabled=true;
 lastRedraw=millis();
 lastDisplayChange=millis();
+#ifdef RANET
 RANetSeq=0;
 RANetlastmillis=millis();
+#endif
 OkButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,CUSTOMLABELOKBUTTON,OKBUTTON);
 CancelButton.Create(COLOR_WHITE,COLOR_MIDNIGHTBLUE,CUSTOMLABELCANCELBUTTON,CANCELBUTTON);
 Slider.Create(COLOR_ROYALBLUE,COLOR_RED,"");

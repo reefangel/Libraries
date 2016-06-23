@@ -1689,13 +1689,14 @@ void RA_Wifi::ReceiveData()
   if ( _wifiSerial->available() > 0 ) ProcessSerial();
 }
 
-void RA_Wifi::PROGMEMprint(const char str[])
+void RA_Wifi::PROGMEMprint(const char *str)
 {
     char c;
     if(!str) return;
     while((c = pgm_read_byte(str++)))
     {
-      write(c);
+    	Serial.print(c);
+    	print(c);
     }
 }
 
