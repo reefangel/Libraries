@@ -1133,7 +1133,7 @@ void ReefAngelClass::WaterLevelATO(byte ATORelay, int ATOTimeout, byte LowLevel,
 	Is the low level is reached (meaning we need to top off) and are we not currently topping off
 	Then we set the timer to be now and start the topping pump
 	 */
-	if ( WaterLevel.GetLevel(Channel) < LowLevel && ( !WLATO.IsTopping()) )
+	if ( WaterLevel.GetLevel(Channel) < LowLevel && ( !WLATO.IsTopping()) && bitRead(AlertFlags,ATOTimeOutFlag)==0)
 	{
 		WLATO.Timer = millis();
 		WLATO.StartTopping();
