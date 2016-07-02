@@ -1500,14 +1500,14 @@ void ReefAngelClass::StandardHeater(byte Relay)
 
 void ReefAngelClass::StandardHeater2(byte Relay)
 {
-	StandardHeater2(T2_PROBE,Relay,
+	StandardHeater(T2_PROBE,Relay,
 			InternalMemory.HeaterTempOn_read(),
 			InternalMemory.HeaterTempOff_read());
 }
 
 void ReefAngelClass::StandardHeater3(byte Relay)
 {
-	StandardHeater3(T3_PROBE,Relay,
+	StandardHeater(T3_PROBE,Relay,
 			InternalMemory.HeaterTempOn_read(),
 			InternalMemory.HeaterTempOff_read());
 }
