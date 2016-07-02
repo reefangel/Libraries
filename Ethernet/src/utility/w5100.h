@@ -12,7 +12,7 @@
 
 #include <SPI.h>
 
-#define ETHERNET_SHIELD_SPI_CS 10
+#define ETHERNET_SHIELD_SPI_CS 53
 
 #define MAX_SOCK_NUM 4
 

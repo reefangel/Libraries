@@ -25,11 +25,11 @@ static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 //static byte MQTTServer[] = { 212, 72, 74, 21 }; // broker.mqttdashboard.com
 //static byte MQTTServer[] = { 10, 1, 10, 130 }; // local test
 //static byte MQTTServer[] = { 107, 22, 157, 224 }; // m11.cloudmqtt.com
-static byte MQTTServer[] = { 23, 24, 193, 9 }; // forum.reefangel.com
+static byte MQTTServer[] = { 192,168,99,140 }; // forum.reefangel.com
 static IPAddress NetIP(192,168,1,200);
 //const IPAddress PortalServer(198,171,134,6); // www
 //const IPAddress PortalServer(192,168,9,140); // local
-const IPAddress PortalServer(23, 24, 193, 9); // forum
+const IPAddress PortalServer(192,168,99,140); // forum
 //const IPAddress RelayServer(46,137,106,125); // try.yaler.net
 //const IPAddress RelayServer(10,1,10,130); // local test
 //static YalerEthernetServer RelayServer("try.yaler.net", 80, "reefangel");
