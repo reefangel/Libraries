@@ -345,6 +345,12 @@ void ReefAngelClass::Refresh()
 		AntiSyncSpeed=ElseMode(DCPump.Speed,DCPump.Duration,false);
 		break;
 	}
+	case Storm:
+	{
+		SyncSpeed=StormMode(DCPump.Speed,DCPump.Duration,true);
+		AntiSyncSpeed=StormMode(DCPump.Speed,DCPump.Duration,false);
+		break;
+    }
     }
 	if (DisplayedMenu==FEEDING_MODE)
 	{
