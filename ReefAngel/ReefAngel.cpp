@@ -1003,7 +1003,7 @@ void ReefAngelClass::StandardHeater(byte Probe, byte HeaterRelay, int LowTemp, i
 
 void ReefAngelClass::StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp)
 {
-	StandardHeater(T1_PROBE, HeaterRelay, LowTemp, HighTemp);
+	StandardHeater(TempProbe, HeaterRelay, LowTemp, HighTemp);
 }
 
 void ReefAngelClass::StandardHeater2(byte HeaterRelay, int LowTemp, int HighTemp)
@@ -1027,7 +1027,7 @@ void ReefAngelClass::StandardFan(byte Probe, byte FanRelay, int LowTemp, int Hig
 
 void ReefAngelClass::StandardFan(byte FanRelay, int LowTemp, int HighTemp)
 {
-	StandardFan(T1_PROBE, FanRelay, LowTemp, HighTemp);
+	StandardFan(TempProbe, FanRelay, LowTemp, HighTemp);
 }
 
 void ReefAngelClass::StandardFan2(byte FanRelay, int LowTemp, int HighTemp)
@@ -1503,9 +1503,37 @@ void ReefAngelClass::StandardHeater(byte Relay)
 			InternalMemory.HeaterTempOff_read());
 }
 
+void ReefAngelClass::StandardHeater2(byte Relay)
+{
+	StandardHeater(T2_PROBE,Relay,
+			InternalMemory.HeaterTempOn_read(),
+			InternalMemory.HeaterTempOff_read());
+}
+
+void ReefAngelClass::StandardHeater3(byte Relay)
+{
+	StandardHeater(T3_PROBE,Relay,
+			InternalMemory.HeaterTempOn_read(),
+			InternalMemory.HeaterTempOff_read());
+}
+
 void ReefAngelClass::StandardFan(byte Relay)
 {
 	StandardFan(Relay,
+			InternalMemory.ChillerTempOff_read(),
+			InternalMemory.ChillerTempOn_read());
+}
+
+void ReefAngelClass::StandardFan2(byte Relay)
+{
+	StandardFan(T2_PROBE,Relay,
+			InternalMemory.ChillerTempOff_read(),
+			InternalMemory.ChillerTempOn_read());
+}
+
+void ReefAngelClass::StandardFan3(byte Relay)
+{
+	StandardFan(T3_PROBE,Relay,
 			InternalMemory.ChillerTempOff_read(),
 			InternalMemory.ChillerTempOn_read());
 }
