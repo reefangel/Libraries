@@ -1870,9 +1870,7 @@ void ReefAngelClass::Portal(char *username, char *key)
 void ReefAngelClass::CloudPortal()
 {
 	char cloudusername[16];
-	char cloudpassword[16];
 	strcpy_P(cloudusername, CLOUD_USERNAME); 
-	strcpy_P(cloudpassword, CLOUD_PASSWORD); 
 	Network.Portal(cloudusername);
 	if (millis()-LastCloudCheck>1000)
 	{
@@ -1884,12 +1882,7 @@ void ReefAngelClass::CloudPortal()
 				char buffer[15];
 				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
 				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
-				Serial.print(a);
-				Serial.print(F("cloud:"));
-				Serial.print(cloudusername);
-				Serial.print(F(":"));
-				Serial.print(cloudpassword);
-				Serial.print(F(":"));
+				Serial.print(F("CLOUD:"));
 				Serial.println(buffer);
 				ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
 			}
@@ -1901,12 +1894,7 @@ void ReefAngelClass::CloudPortal()
 				char buffer[15];
 				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
 				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
-				Serial.print(a);
-				Serial.print(F("cloud:"));
-				Serial.print(cloudusername);
-				Serial.print(F(":"));
-				Serial.print(cloudpassword);
-				Serial.print(F(":"));
+				Serial.print(F("CLOUD:"));
 				Serial.println(buffer);
 				ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
 			}

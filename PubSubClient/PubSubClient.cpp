@@ -6,7 +6,9 @@
 
 #include "PubSubClient.h"
 #include <string.h>
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #include <avr/wdt.h>
+#endif
 
 PubSubClient::PubSubClient() {
    this->_client = NULL;
@@ -116,7 +118,9 @@ boolean PubSubClient::connect(char *id, char *user, char *pass, char* willTopic,
          lastInActivity = lastOutActivity = millis();
          
          while (!_client->available()) {
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
         	wdt_reset();
+#endif
             unsigned long t = millis();
 //            if (t-lastInActivity > MQTT_KEEPALIVE*1000UL) {
             if (t-lastInActivity > 2000UL) {
