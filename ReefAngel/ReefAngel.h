@@ -74,6 +74,7 @@
 #include <PAR.h>
 #endif  // defined PAREXPANSION
 #include <RA_CustomLabels.h>
+#include <RA_CustomSettings.h>
 
 #ifdef RA_STANDARD
 #include <Standard/includes.h>

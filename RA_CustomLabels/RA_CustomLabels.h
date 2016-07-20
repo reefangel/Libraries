@@ -17,11 +17,6 @@
 #ifndef __RA_CUSTOMLABELS_H__
 #define __RA_CUSTOMLABELS_H__
 
-// Cloud authentication
-// Max number of characters for username and password is 16
-const char CLOUD_USERNAME[] PROGMEM = "cloudtest";
-const char CLOUD_PASSWORD[] PROGMEM = "123456";
-
 // Headers
 const char RELAY_BOX_LABEL[] PROGMEM = "Relay Box";
 const char EXP_RELAY_1_LABEL[] PROGMEM = "Exp. Relay Box 1";
