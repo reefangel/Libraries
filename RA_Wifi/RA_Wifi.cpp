@@ -1708,32 +1708,6 @@ void RA_Wifi::LoadWebBanner(int pointer, byte qty)
 
 void RA_Wifi::Portal(char *username)
 {
-  /*
-  static byte LastRelayData;
-    byte TempRelay = Relay.RelayData;
-    TempRelay &= Relay.RelayMaskOff;
-    TempRelay |= Relay.RelayMaskOn;
-    if (TempRelay!=LastRelayData)
-    {
-      Timer[PORTAL_TIMER].ForceTrigger();
-      LastRelayData=TempRelay;
-    }
-#ifdef RelayExp
-  static byte LastRelayDataE[MAX_RELAY_EXPANSION_MODULES];
-
-    for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
-  {
-    TempRelay = Relay.RelayDataE[EID];
-    TempRelay &= Relay.RelayMaskOffE[EID];
-    TempRelay |= Relay.RelayMaskOnE[EID];
-      if (TempRelay!=LastRelayDataE[EID])
-      {
-        Timer[PORTAL_TIMER].ForceTrigger();
-        LastRelayDataE[EID]=TempRelay;
-      }
-  }
-#endif  // RelayExp
-   */
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
 #ifdef ETH_WIZ5100
   if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,"");

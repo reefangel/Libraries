@@ -23,10 +23,6 @@ void RA_Wiznet5100::Init()
 	EthernetDHCP.begin(NetMac, 1); // Start Ethernet with DHCP polling enabled
 	NetServer.begin();
 	FoundIP=false;
-//	RelayConnected=false;
-//	RelayIndex=0;
-//	ConnectionRetry=0;
-//	RelayClient.setTimeout(100);
 	PortalClient.setTimeout(100);
 	PortalConnection=false;
 	PortalWaiting=false;
@@ -87,64 +83,6 @@ void RA_Wiznet5100::Update()
 			if (!PortalDataReceived) Init();
 			PortalDataReceived=false;
 		}
-		
-//		EthernetClient RelayClient = RelayServer.available();
-//		if (RelayClient && RelayClient.connected()) {
-//			RelayClient.find("\r\n\r\n"); // Consume incoming request
-//
-//			RelayClient.print("HTTP/1.1 200 OK\r\n");
-//			RelayClient.print("Connection: close\r\n");
-//			RelayClient.print("Content-Length: 5\r\n");
-//			RelayClient.print("\r\n");
-//			RelayClient.print("Hello");
-//
-//			delay(1); // Give the Web browser time to receive the data
-//			RelayClient.stop();
-//		}
-		
-//		// Relay server
-//		if (!RelayClient.connected()) // Check for relay server closed connection
-//		{
-//			Serial.println("Relay Disconnected");
-//			ConnectionRetry++;
-//			RelayConnected=false;
-//			RelayIndex=0;
-//			RelayClient.stop(); // Make sure we free up the client
-//			if (ConnectionRetry>=RETRY_COUNT) // Connection failed too many times
-//			{
-//				Serial.println("Reinitialzing");
-//				Init();
-//			}
-//			else
-//			{
-//				delay(100);
-//				Serial.println("Relay Connecting...");
-//				RelayClient.noblockconnect(RelayServer, 80);
-//			}
-//		}
-//		else
-//		{
-//			if (!RelayConnected)
-//			{
-//				Serial.print(".");
-//				delay(100);
-//				wdt_reset();
-//				if (RelayClient.checkconnect()==0x17) // Check for connection established
-//				{
-//					Serial.println();
-//					Serial.println("Relay Connected");
-//					ConnectionRetry=0;
-//					RelayConnected=true;
-//					RelayClient.print("POST /");
-//					RelayClient.print(uid);
-//					RelayClient.println(" HTTP/1.1");
-//					RelayClient.println("Upgrade: PTTH/1.0");
-//					RelayClient.println("Connection: Upgrade");
-//					RelayClient.println("Host: try.yaler.net");
-//					RelayClient.println();
-//				}
-//			}
-//		}
 	}
 }
 
@@ -162,35 +100,6 @@ void RA_Wiznet5100::ReceiveData()
 			}
 		}
 	}
-	
-//	if (RelayClient.available())
-//	{
-//		wdt_reset();
-////			if (RelayClient.available()>54) // length of the return header of the HTTP upgrade
-////				RelayClient.find("\r\n\r\n"); // Discard header
-////			else
-////				RelayClient.read(); // Most likely HTTP/1.1 204, so we read one byte to cause timeout
-////			RelayClient.find("\r\n\r\n"); // Discard header
-//		Serial.print("Relay Data available: ");
-//		Serial.println(RelayClient.available());
-//		if (RelayClient.available()==17)
-//		{
-//			while(RelayClient.available()) Serial.write(RelayClient.read());
-//			Serial.println("Relay Repost");
-//			RelayClient.print("POST /");
-//			RelayClient.print(uid);
-//			RelayClient.println(" HTTP/1.1");
-//			RelayClient.println("Upgrade: PTTH/1.0");
-//			RelayClient.println("Connection: Upgrade");
-//			RelayClient.println("Host: try.yaler.net");
-//			RelayClient.println();
-//		}
-//		if (RelayClient.available()>0)
-//		{
-//			RelayClient.find("\r\n\r\n"); // Discard header
-//			ProcessRelayEthernet();
-//		}
-//	}
 }
 
 void RA_Wiznet5100::ProcessEthernet()
@@ -227,62 +136,6 @@ void RA_Wiznet5100::ProcessEthernet()
 	m_pushbackindex=0;
 }
 
-//void RA_Wiznet5100::ProcessRelayEthernet()
-//{
-//	bIncomingR=true;
-//	timeoutR=millis();
-//	Serial.println("Incoming...");
-//	while (bIncomingR)
-//	{
-//		if (millis()-timeoutR>100)
-//		{
-//			Serial.println("Timeout");
-//			bIncomingR=false;
-//			RelayIndex=0;
-//			RelayClient.stop();
-//		}
-//		if (RelayClient.available()>0)
-//		{
-//			if (RelayIndex++==5)
-//			{
-//				// Commented to allow for direct access subdomain instead of folder
-////				for (int a=0;a<uid.length();a++)
-////				{
-////					RelayClient.read(); // Consume the unique id
-////				}
-////				if (RelayClient.peek()=='/') RelayClient.read(); // Consume the slash, we already have one
-//			}
-//			char c=RelayClient.read();
-//			Serial.write(c);
-//			PushBuffer(c);
-//			timeoutR=millis();
-//			wdt_reset();
-//			if (reqtype>0 && reqtype<128)
-//			{
-//				bIncomingR=false;
-//				while(RelayClient.available())
-//				{
-//					wdt_reset();
-//					RelayClient.read();
-//				}
-//			}
-//		}
-//	}
-////	Serial1.println();
-////	Serial1.println(reqtype);
-//	wdt_reset();
-//	ProcessHTTP();
-//	Serial.println("Done processing");
-//	RelayIndex=0;
-//	RelayClient.stop();
-//	m_pushbackindex=0;
-//}
-
-//void RA_Wiznet5100::DirectAccess(String uniqueid)
-//{
-//	uid=uniqueid;
-//}
-
 void RA_Wiznet5100::PortalConnect()
 {
 	  PortalClient.noblockconnect(PortalServer, 80);
@@ -303,23 +156,20 @@ void RA_Wiznet5100::Cloud()
 {
 	if (FoundIP)
 	{
-		char username[16];
-		char password[16];
-		strcpy_P(username, CLOUD_USERNAME); 
-		strcpy_P(password, CLOUD_PASSWORD);
+		Portal(CLOUD_USERNAME);
 		MQTTClient.loop();
 		if (millis()-MQTTReconnectmillis>5000)
 		{
 			if (!MQTTClient.connected())
 			{
-				char sub_buffer[sizeof(username)+6];
+				char sub_buffer[sizeof(CLOUD_USERNAME)+6];
 				MQTTReconnectmillis=millis();
 				Serial.println(F("MQTT Connecting..."));
 				wdt_reset();
-				sprintf(sub_buffer, "RA-%s", username);
-				if (MQTTClient.connect(sub_buffer,username,password))
+				sprintf(sub_buffer, "RA-%s", CLOUD_USERNAME);
+				if (MQTTClient.connect(sub_buffer,CLOUD_USERNAME,CLOUD_PASSWORD))
 				{
-					sprintf(sub_buffer, "%s/in/#", username);
+					sprintf(sub_buffer, "%s/in/#", CLOUD_USERNAME);
 					Serial.println(F("MQTT succeeded"));
 					MQTTClient.subscribe(sub_buffer);
 					wdt_reset();
@@ -365,10 +215,8 @@ void RA_Wiznet5100::CloudPublish(char* message)
 {
 	if (MQTTClient.connected())
 	{
-		char username[16];
-		strcpy_P(username, CLOUD_USERNAME); 
-		char pub_buffer[sizeof(username)+5];
-		sprintf(pub_buffer, "%s/out", username);
+		char pub_buffer[sizeof(CLOUD_USERNAME)+5];
+		sprintf(pub_buffer, "%s/out", CLOUD_USERNAME);
 		MQTTClient.publish(pub_buffer,message);
 
 	}

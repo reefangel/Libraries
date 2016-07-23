@@ -1857,6 +1857,11 @@ void ReefAngelClass::SetDisplayedMenu(byte value)
 }
 
 #if defined wifi || defined ETH_WIZ5100
+void ReefAngelClass::Portal()
+{
+	Network.Portal(CLOUD_USERNAME);
+}
+
 void ReefAngelClass::Portal(char *username)
 {
 	Network.Portal(username);
@@ -1869,9 +1874,7 @@ void ReefAngelClass::Portal(char *username, char *key)
 
 void ReefAngelClass::CloudPortal()
 {
-	char cloudusername[16];
-	strcpy_P(cloudusername, CLOUD_USERNAME); 
-	Network.Portal(cloudusername);
+	Network.Portal(CLOUD_USERNAME);
 	if (millis()-LastCloudCheck>1000)
 	{
 		LastCloudCheck=millis();

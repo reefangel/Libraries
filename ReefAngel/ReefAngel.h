@@ -524,6 +524,7 @@ public:
 #endif  // VersionMenu
 
 #if defined wifi || defined RA_STAR
+	void Portal();
 	void Portal(char *username);
 	void Portal(char *username, char *key);
 	void CloudPortal();

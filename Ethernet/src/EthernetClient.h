@@ -4,6 +4,10 @@
 #include "Print.h"
 #include "Client.h"
 #include "IPAddress.h"
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
+#include <avr/wdt.h>
+#endif
+
 
 class EthernetClient : public Client {
 

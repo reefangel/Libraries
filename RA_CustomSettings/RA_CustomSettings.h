@@ -17,17 +17,24 @@
 #ifndef __RA_CUSTOMSETTINGS_H__
 #define __RA_CUSTOMSETTINGS_H__
 
+// Portal & Cloud Server
+const IPAddress PortalServer(23,24,193,9); // forum.reefangel.com
+static byte MQTTServer[] = {23,24,193,9}; // forum.reefangel.com
+#define MQTTPORT 1883 // MQTT server port
+
+#if defined(ARDUINO_ARCH_SAMD)
 // Cloud Wifi Attachment
 // Max number of characters for username and password is 32
-const char WIFI_SSID[] PROGMEM = "testing2"; //  your network SSID (name)
-const char WIFI_PASS[] PROGMEM = "a01b02c03d"; // your network password
-const char PORTALSERVER[] PROGMEM = "forum.reefangel.com"; // Portal server address
-const char MQTTSERVER[] PROGMEM ="forum.reefangel.com"; // MQTT server address
-#define MQTTPORT 1883 // MQTT server port
+static char WIFI_SSID[] = "testing2"; //  your network SSID (name)
+static char WIFI_PASS[] = "a01b02c03d"; // your network password
+#endif
 
 // Cloud authentication
 // Max number of characters for username and password is 16
-const char CLOUD_USERNAME[] PROGMEM = "cloudtest2"; // your forum username
-const char CLOUD_PASSWORD[] PROGMEM = "123456"; // your forum password
+static char CLOUD_USERNAME[]  = "cloudtest2"; // your forum username
+static char CLOUD_PASSWORD[]  = "123456"; // your forum password
+
+// Star board
+#define STARPORT	2000 //  internal web server port
 
 #endif  // __RA_CUSTOMSETTINGS_H__

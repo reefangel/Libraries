@@ -61,6 +61,7 @@ int EthernetClient::connect(IPAddress ip, uint16_t port) {
 
   while (status() != SnSR::ESTABLISHED) {
     delay(1);
+    wdt_reset();
     if (status() == SnSR::CLOSED) {
       _sock = MAX_SOCK_NUM;
       return 0;
