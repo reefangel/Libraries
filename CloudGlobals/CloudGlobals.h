@@ -126,12 +126,8 @@ static boolean WLFound;
 static boolean MultiWLFound;
 
 
-
-#define	MQTTPort	1883
-
 static EthernetServer NetServer(2000);
 static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xE0 };
-static byte MQTTServer[] = { 69, 198, 171, 165 }; // forum.reefangel.com
 static EthernetClient ethClient;
 static boolean FoundIP=false;
 static unsigned long MQTTReconnectmillis=millis();

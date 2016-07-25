@@ -324,12 +324,12 @@ public:
 #ifdef DCPUMPCONTROL
 	&DCPump.Mode,&DCPump.Speed,&DCPump.Duration,&DCPump.Threshold,
 #else
-	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
 #endif
 #ifdef PWMEXPANSION
 	&PWM.ExpansionPercentage[0],&PWM.ExpansionPercentage[1],&PWM.ExpansionPercentage[2],&PWM.ExpansionPercentage[3],&PWM.ExpansionPercentage[4],&PWM.ExpansionPercentage[5],&PWM.ExpansionChannelOverride[0],&PWM.ExpansionChannelOverride[1],&PWM.ExpansionChannelOverride[2],&PWM.ExpansionChannelOverride[3],&PWM.ExpansionChannelOverride[4],&PWM.ExpansionChannelOverride[5],
 #else
-	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
 #endif
 #ifdef AI_LED
 	&AI.AIChannels[0],&AI.AIChannels[1],&AI.AIChannels[2],
