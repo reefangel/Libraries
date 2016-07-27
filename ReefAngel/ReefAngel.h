@@ -293,6 +293,10 @@ public:
 	byte CustomVar[8];
 #endif //CUSTOM_VARIABLES
 
+#if defined RA_STAR || defined CLOUD_WIFI
+	int CloudCalVal;
+#endif // RA_STAR 
+	
 #if defined wifi || defined CLOUD_WIFI || defined ETH_WIZ5100
 	byte* ParamArrayByte[NumParamByte] = {&LowATO.Status,&HighATO.Status,&EM,&EM1,&REM,&Board,&AlertFlags,&StatusFlags,
 

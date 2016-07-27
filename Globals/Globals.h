@@ -1306,9 +1306,11 @@ typedef struct Compensation
 #define CloudLeakBit		6
 #define CloudPARBit			7
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
-
+#if defined RA_STAR || defined CLOUD_WIFI
 void MQTTSubCallback(char* topic, byte* payload, unsigned int length);
+#endif // RA_STAR
+
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 
 uint16_t read16(File f);
 uint32_t read32(File f);

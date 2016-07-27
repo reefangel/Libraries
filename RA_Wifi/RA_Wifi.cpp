@@ -215,6 +215,21 @@ void RA_Wifi::PushBuffer(byte inStr)
 #endif
             else if (strncmp("GET /cal", m_pushback, 8)==0) { reqtype = -REQ_CALIBRATION; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /json", m_pushback, 9)==0) reqtype = REQ_JSON;
+            else if (strncmp("cloud:", m_pushback, 6)==0)
+            {
+            	if (inStr==' ')
+            	{
+            		byte cloudstr[m_pushbackindex-6];
+            		for (int a=6; a<m_pushbackindex;a++)
+            		{
+            			cloudstr[a-6]=m_pushback[a];
+            		}
+            		cloudstr[sizeof(cloudstr)-1]=0;
+        			MQTTSubCallback("",cloudstr,sizeof(cloudstr));
+        			while(_wifiSerial->available()) _wifiSerial->read();
+            	}
+            	//reqtype = REQ_CLOUD;
+            }
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}

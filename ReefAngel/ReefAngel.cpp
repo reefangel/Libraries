@@ -1888,6 +1888,7 @@ void ReefAngelClass::CloudPortal()
 				Serial.print(F("CLOUD:"));
 				Serial.println(buffer);
 				ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
+				delay(10);
 			}
 		}
 		for (byte a=0; a<NumParamInt;a++)
@@ -1900,6 +1901,7 @@ void ReefAngelClass::CloudPortal()
 				Serial.print(F("CLOUD:"));
 				Serial.println(buffer);
 				ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
+				delay(10);
 			}
 		}
 	}		
@@ -2565,10 +2567,10 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 }
 #endif // DCPUMPCONTROL
 
-#ifdef RA_STAR
+#if defined RA_STAR || defined CLOUD_WIFI
 void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
   // handle message arrived
-	char mqtt_sub[10];
+	char mqtt_sub[12];
 	byte starti=0;
 	int mqtt_val=0;
 	long mqtt_val1=0;
@@ -2577,7 +2579,9 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 	
 	for (int a=0;a<length;a++)
 	{
+#ifdef RA_STAR
 		Serial.write(payload[a]);
+#endif
 		if (starti==0)
 		{
 			mqtt_sub[a]=payload[a];
@@ -2627,18 +2631,26 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			{
 				if (!foundchannel)
 				{
-					mqtt_val*=10;
-					mqtt_val+=(payload[a]-'0');
+					if (payload[a]!=0)
+					{
+						mqtt_val*=10;
+						mqtt_val+=(payload[a]-'0');
+					}
 				}
 				else
 				{
-					mqtt_val1*=10;
-					mqtt_val1+=(payload[a]-'0');
+					if (payload[a]!=0)
+					{
+						mqtt_val1*=10;
+						mqtt_val1+=(payload[a]-'0');
+					}
 				}
 			}
 		}
 	}
+#ifdef RA_STAR
 	Serial.println();
+#endif
 	switch (mqtt_type)
 	{
 		case MQTT_NONE:
@@ -2694,11 +2706,6 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			ReefAngel.OverheatClear();
 			break;
 		}
-		case MQTT_ALARM_LEAK:
-		{
-			ReefAngel.LeakClear();
-			break;
-		}
 		case MQTT_LIGHTS:
 		{
 			if (mqtt_val==0)
@@ -2712,47 +2719,10 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			while(1);
 			break;
 		}
-		case MQTT_SALINITY:
+#if defined LEAKDETECTOREXPANSION || defined RA_STAR
+		case MQTT_ALARM_LEAK:
 		{
-			ReefAngel.Params.Salinity=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudSalinityBit);
-			break;
-		}
-		case MQTT_CALIBRATION:
-			ReefAngel.CloudCalVal=mqtt_val;
-			break;
-		case MQTT_CUSTOM_CALIBRATION:
-			ReefAngel.CloudCalVal=mqtt_val1;
-			break;
-		case MQTT_PHEXP:
-		{
-			ReefAngel.Params.PHExp=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudPHExpBit);
-			break;
-		}
-		case MQTT_ORP:
-		{
-			ReefAngel.Params.ORP=mqtt_val;
-			bitSet(ReefAngel.CEM,CloudORPBit);
-			break;
-		}
-		case MQTT_IO:
-		{
-#ifdef IOEXPANSION
-			ReefAngel.IO.IOPorts=mqtt_val;
-#endif // IOEXPANSION
-			bitSet(ReefAngel.CEM,CloudIOBit);
-			break;
-		}
-		case MQTT_WL:
-		{
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION 
-			if (mqtt_val < 5) ReefAngel.WaterLevel.level[mqtt_val]=mqtt_val1;
-#endif
-			if (mqtt_val==0)
-				bitSet(ReefAngel.CEM,CloudWLBit);
-			else
-				bitSet(ReefAngel.CEM,CloudMultiWLBit);
+			ReefAngel.LeakClear();
 			break;
 		}
 		case MQTT_LEAK:
@@ -2761,32 +2731,96 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			bitSet(ReefAngel.CEM,CloudLeakBit);
 			break;
 		}
+#endif // LEAKDETECTOREXPANSION
+#ifdef SALINITYEXPANSION
+		case MQTT_SALINITY:
+		{
+			ReefAngel.Params.Salinity=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudSalinityBit);
+			break;
+		}
+#endif // SALINITYEXPANSION
+#ifdef PHEXPANSION
+		case MQTT_PHEXP:
+		{
+			ReefAngel.Params.PHExp=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudPHExpBit);
+			break;
+		}
+#endif // PHEXPANSION
+#ifdef ORPEXPANSION
+		case MQTT_ORP:
+		{
+			ReefAngel.Params.ORP=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudORPBit);
+			break;
+		}
+#endif // ORPEXPANSION
+#ifdef IOEXPANSION
+		case MQTT_IO:
+		{
+			ReefAngel.IO.IOPorts=mqtt_val;
+			bitSet(ReefAngel.CEM,CloudIOBit);
+			break;
+		}
+#endif // IOEXPANSION
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION 
+		case MQTT_WL:
+		{
+			if (mqtt_val < 5) ReefAngel.WaterLevel.level[mqtt_val]=mqtt_val1;
+			if (mqtt_val==0)
+				bitSet(ReefAngel.CEM,CloudWLBit);
+			else
+				bitSet(ReefAngel.CEM,CloudMultiWLBit);
+			break;
+		}
+#endif
+#ifdef PAREXPANSION
 		case MQTT_PAR:
 		{
-#ifdef PAREXPANSION
 			ReefAngel.PAR.level=mqtt_val;
-#endif // PAREXPANSION
 			bitSet(ReefAngel.CEM,CloudPARBit);
 			break;
 		}
+#endif // PAREXPANSION
+#ifdef CUSTOM_VARIABLES
+		case MQTT_CVAR:
+		{
+			if (mqtt_val < 8) ReefAngel.CustomVar[mqtt_val]=mqtt_val1;
+			break;
+		}
+#endif // CUSTOM_VARIABLES
+#if defined DisplayLEDPWM && ! defined RemoveAllLights || defined DCPUMPCONTROL
 		case MQTT_OVERRIDE:
 		{
 			if (mqtt_val < OVERRIDE_CHANNELS) ReefAngel.DimmingOverride(mqtt_val1,mqtt_val);
 			break;
 		}
-		case MQTT_CVAR:
+#endif
+#ifdef RA_STAR
+		case MQTT_CUSTOM_EXP:
 		{
-#ifdef CUSTOM_VARIABLES
-			if (mqtt_val < 8) ReefAngel.CustomVar[mqtt_val]=mqtt_val1;
-#endif // CUSTOM_VARIABLES
+			ReefAngel.CustomExpansionValue[mqtt_val]=mqtt_val1;
 			break;
 		}
+#endif
+		case MQTT_CALIBRATION:
+			ReefAngel.CloudCalVal=mqtt_val;
+			break;
+		case MQTT_CUSTOM_CALIBRATION:
+			ReefAngel.CloudCalVal=mqtt_val1;
+			break;
 		case MQTT_MEM_BYTE:
 		{
 			InternalMemory.write(mqtt_val, mqtt_val1);
 			char buffer[16];
 			sprintf(buffer, "MBOK:%d", mqtt_val);
+#ifdef RA_STAR
 			ReefAngel.Network.CloudPublish(buffer);
+#endif
+#ifdef CLOUD_WIFI
+			Serial.println(buffer);
+#endif
 			break;
 		}
 		case MQTT_MEM_INT:
@@ -2794,12 +2828,12 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			InternalMemory.write_int(mqtt_val, mqtt_val1);
 			char buffer[16];
 			sprintf(buffer, "MIOK:%d", mqtt_val);
+#ifdef RA_STAR
 			ReefAngel.Network.CloudPublish(buffer);
-			break;
-		}
-		case MQTT_CUSTOM_EXP:
-		{
-			ReefAngel.CustomExpansionValue[mqtt_val]=mqtt_val1;
+#endif
+#ifdef CLOUD_WIFI
+			Serial.println(buffer);
+#endif
 			break;
 		}
 		case MQTT_DATE:
@@ -2820,14 +2854,24 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			}
 			char buffer[16];
 			sprintf(buffer, "DATE:%02d%02d%02d%02d%02d", month(), day(), year()-2000, hour(), minute());
+#ifdef RA_STAR
 			ReefAngel.Network.CloudPublish(buffer);
+#endif
+#ifdef CLOUD_WIFI
+			Serial.println(buffer);
+#endif
 			break;
 		}
 		case MQTT_VERSION:
 		{
 			char buffer[16];
 			sprintf(buffer, "V:%s", ReefAngel_Version);
+#ifdef RA_STAR
 			ReefAngel.Network.CloudPublish(buffer);
+#endif
+#ifdef CLOUD_WIFI
+			Serial.println(buffer);
+#endif
 			break;
 		}
 		case MQTT_MEM_RAW:
@@ -2837,8 +2881,12 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			while ((VarsEnd-VarsStart-mindex)>8)
 			{
 				sprintf(buffer,"MR%02d:%02x%02x%02x%02x%02x%02x%02x%02x",mindex/8,InternalMemory.read(VarsStart+mindex+0),InternalMemory.read(VarsStart+mindex+1),InternalMemory.read(VarsStart+mindex+2),InternalMemory.read(VarsStart+mindex+3),InternalMemory.read(VarsStart+mindex+4),InternalMemory.read(VarsStart+mindex+5),InternalMemory.read(VarsStart+mindex+6),InternalMemory.read(VarsStart+mindex+7));
-				ReefAngel.Network.CloudPublish(buffer);
-				Serial.println(buffer);
+#ifdef RA_STAR
+			ReefAngel.Network.CloudPublish(buffer);
+#endif
+#ifdef CLOUD_WIFI
+			Serial.println(buffer);
+#endif
 				mindex+=8;
 			}
 		}
