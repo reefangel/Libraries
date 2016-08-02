@@ -3717,7 +3717,9 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
 
 	else
 	{
+#ifdef CLOUD_WIFI
 		ph_read_range[setup_step]=CloudCalVal;
+#endif
 	}
     LCD.DrawCalibrate(ph_read_range[setup_step], MENU_START_COL+65, MENU_START_ROW*6);
     delay(100);
@@ -3890,7 +3892,9 @@ void ReefAngelClass::DisplaySetupCalibrateSalinity()
 	}
 	else
 	{
+#ifdef CLOUD_WIFI
 		salinity_read=CloudCalVal;
+#endif
 	}
     LCD.DrawCalibrate(salinity_read, MENU_START_COL+65, MENU_START_ROW*5);
     delay(100);
@@ -3976,7 +3980,9 @@ void ReefAngelClass::SetupCalibrateORP()
 			}
 			else
 			{
+#ifdef CLOUD_WIFI
 				iO[b]=CloudCalVal;
+#endif
 			}
 			
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
@@ -4109,7 +4115,9 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 
 			else
 			{
+#ifdef CLOUD_WIFI
 				iO[b]=CloudCalVal;
+#endif
 			}
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
 			delay(100);

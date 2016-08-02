@@ -215,6 +215,7 @@ void RA_Wifi::PushBuffer(byte inStr)
 #endif
             else if (strncmp("GET /cal", m_pushback, 8)==0) { reqtype = -REQ_CALIBRATION; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /json", m_pushback, 9)==0) reqtype = REQ_JSON;
+#ifdef CLOUD_WIFI
             else if (strncmp("cloud:", m_pushback, 6)==0)
             {
             	if (inStr==' ')
@@ -230,6 +231,7 @@ void RA_Wifi::PushBuffer(byte inStr)
             	}
             	//reqtype = REQ_CLOUD;
             }
+#endif // CLOUD_WIFI
             //else reqtype = -REQ_UNKNOWN;
 		}
 	}
