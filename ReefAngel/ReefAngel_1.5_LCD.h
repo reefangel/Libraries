@@ -1278,22 +1278,6 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawLargeTextP(COLOR_WHITE,PHColor,15,30,LABEL_PH);
 			x=1;
 			y=26;
-//#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-//			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+15,y+4,"AP");
-//			CheckOffset(x,y);
-//			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+15,y+4,"DP");
-//			CheckOffset(x,y);
-//#endif // DisplayLEDPWM
-//#ifdef RA_STAR
-//			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+12,y+4,"AP2");
-//			CheckOffset(x,y);
-//			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+12,y+4,"DP2");
-//			CheckOffset(x,y);
-//#endif // RA_STAR
 #if defined SALINITYEXPANSION
 			LCD.Clear(COLOR_DARKSLATEGREY,x1[x],y,x2[x],y+13);
 			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,LABEL_SALINITY_SHORT);
@@ -1330,12 +1314,6 @@ void ReefAngelClass::Draw2014Main()
 			y+=20;
 			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ACTINIC);
 			y+=20;
-#ifdef RA_STAR
-			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_DAYLIGHT2);
-			y+=20;
-			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ACTINIC2);
-			y+=20;
-#endif // RA_STAR
 			break;
 #endif // DisplayLEDPWM
 		case INPUT_2014:
@@ -1347,10 +1325,6 @@ void ReefAngelClass::Draw2014Main()
 			y+=20;
 			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ATOHIGH);
 			y+=20;
-#ifdef RA_STAR
-			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ALARM);
-			y+=20;
-#endif // RA_STAR
 #ifdef LEAKDETECTOREXPANSION
 			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,ALERT_LEAK_LABEL);
 #endif // LEAKDETECTOREXPANSION
@@ -1579,26 +1553,6 @@ void ReefAngelClass::Draw2014Main()
 		LCD.DrawCenterSingleMonitor(Params.PH,PHColor,22,42,100,1);
 		x=1;
 		y=42;
-//#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-//		offset=intlength(PWM.GetActinicValue())+1;
-//		ConvertNumToString(text, PWM.GetActinicValue(), 1);
-//		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//		offset=intlength(PWM.GetDaylightValue())+1;
-//		ConvertNumToString(text, PWM.GetDaylightValue(), 1);
-//		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//#endif // DisplayLEDPWM
-//#ifdef RA_STAR
-//		offset=intlength(PWM.GetActinic2Value())+1;
-//		ConvertNumToString(text, PWM.GetActinic2Value(), 1);
-//		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//		offset=intlength(PWM.GetDaylight2Value())+1;
-//		ConvertNumToString(text, PWM.GetDaylight2Value(), 1);
-//		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//#endif // RA_STAR
 #if defined SALINITYEXPANSION
 		LCD.DrawCenterSingleMonitor(Params.Salinity,COLOR_DARKSLATEGREY,x3[x],y,10,1);
 		CheckOffset(x,y);
@@ -1643,27 +1597,6 @@ void ReefAngelClass::Draw2014Main()
 		for(int b=a1; b<100; b++)
 			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
 		y+=20;
-#ifdef RA_STAR
-		byte d2,a2;
-		d2=PWM.GetDaylight2Value();
-		a2=PWM.GetActinic2Value();
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,d2);
-		for(int b=0; b<d2; b++)
-			LCD.DrawImage(1,6,b+5,y+2,BAR_D_LEFT);
-		LCD.DrawImage(2,6,d2+5,y+2,BAR_CENTER);
-		for(int b=d2; b<100; b++)
-			LCD.DrawImage(1,6,b+7,y+2,BAR_D_RIGHT);
-		y+=20;
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,a2);
-		for(int b=0; b<a2; b++)
-			LCD.DrawImage(1,6,b+5,y+2,BAR_RB_LEFT);
-		LCD.DrawImage(2,6,a2+5,y+2,BAR_CENTER);
-		for(int b=a2; b<100; b++)
-			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
-		y+=20;
-#endif // RA_STAR
 		break;
 #endif // DisplayLEDPWM
 	case INPUT_2014:
@@ -1673,10 +1606,6 @@ void ReefAngelClass::Draw2014Main()
 		y+=20;
 		LCD.DrawImage(8,8,x,y,HighATO.IsActive()?ATO_GREEN:ATO_RED);
 		y+=20;
-#ifdef RA_STAR
-		LCD.DrawImage(8,8,x,y,AlarmInput.IsActive()?ATO_GREEN:ATO_RED);
-		y+=20;
-#endif // RA_STAR
 #ifdef LEAKDETECTOREXPANSION
 		LCD.DrawImage(8,8,x,y,IsLeakDetected()?ATO_GREEN:ATO_RED);
 #endif // LEAKDETECTOREXPANSION
