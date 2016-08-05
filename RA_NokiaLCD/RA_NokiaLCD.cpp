@@ -1153,6 +1153,20 @@ void RA_NokiaLCD::DrawLargeText(byte fcolor, byte bcolor, byte x, byte y, char* 
 		x+=8;
 	}
 }
+
+void RA_NokiaLCD::DrawLargeTextP(byte fcolor, byte bcolor, byte x, byte y, const char* text, byte height /*= Font8x8*/)
+{
+	int ix=x;
+	char c;
+	char c1[2];
+	while( c = pgm_read_byte(text++))
+	{
+		c1[0]=c;
+		DrawLargeText(fcolor,bcolor,ix,y,c1);
+		ix+=8;
+	}
+	
+}
 #endif  // FONT_8x8 || FONT_8x16
 
 #if defined FONT_12x16 || defined NUMBERS_12x16

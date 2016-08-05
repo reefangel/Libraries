@@ -34,6 +34,8 @@ const char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
 const char AI_LABEL[] PROGMEM = "Aqua Illumination";
 const char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
 const char DCPUMP_LABEL[] PROGMEM = "DC Pump";
+const char DIMMING_LABEL[] PROGMEM = "Dimming";
+const char INPUT_LABEL[] PROGMEM = "Input";
 const char CVAR_LABEL[] PROGMEM = "Custom Variables";
 const char STATUS_LABEL[] PROGMEM = "Status";
 const char ALERT_LABEL[] PROGMEM = "Alert";
@@ -45,10 +47,14 @@ const char ALERT_LEAK_LABEL[] PROGMEM = "Water Leak";
 
 
 // Labels
+// Labels with _SHORT are used on the RA+ screen only
 const char LABEL_TEMP1[] PROGMEM = "Temp 1";
+const char LABEL_TEMP1_SHORT[] PROGMEM = "T1";
 const char LABEL_TEMP2[] PROGMEM = "Temp 2";
+const char LABEL_TEMP2_SHORT[] PROGMEM = "T2";
 const char LABEL_TEMP3[] PROGMEM = "Temp 3";
-const char LABEL_PH[] PROGMEM = "PH";
+const char LABEL_TEMP3_SHORT[] PROGMEM = "T3";
+const char LABEL_PH[] PROGMEM = "pH";
 
 const char LABEL_ATOLOW[] PROGMEM = "Low ATO";
 const char LABEL_ATOHIGH[] PROGMEM = "High ATO";
@@ -60,9 +66,12 @@ const char LABEL_ACTINIC[] PROGMEM = "Actinic";
 const char LABEL_ACTINIC2[] PROGMEM = "Actinic 2";
 
 const char LABEL_SALINITY[] PROGMEM = "Salinity";
+const char LABEL_SALINITY_SHORT[] PROGMEM = "Sal";
 const char LABEL_ORP[] PROGMEM = "ORP";
-const char LABEL_PHEXP[] PROGMEM = "PH Exp";
+const char LABEL_PHEXP[] PROGMEM = "pH Exp";
+const char LABEL_PHEXP_SHORT[] PROGMEM = "pHE";
 const char LABEL_HUMIDITY[] PROGMEM = "Humidity";
+const char LABEL_HUMIDITY_SHORT[] PROGMEM = "Hum";
 const char LABEL_PAR[] PROGMEM = "PAR";
 
 const char LABEL_CUSTOM_EXP0[] PROGMEM = "Exp 0";
@@ -74,12 +83,14 @@ const char LABEL_CUSTOM_EXP5[] PROGMEM = "Exp 5";
 const char LABEL_CUSTOM_EXP6[] PROGMEM = "Exp 6";
 const char LABEL_CUSTOM_EXP7[] PROGMEM = "Exp 7";
 
+const char LABEL_WL_CHANNEL[] PROGMEM = "WL Ch";
 const char LABEL_WL0[] PROGMEM = "WL";
 const char LABEL_WL1[] PROGMEM = "WL 1";
 const char LABEL_WL2[] PROGMEM = "WL 2";
 const char LABEL_WL3[] PROGMEM = "WL 3";
 const char LABEL_WL4[] PROGMEM = "WL 4";
 
+const char LABEL_PWME_CHANNEL[] PROGMEM = "Dimming Ch";
 const char LABEL_PWME0[] PROGMEM = "Channel 0";
 const char LABEL_PWME1[] PROGMEM = "Channel 1";
 const char LABEL_PWME2[] PROGMEM = "Channel 2";
@@ -87,6 +98,7 @@ const char LABEL_PWME3[] PROGMEM = "Channel 3";
 const char LABEL_PWME4[] PROGMEM = "Channel 4";
 const char LABEL_PWME5[] PROGMEM = "Channel 5";
 
+const char LABEL_IO_CHANNEL[] PROGMEM = "I/O Ch";
 const char LABEL_IO0[] PROGMEM = "I/O Channel 0";
 const char LABEL_IO1[] PROGMEM = "I/O Channel 1";
 const char LABEL_IO2[] PROGMEM = "I/O Channel 2";
@@ -183,8 +195,8 @@ const char LABEL_AI_ROYAL_BLUE[] PROGMEM = "R. Blue";
 const char LABEL_RF_WHITE[] PROGMEM = "White";
 const char LABEL_RF_ROYAL_BLUE[] PROGMEM = "R. Blue";
 const char LABEL_RF_RED[] PROGMEM = "Red";
-const char LABEL_RF_BLUE[] PROGMEM = "Green";
-const char LABEL_RF_GREEN[] PROGMEM = "Blue";
+const char LABEL_RF_GREEN[] PROGMEM = "Green";
+const char LABEL_RF_BLUE[] PROGMEM = "Blue";
 const char LABEL_RF_INTENSITY[] PROGMEM = "Intensity";
 
 // Buttons

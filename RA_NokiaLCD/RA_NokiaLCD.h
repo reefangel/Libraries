@@ -52,6 +52,7 @@ public:
 	void Clear(byte color, byte x1, byte y1, byte x2, byte y2);
 #if defined FONT_8x8 || defined FONT_8x16 || defined NUMBERS_8x8 || defined NUMBERS_8x16
 	void DrawLargeText(byte fcolor, byte bcolor, byte x, byte y, char* text, byte height = Font8x8);
+	void DrawLargeTextP(byte fcolor, byte bcolor, byte x, byte y, const char* text, byte height = Font8x8);	
 #endif  // FONT_8x8 || FONT_8x16 || NUMBERS_8x8 || NUMBERS_8x16
 #if defined FONT_12x16 || defined NUMBERS_12x16
 	void DrawHugeText(byte fcolor, byte bcolor, byte x, byte y, char* text, byte height = Font12x16);

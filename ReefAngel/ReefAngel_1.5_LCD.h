@@ -1198,16 +1198,16 @@ enum ScreenItem {
 	STATUS_FLAGS_2014
 };
 
-void ReefAngelClass::InitCustomLabels()
-{
-	for (int a=1;a<=8;a++)
-		CustomLabels[a-1]=String("Port " + String(a));
-#ifdef RelayExp
-	for (int a=1;a<=MAX_RELAY_EXPANSION_MODULES;a++)
-		for (int b=1;b<=8;b++)
-			CustomLabels[(a*8)+b-1]=String("Port "+ String(a) + String(b));
-#endif // RelayExp
-}
+//void ReefAngelClass::InitCustomLabels()
+//{
+//	for (int a=1;a<=8;a++)
+//		CustomLabels[a-1]=String("Port " + String(a));
+//#ifdef RelayExp
+//	for (int a=1;a<=MAX_RELAY_EXPANSION_MODULES;a++)
+//		for (int b=1;b<=8;b++)
+//			CustomLabels[(a*8)+b-1]=String("Port "+ String(a) + String(b));
+//#endif // RelayExp
+//}
 
 void ReefAngelClass::Draw2014Main()
 {
@@ -1272,10 +1272,10 @@ void ReefAngelClass::Draw2014Main()
 			LCD.Clear(PHColor,0,26,43,39);
 			LCD.Clear(COLOR_DIMGREY,45,26,87,39);
 			LCD.Clear(COLOR_DIMGREY,89,26,131,39);
-			LCD.DrawLargeText(COLOR_WHITE,T1TempColor,15,4,"T1");
-			LCD.DrawLargeText(COLOR_WHITE,T2TempColor,58,4,"T2");
-			LCD.DrawLargeText(COLOR_WHITE,T3TempColor,101,4,"T3");
-			LCD.DrawLargeText(COLOR_WHITE,PHColor,15,30,"pH");
+			LCD.DrawLargeTextP(COLOR_WHITE,T1TempColor,15,4,LABEL_TEMP1_SHORT);
+			LCD.DrawLargeTextP(COLOR_WHITE,T2TempColor,58,4,LABEL_TEMP2_SHORT);
+			LCD.DrawLargeTextP(COLOR_WHITE,T3TempColor,101,4,LABEL_TEMP3_SHORT);
+			LCD.DrawLargeTextP(COLOR_WHITE,PHColor,15,30,LABEL_PH);
 			x=1;
 			y=26;
 //#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
@@ -1296,27 +1296,27 @@ void ReefAngelClass::Draw2014Main()
 //#endif // RA_STAR
 #if defined SALINITYEXPANSION
 			LCD.Clear(COLOR_DARKSLATEGREY,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,"SAL");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,LABEL_SALINITY_SHORT);
 			CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
 			LCD.Clear(COLOR_SADDLEBROWN,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_SADDLEBROWN,x1[x]+12,y+4,"ORP");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_SADDLEBROWN,x1[x]+12,y+4,LABEL_ORP);
 			CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
 			LCD.Clear(COLOR_DARKGREEN,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKGREEN,x1[x]+12,y+4,"pHE");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_DARKGREEN,x1[x]+12,y+4,LABEL_PHEXP_SHORT);
 			CheckOffset(x,y);
 #endif // PHEXPANSION
 #if defined HUMIDITYEXPANSION
 			LCD.Clear(COLOR_PLUM,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,"HUM");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,LABEL_HUMIDITY_SHORT);
 			CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 #if defined PAREXPANSION
 			LCD.Clear(COLOR_DODGERBLUE,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_DODGERBLUE,x1[x]+12,y+4,"PAR");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_DODGERBLUE,x1[x]+12,y+4,LABEL_PAR);
 			CheckOffset(x,y);
 #endif // PAREXPANSION
 			break;
@@ -1324,16 +1324,16 @@ void ReefAngelClass::Draw2014Main()
 		case DIMMING_2014:
 			x=5;
 			y=5;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,37,y,"Dimming");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,37,y,DIMMING_LABEL);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Daylight");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_DAYLIGHT);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Actinic");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ACTINIC);
 			y+=20;
 #ifdef RA_STAR
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Daylight 2");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_DAYLIGHT2);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Actinic 2");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ACTINIC2);
 			y+=20;
 #endif // RA_STAR
 			break;
@@ -1341,18 +1341,18 @@ void ReefAngelClass::Draw2014Main()
 		case INPUT_2014:
 			x=25;
 			y=5;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,47,y,"Input");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,47,y,INPUT_LABEL);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"ATO Low");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ATOLOW);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"ATO High");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ATOHIGH);
 			y+=20;
 #ifdef RA_STAR
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Alarm");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ALARM);
 			y+=20;
 #endif // RA_STAR
 #ifdef LEAKDETECTOREXPANSION
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Water Leak");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,ALERT_LEAK_LABEL);
 #endif // LEAKDETECTOREXPANSION
 			break;
 		case RELAY_2014:
@@ -1370,9 +1370,10 @@ void ReefAngelClass::Draw2014Main()
 			y=5;
 			for (int a=0+(MenuItem_2014-RELAY_2014)*8;a<8+(MenuItem_2014-RELAY_2014)*8;a++)
 			{
-				char buf[16];
-				CustomLabels[a].toCharArray(buf,16);
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,buf);
+//				char buf[16];
+//				CustomLabels[a].toCharArray(buf,16);
+//				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,buf);
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,(char * )pgm_read_word(&(LABEL_PORT[a])));
 				LCD.DrawImage(35,12,0,y-2,RELAY_BAR);
 				y+=12;
 			}
@@ -1389,7 +1390,7 @@ void ReefAngelClass::Draw2014Main()
 #endif
 			for (a; a < WATERLEVEL_CHANNELS; a++)
 			{
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"WL Ch");
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_WL_CHANNEL);
 				ConvertNumToString(text, a, 1);
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,52,y,text);
 				y+=19;
@@ -1403,7 +1404,7 @@ void ReefAngelClass::Draw2014Main()
 			y=5;
 			for (int a=0; a<PWM_EXPANSION_CHANNELS; a++)
 			{
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Dimming Ch");
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_PWME_CHANNEL);
 				ConvertNumToString(text, a, 1);
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,92,y,text);
 				y+=17;
@@ -1416,7 +1417,7 @@ void ReefAngelClass::Draw2014Main()
 			y=5;
 			for (int a=0; a<IO_EXPANSION_CHANNELS; a++)
 			{
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"I/O Ch");
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_IO_CHANNEL);
 				ConvertNumToString(text, a, 1);
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,80,y,text);
 				y+=17;
@@ -1427,11 +1428,11 @@ void ReefAngelClass::Draw2014Main()
 		case AI_2014:
 			x=5;
 			y=15;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"White");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_AI_WHITE);
 			y+=25;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_AI_BLUE);
 			y+=25;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Royal Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_AI_ROYAL_BLUE);
 			y+=25;
 			break;
 #endif // AI_LED
@@ -1440,17 +1441,17 @@ void ReefAngelClass::Draw2014Main()
 		case RF_RADION_2014:
 			x=5;
 			y=5;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"White");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_WHITE);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Royal Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_ROYAL_BLUE);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Red");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_RED);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Green");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_GREEN);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_BLUE);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Intensity");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_INTENSITY);
 			y+=17;
 			break;
 #endif // RADION_COMM
