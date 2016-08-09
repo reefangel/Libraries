@@ -126,9 +126,17 @@ static boolean WLFound;
 static boolean MultiWLFound;
 
 
+#if defined(ARDUINO_ARCH_SAMD)
+WiFiServer server(2000);
+WiFiClient client;
+WiFiClient portalclient;
+WiFiClient mqttclient;
+#else
 static EthernetServer NetServer(2000);
 static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xE0 };
 static EthernetClient ethClient;
+#endif // ARDUINO_ARCH_SAMD
+
 static boolean FoundIP=false;
 static unsigned long MQTTReconnectmillis=millis();
 static unsigned long MQTTSendmillis=millis();
