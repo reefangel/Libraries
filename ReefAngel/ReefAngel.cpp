@@ -623,33 +623,52 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 #endif // EXTRA_TEMP_PROBES	
 #else  // DirectTempSensor
-	int x = TempSensor.ReadTemperature(TempSensor.addrT1);
-	RefreshScreen();
-	int y;
-	y = x - Params.Temp[T1_PROBE];
-	// check to make sure the temp readings aren't beyond max allowed
-	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T1_PROBE] == 0 || ~x) Params.Temp[T1_PROBE] = x;
-	x = TempSensor.ReadTemperature(TempSensor.addrT2);
-	RefreshScreen();
-	y = x - Params.Temp[T2_PROBE];
-	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T2_PROBE] == 0 || ~x) Params.Temp[T2_PROBE] = x;
-	x = TempSensor.ReadTemperature(TempSensor.addrT3);
-	RefreshScreen();
-	y = x - Params.Temp[T3_PROBE];
-	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T3_PROBE] == 0 || ~x) Params.Temp[T3_PROBE] = x;
+	int x=0;
+	int y=0;
+	if (TempSensor.addrT1[0]!=0 && TempSensor.addrT1[7]!=0)
+	{
+		x = TempSensor.ReadTemperature(TempSensor.addrT1);
+		RefreshScreen();
+		y = x - Params.Temp[T1_PROBE];
+		// check to make sure the temp readings aren't beyond max allowed
+		if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T1_PROBE] == 0 || ~x) Params.Temp[T1_PROBE] = x;
+	}
+	if (TempSensor.addrT2[0]!=0 && TempSensor.addrT2[7]!=0)
+	{
+		x = TempSensor.ReadTemperature(TempSensor.addrT2);
+		RefreshScreen();
+		y = x - Params.Temp[T2_PROBE];
+		if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T2_PROBE] == 0 || ~x) Params.Temp[T2_PROBE] = x;
+	}
+	if (TempSensor.addrT3[0]!=0 && TempSensor.addrT3[7]!=0)
+	{
+		x = TempSensor.ReadTemperature(TempSensor.addrT3);
+		RefreshScreen();
+		y = x - Params.Temp[T3_PROBE];
+		if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T3_PROBE] == 0 || ~x) Params.Temp[T3_PROBE] = x;
+	}
 #ifdef EXTRA_TEMP_PROBES
-	x = TempSensor.ReadTemperature(TempSensor.addrT4);
-	RefreshScreen();
-	y = x - Params.Temp[T4_PROBE];
-	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T4_PROBE] == 0 || ~x) Params.Temp[T4_PROBE] = x;
-	x = TempSensor.ReadTemperature(TempSensor.addrT5);
-	RefreshScreen();
-	y = x - Params.Temp[T5_PROBE];
-	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T5_PROBE] == 0 || ~x) Params.Temp[T5_PROBE] = x;
-	x = TempSensor.ReadTemperature(TempSensor.addrT6);
-	RefreshScreen();
-	y = x - Params.Temp[T6_PROBE];
-	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T6_PROBE] == 0 || ~x) Params.Temp[T6_PROBE] = x;
+	if (TempSensor.addrT4[0]!=0 && TempSensor.addrT4[7]!=0)
+	{
+		x = TempSensor.ReadTemperature(TempSensor.addrT4);
+		RefreshScreen();
+		y = x - Params.Temp[T4_PROBE];
+		if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T4_PROBE] == 0 || ~x) Params.Temp[T4_PROBE] = x;
+	}
+	if (TempSensor.addrT5[0]!=0 && TempSensor.addrT5[7]!=0)
+	{
+		x = TempSensor.ReadTemperature(TempSensor.addrT5);
+		RefreshScreen();
+		y = x - Params.Temp[T5_PROBE];
+		if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T5_PROBE] == 0 || ~x) Params.Temp[T5_PROBE] = x;
+	}
+	if (TempSensor.addrT6[0]!=0 && TempSensor.addrT6[7]!=0)
+	{
+		x = TempSensor.ReadTemperature(TempSensor.addrT6);
+		RefreshScreen();
+		y = x - Params.Temp[T6_PROBE];
+		if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T6_PROBE] == 0 || ~x) Params.Temp[T6_PROBE] = x;
+	}
 #endif // EXTRA_TEMP_PROBES	
 #endif  // DirectTempSensor
 	Params.PH=0;
@@ -2590,6 +2609,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				mqtt_sub[a]=0;
 				starti=a;
 				if (strcmp("all", mqtt_sub)==0) mqtt_type=MQTT_REQUESTALL;
+				else if (strcmp("t", mqtt_sub)==0) mqtt_type=MQTT_T;
 				else if (strcmp("r", mqtt_sub)==0) mqtt_type=MQTT_R;
 				else if (strcmp("mf", mqtt_sub)==0) mqtt_type=MQTT_MODE_FEEDING;
 				else if (strcmp("mw", mqtt_sub)==0) mqtt_type=MQTT_MODE_WATERCHANGE;
@@ -2654,6 +2674,9 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 	switch (mqtt_type)
 	{
 		case MQTT_NONE:
+			break;
+		case MQTT_T:
+			ReefAngel.Params.Temp[mqtt_val]=mqtt_val1;
 			break;
 		case MQTT_R:
 			ReefAngel.CheckOverride(mqtt_val);

@@ -1269,31 +1269,32 @@ typedef struct Compensation
 // Cloud
 #define MQTT_NONE	0
 #define MQTT_REQUESTALL	1
-#define MQTT_R	2
-#define MQTT_MODE_FEEDING	3
-#define MQTT_MODE_WATERCHANGE	4
-#define MQTT_ALARM_ATO	5
-#define MQTT_ALARM_OVERHEAT	6
-#define MQTT_ALARM_LEAK	7
-#define MQTT_LIGHTS	8
-#define MQTT_REBOOT	9
-#define MQTT_SALINITY 10
-#define MQTT_PHEXP 11
-#define MQTT_ORP 12
-#define MQTT_IO 13
-#define MQTT_WL 14
-#define MQTT_LEAK 15
-#define MQTT_PAR 26
-#define MQTT_OVERRIDE 27
-#define MQTT_CVAR 28
-#define MQTT_MEM_BYTE	29
-#define MQTT_MEM_INT	30
-#define MQTT_CUSTOM_EXP	31
-#define MQTT_DATE	32
-#define MQTT_CALIBRATION 33
-#define MQTT_CUSTOM_CALIBRATION 34
-#define MQTT_VERSION	35
-#define MQTT_MEM_RAW	36
+#define MQTT_T	2
+#define MQTT_R	3
+#define MQTT_MODE_FEEDING	4
+#define MQTT_MODE_WATERCHANGE	5
+#define MQTT_ALARM_ATO	6
+#define MQTT_ALARM_OVERHEAT	7
+#define MQTT_ALARM_LEAK	8
+#define MQTT_LIGHTS	9
+#define MQTT_REBOOT	10
+#define MQTT_SALINITY 11
+#define MQTT_PHEXP 12
+#define MQTT_ORP 13
+#define MQTT_IO 14
+#define MQTT_WL 15
+#define MQTT_LEAK 16
+#define MQTT_PAR 17
+#define MQTT_OVERRIDE 18
+#define MQTT_CVAR 19
+#define MQTT_MEM_BYTE	20
+#define MQTT_MEM_INT	21
+#define MQTT_CUSTOM_EXP	22
+#define MQTT_DATE	23
+#define MQTT_CALIBRATION 24
+#define MQTT_CUSTOM_CALIBRATION 25
+#define MQTT_VERSION	26
+#define MQTT_MEM_RAW	27
 
 
 // Cloud Expansion Bits ( CEM )
