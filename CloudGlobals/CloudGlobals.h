@@ -13,6 +13,7 @@
 #define IO_EXPANSION_CHANNELS     		6
 #define WL_CHANNELS						5
 #define CUSTOM_EXP_MODULES				8
+#define TEMP_PROBES						2
 
 #define CUSTOM_NONE	0
 #define CUSTOM_SALINITY	1
@@ -25,6 +26,7 @@
 #define CUSTOM_MULTI_WL4	8
 
 typedef struct  {
+  int Temp[TEMP_PROBES+1];
   int Salinity;
   int ORP;
   int PHExp;
