@@ -17,6 +17,8 @@
 #ifndef __RA_CUSTOMSETTINGS_H__
 #define __RA_CUSTOMSETTINGS_H__
 
+#if defined(ARDUINO_ARCH_SAMD) || defined RA_STAR
+
 // Portal & Cloud Server
 const IPAddress PortalServer(23,24,193,9); // forum.reefangel.com
 static byte MQTTServer[] = {23,24,193,9}; // forum.reefangel.com
@@ -36,5 +38,7 @@ static char CLOUD_PASSWORD[]  = "123456"; // your forum password
 
 // Star board
 #define STARPORT	2000 //  internal web server port
+
+#endif
 
 #endif  // __RA_CUSTOMSETTINGS_H__
