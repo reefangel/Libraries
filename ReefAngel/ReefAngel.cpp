@@ -1876,10 +1876,12 @@ void ReefAngelClass::SetDisplayedMenu(byte value)
 }
 
 #if defined wifi || defined ETH_WIZ5100
+#ifdef ETH_WIZ5100
 void ReefAngelClass::Portal()
 {
 	Network.Portal(CLOUD_USERNAME);
 }
+#endif // ETH_WIZ5100
 
 void ReefAngelClass::Portal(char *username)
 {
@@ -1890,7 +1892,7 @@ void ReefAngelClass::Portal(char *username, char *key)
 {
 	Network.Portal(username,key);
 }
-
+#ifdef CLOUD_WIFI
 void ReefAngelClass::CloudPortal()
 {
 	Network.Portal(CLOUD_USERNAME);
@@ -1927,6 +1929,7 @@ void ReefAngelClass::CloudPortal()
 
 
 }
+#endif // CLOUD_WIFI
 
 void ReefAngelClass::DDNS(char *subdomain)
 {
