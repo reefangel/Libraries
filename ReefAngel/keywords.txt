@@ -106,6 +106,7 @@ ATOClear	KEYWORD2
 OverheatClear	KEYWORD2
 InitMenu	KEYWORD2
 ShowInterface	KEYWORD2
+ShowTouchInterface	KEYWORD2
 CO2Control	KEYWORD2
 PHControl	KEYWORD2
 LightsOn	KEYWORD2
@@ -157,6 +158,7 @@ DrawCenterTextP	KEYWORD2
 DrawCenterNumber	KEYWORD2
 GetX	KEYWORD2
 GetY	KEYWORD2
+DrawPixel	KEYWORD2
 
 #PWM
 
@@ -557,6 +559,7 @@ write_dword	KEYWORD2
 
 ReefAngel	KEYWORD1
 LCD	LITERAL1
+TouchLCD	LITERAL1
 PWM	LITERAL1
 VariableControl	LITERAL1
 Relay	LITERAL1
