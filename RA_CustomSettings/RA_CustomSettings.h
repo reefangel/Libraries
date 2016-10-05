@@ -17,7 +17,7 @@
 #ifndef __RA_CUSTOMSETTINGS_H__
 #define __RA_CUSTOMSETTINGS_H__
 
-#if defined(ARDUINO_ARCH_SAMD) || defined RA_STAR
+#if defined(ARDUINO_ARCH_SAMD) || defined RA_STAR || defined CLOUD_WIFI
 
 // Portal & Cloud Server
 const IPAddress PortalServer(23,24,193,9); // forum.reefangel.com
