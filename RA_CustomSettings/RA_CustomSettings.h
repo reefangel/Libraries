@@ -20,8 +20,9 @@
 #if defined(ARDUINO_ARCH_SAMD) || defined RA_STAR || defined CLOUD_WIFI
 
 // Portal & Cloud Server
-const IPAddress PortalServer(23,24,193,9); // forum.reefangel.com
-static byte MQTTServer[] = {23,24,193,9}; // forum.reefangel.com
+const IPAddress PortalServer(104,36,18,155); // forum.reefangel.com
+static byte MQTTServer[] = {23,24,193,9}; // cloud.reefangel.com
+const IPAddress WebWizardServer(162,213,37,72); // webwizard.reefangel.com
 #define MQTTPORT 1883 // MQTT server port
 
 #if defined(ARDUINO_ARCH_SAMD)
