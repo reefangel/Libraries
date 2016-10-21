@@ -53,6 +53,7 @@ typedef struct  {
 #define I2CSalinity			0X4d
 #define I2CPH				0X4e
 #define I2CWaterLevel		0X4f
+#define I2CEEPROM1          0x50
 
 #define VarsStart                 200
 #define Mem_I_SalMax			  VarsStart+47
