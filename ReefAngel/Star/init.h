@@ -117,6 +117,10 @@ if (SDFound)
 	SD.begin(SDPin);
 	wdt_reset();
 	Serial.println(F("SD Init"));
+	if (SD.exists("FIRMWARE.BIN")) {
+		Serial.println(F("deleting firmware..."));
+		SD.remove("FIRMWARE.BIN");
+	}
 	if (orientation%2==0)
 		TouchLCD.DrawSDRawImage("splash_l.raw",0,0,320,240);
 	else
