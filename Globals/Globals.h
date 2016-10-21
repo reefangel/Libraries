@@ -657,6 +657,7 @@ When adding more variables, use the previous value plus 1 or 2
 #define RANetDelay			100
 #define bit9600Delay 		101
 #define KeyPressRate		250
+#define RemoteFirmware		300
 #define DEGREE_F            0
 #define DEGREE_C            1
 #define DEGREE_F_LOW_TEMP			700
