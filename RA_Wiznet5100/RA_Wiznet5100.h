@@ -26,6 +26,7 @@ static EthernetClient PortalClient;
 static EthernetClient ethClient;
 static PubSubClient MQTTClient(MQTTServer, MQTTPORT, MQTTSubCallback, ethClient);
 static boolean PortalWaiting;
+static boolean FirmwareWaiting;
 #define PORTAL_TIMEOUT  10000
 #define RETRY_COUNT  3
 
@@ -44,12 +45,16 @@ public:
 	unsigned long PortalTimeOut;
 	boolean FoundIP;
 	void PortalConnect();
+	void FirmwareConnect();
+	boolean FirmwareConnection;
 	boolean IsPortalConnected();
 	boolean IsMQTTConnected();
 
 private:
 	unsigned long MQTTReconnectmillis;
 	unsigned long MQTTSendmillis;
+	unsigned long downloadsize;
+	File firwareFile;
 protected:
 	size_t write(uint8_t c);
 	size_t write(unsigned long n);

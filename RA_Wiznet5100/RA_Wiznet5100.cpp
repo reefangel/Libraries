@@ -27,8 +27,11 @@ void RA_Wiznet5100::Init()
 	PortalConnection=false;
 	PortalWaiting=false;
 	PortalDataReceived=false;
+	FirmwareConnection=false;
+	FirmwareWaiting=false;
 	MQTTReconnectmillis=millis();
 	MQTTSendmillis=millis();
+	downloadsize=0;
 }
 
 void RA_Wiznet5100::Update()
@@ -50,16 +53,46 @@ void RA_Wiznet5100::Update()
 
 	    //Portal server
 	    // Read and dump what the server is returning from the Portal GET request.
-		if (PortalClient.available() && PortalConnection)
+		if (PortalClient.available() && (PortalConnection || FirmwareConnection))
 		{
-			Serial.println(F("Receiving Data..."));
+		    boolean newline = false;
+		    boolean payload_ready = false;
+
+		    Serial.println(F("Receiving Data..."));
 			while(PortalClient.available())
 			{
 				wdt_reset();
 				char c = PortalClient.read();
 				Serial.write(c);
+				if (payload_ready)
+				{
+					firwareFile.write(c);
+				}
+				else
+				{
+					if (c == '\n')
+					{
+						newline = true;
+						c = PortalClient.read();
+						Serial.write(c);
+						if (c == '\r' && newline)
+						{
+							c = PortalClient.read();
+							Serial.write(c);
+							payload_ready = true;
+							Serial.print(F("Header size: "));
+							Serial.println(--downloadsize);
+							downloadsize=0;
+						}
+						else
+						{
+							newline = false;
+						}
+					}
+				}
+				downloadsize++;
 			}
-			PortalDataReceived=true;
+			if (PortalConnection) PortalDataReceived=true;
 			Serial.println();
 			Serial.println(F("Portal Received"));
 		}
@@ -67,21 +100,70 @@ void RA_Wiznet5100::Update()
 		// if the server has disconnected, stop the client
 		if (!PortalClient.connected() && PortalConnection)
 		{
+			Serial.print(F("Data size: "));
+			Serial.println(--downloadsize);
 			Serial.println(F("Portal Disconnected"));
 			PortalConnection=false;
 			PortalClient.stop();
 			if (!PortalDataReceived) Init();
 			PortalDataReceived=false;
+			FirmwareConnection=true;
+			PortalWaiting=false;
+			FirmwareWaiting=false;
+			downloadsize=0;
+			delay(100);
+			FirmwareConnect();
+			Serial.println(F("Connecting..."));
+		}
+		
+		if (!PortalClient.connected() && FirmwareConnection)
+		{
+			Serial.print(F("Data size: "));
+			Serial.println(--downloadsize);
+			Serial.println(F("Portal Disconnected"));
+			FirmwareConnection=false;
+			PortalWaiting=false;
+			FirmwareWaiting=false;
+			PortalClient.stop();
+			if (firwareFile) firwareFile.close();
+			if (downloadsize>2000)
+			{
+				Serial.println(F("Rebooting to update firmware..."));
+				InternalMemory.write(RemoteFirmware, 0xf0);
+				while(1);
+			}
+			downloadsize=0;
 		}
 
 		// if request timed out, stop the client
-		if (PortalClient.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
+		if (PortalClient.connected() && (PortalConnection || FirmwareConnection) && millis()-PortalTimeOut>PORTAL_TIMEOUT)
 		{
 			Serial.println(F("Portal Timeout"));
 			PortalConnection=false;
+			FirmwareConnection=false;
 			PortalClient.stop();
 			if (!PortalDataReceived) Init();
 			PortalDataReceived=false;
+			PortalWaiting=false;
+			FirmwareWaiting=false;
+			downloadsize=0;
+			if (firwareFile) firwareFile.close();
+		}
+		if (IsPortalConnected() && FirmwareConnection && !FirmwareWaiting) // Check for connection established
+		{
+			FirmwareWaiting=true;
+			firwareFile = SD.open("FIRMWARE.BIN", O_WRITE | O_CREAT | O_TRUNC);  // change file name to write to here
+		    if (!firwareFile) {
+		      Serial.println(F("Could not create file"));
+		    }
+			
+			Serial.println(F("Connected"));
+			PortalClient.print("GET /getcodebin.php?u=");
+			PortalClient.print(CLOUD_USERNAME);
+			PortalClient.println(" HTTP/1.1");
+			PortalClient.println("Host: webwizard.reefangel.com");
+			PortalClient.println("Connection: close");
+			PortalClient.println();
 		}
 	}
 }
@@ -139,6 +221,12 @@ void RA_Wiznet5100::ProcessEthernet()
 void RA_Wiznet5100::PortalConnect()
 {
 	  PortalClient.noblockconnect(PortalServer, 80);
+	  PortalTimeOut=millis();
+}
+
+void RA_Wiznet5100::FirmwareConnect()
+{
+	  PortalClient.noblockconnect(WebWizardServer, 80);
 	  PortalTimeOut=millis();
 }
 
