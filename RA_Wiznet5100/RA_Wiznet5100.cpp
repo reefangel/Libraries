@@ -40,7 +40,8 @@ void RA_Wiznet5100::Update()
 	EthernetDHCP.poll();
 
 	const byte* ipAddr=EthernetDHCP.ipAddress();
-
+	int lheader=0;
+	
 	if (ipAddr[0]!=0)
 	{
 		if (!FoundIP)
@@ -57,6 +58,7 @@ void RA_Wiznet5100::Update()
 		{
 		    boolean newline = false;
 		    boolean payload_ready = false;
+		    String headerline="";
 
 		    Serial.println(F("Receiving Data..."));
 			while(PortalClient.available())
@@ -64,6 +66,7 @@ void RA_Wiznet5100::Update()
 				wdt_reset();
 				char c = PortalClient.read();
 				Serial.write(c);
+				headerline+=c;
 				if (payload_ready)
 				{
 					firwareFile.write(c);
@@ -72,14 +75,19 @@ void RA_Wiznet5100::Update()
 				{
 					if (c == '\n')
 					{
+						byte sheader = headerline.indexOf("Length");
+						if (sheader==8)
+							lheader=headerline.substring(sheader+8).toInt();
+						headerline="";
 						newline = true;
 						c = PortalClient.read();
+						headerline+=c;
 						Serial.write(c);
 						if (c == '\r' && newline)
 						{
 							c = PortalClient.read();
 							Serial.write(c);
-							payload_ready = true;
+							if (FirmwareConnection) payload_ready = true;
 							Serial.print(F("Header size: "));
 							Serial.println(--downloadsize);
 							downloadsize=0;
@@ -126,11 +134,15 @@ void RA_Wiznet5100::Update()
 			FirmwareWaiting=false;
 			PortalClient.stop();
 			if (firwareFile) firwareFile.close();
-			if (downloadsize>2000)
+			if (lheader==downloadsize && downloadsize>600)
 			{
 				Serial.println(F("Rebooting to update firmware..."));
 				InternalMemory.write(RemoteFirmware, 0xf0);
 				while(1);
+			}
+			else
+			{
+				if (SD.exists("FIRMWARE.BIN")) SD.remove("FIRMWARE.BIN");
 			}
 			downloadsize=0;
 		}
@@ -148,6 +160,7 @@ void RA_Wiznet5100::Update()
 			FirmwareWaiting=false;
 			downloadsize=0;
 			if (firwareFile) firwareFile.close();
+			if (SD.exists("FIRMWARE.BIN")) SD.remove("FIRMWARE.BIN");
 		}
 		if (IsPortalConnected() && FirmwareConnection && !FirmwareWaiting) // Check for connection established
 		{
