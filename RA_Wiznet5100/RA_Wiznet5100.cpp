@@ -23,7 +23,6 @@ void RA_Wiznet5100::Init()
 	EthernetDHCP.begin(NetMac, 1); // Start Ethernet with DHCP polling enabled
 	NetServer.begin();
 	FoundIP=false;
-	PortalClient.setTimeout(100);
 	PortalConnection=false;
 	PortalWaiting=false;
 	PortalDataReceived=false;
@@ -40,7 +39,6 @@ void RA_Wiznet5100::Update()
 	EthernetDHCP.poll();
 
 	const byte* ipAddr=EthernetDHCP.ipAddress();
-	int lheader=0;
 	
 	if (ipAddr[0]!=0)
 	{
@@ -57,22 +55,22 @@ void RA_Wiznet5100::Update()
 		if (PortalClient.available() && (PortalConnection || FirmwareConnection))
 		{
 		    boolean newline = false;
-		    boolean payload_ready = false;
 		    String headerline="";
 
-		    Serial.println(F("Receiving Data..."));
+		    PortalTimeOut=millis();
+		    Serial.println(F("Receiving..."));
 			while(PortalClient.available())
 			{
 				wdt_reset();
 				char c = PortalClient.read();
-				Serial.write(c);
-				headerline+=c;
 				if (payload_ready)
 				{
 					firwareFile.write(c);
 				}
 				else
 				{
+					headerline+=c;
+					Serial.write(c);
 					if (c == '\n')
 					{
 						byte sheader = headerline.indexOf("Length");
@@ -88,8 +86,6 @@ void RA_Wiznet5100::Update()
 							c = PortalClient.read();
 							Serial.write(c);
 							if (FirmwareConnection) payload_ready = true;
-							Serial.print(F("Header size: "));
-							Serial.println(--downloadsize);
 							downloadsize=0;
 						}
 						else
@@ -100,17 +96,16 @@ void RA_Wiznet5100::Update()
 				}
 				downloadsize++;
 			}
+			ReefAngel.Timer[PORTAL_TIMER].Start();  // start timer
+			Serial.println(downloadsize-1);
 			if (PortalConnection) PortalDataReceived=true;
-			Serial.println();
-			Serial.println(F("Portal Received"));
+			Serial.println(F("Received"));
 		}
 
 		// if the server has disconnected, stop the client
 		if (!PortalClient.connected() && PortalConnection)
 		{
-			Serial.print(F("Data size: "));
-			Serial.println(--downloadsize);
-			Serial.println(F("Portal Disconnected"));
+			Serial.println(F("Disconnected"));
 			PortalConnection=false;
 			PortalClient.stop();
 			if (!PortalDataReceived) Init();
@@ -119,6 +114,8 @@ void RA_Wiznet5100::Update()
 			PortalWaiting=false;
 			FirmwareWaiting=false;
 			downloadsize=0;
+			lheader=0;
+		    payload_ready = false;
 			delay(100);
 			FirmwareConnect();
 			Serial.println(F("Connecting..."));
@@ -126,17 +123,20 @@ void RA_Wiznet5100::Update()
 		
 		if (!PortalClient.connected() && FirmwareConnection)
 		{
-			Serial.print(F("Data size: "));
+			Serial.print(F("Data: "));
 			Serial.println(--downloadsize);
-			Serial.println(F("Portal Disconnected"));
+			Serial.print(F("Header: "));
+			Serial.println(lheader);
+			Serial.println(F("Disconnected"));
 			FirmwareConnection=false;
 			PortalWaiting=false;
 			FirmwareWaiting=false;
 			PortalClient.stop();
+		    payload_ready = false;
 			if (firwareFile) firwareFile.close();
 			if (lheader==downloadsize && downloadsize>600)
 			{
-				Serial.println(F("Rebooting to update firmware..."));
+				Serial.println(F("Updating..."));
 				InternalMemory.write(RemoteFirmware, 0xf0);
 				while(1);
 			}
@@ -145,12 +145,14 @@ void RA_Wiznet5100::Update()
 				if (SD.exists("FIRMWARE.BIN")) SD.remove("FIRMWARE.BIN");
 			}
 			downloadsize=0;
+			lheader=0;
 		}
 
 		// if request timed out, stop the client
 		if (PortalClient.connected() && (PortalConnection || FirmwareConnection) && millis()-PortalTimeOut>PORTAL_TIMEOUT)
 		{
 			Serial.println(F("Portal Timeout"));
+			Serial.println(downloadsize);
 			PortalConnection=false;
 			FirmwareConnection=false;
 			PortalClient.stop();
@@ -159,11 +161,15 @@ void RA_Wiznet5100::Update()
 			PortalWaiting=false;
 			FirmwareWaiting=false;
 			downloadsize=0;
+			lheader=0;
+		    payload_ready = false;
 			if (firwareFile) firwareFile.close();
 			if (SD.exists("FIRMWARE.BIN")) SD.remove("FIRMWARE.BIN");
 		}
 		if (IsPortalConnected() && FirmwareConnection && !FirmwareWaiting) // Check for connection established
 		{
+		    payload_ready = false;
+			lheader=0;
 			FirmwareWaiting=true;
 			firwareFile = SD.open("FIRMWARE.BIN", O_WRITE | O_CREAT | O_TRUNC);  // change file name to write to here
 		    if (!firwareFile) {

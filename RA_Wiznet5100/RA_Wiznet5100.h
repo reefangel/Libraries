@@ -49,11 +49,13 @@ public:
 	boolean FirmwareConnection;
 	boolean IsPortalConnected();
 	boolean IsMQTTConnected();
+	unsigned long downloadsize;
+	boolean payload_ready;
+	unsigned long lheader;
 
 private:
 	unsigned long MQTTReconnectmillis;
 	unsigned long MQTTSendmillis;
-	unsigned long downloadsize;
 	File firwareFile;
 protected:
 	size_t write(uint8_t c);
