@@ -148,8 +148,16 @@ if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 	char temptext[25];
 	while(1)
 	{
-		digitalWrite(ledPin,millis()%2000>100);
-		SetOrientation(2);
+		BuzzerOn(0);
+		delay(50);
+		BuzzerOff();
+		delay(100);
+		BuzzerOn(0);
+		delay(50);
+		BuzzerOff();
+		delay(700);
+		wdt_reset();
+		SetOrientation(4);
 		LargeFont.SetColor(WARNING_TEXT,BKCOLOR,true);
 		LargeFont.DrawCenterTextP(TouchLCD.GetWidth()/2,20,NoIMCheck);
 		LargeFont.DrawCenterTextP(TouchLCD.GetWidth()/2,70,NoIMCheck1);
