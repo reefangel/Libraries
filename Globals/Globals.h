@@ -1321,6 +1321,8 @@ uint32_t read32(File f);
 //#define HX8347D
 //#define HX8347G
 
+const char DOWNLOADING[] PROGMEM = "Downloading firmware... ";
+
 const char NoIMLine1[] PROGMEM = "Please upload InitialInternalMemory code";
 const char NoIMLine2[] PROGMEM = "File";
 const char NoIMLine3[] PROGMEM = "Sketchbook";

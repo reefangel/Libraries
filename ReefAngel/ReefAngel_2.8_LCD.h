@@ -1997,7 +1997,16 @@ void ReefAngelClass::ReDrawScreen()
 		if (DisplayedMenu==DEFAULT_MENU || DisplayedMenu==MAIN_MENU)
 		{
 			Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
-			TouchLCD.DrawDateTime(now(),38,9,MilitaryTime,Font);
+			if (Network.payload_ready)
+			{
+				Font.DrawTextP(38,9,DOWNLOADING);
+				Font.DrawText((Network.downloadsize*100)/Network.lheader);
+				Font.DrawText("%");
+			}
+			else
+			{
+				TouchLCD.DrawDateTime(now(),38,9,MilitaryTime,Font);
+			}
 			if (StatusFlags || AlertFlags)
 				TouchLCD.DrawBMP(twidth-16,7,ALERTICON);
 			else
