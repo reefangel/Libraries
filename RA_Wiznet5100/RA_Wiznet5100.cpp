@@ -16,6 +16,7 @@
 RA_Wiznet5100::RA_Wiznet5100()
 {
 	PortalTimeOut=millis();
+	downloading=false;
 }
 
 void RA_Wiznet5100::Init()
@@ -85,7 +86,11 @@ void RA_Wiznet5100::Update()
 						{
 							c = PortalClient.read();
 							Serial.write(c);
-							if (FirmwareConnection) payload_ready = true;
+							if (FirmwareConnection)
+							{
+								payload_ready = true;
+								downloading = true;
+							}
 							downloadsize=0;
 						}
 						else

@@ -2005,7 +2005,18 @@ void ReefAngelClass::ReDrawScreen()
 			}
 			else
 			{
-				TouchLCD.DrawDateTime(now(),38,9,MilitaryTime,Font);
+				if (Network.downloading)
+				{
+					Font.DrawTextP(38,9,DOWNLOAD_FAILED);
+					if (SD.exists("FIRMWARE.BIN")) {
+						Serial.println(F("deleting firmware..."));
+						SD.remove("FIRMWARE.BIN");
+					}
+				}
+				else
+				{
+					TouchLCD.DrawDateTime(now(),38,9,MilitaryTime,Font);
+				}
 			}
 			if (StatusFlags || AlertFlags)
 				TouchLCD.DrawBMP(twidth-16,7,ALERTICON);

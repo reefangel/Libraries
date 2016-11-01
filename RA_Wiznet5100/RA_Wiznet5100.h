@@ -52,6 +52,7 @@ public:
 	unsigned long downloadsize;
 	boolean payload_ready;
 	unsigned long lheader;
+	boolean downloading;
 
 private:
 	unsigned long MQTTReconnectmillis;
