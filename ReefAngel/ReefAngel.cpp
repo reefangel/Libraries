@@ -2539,6 +2539,17 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
             PWM.SetActinic(AntiSyncSpeed);
 #endif // __SAM3X8E__
 
+#ifdef RA_STAR
+            if (DCPump.Daylight2Channel==Sync)
+                PWM.SetDaylight2(SyncSpeed);
+            else if (DCPump.Daylight2Channel==AntiSync)
+                PWM.SetDaylight2(AntiSyncSpeed);
+
+            if (DCPump.Actinic2Channel==Sync)
+                PWM.SetActinic2(SyncSpeed);
+            else if (DCPump.Actinic2Channel==AntiSync)
+                PWM.SetActinic2(AntiSyncSpeed);
+#endif
         if (DCPump.LowATOChannel==Sync)
             analogWrite(lowATOPin, 2.55*SyncSpeed);
 		else if (DCPump.LowATOChannel==AntiSync)

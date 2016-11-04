@@ -29,6 +29,10 @@ DCPumpClass::DCPumpClass()
 	WaterChangeSpeed=0;
 	DaylightChannel=None;
 	ActinicChannel=None;
+#ifdef RA_STAR
+	 Daylight2Channel=None;
+	 Actinic2Channel=None;
+#endif
 	LowATOChannel=None;
 	HighATOChannel=None;
 #ifdef RFEXPANSION

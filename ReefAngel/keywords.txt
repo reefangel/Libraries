@@ -757,6 +757,8 @@ Sync	LITERAL2
 AntiSync	LITERAL2
 DaylightChannel	LITERAL2
 ActinicChannel	LITERAL2
+Daylight2Channel	LITERAL2
+Actinic2Channel	LITERAL2
 FeedingSpeed	LITERAL2
 WaterChangeSpeed	LITERAL2
 
