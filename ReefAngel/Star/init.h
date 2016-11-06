@@ -7,6 +7,7 @@ EM=0;
 EM1=0;
 REM=0;
 orientation=InternalMemory.Touch_Orientation_read();
+if (orientation==255) orientation=4;
 LastOrientation=orientation;
 MilitaryTime=false;
 NeedsRedraw=true;
