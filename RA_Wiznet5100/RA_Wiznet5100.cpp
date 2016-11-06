@@ -89,7 +89,7 @@ void RA_Wiznet5100::Update()
 							if (FirmwareConnection)
 							{
 								payload_ready = true;
-								downloading = true;
+								if (lheader>0) downloading = true;
 							}
 							downloadsize=0;
 						}
