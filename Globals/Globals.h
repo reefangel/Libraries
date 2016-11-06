@@ -1296,6 +1296,7 @@ typedef struct Compensation
 #define MQTT_CUSTOM_CALIBRATION 25
 #define MQTT_VERSION	26
 #define MQTT_MEM_RAW	27
+#define MQTT_HUM 28
 
 
 // Cloud Expansion Bits ( CEM )
@@ -1307,6 +1308,9 @@ typedef struct Compensation
 #define CloudMultiWLBit		5
 #define CloudLeakBit		6
 #define CloudPARBit			7
+
+// Cloud Expansion Bits ( CEM1 )
+#define CloudHumidityBit	1
 
 #if defined RA_STAR || defined CLOUD_WIFI
 void MQTTSubCallback(char* topic, byte* payload, unsigned int length);

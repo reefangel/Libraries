@@ -103,6 +103,7 @@ void ReefAngelClass::Init()
 	Splash=true;
 	Relay.AllOff();
 	CEM=0;
+	CEM1=0;
 	OverheatProbe = T2_PROBE;
 	TempProbe = T1_PROBE;
 #ifdef ENABLE_ATO_LOGGING
@@ -739,7 +740,8 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #if defined HUMIDITYEXPANSION
-	Humidity.Read();
+	if (bitRead(ReefAngel.CEM1,CloudHumidityBit)==0)
+		Humidity.Read();
 	RefreshScreen();
 #endif  // defined HUMIDITYEXPANSION
 	OverheatCheck();
@@ -2645,6 +2647,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("wlc", mqtt_sub)==0) mqtt_type=MQTT_CALIBRATION;
 				else if (strcmp("leak", mqtt_sub)==0) mqtt_type=MQTT_LEAK;
 				else if (strcmp("par", mqtt_sub)==0) mqtt_type=MQTT_PAR;
+				else if (strcmp("hum", mqtt_sub)==0) mqtt_type=MQTT_HUM;
 				else if (strcmp("po", mqtt_sub)==0) mqtt_type=MQTT_OVERRIDE;
 				else if (strcmp("cvar", mqtt_sub)==0) mqtt_type=MQTT_CVAR;
 				else if (strcmp("mb", mqtt_sub)==0) mqtt_type=MQTT_MEM_BYTE;
@@ -2820,6 +2823,14 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			break;
 		}
 #endif // PAREXPANSION
+#ifdef HUMIDITYEXPANSION
+		case MQTT_HUM:
+		{
+			ReefAngel.Humidity.level=mqtt_val/10;
+			bitSet(ReefAngel.CEM1,CloudHumidityBit);
+			break;
+		}
+#endif // HUMIDITYEXPANSION
 #ifdef CUSTOM_VARIABLES
 		case MQTT_CVAR:
 		{

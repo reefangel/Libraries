@@ -2337,7 +2337,7 @@ void ReefAngelClass::ReDrawScreen()
 						}
 						if (Humidity.GetLevel()!=Humidity.LastLevel)
 						{
-							LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),10);
+							LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),0);
 							Humidity.LastLevel=Humidity.GetLevel();
 						}
 						x+=twidth*5/16;
@@ -2474,7 +2474,7 @@ void ReefAngelClass::ReDrawScreen()
 						}
 						if (Humidity.GetLevel()!=Humidity.LastLevel)
 						{
-							LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),10);
+							LargeFont.DrawCenterNumber(x,j,Humidity.GetLevel(),0);
 							Humidity.LastLevel=Humidity.GetLevel();
 						}
 						x+=twidth*5/21;

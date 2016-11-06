@@ -60,6 +60,6 @@ void HumidityClass::Read()
 				iHumidity+=reply[3];
 			}
 		}
-		level=iHumidity;
+		level=iHumidity/10;
 	}
 }

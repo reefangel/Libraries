@@ -31,6 +31,7 @@ typedef struct  {
   int ORP;
   int PHExp;
   int PAR;
+  int Humidity;
   byte WL[WL_CHANNELS];
   byte Leak;
   byte IO;
@@ -54,6 +55,7 @@ typedef struct  {
 #define I2CPH				0X4e
 #define I2CWaterLevel		0X4f
 #define I2CEEPROM1          0x50
+#define I2CHumidity			0x5c
 
 #define VarsStart                 200
 #define Mem_I_SalMax			  VarsStart+47
@@ -122,11 +124,13 @@ static char pub_wl[16];
 static char pub_multiwl[16];
 static char pub_custom_wl[16];
 static char pub_custom_multiwl[16];
+static char pub_humidity[16];
 static boolean SalinityFound;
 static boolean ORPFound;
 static boolean PHExpFound;
 static boolean WLFound;
 static boolean MultiWLFound;
+static boolean HumidityFound;
 
 
 #if defined(ARDUINO_ARCH_SAMD)
