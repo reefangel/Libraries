@@ -76,7 +76,6 @@ void RA_Wiznet5100::Update()
 						if (sd_index==32)
 						{
 							sd_index=0;
-							Serial.println(downloadsize);
 							ReefAngel.Timer[PORTAL_TIMER].Start();  // start timer
 							ReefAngel.Font.DrawTextP(38,9,DOWNLOADING);
 							ReefAngel.Font.DrawText((downloadsize*100)/lheader);
