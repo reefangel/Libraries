@@ -32,6 +32,7 @@ void RA_Wiznet5100::Init()
 	MQTTReconnectmillis=millis();
 	MQTTSendmillis=millis();
 	downloadsize=0;
+	sd_index=0;
 }
 
 void RA_Wiznet5100::Update()
@@ -63,13 +64,36 @@ void RA_Wiznet5100::Update()
 			while(PortalClient.available())
 			{
 				wdt_reset();
-				char c = PortalClient.read();
 				if (payload_ready)
 				{
-					firwareFile.write(c);
+					if (PortalClient.available()>32)
+					{
+						for (int a=0;a<32;a++)
+							sd_buffer[a]=PortalClient.read();
+						firwareFile.write(sd_buffer,32);
+						downloadsize+=32;
+						sd_index++;
+						if (sd_index==32)
+						{
+							sd_index=0;
+							Serial.println(downloadsize);
+							ReefAngel.Timer[PORTAL_TIMER].Start();  // start timer
+							ReefAngel.Font.DrawTextP(38,9,DOWNLOADING);
+							ReefAngel.Font.DrawText((downloadsize*100)/lheader);
+							ReefAngel.Font.DrawText("%");
+						}
+					}
+					else
+					{
+						char c = PortalClient.read();
+						downloadsize++;
+						firwareFile.write(c);
+					}
 				}
 				else
 				{
+					char c = PortalClient.read();
+					downloadsize++;
 					headerline+=c;
 					Serial.write(c);
 					if (c == '\n')
@@ -99,10 +123,8 @@ void RA_Wiznet5100::Update()
 						}
 					}
 				}
-				downloadsize++;
 			}
-			ReefAngel.Timer[PORTAL_TIMER].Start();  // start timer
-			Serial.println(downloadsize-1);
+			Serial.println(downloadsize);
 			if (PortalConnection) PortalDataReceived=true;
 			Serial.println(F("Received"));
 		}
@@ -129,7 +151,7 @@ void RA_Wiznet5100::Update()
 		if (!PortalClient.connected() && FirmwareConnection)
 		{
 			Serial.print(F("Data: "));
-			Serial.println(--downloadsize);
+			Serial.println(downloadsize);
 			Serial.print(F("Header: "));
 			Serial.println(lheader);
 			Serial.println(F("Disconnected"));
@@ -141,6 +163,7 @@ void RA_Wiznet5100::Update()
 			if (firwareFile) firwareFile.close();
 			if (lheader==downloadsize && downloadsize>600)
 			{
+				if (firwareFile) firwareFile.close();
 				Serial.println(F("Updating..."));
 				InternalMemory.write(RemoteFirmware, 0xf0);
 				while(1);

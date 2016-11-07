@@ -58,6 +58,8 @@ private:
 	unsigned long MQTTReconnectmillis;
 	unsigned long MQTTSendmillis;
 	File firwareFile;
+	byte sd_buffer[32];
+	byte sd_index;
 protected:
 	size_t write(uint8_t c);
 	size_t write(unsigned long n);
