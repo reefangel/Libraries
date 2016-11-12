@@ -21,6 +21,13 @@ RA_Wiznet5100::RA_Wiznet5100()
 
 void RA_Wiznet5100::Init()
 {
+	NetMac[5] = InternalMemory.read(StarMac);
+	if (NetMac[5]==0xff)
+	{
+		byte tempmac = random(0xff);
+		InternalMemory.write(StarMac,tempmac);
+		NetMac[5] = tempmac;
+	}
 	EthernetDHCP.begin(NetMac, 1); // Start Ethernet with DHCP polling enabled
 	NetServer.begin();
 	FoundIP=false;
