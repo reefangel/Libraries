@@ -18,7 +18,7 @@
 #include <RA_CustomSettings.h>
 
 static EthernetServer NetServer(STARPORT);
-static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, random(0xFF) };
 static IPAddress NetIP(192,168,1,200);
 
 static EthernetClient NetClient;
