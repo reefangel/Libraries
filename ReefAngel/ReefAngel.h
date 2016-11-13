@@ -495,9 +495,11 @@ public:
 	void MHLights(byte Relay);
 	void MHLights(byte Relay, byte MinuteOffset);
 	void StandardHeater(byte Relay);
+	void inline StandardHeater1(byte Relay) { StandardHeater(Relay); } ;
 	void StandardHeater2(byte Relay);
 	void StandardHeater3(byte Relay);
 	void StandardFan(byte Relay);
+	void inline StandardFan1(byte Relay) { StandardFan(Relay); } ;
 	void StandardFan2(byte Relay);
 	void StandardFan3(byte Relay);
 	void StandardATO(byte Relay);
