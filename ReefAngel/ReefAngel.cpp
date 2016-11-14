@@ -1897,39 +1897,40 @@ void ReefAngelClass::Portal(char *username, char *key)
 #ifdef CLOUD_WIFI
 void ReefAngelClass::CloudPortal()
 {
-	Network.Portal(CLOUD_USERNAME);
-	if (millis()-LastCloudCheck>1000)
+	if (!Network.payload_ready)
 	{
-		LastCloudCheck=millis();
-		for (byte a=0; a<NumParamByte;a++)
+		Network.Portal(CLOUD_USERNAME);
+		if (millis()-LastCloudCheck>1000)
 		{
-			if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
+			LastCloudCheck=millis();
+			for (byte a=0; a<NumParamByte;a++)
 			{
-				char buffer[15];
-				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
-				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
-				Serial.print(F("CLOUD:"));
-				Serial.println(buffer);
-				ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
-				delay(10);
+				if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
+				{
+					char buffer[15];
+					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
+					sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
+					Serial.print(F("CLOUD:"));
+					Serial.println(buffer);
+					ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
+					delay(10);
+				}
+			}
+			for (byte a=0; a<NumParamInt;a++)
+			{
+				if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
+				{
+					char buffer[15];
+					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
+					sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
+					Serial.print(F("CLOUD:"));
+					Serial.println(buffer);
+					ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
+					delay(10);
+				}
 			}
 		}
-		for (byte a=0; a<NumParamInt;a++)
-		{
-			if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
-			{
-				char buffer[15];
-				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
-				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
-				Serial.print(F("CLOUD:"));
-				Serial.println(buffer);
-				ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
-				delay(10);
-			}
-		}
-	}		
-
-
+	}
 }
 #endif // CLOUD_WIFI
 
@@ -3056,6 +3057,5 @@ void ReefAngelClass::DimmingOverride(int weboption, int weboption2 )
 #endif // SIXTEENCHPWMEXPANSION
 #endif // DisplayLEDPWM
 }
-
 
 ReefAngelClass ReefAngel = ReefAngelClass() ;

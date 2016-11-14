@@ -296,60 +296,63 @@ boolean RA_Wiznet5100::IsMQTTConnected()
 
 void RA_Wiznet5100::Cloud()
 {
-	if (FoundIP)
+	if (!payload_ready)
 	{
-		Portal(CLOUD_USERNAME);
-		MQTTClient.loop();
-		if (millis()-MQTTReconnectmillis>5000)
+		if (FoundIP)
 		{
-			if (!MQTTClient.connected())
+			Portal(CLOUD_USERNAME);
+			MQTTClient.loop();
+			if (millis()-MQTTReconnectmillis>5000)
 			{
-				char sub_buffer[sizeof(CLOUD_USERNAME)+6];
-				MQTTReconnectmillis=millis();
-				Serial.println(F("MQTT Connecting..."));
-				wdt_reset();
-				sprintf(sub_buffer, "RA-%s", CLOUD_USERNAME);
-				if (MQTTClient.connect(sub_buffer,CLOUD_USERNAME,CLOUD_PASSWORD))
+				if (!MQTTClient.connected())
 				{
-					sprintf(sub_buffer, "%s/in/#", CLOUD_USERNAME);
-					Serial.println(F("MQTT succeeded"));
-					MQTTClient.subscribe(sub_buffer);
+					char sub_buffer[sizeof(CLOUD_USERNAME)+6];
+					MQTTReconnectmillis=millis();
+					Serial.println(F("MQTT Connecting..."));
 					wdt_reset();
-				}
-				else
-				{
-					Serial.println(F("MQTT failed"));
-					MQTTClient.disconnect();
+					sprintf(sub_buffer, "RA-%s", CLOUD_USERNAME);
+					if (MQTTClient.connect(sub_buffer,CLOUD_USERNAME,CLOUD_PASSWORD))
+					{
+						sprintf(sub_buffer, "%s/in/#", CLOUD_USERNAME);
+						Serial.println(F("MQTT succeeded"));
+						MQTTClient.subscribe(sub_buffer);
+						wdt_reset();
+					}
+					else
+					{
+						Serial.println(F("MQTT failed"));
+						MQTTClient.disconnect();
+					}
 				}
 			}
+			
+			if (millis()-MQTTSendmillis>1000 && MQTTClient.connected())
+			{
+				MQTTSendmillis=millis();
+				for (byte a=0; a<NumParamByte;a++)
+				{
+					if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
+					{
+						char buffer[15];
+						strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
+						sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
+						CloudPublish(buffer);
+						ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
+					}
+				}
+				for (byte a=0; a<NumParamInt;a++)
+				{
+					if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
+					{
+						char buffer[15];
+						strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
+						sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
+						CloudPublish(buffer);
+						ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
+					}
+				}
+			}		
 		}
-		
-		if (millis()-MQTTSendmillis>1000 && MQTTClient.connected())
-		{
-			MQTTSendmillis=millis();
-			for (byte a=0; a<NumParamByte;a++)
-			{
-				if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
-				{
-					char buffer[15];
-					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
-					sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
-					CloudPublish(buffer);
-					ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
-				}
-			}
-			for (byte a=0; a<NumParamInt;a++)
-			{
-				if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
-				{
-					char buffer[15];
-					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
-					sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
-					CloudPublish(buffer);
-					ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
-				}
-			}
-		}		
 	}
 }
 

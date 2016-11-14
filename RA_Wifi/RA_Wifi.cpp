@@ -1727,7 +1727,7 @@ void RA_Wifi::Portal(char *username)
 {
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
 #ifdef ETH_WIZ5100
-  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,"");
+  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP && !ReefAngel.Network.payload_ready) SendPortal(username,"");
 #endif
   portalusername=username;
 }
@@ -1736,7 +1736,7 @@ void RA_Wifi::Portal(char *username, char *key)
 {
   if (ReefAngel.Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
 #ifdef ETH_WIZ5100
-  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP) SendPortal(username,key); // Let's keep checking for Portal connection
+  if (ReefAngel.Network.PortalConnection && ReefAngel.Network.FoundIP && !ReefAngel.Network.payload_ready) SendPortal(username,key); // Let's keep checking for Portal connection
 #endif
   portalusername=username;
   portalkey=key;
