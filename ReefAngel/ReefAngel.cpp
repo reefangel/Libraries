@@ -1897,37 +1897,34 @@ void ReefAngelClass::Portal(char *username, char *key)
 #ifdef CLOUD_WIFI
 void ReefAngelClass::CloudPortal()
 {
-	if (!Network.payload_ready)
+	Network.Portal(CLOUD_USERNAME);
+	if (millis()-LastCloudCheck>1000)
 	{
-		Network.Portal(CLOUD_USERNAME);
-		if (millis()-LastCloudCheck>1000)
+		LastCloudCheck=millis();
+		for (byte a=0; a<NumParamByte;a++)
 		{
-			LastCloudCheck=millis();
-			for (byte a=0; a<NumParamByte;a++)
+			if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
 			{
-				if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
-				{
-					char buffer[15];
-					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
-					sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
-					Serial.print(F("CLOUD:"));
-					Serial.println(buffer);
-					ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
-					delay(10);
-				}
+				char buffer[15];
+				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
+				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
+				Serial.print(F("CLOUD:"));
+				Serial.println(buffer);
+				ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
+				delay(10);
 			}
-			for (byte a=0; a<NumParamInt;a++)
+		}
+		for (byte a=0; a<NumParamInt;a++)
+		{
+			if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
 			{
-				if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
-				{
-					char buffer[15];
-					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
-					sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
-					Serial.print(F("CLOUD:"));
-					Serial.println(buffer);
-					ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
-					delay(10);
-				}
+				char buffer[15];
+				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
+				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
+				Serial.print(F("CLOUD:"));
+				Serial.println(buffer);
+				ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
+				delay(10);
 			}
 		}
 	}
