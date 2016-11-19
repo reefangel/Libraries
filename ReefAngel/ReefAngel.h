@@ -356,10 +356,11 @@ public:
 	&CloudDummyByte,
 #endif
 #ifdef CUSTOM_VARIABLES
-	&CustomVar[0],&CustomVar[1],&CustomVar[2],&CustomVar[3],&CustomVar[4],&CustomVar[5],&CustomVar[6],&CustomVar[7]
+	&CustomVar[0],&CustomVar[1],&CustomVar[2],&CustomVar[3],&CustomVar[4],&CustomVar[5],&CustomVar[6],&CustomVar[7],
 #else
-	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte
+	&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,&CloudDummyByte,
 #endif
+	&Relay.RelayData,&Relay.RelayMaskOff,&Relay.RelayMaskOn
 	};
 	
 	int* ParamArrayInt[NumParamInt] = {&Params.Temp[T1_PROBE],&Params.Temp[T2_PROBE],&Params.Temp[T3_PROBE],&Params.PH,
