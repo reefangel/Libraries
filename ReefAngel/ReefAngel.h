@@ -454,6 +454,9 @@ public:
 
 	boolean isATOTimeOut();
 	boolean isOverheat();
+	boolean isFeedingMode();
+	boolean isWaterChangeMode();
+	boolean isLightsOnMode();
 	
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);

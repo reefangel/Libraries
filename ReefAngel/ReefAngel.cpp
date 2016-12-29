@@ -1794,6 +1794,21 @@ boolean ReefAngelClass::isOverheat()
 	return bitRead(AlertFlags, OverheatFlag);
 }
 
+boolean ReefAngelClass::isFeedingMode()
+{
+	return bitRead(StatusFlags, FeedingFlag);
+}
+
+boolean ReefAngelClass::isWaterChangeMode()
+{
+	return bitRead(StatusFlags, WaterChangeFlag);
+}
+
+boolean ReefAngelClass::isLightsOnMode()
+{
+	return bitRead(StatusFlags, LightsOnFlag);
+}
+
 void ReefAngelClass::LightsOn()
 {
 	// turn on ports
