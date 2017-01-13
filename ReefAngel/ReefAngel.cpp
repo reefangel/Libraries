@@ -2880,6 +2880,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			ReefAngel.Network.CloudPublish(buffer);
 #endif
 #ifdef CLOUD_WIFI
+			Serial.print(F("CLOUD:"));
 			Serial.println(buffer);
 #endif
 			break;
@@ -2893,6 +2894,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			ReefAngel.Network.CloudPublish(buffer);
 #endif
 #ifdef CLOUD_WIFI
+			Serial.print(F("CLOUD:"));
 			Serial.println(buffer);
 #endif
 			break;
@@ -2919,6 +2921,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			ReefAngel.Network.CloudPublish(buffer);
 #endif
 #ifdef CLOUD_WIFI
+			Serial.print(F("CLOUD:"));
 			Serial.println(buffer);
 #endif
 			break;
@@ -2931,6 +2934,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			ReefAngel.Network.CloudPublish(buffer);
 #endif
 #ifdef CLOUD_WIFI
+			Serial.print(F("CLOUD:"));
 			Serial.println(buffer);
 #endif
 			break;
@@ -2946,10 +2950,14 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			ReefAngel.Network.CloudPublish(buffer);
 #endif
 #ifdef CLOUD_WIFI
+			Serial.print(F("CLOUD:"));
 			Serial.println(buffer);
+			delay(10);
+			wdt_reset();
 #endif
 				mindex+=8;
 			}
+			break;
 		}
 	}
 }
