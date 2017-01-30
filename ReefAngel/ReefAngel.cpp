@@ -1927,6 +1927,7 @@ void ReefAngelClass::CloudPortal()
 				Serial.println(buffer);
 				ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
 				delay(10);
+				wdt_reset();
 			}
 		}
 		for (byte a=0; a<NumParamInt;a++)
@@ -1940,6 +1941,7 @@ void ReefAngelClass::CloudPortal()
 				Serial.println(buffer);
 				ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
 				delay(10);
+				wdt_reset();
 			}
 		}
 	}
