@@ -316,8 +316,9 @@ public:
 	void inline AddExtraTempProbes() {};
 	void inline Display24h() {};
 	void inline UseFlexiblePhCalibration() {};
-	void inline ReverseATOLow() {};
-	void inline ReverseATOHigh() {};
+	void inline UseFlexibleORPCalibration() {};
+        void inline ReverseATOLow() {};
+        void inline ReverseATOHigh() {};
 	void inline Mini() {}; // deprecated
 	void inline Touch() {};
 	void inline TouchDisplay() {};
