@@ -1048,7 +1048,7 @@ void RA_Wifi::PrintHeader(int s, byte type)
 
 	PROGMEMprint(SERVER_HEADER2);
 	print(s, DEC);
-	print("\r\n\r\n");
+	PROGMEMprint(SERVER_HEADER3);
 }
 
 char RA_Wifi::GetC(int c)

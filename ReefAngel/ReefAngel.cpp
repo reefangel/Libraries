@@ -2701,7 +2701,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 		}
 	}
 #ifdef RA_STAR
-	Serial.println();
+	Serial.println(F(" "));
 #endif
 	switch (mqtt_type)
 	{
@@ -2947,7 +2947,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			char buffer[21];
 			while ((VarsEnd-VarsStart-mindex)>8)
 			{
-				sprintf(buffer,"MR%02d:%02x%02x%02x%02x%02x%02x%02x%02x",mindex/8,InternalMemory.read(VarsStart+mindex+0),InternalMemory.read(VarsStart+mindex+1),InternalMemory.read(VarsStart+mindex+2),InternalMemory.read(VarsStart+mindex+3),InternalMemory.read(VarsStart+mindex+4),InternalMemory.read(VarsStart+mindex+5),InternalMemory.read(VarsStart+mindex+6),InternalMemory.read(VarsStart+mindex+7));
+				sprintf(buffer,"MR%02d:%02x%02x%02x%02x%02x%02x%02x%02x  ",mindex/8,InternalMemory.read(VarsStart+mindex+0),InternalMemory.read(VarsStart+mindex+1),InternalMemory.read(VarsStart+mindex+2),InternalMemory.read(VarsStart+mindex+3),InternalMemory.read(VarsStart+mindex+4),InternalMemory.read(VarsStart+mindex+5),InternalMemory.read(VarsStart+mindex+6),InternalMemory.read(VarsStart+mindex+7));
 #ifdef RA_STAR
 			ReefAngel.Network.CloudPublish(buffer);
 #endif

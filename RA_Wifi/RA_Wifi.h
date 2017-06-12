@@ -132,6 +132,7 @@ const char XML_ERR[] PROGMEM = "ERR";
 
 const char SERVER_HEADER1[] PROGMEM = "HTTP/1.1 200 OK\r\nServer: ReefAngel\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET\r\nConnection: close\r\nContent-Type: text/";
 const char SERVER_HEADER2[] PROGMEM = "\r\nContent-Length: ";
+const char SERVER_HEADER3[] PROGMEM = "\r\n\r\n";
 const char SERVER_DENY[] PROGMEM = "HTTP/1.1 401 Access Denied\r\nWWW-Authenticate: Basic realm=Reef Angel Controller\r\nContent-Length: 0\r\n";
 const char SERVER_DEFAULT[] PROGMEM = "<h1>Reef Angel Controller Web Server</h1>";
 
