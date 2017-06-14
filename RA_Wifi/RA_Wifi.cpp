@@ -1758,14 +1758,14 @@ void RA_Wifi::SendPortal(char *username, char*key)
 	  ReefAngel.Network.PortalConnection=true;
 	  PortalWaiting=false;
 	  ReefAngel.Network.PortalConnect();
-	  Serial.println(F("Connecting..."));
+	  //Serial.println(F("Connecting..."));
   }
   else
   {
 	if (ReefAngel.Network.IsPortalConnected() && !PortalWaiting) // Check for connection established
 	{
 		PortalWaiting=true;
-		Serial.println(F("Connected"));
+		//Serial.println(F("Connected"));
 #endif
   PROGMEMprint(BannerGET);
   print(ReefAngel.Params.Temp[T1_PROBE], DEC);

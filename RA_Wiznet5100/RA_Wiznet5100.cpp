@@ -67,7 +67,7 @@ void RA_Wiznet5100::Update()
 		    String headerline="";
 
 		    PortalTimeOut=millis();
-		    Serial.println(F("Receiving..."));
+		    //Serial.println(F("Receiving"));
 			while(PortalClient.available())
 			{
 				wdt_reset();
@@ -131,9 +131,9 @@ void RA_Wiznet5100::Update()
 					}
 				}
 			}
-			Serial.println(downloadsize);
+			//Serial.println(downloadsize);
 			if (PortalConnection) PortalDataReceived=true;
-			Serial.println(F("Received"));
+			//Serial.println(F("Received"));
 		}
 
 		// if the server has disconnected, stop the client
@@ -152,7 +152,7 @@ void RA_Wiznet5100::Update()
 		    payload_ready = false;
 			delay(100);
 			FirmwareConnect();
-			Serial.println(F("Connecting..."));
+			//Serial.println(F("Connecting..."));
 		}
 		
 		if (!PortalClient.connected() && FirmwareConnection)
