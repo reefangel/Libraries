@@ -91,6 +91,8 @@ void RA_TS::SaveCalibration()
 boolean RA_TS::GetTouch()
 {
 #ifdef TOUCHCAP
+	digitalWrite(i2cEnable1,LOW);
+	digitalWrite(i2cEnable2,HIGH);
 	X = Y = 0;
 	uint8_t n = readRegister8(FT6206_REG_NUMTOUCHES);
 	if ((n == 0) || (n > 2)) return false;
@@ -107,6 +109,8 @@ boolean RA_TS::GetTouch()
 	Wire.endTransmission();  
 	disableI2CChannel1();
 	touches = i2cdat[0x02];
+	digitalWrite(i2cEnable1,HIGH);
+	digitalWrite(i2cEnable2,LOW);
 	
 	if ((touches == 0) || (touches > 2))
 	{
@@ -280,7 +284,6 @@ boolean RA_TS::GetTouch()
 	if (Y <= 0) Y = 0;
 	if (uX==0 && uY==0) return false; else return true;
 #endif //TOUCHCAP
-
 }
 
 boolean RA_TS::IsTouched()

@@ -37,7 +37,7 @@ digitalWrite(i2cMuxEnable,LOW);
 delay(10);
 digitalWrite(i2cMuxEnable,HIGH);
 digitalWrite(i2cEnable1,HIGH);
-digitalWrite(i2cEnable2,HIGH);
+digitalWrite(i2cEnable2,LOW);
 SPI.begin();
 Serial.println(F("SPI Init"));
 TouchLCD.Init();
