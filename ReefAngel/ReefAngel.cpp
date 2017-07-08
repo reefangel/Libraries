@@ -1913,7 +1913,7 @@ void ReefAngelClass::Portal(char *username, char *key)
 void ReefAngelClass::CloudPortal()
 {
 	Network.Portal(CLOUD_USERNAME);
-	if (millis()-LastCloudCheck>1000)
+	if (millis()-LastCloudCheck>1000 && !Network.BlockCloud())
 	{
 		LastCloudCheck=millis();
 		for (byte a=0; a<NumParamByte;a++)

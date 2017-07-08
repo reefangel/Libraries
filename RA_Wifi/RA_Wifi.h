@@ -286,6 +286,7 @@ const char JSON_CLOSE[] PROGMEM = "}}";
 #define REQ_M_CVAR		23		// Custom Variable
 #define REQ_CALIBRATION	24		// Calibration
 #define REQ_JSON		25		// JSON export
+#define REQ_FAVICON		26		// favicon
 #define REQ_HTTP		127		// HTTP get request from  external server
 #define REQ_UNKNOWN		128	 	// Unknown request
 
@@ -509,6 +510,7 @@ class RA_Wifi: public Print
     char *portalkey;
     char encodeduserpass[50];
     char *portalsubdomain;
+    inline boolean BlockCloud() { return reqtype!=0; };
     
 #ifndef ETH_WIZ5100
     using Print::write;

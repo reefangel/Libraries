@@ -215,6 +215,7 @@ void RA_Wifi::PushBuffer(byte inStr)
 #endif
             else if (strncmp("GET /cal", m_pushback, 8)==0) { reqtype = -REQ_CALIBRATION; weboption2 = -1; bHasSecondValue = false; bCommaCount = 0; }
             else if (strncmp("GET /json", m_pushback, 9)==0) reqtype = REQ_JSON;
+            else if (strncmp("GET /favicon.ico", m_pushback, 16)==0) reqtype = REQ_FAVICON;
 #ifdef CLOUD_WIFI
             else if (strncmp("cloud:", m_pushback, 6)==0)
             {
@@ -252,6 +253,7 @@ void RA_Wifi::ProcessHTTP()
 	switch ( reqtype )
 	{
 		case REQ_ROOT:
+		case REQ_FAVICON:
 		{
 			WebResponse(SERVER_DEFAULT, sizeof(SERVER_DEFAULT) - 1);
 			break;
