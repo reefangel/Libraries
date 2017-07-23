@@ -364,6 +364,11 @@ public:
 	};
 	
 	int* ParamArrayInt[NumParamInt] = {&Params.Temp[T1_PROBE],&Params.Temp[T2_PROBE],&Params.Temp[T3_PROBE],&Params.PH,
+#ifdef EXTRA_TEMP_PROBES
+	&Params.Temp[T4_PROBE],&Params.Temp[T5_PROBE],&Params.Temp[T6_PROBE],
+#else
+	&CloudDummyInt,&CloudDummyInt,&CloudDummyInt,
+#endif
 #ifdef ORPEXPANSION
 	&Params.ORP,
 #else
