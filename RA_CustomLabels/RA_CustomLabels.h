@@ -54,6 +54,12 @@ const char LABEL_TEMP2[] PROGMEM = "Temp 2";
 const char LABEL_TEMP2_SHORT[] PROGMEM = "T2";
 const char LABEL_TEMP3[] PROGMEM = "Temp 3";
 const char LABEL_TEMP3_SHORT[] PROGMEM = "T3";
+const char LABEL_TEMP4[] PROGMEM = "Temp 4";
+const char LABEL_TEMP4_SHORT[] PROGMEM = "T4";
+const char LABEL_TEMP5[] PROGMEM = "Temp 5";
+const char LABEL_TEMP5_SHORT[] PROGMEM = "T5";
+const char LABEL_TEMP6[] PROGMEM = "Temp 6";
+const char LABEL_TEMP6_SHORT[] PROGMEM = "T6";
 const char LABEL_PH[] PROGMEM = "pH";
 
 const char LABEL_ATOLOW[] PROGMEM = "Low ATO";

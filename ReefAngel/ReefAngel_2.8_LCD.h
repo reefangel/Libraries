@@ -2041,6 +2041,11 @@ void ReefAngelClass::ReDrawScreen()
 					LastParams.Temp[T2_PROBE]=-1;
 					LastParams.Temp[T3_PROBE]=-1;
 					LastParams.PH=0;
+#ifdef EXTRA_TEMP_PROBES
+					LastParams.Temp[T4_PROBE]=-1;
+					LastParams.Temp[T5_PROBE]=-1;
+					LastParams.Temp[T6_PROBE]=-1;
+#endif
 #ifdef SALINITYEXPANSION
 					LastParams.Salinity=-1;
 #endif // SALINITYEXPANSION
@@ -2074,7 +2079,15 @@ void ReefAngelClass::ReDrawScreen()
 						Font.DrawCenterTextP(x,j,LABEL_TEMP2);
 						x+=twidth*5/16;
 						Font.DrawCenterTextP(x,j,LABEL_TEMP3);
-						
+#ifdef EXTRA_TEMP_PROBES
+						x=twidth*3/16;
+						j+=45+i;
+						Font.DrawCenterTextP(x,j,LABEL_TEMP4);
+						x+=twidth*5/16;
+						Font.DrawCenterTextP(x,j,LABEL_TEMP5);
+						x+=twidth*5/16;
+						Font.DrawCenterTextP(x,j,LABEL_TEMP6);
+#endif
 						//pH
 						x=twidth*3/16;
 						j+=45+i;
@@ -2165,6 +2178,15 @@ void ReefAngelClass::ReDrawScreen()
 						x+=twidth*5/21;
 						Font.DrawCenterTextP(x,j,LABEL_TEMP3);
 						x+=twidth*5/21;
+#ifdef EXTRA_TEMP_PROBES
+						Font.DrawCenterTextP(x,j,LABEL_TEMP4);
+						x=twidth*3/21;
+						j+=43+i;
+						Font.DrawCenterTextP(x,j,LABEL_TEMP5);
+						x+=twidth*5/21;
+						Font.DrawCenterTextP(x,j,LABEL_TEMP6);
+						x+=twidth*5/21;
+#endif
 						Font.DrawCenterTextP(x,j,LABEL_PH);
 						x+=twidth*5/21;
 
@@ -2259,26 +2281,34 @@ void ReefAngelClass::ReDrawScreen()
 					x=twidth*3/16;
 					j=31+i;
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					if (Params.Temp[T1_PROBE]!=LastParams.Temp[T1_PROBE])
+					for (int a=1;a<=TEMP_PROBES;a++)
 					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T1_PROBE],10);
-						LastParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
+						if (Params.Temp[a]!=LastParams.Temp[a])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[a],10);
+							LastParams.Temp[a]=Params.Temp[a];
+						}
+						x+=twidth*5/16;
+						if (x>twidth*14/16)
+						{
+							x=twidth*3/16;
+							j+=45+i;
+						}
 					}
-					x+=twidth*5/16;
-					if (Params.Temp[T1_PROBE]!=LastParams.Temp[T2_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
-						LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
-					}
-					x+=twidth*5/16;
-					if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
-						LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
-					}
+//					if (Params.Temp[T1_PROBE]!=LastParams.Temp[T2_PROBE])
+//					{
+//						LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
+//						LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
+//					}
+//					x+=twidth*5/16;
+//					if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
+//					{
+//						LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
+//						LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
+//					}
 					//pH
-					x=twidth*3/16;
-					j+=43+i;
+//					x=twidth*3/16;
+//					j+=43+i;
 					if (Params.PH!=LastParams.PH)
 					{
 						LargeFont.DrawCenterNumber(x,j,Params.PH,100);
@@ -2388,24 +2418,32 @@ void ReefAngelClass::ReDrawScreen()
 					//Temperature
 					j=32+i;
 					LargeFont.SetColor(COLOR_WHITE,BKCOLOR,false);
-					if (Params.Temp[T1_PROBE]!=LastParams.Temp[T1_PROBE])
+					for (int a=1;a<=TEMP_PROBES;a++)
 					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T1_PROBE],10);
-						LastParams.Temp[T1_PROBE]=Params.Temp[T1_PROBE];
+						if (Params.Temp[a]!=LastParams.Temp[a])
+						{
+							LargeFont.DrawCenterNumber(x,j,Params.Temp[a],10);
+							LastParams.Temp[a]=Params.Temp[a];
+						}
+						x+=twidth*5/21;
+						if (x>twidth*18/21)
+						{
+							x=twidth*3/21;
+							j+=43+i;
+						}
 					}
-					x+=twidth*5/21;
-					if (Params.Temp[T2_PROBE]!=LastParams.Temp[T2_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
-						LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
-					}
-					x+=twidth*5/21;
-					if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
-					{
-						LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
-						LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
-					}
-					x+=twidth*5/21;
+//					if (Params.Temp[T2_PROBE]!=LastParams.Temp[T2_PROBE])
+//					{
+//						LargeFont.DrawCenterNumber(x,j,Params.Temp[T2_PROBE],10);
+//						LastParams.Temp[T2_PROBE]=Params.Temp[T2_PROBE];
+//					}
+//					x+=twidth*5/21;
+//					if (Params.Temp[T3_PROBE]!=LastParams.Temp[T3_PROBE])
+//					{
+//						LargeFont.DrawCenterNumber(x,j,Params.Temp[T3_PROBE],10);
+//						LastParams.Temp[T3_PROBE]=Params.Temp[T3_PROBE];
+//					}
+//					x+=twidth*5/21;
 					if (Params.PH!=LastParams.PH)
 					{
 						LargeFont.DrawCenterNumber(x,j,Params.PH,100);
