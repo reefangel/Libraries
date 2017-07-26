@@ -284,6 +284,7 @@ void ReefAngelClass::SetupTouchCalibrateSal()
 	LargeFont.DrawCenterTextP(twidth/2, 35, MENU_BUTTON_CALIBRATION);
 
 	Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+#ifdef SALINITYEXPANSION
 	Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
 	Font.DrawCenterNumber(twidth/2- 10,theight*5/12,35,0);
 	Font.DrawCenterTextP(twidth/2+ 15,theight*5/12,SAL_CALI2);
@@ -297,6 +298,9 @@ void ReefAngelClass::SetupTouchCalibrateSal()
 
 	OkButton.SetPosition(twidth/4-40,theight*17/20);
 	OkButton.Show();
+#else
+	Font.DrawCenterTextP(twidth/2,theight/2,MENU_BUTTON_NOT_ENABLED);
+#endif
 	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
 	CancelButton.Show();
 	TouchEnabled=true;
@@ -321,6 +325,7 @@ void ReefAngelClass::SetupTouchCalibrateORP()
 	LargeFont.DrawCenterTextP(twidth/2, 35, MENU_BUTTON_CALIBRATION);
 
 	Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+#ifdef ORPEXPANSION
 	Font.DrawCenterTextP(twidth/2,theight/3,ORP_CALI1);
 	Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI3);
 
@@ -330,6 +335,9 @@ void ReefAngelClass::SetupTouchCalibrateORP()
 
 	OkButton.SetPosition(twidth/4-40,theight*17/20);
 	OkButton.Show();
+#else
+	Font.DrawCenterTextP(twidth/2,theight/2,MENU_BUTTON_NOT_ENABLED);
+#endif
 	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
 	CancelButton.Show();
 	TouchEnabled=true;
@@ -354,6 +362,7 @@ void ReefAngelClass::SetupTouchCalibratePHExp()
 	LargeFont.DrawCenterTextP(twidth/2, 35, MENU_BUTTON_CALIBRATION);
 
 	Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+#ifdef PHEXPANSION
 	Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
 	Font.DrawCenterTextP(twidth/2- 10,theight*5/12,MENU_BUTTON_PH);
 	Font.DrawCenterNumber(twidth/2+ 10,theight*5/12,7,1);
@@ -367,6 +376,9 @@ void ReefAngelClass::SetupTouchCalibratePHExp()
 
 	OkButton.SetPosition(twidth/4-40,theight*17/20);
 	OkButton.Show();
+#else
+	Font.DrawCenterTextP(twidth/2,theight/2,MENU_BUTTON_NOT_ENABLED);
+#endif
 	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
 	CancelButton.Show();
 	TouchEnabled=true;
@@ -391,6 +403,7 @@ void ReefAngelClass::SetupTouchCalibrateWL(byte channel)
 	LargeFont.DrawCenterTextP(twidth/2, 35, MENU_BUTTON_CALIBRATION);
 
 	Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION 
 	Font.DrawCenterTextP(twidth/2,theight/3,WL_CALI7);
 	Font.DrawText(channel);
 	Font.DrawCenterTextP(twidth/2,theight*5/12,WL_CALI1);
@@ -403,6 +416,9 @@ void ReefAngelClass::SetupTouchCalibrateWL(byte channel)
 
 	OkButton.SetPosition(twidth/4-40,theight*17/20);
 	OkButton.Show();
+#else
+	Font.DrawCenterTextP(twidth/2,theight/2,MENU_BUTTON_NOT_ENABLED);
+#endif
 	CancelButton.SetPosition(twidth*3/4-60,theight*17/20);
 	CancelButton.Show();
 	TouchEnabled=true;
@@ -764,9 +780,8 @@ void ReefAngelClass::ShowTouchInterface()
 	{
 		unsigned long t=newnow-now();
 		unsigned long p=0;
-
-		if (!TS.IsTouched()) TouchEnabled=true;
-		if (TouchEnabled && TS.IsTouched())
+		
+		if (TS.IsTouched())
 		{
 			if (CancelButton.IsPressed())
 				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
@@ -774,19 +789,15 @@ void ReefAngelClass::ShowTouchInterface()
 		switch(CalStep)
 		{
 		case 0:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 1:
@@ -822,52 +833,40 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 3:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI10);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI11);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI10);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI11);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 4:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
-					Font.DrawCenterTextP(twidth/2- 15,theight*5/12,MENU_BUTTON_PH);
-					Font.DrawCenterNumber(twidth/2+ 15,theight*5/12,10,1);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
-					Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
-					Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
+				Font.DrawCenterTextP(twidth/2- 15,theight*5/12,MENU_BUTTON_PH);
+				Font.DrawCenterNumber(twidth/2+ 15,theight*5/12,10,1);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
+				Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
+				Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 5:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 6:
@@ -903,49 +902,39 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 8:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
-					Font.DrawTextP(twidth/4,theight/2,MENU_BUTTON_PH);
-					Font.DrawText(twidth/4+ 20,theight/2,7);
-					Font.DrawTextP(twidth/4,theight*7/12,MENU_BUTTON_PH);
-					Font.DrawText(twidth/4+ 20,theight*7/12,10);
-					Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
-					Font.SetColor(COLOR_RED, COLOR_WHITE,false);
-					Font.DrawText(twidth*3/4,theight/2,CalVal1);
-					Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
+				Font.DrawTextP(twidth/4,theight/2,MENU_BUTTON_PH);
+				Font.DrawText(twidth/4+ 20,theight/2,7);
+				Font.DrawTextP(twidth/4,theight*7/12,MENU_BUTTON_PH);
+				Font.DrawText(twidth/4+ 20,theight*7/12,10);
+				Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawText(twidth*3/4,theight/2,CalVal1);
+				Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
+				CalStep++;
 			}
 			break;
 		case 9:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
-					InternalMemory.PHMin_write(CalVal1);
-					PHMin = CalVal1;
-					InternalMemory.PHMax_write(CalVal2);
-					PHMax = CalVal2;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
+				InternalMemory.PHMin_write(CalVal1);
+				PHMin = CalVal1;
+				InternalMemory.PHMax_write(CalVal2);
+				PHMax = CalVal2;
+				CalStep++;
 			}
 			break;
 		case 10:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-					ShowTouchMenu(CALIBRATE_MENU_SCREEN);
-				TouchEnabled=false;
+				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 			}
 			break;
 		}
@@ -953,8 +942,7 @@ void ReefAngelClass::ShowTouchInterface()
 	}
 	case SAL_CALIBRATE_MENU:
 	{
-		if (!TS.IsTouched()) TouchEnabled=true;
-		if (TouchEnabled && TS.IsTouched())
+		if (TS.IsTouched())
 		{
 			if (CancelButton.IsPressed())
 			{
@@ -962,6 +950,7 @@ void ReefAngelClass::ShowTouchInterface()
 				ReefAngel.Network.CloudPublish("SALC:0");
 			}
 		}
+
 #ifdef SALINITYEXPANSION
 		unsigned long t=newnow-now();
 		unsigned long p=0;
@@ -969,19 +958,15 @@ void ReefAngelClass::ShowTouchInterface()
 		switch(CalStep)
 		{
 		case 0:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 1:
@@ -1024,50 +1009,41 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 3:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
-					Font.DrawText(twidth/4- 20,theight/2,35);
-					Font.DrawTextP(twidth/4,theight/2,SAL_CALI2);
-					Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
-					Font.SetColor(COLOR_RED, COLOR_WHITE,false);
-					Font.DrawText(twidth*3/4,theight/2,CalVal1);
-					CalStep++;
-				}
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
+				Font.DrawText(twidth/4- 20,theight/2,35);
+				Font.DrawTextP(twidth/4,theight/2,SAL_CALI2);
+				Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawText(twidth*3/4,theight/2,CalVal1);
+				CalStep++;
 				TouchEnabled=false;
 			}
 			break;
 		case 4:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
+				InternalMemory.SalMax_write(CalVal1);
+				SalMax = CalVal1;
+				CalStep++;
+				if (bitRead(ReefAngel.CEM,CloudSalinityBit)==1)
 				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
-					InternalMemory.SalMax_write(CalVal1);
-					SalMax = CalVal1;
-					CalStep++;
-					if (bitRead(ReefAngel.CEM,CloudSalinityBit)==1)
-					{
-						char buffer[16];
-						sprintf(buffer, "SALC:2:%d", CalVal1);
-						ReefAngel.Network.CloudPublish(buffer);
-					}
+					char buffer[16];
+					sprintf(buffer, "SALC:2:%d", CalVal1);
+					ReefAngel.Network.CloudPublish(buffer);
 				}
-				TouchEnabled=false;
 			}
 			break;
 		case 5:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-					ShowTouchMenu(CALIBRATE_MENU_SCREEN);
-				TouchEnabled=false;
+				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 			}
 			break;
 		}
@@ -1076,13 +1052,12 @@ void ReefAngelClass::ShowTouchInterface()
 	}
 	case ORP_CALIBRATE_MENU:
 	{
-		if (!TS.IsTouched()) TouchEnabled=true;
-		if (TouchEnabled && TS.IsTouched())
+		if (TS.IsTouched())
 		{
 			if (CancelButton.IsPressed())
 			{
-				ReefAngel.Network.CloudPublish("ORPC:0");
 				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
+				ReefAngel.Network.CloudPublish("ORPC:0");
 			}
 		}
 #ifdef ORPEXPANSION
@@ -1092,19 +1067,15 @@ void ReefAngelClass::ShowTouchInterface()
 		switch(CalStep)
 		{
 		case 0:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 1:
@@ -1147,52 +1118,40 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 3:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,ORP_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,ORP_CALI5);
-					Font.DrawCenterTextP(twidth/2,theight/2,ORP_CALI6);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,ORP_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,ORP_CALI5);
+				Font.DrawCenterTextP(twidth/2,theight/2,ORP_CALI6);
+				CalStep++;
 			}
 			break;
 		case 4:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
-					Font.DrawCenterNumber(twidth/2- 15,theight*5/12,470,0);
-					Font.DrawCenterTextP(twidth/2+ 15,theight*5/12,ORP_CALI3);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
-					Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
-					Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
+				Font.DrawCenterNumber(twidth/2- 15,theight*5/12,470,0);
+				Font.DrawCenterTextP(twidth/2+ 15,theight*5/12,ORP_CALI3);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
+				Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
+				Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 5:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 6:
@@ -1235,58 +1194,48 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 8:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
-					Font.DrawText(twidth/4- 27,theight/2,"0");
-					Font.DrawTextP(twidth/4,theight/2,ORP_CALI3);
-					Font.DrawText(twidth/4- 27,theight*7/12,470);
-					Font.DrawTextP(twidth/4,theight*7/12,ORP_CALI3);
-					Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
-					Font.SetColor(COLOR_RED, COLOR_WHITE,false);
-					Font.DrawText(twidth*3/4,theight/2,CalVal1);
-					Font.SetColor(COLOR_RED, COLOR_WHITE,false);
-					Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
+				Font.DrawText(twidth/4- 27,theight/2,"0");
+				Font.DrawTextP(twidth/4,theight/2,ORP_CALI3);
+				Font.DrawText(twidth/4- 27,theight*7/12,470);
+				Font.DrawTextP(twidth/4,theight*7/12,ORP_CALI3);
+				Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawText(twidth*3/4,theight/2,CalVal1);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
+				CalStep++;
 			}
 			break;
 		case 9:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
+				InternalMemory.ORPMin_write(CalVal1);
+				ORPMin = CalVal1;
+				InternalMemory.ORPMax_write(CalVal2);
+				ORPMax = CalVal2;
+				CalStep++;
+				if (bitRead(ReefAngel.CEM,CloudORPBit)==1)
 				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
-					InternalMemory.ORPMin_write(CalVal1);
-					ORPMin = CalVal1;
-					InternalMemory.ORPMax_write(CalVal2);
-					ORPMax = CalVal2;
-					CalStep++;
-					if (bitRead(ReefAngel.CEM,CloudORPBit)==1)
-					{
-						char buffer[16];
-						sprintf(buffer, "ORPC:2:%d", CalVal1);
-						ReefAngel.Network.CloudPublish(buffer);
-						sprintf(buffer, "ORPC:3:%d", CalVal2);
-						ReefAngel.Network.CloudPublish(buffer);
-					}
+					char buffer[16];
+					sprintf(buffer, "ORPC:2:%d", CalVal1);
+					ReefAngel.Network.CloudPublish(buffer);
+					sprintf(buffer, "ORPC:3:%d", CalVal2);
+					ReefAngel.Network.CloudPublish(buffer);
 				}
-				TouchEnabled=false;
 			}
 			break;
 		case 10:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-					ShowTouchMenu(CALIBRATE_MENU_SCREEN);
-				TouchEnabled=false;
+				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 			}
 			break;
 		}
@@ -1298,32 +1247,27 @@ void ReefAngelClass::ShowTouchInterface()
 		unsigned long t=newnow-now();
 		unsigned long p=0;
 
-		if (!TS.IsTouched()) TouchEnabled=true;
-		if (TouchEnabled && TS.IsTouched())
+		if (TS.IsTouched())
 		{
 			if (CancelButton.IsPressed())
 			{
-				ReefAngel.Network.CloudPublish("PHEC:0");
 				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
+				ReefAngel.Network.CloudPublish("PHEC:0");
 			}
 		}
 #ifdef PHEXPANSION
 		switch(CalStep)
 		{
 		case 0:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 1:
@@ -1366,52 +1310,40 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 3:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI10);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI11);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI10);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI11);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 4:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
-					Font.DrawCenterTextP(twidth/2- 15,theight*5/12,MENU_BUTTON_PH);
-					Font.DrawCenterNumber(twidth/2+ 15,theight*5/12,10,1);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
-					Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
-					Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
+				Font.DrawCenterTextP(twidth/2- 15,theight*5/12,MENU_BUTTON_PH);
+				Font.DrawCenterNumber(twidth/2+ 15,theight*5/12,10,1);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
+				Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
+				Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 5:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 6:
@@ -1454,57 +1386,47 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 8:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
-					Font.DrawTextP(twidth/4,theight/2,MENU_BUTTON_PH);
-					Font.DrawText(twidth/4+ 20,theight/2,7);
-					Font.DrawTextP(twidth/4,theight*7/12,MENU_BUTTON_PH);
-					Font.DrawText(twidth/4+ 20,theight*7/12,10);
-					Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
-					Font.SetColor(COLOR_RED, COLOR_WHITE,false);
-					Font.DrawText(twidth*3/4,theight/2,CalVal1);
-					Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
+				Font.DrawTextP(twidth/4,theight/2,MENU_BUTTON_PH);
+				Font.DrawText(twidth/4+ 20,theight/2,7);
+				Font.DrawTextP(twidth/4,theight*7/12,MENU_BUTTON_PH);
+				Font.DrawText(twidth/4+ 20,theight*7/12,10);
+				Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawText(twidth*3/4,theight/2,CalVal1);
+				Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
+				CalStep++;
 			}
 			break;
 		case 9:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
+				InternalMemory.PHExpMin_write(CalVal1);
+				PHExpMin = CalVal1;
+				InternalMemory.PHExpMax_write(CalVal2);
+				PHExpMax = CalVal2;
+				CalStep++;
+				if (bitRead(ReefAngel.CEM,CloudPHExpBit)==1)
 				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
-					InternalMemory.PHExpMin_write(CalVal1);
-					PHExpMin = CalVal1;
-					InternalMemory.PHExpMax_write(CalVal2);
-					PHExpMax = CalVal2;
-					CalStep++;
-					if (bitRead(ReefAngel.CEM,CloudPHExpBit)==1)
-					{
-						char buffer[16];
-						sprintf(buffer, "PHEC:2:%d", CalVal1);
-						ReefAngel.Network.CloudPublish(buffer);
-						sprintf(buffer, "PHEC:3:%d", CalVal2);
-						ReefAngel.Network.CloudPublish(buffer);
-					}
+					char buffer[16];
+					sprintf(buffer, "PHEC:2:%d", CalVal1);
+					ReefAngel.Network.CloudPublish(buffer);
+					sprintf(buffer, "PHEC:3:%d", CalVal2);
+					ReefAngel.Network.CloudPublish(buffer);
 				}
-				TouchEnabled=false;
 			}
 			break;
 		case 10:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-					ShowTouchMenu(CALIBRATE_MENU_SCREEN);
-				TouchEnabled=false;
+				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 			}
 			break;
 		}
@@ -1521,34 +1443,29 @@ void ReefAngelClass::ShowTouchInterface()
 		unsigned long p=0;
 		byte channel=DisplayedMenu-WL_CALIBRATE_MENU;
 
-		if (!TS.IsTouched()) TouchEnabled=true;
-		if (TouchEnabled && TS.IsTouched())
+		if (TS.IsTouched())
 		{
 			if (CancelButton.IsPressed())
 			{
+				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 				char buffer[7];
 				sprintf(buffer, "WL%dC:0", channel);
 				ReefAngel.Network.CloudPublish(buffer);
-				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 			}
 		}
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		switch(CalStep)
 		{
 		case 0:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 1:
@@ -1598,35 +1515,27 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 3:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,WL_CALI3);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,WL_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight/2,WL_CALI5);
-					Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,WL_CALI3);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,WL_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight/2,WL_CALI5);
+				Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 4:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 5:
@@ -1676,55 +1585,45 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 7:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
-					Font.DrawTextP(twidth/4+15,theight/2,WL_CALI6);
-					Font.DrawText(twidth/4-15,theight/2,"0");
-					Font.DrawTextP(twidth/4+15,theight*7/12,WL_CALI6);
-					Font.DrawText(twidth/4-15,theight*7/12,100);
-					Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
-					Font.SetColor(COLOR_RED, COLOR_WHITE,false);
-					Font.DrawText(twidth*3/4,theight/2,CalVal1);
-					Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
+				Font.DrawTextP(twidth/4+15,theight/2,WL_CALI6);
+				Font.DrawText(twidth/4-15,theight/2,"0");
+				Font.DrawTextP(twidth/4+15,theight*7/12,WL_CALI6);
+				Font.DrawText(twidth/4-15,theight*7/12,100);
+				Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawText(twidth*3/4,theight/2,CalVal1);
+				Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
+				CalStep++;
 			}
 			break;
 		case 8:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
+				InternalMemory.WaterLevelMin_write(CalVal1);
+				InternalMemory.WaterLevelMax_write(CalVal2);
+				CalStep++;
+				if ((bitRead(ReefAngel.CEM,CloudWLBit)==1 && channel==0) || (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1 && channel>0 && channel<5))
 				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
-					InternalMemory.WaterLevelMin_write(CalVal1);
-					InternalMemory.WaterLevelMax_write(CalVal2);
-					CalStep++;
-					if ((bitRead(ReefAngel.CEM,CloudWLBit)==1 && channel==0) || (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1 && channel>0 && channel<5))
-					{
-						char buffer[16];
-						sprintf(buffer, "WL%dC:2:%d", channel, CalVal1);
-						ReefAngel.Network.CloudPublish(buffer);
-						sprintf(buffer, "WL%dC:3:%d", channel, CalVal2);
-						ReefAngel.Network.CloudPublish(buffer);
-					}
+					char buffer[16];
+					sprintf(buffer, "WL%dC:2:%d", channel, CalVal1);
+					ReefAngel.Network.CloudPublish(buffer);
+					sprintf(buffer, "WL%dC:3:%d", channel, CalVal2);
+					ReefAngel.Network.CloudPublish(buffer);
 				}
-				TouchEnabled=false;
 			}
 			break;
 		case 9:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-					ShowTouchMenu(CALIBRATE_MENU_SCREEN);
-				TouchEnabled=false;
+				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 			}
 			break;
 		}
@@ -1744,33 +1643,28 @@ void ReefAngelClass::ShowTouchInterface()
 		unsigned long p=0;
 		byte index=DisplayedMenu-CUSTOM1_CALIBRATE_MENU;
 
-		if (!TS.IsTouched()) TouchEnabled=true;
-		if (TouchEnabled && TS.IsTouched())
+		if (TS.IsTouched())
 		{
 			if (CancelButton.IsPressed())
 			{
+				ShowTouchMenu(CALIBRATE_MENU_SCREEN);
 				char buffer[9];
 				sprintf(buffer, "CEXP%dC:0", index);
 				ReefAngel.Network.CloudPublish(buffer);
-				ShowTouchMenu(CALIBRATE_CUSTOM_MENU_SCREEN);
 			}
 		}
 		switch(CalStep)
 		{
 		case 0:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 1:
@@ -1795,51 +1689,39 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 3:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI10);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI11);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI10);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI11);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 4:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
-					Font.DrawCenterTextP(twidth/2- 15,theight*5/12,CUSTOM_CALI2);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
-					Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
-					Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI1);
+				Font.DrawCenterTextP(twidth/2- 15,theight*5/12,CUSTOM_CALI2);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI2);
+				Font.DrawCenterTextP(twidth/2,theight*7/12,PH_CALI15);
+				Font.DrawCenterTextP(twidth/2,theight*8/12,PH_CALI3);
+				CalStep++;
 			}
 			break;
 		case 5:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					OkButton.Hide(COLOR_WHITE);
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
-					Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
-					newnow=now()+CALIBRATION_TIMER;
-					CalStep++;
-				}
-				TouchEnabled=false;
+				OkButton.Hide(COLOR_WHITE);
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI4);
+				Font.DrawCenterTextP(twidth/2,theight*5/12,PH_CALI5);
+				newnow=now()+CALIBRATION_TIMER;
+				CalStep++;
 			}
 			break;
 		case 6:
@@ -1864,48 +1746,38 @@ void ReefAngelClass::ShowTouchInterface()
 			CalStep++;
 			break;
 		case 8:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
-					Font.DrawTextP(twidth/4,theight/2,CUSTOM_CALI4);
-					Font.DrawTextP(twidth/4,theight*7/12,CUSTOM_CALI5);
-					Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
-					Font.SetColor(COLOR_RED, COLOR_WHITE,false);
-					Font.DrawText(twidth*3/4,theight/2,CalVal1);
-					Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
-					CalStep++;
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/3,PH_CALI12);
+				Font.DrawTextP(twidth/4,theight/2,CUSTOM_CALI4);
+				Font.DrawTextP(twidth/4,theight*7/12,CUSTOM_CALI5);
+				Font.DrawCenterTextP(twidth/2,theight*9/12,PH_CALI13);
+				Font.SetColor(COLOR_RED, COLOR_WHITE,false);
+				Font.DrawText(twidth*3/4,theight/2,CalVal1);
+				Font.DrawText(twidth*3/4,theight*7/12,CalVal2);
+				CalStep++;
 			}
 			break;
 		case 9:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-				{
-					TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
-					Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
-					Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
-					CalStep++;
-					char buffer[16];
-					sprintf(buffer, "CEXP%dC:2:%d", index, CalVal1);
-					ReefAngel.Network.CloudPublish(buffer);
-					sprintf(buffer, "CEXP%dC:3:%d", index, CalVal2);
-					ReefAngel.Network.CloudPublish(buffer);
-				}
-				TouchEnabled=false;
+				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
+				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
+				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
+				CalStep++;
+				char buffer[16];
+				sprintf(buffer, "CEXP%dC:2:%d", index, CalVal1);
+				ReefAngel.Network.CloudPublish(buffer);
+				sprintf(buffer, "CEXP%dC:3:%d", index, CalVal2);
+				ReefAngel.Network.CloudPublish(buffer);
 			}
 			break;
 		case 10:
-			if (TouchEnabled && TS.IsTouched())
+			if (OkButton.IsPressed())
 			{
-				if (OkButton.IsPressed())
-					ShowTouchMenu(CALIBRATE_CUSTOM_MENU_SCREEN);
-				TouchEnabled=false;
+				ShowTouchMenu(CALIBRATE_CUSTOM_MENU_SCREEN);
 			}
 			break;
 		}

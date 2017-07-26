@@ -1454,6 +1454,7 @@ const char MENU_BUTTON_ADJUST[] PROGMEM = "Adjust";
 const char MENU_BUTTON_DATETIME[] PROGMEM = "Date/Time";
 const char MENU_BUTTON_CHANGE[] PROGMEM = "Change";
 const char MENU_BUTTON_ORIENTATION[] PROGMEM = "Orientation";
+const char MENU_BUTTON_NOT_ENABLED[] PROGMEM = "Module Not Enabled";
 const char MENU_BUTTON_PH[] PROGMEM = "pH";
 const char MENU_BUTTON_CALIBRATION[] PROGMEM = "Calibration";
 const char MENU_BUTTON_SALINITY[] PROGMEM = "Salinity";
