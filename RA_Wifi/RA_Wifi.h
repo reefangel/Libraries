@@ -301,6 +301,7 @@ const char JSON_CLOSE[] PROGMEM = "}}";
 const char SERVER_RA[] PROGMEM = "<object type=text/html data=http://www.reefangel.com/wifi3/content.html width=100% height=98%></object>";
 const char EncodingChars[] PROGMEM = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 const char BannerGET[] PROGMEM = "GET /status/submitp.aspx?t1=";
+const char BannerALERT[] PROGMEM = "GET /status/wifialert.aspx?id=";
 const char BannerHTTP11[] PROGMEM = " HTTP/1.1\r\n";
 const char BannerHost[] PROGMEM = "Host: forum.reefangel.com\r\n";
 const char BannerConnectionClose[] PROGMEM = "Connection: close\r\n";
@@ -510,6 +511,7 @@ class RA_Wifi: public Print
     void Portal(char* username, char* key);
     void DDNS(char* subdomain);
     void SendPortal(char* username, char* key);
+    void SendAlert(char* username, char* key, char* msg);
     inline void CheckWifi(){};
     inline void pingSerial(){};
     char *portalusername;
