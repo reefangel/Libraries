@@ -1739,7 +1739,7 @@ void RA_Wifi::PROGMEMprint(const char *str)
     if(!str) return;
     while((c = pgm_read_byte(str++)))
     {
-    	// Serial.print(c);
+    	//Serial.print(c);
     	print(c);
     }
 }
