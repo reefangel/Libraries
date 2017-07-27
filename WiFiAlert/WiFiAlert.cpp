@@ -29,12 +29,6 @@ void WiFiAlert::Send(char *message, boolean force)
 
 void WiFiAlert::WiFiSendAlert(char *message)
 {
-  Serial.print("GET /status/wifialert.aspx?id=");
-  Serial.print(ReefAngel.Network.portalusername);
-  Serial.print("&key=");
-  Serial.print(ReefAngel.Network.portalkey);
-  Serial.print("&msg=");
-  Serial.println(message);
-  Serial.println("\n\n");
+  ReefAngel.Network.SendAlert(ReefAngel.Network.portalusername, ReefAngel.Network.portalkey, message);
 }
 #endif  // wifi || ETH_WIZ5100
