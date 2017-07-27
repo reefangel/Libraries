@@ -2067,11 +2067,6 @@ void RA_Wifi::SendAlert(char *username, char *key, char *msg)
   print(key);
   print("&msg=");
   print(msg);
-//  Serial.print(username);
-//  Serial.print("&key=");
-//  Serial.print(key);
-//  Serial.print("&msg=");
-//  Serial.println(msg);
 #ifdef ETH_WIZ5100
   PROGMEMprint(BannerHTTP11);
   PROGMEMprint(BannerHost);
