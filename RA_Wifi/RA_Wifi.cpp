@@ -1774,7 +1774,7 @@ void RA_Wifi::DDNS(char *subdomain)
 	portalsubdomain=subdomain;
 }
 
-void RA_Wifi::SendPortal(char *username, char*key)
+void RA_Wifi::SendPortal(char *username, char *key)
 {
   ReefAngel.Timer[PORTAL_TIMER].Start();
 #ifdef ETH_WIZ5100
@@ -2028,6 +2028,45 @@ void RA_Wifi::SendPortal(char *username, char*key)
 #endif  
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 #endif  // RA_STAR
+#ifdef ETH_WIZ5100
+  PROGMEMprint(BannerHTTP11);
+  PROGMEMprint(BannerHost);
+  PROGMEMprint(BannerConnectionClose);
+  ReefAngel.Network.PortalTimeOut=millis();
+#endif // ETH_WIZ5100
+  println(F("\n\n"));
+#ifdef ETH_WIZ5100
+	Serial.println(F("Data Sent"));
+	}
+  }
+#endif // ETH_WIZ5100
+}
+
+void RA_Wifi::SendAlert(char *username, char *key, char *msg)
+{
+#ifdef ETH_WIZ5100
+  Serial.println(F("Alert Call"));
+  if (!ReefAngel.Network.FoundIP) return;
+  if (!ReefAngel.Network.PortalConnection)
+  {
+	  ReefAngel.Network.PortalConnection=true;
+	  PortalWaiting=false;
+	  ReefAngel.Network.PortalConnect();
+	  //Serial.println(F("Connecting..."));
+  }
+  else
+  {
+	if (ReefAngel.Network.IsPortalConnected() && !PortalWaiting) // Check for connection established
+	{
+		PortalWaiting=true;
+		//Serial.println(F("Connected"));
+#endif
+  PROGMEMprint(BannerALERT);
+  print(username);
+  print("&key=");
+  print(key);
+  print("&msg=");
+  print(msg);
 #ifdef ETH_WIZ5100
   PROGMEMprint(BannerHTTP11);
   PROGMEMprint(BannerHost);
