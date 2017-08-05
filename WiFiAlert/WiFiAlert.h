@@ -12,13 +12,22 @@ class WiFiAlert
 {
 public:
   WiFiAlert();
+  void Send();
   void Send(char *message, boolean force);
   inline void Send(char *message) { Send(message,false); }
+
   inline void SetDelay(int delay) { AlertDelay=delay; }
+  inline int GetDelay() { return AlertDelay; }
+  inline void ResetAlert() { LastAlert=now()+AlertDelay; }
+  inline time_t GetLastAlert() { return LastAlert; }
+  boolean IsAlert();
 private:
   int AlertDelay;
+  int AlertActive;
+  char *AlertMsg;
   time_t LastAlert;
-  boolean IsAlert();
+  EthernetClient AlertClient;
+
   void WiFiSendAlert(char *message);
 };
 
