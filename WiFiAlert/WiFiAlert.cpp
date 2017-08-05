@@ -55,7 +55,11 @@ void WiFiAlert::Send() {
 
 	if (AlertActive) 
 	{
-		Serial.println("Sending Alert...");
+		if (millis()%15000<500) 
+		{
+			Serial.println("Sending Alert...");
+		}
+
 		if (millis()%15000<500 && !alert)
 		{
 			Serial.println("connecting...");
