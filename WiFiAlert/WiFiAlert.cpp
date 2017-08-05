@@ -55,16 +55,16 @@ void WiFiAlert::Send() {
 
 	if (AlertActive) 
 	{
-		if (millis()%15000<500) 
+		if (millis()%15000<500)
 		{
 			Serial.println("Sending Alert...");
-		}
 
-		if (millis()%15000<500 && !alert)
-		{
-			Serial.println("connecting...");
-			AlertClient.noblockconnect(PortalServer, 80);
-			alert=true;
+			if (!alert) 
+			{
+				Serial.println("connecting...");
+				AlertClient.noblockconnect(PortalServer, 80);
+				alert=true;
+			}
 		}
 
 		if (AlertClient.checkconnect()==0x17 && !alertConnection)
