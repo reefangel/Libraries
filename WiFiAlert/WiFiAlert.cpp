@@ -23,7 +23,7 @@ boolean WiFiAlert::IsAlert()
 void WiFiAlert::Send(char *message, boolean force)
 {
   if (force) { 
-	ResetAlert();
+	TriggerAlert();
   }
 
   if (IsAlert())
