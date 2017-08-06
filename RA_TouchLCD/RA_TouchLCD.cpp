@@ -547,10 +547,11 @@ void RA_TouchLCD::DrawDateTime(unsigned long t, int x, int y, boolean militaryti
 	}
 	else
 	{
-		if(hour()>=12)
-			sprintf(text,"%02d:%02d:%02d PM",hour(t)-12,minute(t),second(t));
-		else
-			sprintf(text,"%02d:%02d:%02d AM",hour(t),minute(t),second(t));
+		int h = hour(t);
+		if(h > 12) {
+			h = h - 12;
+		}
+		sprintf(text, "%02d:%02d:%02d %s", h, minute(t), second(t), (hour(t)>=12)?"PM":"AM");
 	}
 	Font.DrawText(text);
 }
