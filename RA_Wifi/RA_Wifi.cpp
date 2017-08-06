@@ -868,6 +868,13 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
+#ifdef EXTRA_TEMP_PROBES
+			s += intlength(ReefAngel.Params.Temp[T4_PROBE]);
+			s += intlength(ReefAngel.Params.Temp[T5_PROBE]);
+			s += intlength(ReefAngel.Params.Temp[T6_PROBE]);
+#else
+			s+=3;
+#endif
 			s += intlength(ReefAngel.Params.PH);
 			s += intlength(ReefAngel.EM);
 			s += intlength(ReefAngel.EM1);
@@ -1495,6 +1502,11 @@ void RA_Wifi::SendJSONData()
 	SendSingleJSON(JSON_T1,ReefAngel.Params.Temp[T1_PROBE]);
 	SendSingleJSON(JSON_T2,ReefAngel.Params.Temp[T2_PROBE]);
 	SendSingleJSON(JSON_T3,ReefAngel.Params.Temp[T3_PROBE]);
+#ifdef EXTRA_TEMP_PROBES
+	SendSingleJSON(JSON_T4,ReefAngel.Params.Temp[T4_PROBE]);
+	SendSingleJSON(JSON_T5,ReefAngel.Params.Temp[T5_PROBE]);
+	SendSingleJSON(JSON_T6,ReefAngel.Params.Temp[T6_PROBE]);
+#endif // EXTRA_TEMP_PROBES
 	SendSingleJSON(JSON_PH,ReefAngel.Params.PH);
 	SendSingleJSON(JSON_R,ReefAngel.Relay.RelayData);
 	SendSingleJSON(JSON_RON,ReefAngel.Relay.RelayMaskOn);
@@ -1800,6 +1812,14 @@ void RA_Wifi::SendPortal(char *username, char*key)
   print(ReefAngel.Params.Temp[T2_PROBE], DEC);
   PROGMEMprint(BannerT3);
   print(ReefAngel.Params.Temp[T3_PROBE], DEC);
+#ifdef EXTRA_TEMP_PROBES
+  PROGMEMprint(BannerT4);
+  print(ReefAngel.Params.Temp[T4_PROBE], DEC);
+  PROGMEMprint(BannerT5);
+  print(ReefAngel.Params.Temp[T5_PROBE], DEC);
+  PROGMEMprint(BannerT6);
+  print(ReefAngel.Params.Temp[T6_PROBE], DEC);
+#endif // EXTRA_TEMP_PROBES
   PROGMEMprint(BannerPH);
   print(ReefAngel.Params.PH, DEC);
   PROGMEMprint(BannerID);
