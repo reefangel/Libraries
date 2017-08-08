@@ -272,18 +272,18 @@ void RA_Wifi::ProcessHTTP()
 		case REQ_R_STATUS:
 		{
 			char temp[6];
-			int s=208;
-			//<RA><ID></ID><T1></T1><T2></T2><T3></T3><T4></T4><T5></T5><T6></T6><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM><BID></BID><AF></AF><SF></SF></RA>
+			int s=181;
+			//<RA><ID></ID><T1></T1><T2></T2><T3></T3><PH></PH><R></R><RON></RON><ROFF></ROFF><ATOLOW></ATOLOW><ATOHIGH></ATOHIGH><EM></EM><EM1></EM1><REM></REM><BID></BID><AF></AF><SF></SF></RA>
 			s += strlen(portalusername);
 			s += intlength(ReefAngel.Params.Temp[T1_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
 #ifdef EXTRA_TEMP_PROBES
+			//<T4></T4><T5></T5><T6></T6>
+			s += 27;
 			s += intlength(ReefAngel.Params.Temp[T4_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T5_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T6_PROBE]);
-#else
-			s+=3;
 #endif
 			s += intlength(ReefAngel.Params.PH);
 			s += intlength(ReefAngel.EM);
@@ -869,11 +869,11 @@ void RA_Wifi::ProcessHTTP()
 			s += intlength(ReefAngel.Params.Temp[T2_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T3_PROBE]);
 #ifdef EXTRA_TEMP_PROBES
+			//,"T1":"","T2":"","T3":""
+			s += 24;
 			s += intlength(ReefAngel.Params.Temp[T4_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T5_PROBE]);
 			s += intlength(ReefAngel.Params.Temp[T6_PROBE]);
-#else
-			s+=3;
 #endif
 			s += intlength(ReefAngel.Params.PH);
 			s += intlength(ReefAngel.EM);
@@ -1112,23 +1112,13 @@ void RA_Wifi::SendXMLData(bool fAtoLog /*= false*/)
 	print(ReefAngel.Params.Temp[T2_PROBE]);
 	PROGMEMprint(XML_T3);
 	print(ReefAngel.Params.Temp[T3_PROBE]);
+#ifdef EXTRA_TEMP_PROBES
 	PROGMEMprint(XML_T4);
-#ifdef EXTRA_TEMP_PROBES
 	print(ReefAngel.Params.Temp[T4_PROBE]);
-#else
-	print(0);
-#endif
 	PROGMEMprint(XML_T5);
-#ifdef EXTRA_TEMP_PROBES
 	print(ReefAngel.Params.Temp[T5_PROBE]);
-#else
-	print(0);
-#endif
 	PROGMEMprint(XML_T6);
-#ifdef EXTRA_TEMP_PROBES
 	print(ReefAngel.Params.Temp[T6_PROBE]);
-#else
-	print(0);
 #endif
 	PROGMEMprint(XML_PH);
 	print(ReefAngel.Params.PH);

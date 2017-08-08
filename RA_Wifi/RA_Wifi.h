@@ -32,10 +32,14 @@ const char XML_ID[] PROGMEM = "<RA><ID>";
 const char XML_T1[] PROGMEM = "</ID><T1>";
 const char XML_T2[] PROGMEM = "</T1><T2>";
 const char XML_T3[] PROGMEM = "</T2><T3>";
+#ifdef EXTRA_TEMP_PROBES
 const char XML_T4[] PROGMEM = "</T3><T4>";
 const char XML_T5[] PROGMEM = "</T4><T5>";
 const char XML_T6[] PROGMEM = "</T5><T6>";
 const char XML_PH[] PROGMEM = "</T6><PH>";
+#else
+const char XML_PH[] PROGMEM = "</T3><PH>";
+#endif
 const char XML_R[] PROGMEM = "</PH><R>";
 const char XML_RON[] PROGMEM = "</R><RON>";
 const char XML_ROFF[] PROGMEM = "</RON><ROFF>";
