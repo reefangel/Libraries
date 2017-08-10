@@ -30,10 +30,9 @@ void WiFiAlert::Send(char *message, boolean force)
   {
     LastAlert=now();
     AlertActive=true;
+	AlertMsg=message;
     WiFiSendAlert(message);
   }
-
-  Send();
 }
 
 void WiFiAlert::WiFiSendAlert(char *message)
@@ -46,6 +45,7 @@ void WiFiAlert::WiFiSendAlert(char *message)
   Serial.print("&msg=");
   Serial.println(AlertMsg);
   Serial.println("\n\n");
+  Send();
 }
 
 void WiFiAlert::Send() {
@@ -55,16 +55,11 @@ void WiFiAlert::Send() {
 
 	if (AlertActive) 
 	{
-		if (millis()%15000<500)
+		if (millis()%15000<500 && !alert)
 		{
-			Serial.println("Sending Alert...");
-
-			if (!alert) 
-			{
-				Serial.println("connecting...");
-				AlertClient.noblockconnect(PortalServer, 80);
-				alert=true;
-			}
+			Serial.println("connecting...");
+			AlertClient.noblockconnect(PortalServer, 80);
+			alert=true;
 		}
 
 		if (AlertClient.checkconnect()==0x17 && !alertConnection)
