@@ -31,13 +31,12 @@ void WiFiAlert::Send(char *message, boolean force)
     LastAlert=now();
     AlertActive=true;
 	AlertMsg=message;
-    WiFiSendAlert(message);
+    WiFiSendAlert();
   }
 }
 
-void WiFiAlert::WiFiSendAlert(char *message)
+void WiFiAlert::WiFiSendAlert()
 {
-  AlertMsg=message;
   Serial.print("GET /status/wifialert.aspx?id=");
   Serial.print(ReefAngel.Network.portalusername);
   Serial.print("&key=");
@@ -55,6 +54,7 @@ void WiFiAlert::Send() {
 
 	if (AlertActive) 
 	{
+//		Serial.println(AlertMsg);
 		if (millis()%15000<500 && !alert)
 		{
 			Serial.println("connecting...");
@@ -71,7 +71,7 @@ void WiFiAlert::Send() {
 			AlertClient.print(ReefAngel.Network.portalkey);
 			AlertClient.print("&msg=");
 			AlertClient.println(AlertMsg);
-			AlertClient.println("\n\n");
+			AlertClient.println("\n");
 			alertConnection=true;
 		}
 				

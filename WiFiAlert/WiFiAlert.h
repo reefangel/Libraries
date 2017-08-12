@@ -31,7 +31,7 @@ private:
   time_t LastAlert;
   EthernetClient AlertClient;
 
-  void WiFiSendAlert(char *message);
+  void WiFiSendAlert();
 };
 
 #endif  // __WIFIALERT_H__
