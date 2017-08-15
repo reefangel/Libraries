@@ -49,7 +49,7 @@ class ButtonClass
 	public:
 		ButtonClass();
 		void Create(int color, int textcolor, char *str);
-		void Create(int color, int textcolor, char *str, const prog_uchar *Ptr);
+		void Create(int color, int textcolor, char *str, const unsigned char *Ptr);
 		void inline SetPosition(int ix1, int iy1) { x1=ix1; y1=iy1; };
 		void inline SetLabel(char *value) { str=value; };
 		void Show();
@@ -58,7 +58,7 @@ class ButtonClass
 	private:
 		int color, x1, x2, y1, textcolor;
 		char *str;
-		const prog_uchar *Ptr;
+		const unsigned char *Ptr;
 		boolean visible;
 };
 
@@ -71,7 +71,7 @@ class ProgressBarClass
 		void SetCurrent(int value);
 		int inline GetCurrent() { return current; };
 		void inline SetLabel(char *value) { str=value; };
-		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); }; 
+		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); };
  		void inline SetColor(int value) { color=value; };
 		void inline SetBackColor(int value) { bkcolor=value; };
 		void inline SetTextColor(int value) { textcolor=value; };
@@ -102,7 +102,7 @@ class SliderClass
 		int inline GetOverrideID() { return overrideid; };
 		void inline SetColor(int value) { color=value; };
 		void inline SetLabel(char *value) { str=value; };
-		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); }; 
+		void inline SetLabel(String value) { char buff[value.length()+2]; value.toCharArray(buff, value.length()+1); strcpy(str,buff); };
 		void DrawMarker();
 		void Show();
 		void Hide();
@@ -116,5 +116,5 @@ class SliderClass
 		char *str;
 		boolean visible;
 		boolean NeedsRedraw;
-	
+
 };

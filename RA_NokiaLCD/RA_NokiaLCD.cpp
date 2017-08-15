@@ -431,7 +431,7 @@ const unsigned char font_8x16[] PROGMEM = {
 #endif  // FONT_8x16
 
 #ifdef FONT_12x16
-const prog_uint16_t font_12x16[] PROGMEM = {
+const uint16_t font_12x16[] PROGMEM = {
 0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000, //
 0x0060,0x0060,0x00F0,0x00F0,0x00F0,0x00F0,0x00F0,0x0060,0x0060,0x0060,0x0000,0x0000,0x0060,0x0060,0x0000,0x0000, // !
 0x0000,0x0000,0x0198,0x0198,0x0198,0x0198,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000, // "
@@ -566,7 +566,7 @@ const unsigned char num_8x16[] PROGMEM = {
 #endif  // NUMBERS_8x16
 
 #ifdef NUMBERS_12x16
-const prog_uint16_t num_12x16[] PROGMEM = {
+const uint16_t num_12x16[] PROGMEM = {
 0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x00E0,0x00E0,0x00E0,0x0000,0x0000, // .
 0x0000,0x0001,0x0003,0x0007,0x000E,0x001C,0x0038,0x0070,0x00E0,0x01C0,0x0380,0x0700,0x0600,0x0000,0x0000,0x0000, // /
 0x00F8,0x03FE,0x0306,0x0607,0x060F,0x061B,0x0633,0x0663,0x06C3,0x0783,0x0703,0x0306,0x03FE,0x00F8,0x0000,0x0000, // 0
@@ -583,7 +583,7 @@ const prog_uint16_t num_12x16[] PROGMEM = {
 #endif  // NUMBERS_12x16
 
 #ifdef NUMBERS_16x16
-const prog_uint16_t num_16x16[] PROGMEM = {
+const uint16_t num_16x16[] PROGMEM = {
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xE000, 0xE000, 0xE000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, // .
 0xC000, 0xC000, 0x3000, 0x3000, 0x0C00, 0x0C00, 0x0300, 0x0300, 0x00C0, 0x00C0, 0x0030, 0x0030, 0x000C, 0x000C, 0x0003, 0x0003, // /
 0x0000, 0x1FF8, 0x3FFC, 0x7006, 0xD803, 0xCC03, 0xC603, 0xC303, 0xC183, 0xC0C3, 0xC063, 0xC033, 0x601E, 0x3FFC, 0x1FF8, 0x0000, // 0 - with slash
@@ -866,7 +866,7 @@ void RA_NokiaLCD::Init()
 		Clear(DefaultBGColor,0,0,131,131);
 
 		SendCMD(0x29); //Display on
- 
+
     }
     else if (LCDID==2)
     {
@@ -880,7 +880,7 @@ void RA_NokiaLCD::Init()
     	SendCMD(0x75); //set row
     	SendData(0x00);
     	SendData(0x7f);
-    	SendCMD(0xa0); // Set Re-map / Color Depth 
+    	SendCMD(0xa0); // Set Re-map / Color Depth
     	SendData(0x74);				//   Color sequence is swapped: C .. B .. A
     	SendCMD(0xa2); // Set display offset
     	SendData(0x00);
@@ -1165,7 +1165,7 @@ void RA_NokiaLCD::DrawLargeTextP(byte fcolor, byte bcolor, byte x, byte y, const
 		DrawLargeText(fcolor,bcolor,ix,y,c1);
 		ix+=8;
 	}
-	
+
 }
 #endif  // FONT_8x8 || FONT_8x16
 
@@ -1178,7 +1178,7 @@ void RA_NokiaLCD::DrawHugeText(byte fcolor, byte bcolor, byte x, byte y, char* t
 	byte x_w = 16;
 	byte y_w = 16;
 	byte char_offset = 32;
-	const prog_uint16_t *f = NULL;
+	const uint16_t *f = NULL;
 
 #ifdef FONT_12x16
 	// set the font to be 12x16 unless overridden later
@@ -1219,7 +1219,7 @@ void RA_NokiaLCD::DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, 
 	{
 		if (1<<i & c)
 		{
-			if (LCDID==0) 
+			if (LCDID==0)
 				SendColor12Bit(fcolor);
 			else if (LCDID==1 || LCDID==2)
 				SendColor16Bit(fcolor);
@@ -1229,7 +1229,7 @@ void RA_NokiaLCD::DrawHugeNumbersLine(byte fcolor, byte bcolor, byte x, byte y, 
 		else
 		{
 			if (LCDID==0)
-				
+
 				SendColor12Bit(bcolor);
 			else if (LCDID==1 || LCDID==2)
 				SendColor16Bit(bcolor);
@@ -1266,7 +1266,7 @@ void RA_NokiaLCD::DrawTextLine(byte fcolor, byte bcolor, byte x, byte y,char c)
     {
 		if (1<<i & c)
 		{
-			if (LCDID==0) 
+			if (LCDID==0)
 				SendColor12Bit(fcolor);
 			else if (LCDID==1 || LCDID==2)
 				SendColor16Bit(fcolor);
@@ -1516,13 +1516,13 @@ void RA_NokiaLCD::DrawCircleOutletBoxHorizontal(byte x, byte y, byte RelayData)
    // designed for a layout where the plugs are aligned like:
    // 8 6 4 2
    // 7 5 3 1
-   
+
    //Variables:
    byte offset = 5;      //distance between given x,y location and the center of first circle
    byte a = 0;            //our counter of relay port
    byte b = 3;            //horizontal column counter
    byte c = 1;            //vertical row counter
-   
+
    //Main Loop - Starting at port 1 work our way up and left
    for (a=0;a<8;a++)
    {
@@ -1599,37 +1599,37 @@ void RA_NokiaLCD::DrawDateTimeISO8601(byte x, byte y)
     char temp2[]="  ";
     char temp4[]="    ";
     strcpy(text,"");
-	
+
 	// Date
 	itoa(year(),temp4,10);
     strcat(text,temp4);
     strcat(text,"-");
-	
+
     itoa(month(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text,"-");
-	
+
     itoa(day(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text," ");
-	
+
 	// Time
     itoa(hour(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text,":");
-	
+
     itoa(minute(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
     strcat(text,":");
-	
+
     itoa(second(),temp2,10);
     if (temp2[1]==0) strcat(text,"0");
     strcat(text,temp2);
-    
+
     DrawText(DateTextColor, DefaultBGColor, x, y, text);
 }
 #endif // DATETIME24
@@ -1686,18 +1686,18 @@ void RA_NokiaLCD::DrawCenterSingleMonitor(int Temp, byte fcolor, byte x, byte y,
 void RA_NokiaLCD::DrawSingleMonitorAlarm(int Temp, byte fcolor, byte x, byte y, byte decimal, int high, int low, byte warn_color)
 {
   int mod=second()%2;
-  if (Temp > high || Temp < low) 
+  if (Temp > high || Temp < low)
   {
-    if (mod==0) 
+    if (mod==0)
     {
       Clear(DefaultBGColor,x,y,x+40,y+10);
     }
-    else 
+    else
     {
       DrawSingleMonitor(Temp, warn_color, x, y, decimal);
     }
   }
-  else 
+  else
   {
     DrawSingleMonitor(Temp, fcolor, x, y, decimal);
   }
@@ -1884,7 +1884,7 @@ void RA_NokiaLCD::DrawOption(int Option, byte Selected, byte x, byte y, char *un
 }
 
 /*
- * Make sure that the text to be displayed(char *option) 
+ * Make sure that the text to be displayed(char *option)
  * is not longer then the length argument otherwise it will overflow.
  * Maximum text length is currently 5(five) characters!
  */
