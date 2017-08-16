@@ -44,7 +44,7 @@ RA_TouchLCD::RA_TouchLCD()
 //	PIOC->PIO_OER |= 0x001FFFFE;
 //	PIOC->PIO_OWER = 0x0001FFFE;
 //	PIOC->PIO_OWDR = 0xFFFE0001;
-	
+
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
 }
 
@@ -63,7 +63,7 @@ void RA_TouchLCD::SetOrientation(byte O)
 {
 	if (orientation!=O)
 	{
-		
+
 		orientation=O;
 		switch (O)
 		{
@@ -71,7 +71,7 @@ void RA_TouchLCD::SetOrientation(byte O)
 #ifdef HX8347G
 			RA_TFT::SendComData(0x0016,0x0048); // Normal Rotation
 #endif
-#ifdef HX8347D	
+#ifdef HX8347D
 			RA_TFT::SendComData(0x0016,0x000f); // Normal Rotation
 #endif
 #ifdef ILI9341
@@ -84,7 +84,7 @@ void RA_TouchLCD::SetOrientation(byte O)
 #ifdef HX8347G
 			RA_TFT::SendComData(0x0016,0x00e8); // 90 Rotation
 #endif
-#ifdef HX8347D	
+#ifdef HX8347D
 			RA_TFT::SendComData(0x0016,0x00af); // 90 Rotation
 #endif
 #ifdef ILI9341
@@ -97,7 +97,7 @@ void RA_TouchLCD::SetOrientation(byte O)
 #ifdef HX8347G
 			RA_TFT::SendComData(0x0016,0x0088); // 180 Rotation
 #endif
-#ifdef HX8347D	
+#ifdef HX8347D
 			RA_TFT::SendComData(0x0016,0x00cf); // 180 Rotation
 #endif
 #ifdef ILI9341
@@ -110,7 +110,7 @@ void RA_TouchLCD::SetOrientation(byte O)
 #ifdef HX8347G
 			RA_TFT::SendComData(0x0016,0x0028); // 270 Rotation
 #endif
-#ifdef HX8347D	
+#ifdef HX8347D
 			RA_TFT::SendComData(0x0016,0x006f); // 270 Rotation
 #endif
 #ifdef ILI9341
@@ -162,19 +162,19 @@ void RA_TouchLCD::DrawPixel(int color, int x, int y)
 void RA_TouchLCD::DrawLine(int color, int x1, int y1, int x2, int y2)
 {
 	int dx, dy, sx, sy, f;
-	
+
 	if(x1==x2)  // vertical line
 	{
 		Clear(color, x1,y1,x2, y2);
 	}
-	else if(y1==y2)  // horizontal line  
+	else if(y1==y2)  // horizontal line
 	{
 		Clear(color, x1,y1,x2, y2);
 	}
 	else // Bresenham line
 	{
-		dy = y2 - y1; 
-		dx = x2 - x1; 
+		dy = y2 - y1;
+		dx = x2 - x1;
 		if (dy < 0)
 		{
 			dy = -dy;
@@ -183,7 +183,7 @@ void RA_TouchLCD::DrawLine(int color, int x1, int y1, int x2, int y2)
 		else
 		{
 			sy = 1;
-		} 
+		}
 		if (dx < 0)
 		{
 			dx = -dx;
@@ -192,45 +192,45 @@ void RA_TouchLCD::DrawLine(int color, int x1, int y1, int x2, int y2)
 		else
 		{
 			sx = 1;
-		} 
- 
-		dy <<= 1;         
-		dx <<= 1;         
- 
-		DrawPixel(color, x1, y1); 
-		
- 
+		}
+
+		dy <<= 1;
+		dx <<= 1;
+
+		DrawPixel(color, x1, y1);
+
+
 		if (dx > dy)
-		{ 					
-			f = dy - (dx >> 1);  
+		{
+			f = dy - (dx >> 1);
 			while (x1!= x2)
-			{ 
+			{
 				if (f >= 0)
-				{ 
-					y1 += sy; 
-					f -= dx;   
-				} 
-				x1 += sx; 
-				f += dy;    
-				DrawPixel(color, x1, y1); 
-			} 
-		} 
-		else 
-		{ 							
-			f = dx - (dy >> 1); 
-			while (y1 != y2)
-			{ 
-				if (f >= 0) 
-				{ 
-					x1 += sx; 
-					f -= dy; 
-				} 
-				y1 += sy; 
-				f += dx; 
-				DrawPixel(color, x1, y1); 
+				{
+					y1 += sy;
+					f -= dx;
+				}
+				x1 += sx;
+				f += dy;
+				DrawPixel(color, x1, y1);
 			}
-		} 
- 	} 
+		}
+		else
+		{
+			f = dx - (dy >> 1);
+			while (y1 != y2)
+			{
+				if (f >= 0)
+				{
+					x1 += sx;
+					f -= dy;
+				}
+				y1 += sy;
+				f += dx;
+				DrawPixel(color, x1, y1);
+			}
+		}
+ 	}
 
  }
 
@@ -253,14 +253,14 @@ void RA_TouchLCD::DrawRectangle(int color, int x1, int y1, int x2, int y2, boole
 void RA_TouchLCD::DrawCircle(int color, int x, int y, int radius, boolean fill)
 {
 	int xo, yo, r;
-	
+
 	xo = 0;
 	yo = radius;
 	r = -radius;
-	
+
 	while (xo <= yo) {
 		if(fill)
-		{ 
+		{
 			DrawLine(color, x-xo, y+yo, x+xo, y+yo);
 			DrawLine(color, x-xo, y-yo, x+xo, y-yo);
 			DrawLine(color, x-yo, y+xo, x+yo, y+xo);
@@ -277,7 +277,7 @@ void RA_TouchLCD::DrawCircle(int color, int x, int y, int radius, boolean fill)
 			DrawPixel(color, x-yo, y-xo);
 			DrawPixel(color, x+yo, y-xo);
 		}
-			
+
 		if ((r += xo++ + xo)>= 0)
 		{
 			r-= 2*(yo-1);
@@ -289,20 +289,20 @@ void RA_TouchLCD::DrawCircle(int color, int x, int y, int radius, boolean fill)
 void RA_TouchLCD::DrawRoundRect(int color, int x1, int y1, int x2, int y2, int radius, boolean fill)
 {
 
-	
-	if(radius) 
+
+	if(radius)
 	{
 		int xo, yo, r;
 		int x1r, y1r, x2r, y2r;
 		xo = 0;
 		yo = radius;
 		r = -radius;
-		
+
 		x1r = x1+radius;
 		y1r = y1+radius;
 		x2r = x2-radius;
 		y2r = y2-radius;
-	
+
 		if(fill)
 		{
 			Clear(color, x1, y1r, x2, y2r);
@@ -314,7 +314,7 @@ void RA_TouchLCD::DrawRoundRect(int color, int x1, int y1, int x2, int y2, int r
 			DrawLine(color, x1r, y2, x2r, y2);
 			DrawLine(color, x1, y1r, x1, y2r);
 		}
-		
+
 		while (xo <= yo)
 		{
 			if(fill)
@@ -335,12 +335,12 @@ void RA_TouchLCD::DrawRoundRect(int color, int x1, int y1, int x2, int y2, int r
 				DrawPixel(color, x1r-yo, y1r-xo);
 				DrawPixel(color, x2r+yo, y1r-xo);
 			}
-			
+
 			if ((r += xo++ + xo)>= 0) {
 				r-= 2* (yo-1);
 				yo--;
 			}
-		}		
+		}
 	}
 	else
 	{
@@ -365,7 +365,7 @@ void RA_TouchLCD::DrawBMP(int ix, int iy, const unsigned char *iPtr)
 	RA_TFT::SetBox(ix, iy, w+ix-1, h+iy-1);
 #ifdef ILI9341
 		RA_TFT::SendCom(0x00,0x2C);   /* Write RAM Memory */
-#endif		
+#endif
 	for (int a=0; a<w*h; a++)
 	{
 //		if ((i=pgm_read_byte_near(iPtr++))==0) i=255;
@@ -406,13 +406,13 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 {
 	int bmpWidth, bmpHeight;
 	uint8_t bmpImageoffset;
-	
+
 	boolean bmpGood=true;
 	File dataFile = SD.open(bmp);
 	if (dataFile) {
 		if (read16(dataFile) == 0x4D42) {
 			  // read and ignore file size & creator bytes
-			  read32(dataFile);  
+			  read32(dataFile);
 			  read32(dataFile);
 			  //read data offset
 			  bmpImageoffset=read32(dataFile);
@@ -422,7 +422,7 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 			  bmpWidth = read32(dataFile);
 			  bmpHeight = read32(dataFile);
 			  bmpHeight = abs(bmpHeight);
-			  
+
 			  if (read16(dataFile) != 1)
 				  bmpGood=false;
 			  // read bmp depth. Needs to be 24bit
@@ -446,17 +446,17 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 				  RA_TFT::SetBox(x, y,x+bmpWidth-1, y+bmpHeight-1);
 #ifdef ILI9341
 				  RA_TFT::SendCom(0x00,0x2C);   /* Write RAM Memory */
-#endif	
-				  for (i=0; i< bmpHeight; i++) 
+#endif
+				  for (i=0; i< bmpHeight; i++)
 				  {
 
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 					  wdt_reset();
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY
-					  for (j=0; j<bmpWidth; j++) 
+					  for (j=0; j<bmpWidth; j++)
 					  {
 						  // read more pixels
-						  if (buffidx >= 3*BUFFPIXEL) 
+						  if (buffidx >= 3*BUFFPIXEL)
 						  {
 							  dataFile.read(sdbuffer, 3*BUFFPIXEL);
 							  buffidx = 0;
@@ -480,17 +480,17 @@ void RA_TouchLCD::DrawSDImage(char *bmp, int x, int y)
 						  // write out the 16 bits of color
 						  RA_TFT::SendData(p>>8,p);
 					  }
-				  }				  
+				  }
 			  }
 		}
 		dataFile.close();
-	}     
+	}
 }
 
 void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 {
 	File dataFile = SD.open(bmp);
-	
+
 	if (dataFile) {
 		uint16_t p;
 		uint8_t g, b;
@@ -501,15 +501,15 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 		RA_TFT::SetBox(x, y,x+w-1, y+h-1);
 #ifdef ILI9341
 		RA_TFT::SendCom(0x00,0x2C);   /* Write RAM Memory */
-#endif	
+#endif
 		RS1;
 		CS0;
 		j=h;
 		j*=w;
-		for (i=0; i<j; i++) 
+		for (i=0; i<j; i++)
 		{
 			// read more pixels
-			if (buffidx >= 2*BUFFPIXEL) 
+			if (buffidx >= 2*BUFFPIXEL)
 			{
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 					  wdt_reset();
@@ -530,14 +530,14 @@ void RA_TouchLCD::DrawSDRawImage(char *bmp, int x, int y, int w, int h)
 		}
 		CS1;
 		dataFile.close();
-	}	
+	}
 }
 
 
 void RA_TouchLCD::DrawDateTime(unsigned long t, int x, int y, boolean militarytime, FontClass Font)
 {
 	char text[15];
-	
+
 	//Font.SetColor(TOPBAR_FC,TOPBAR_BC,false);
 	sprintf(text,"%02d/%02d/%02d ",month(t),day(t),year(t)-2000);
 	Font.DrawText(x,y,text);
@@ -547,10 +547,13 @@ void RA_TouchLCD::DrawDateTime(unsigned long t, int x, int y, boolean militaryti
 	}
 	else
 	{
-		if(hour()>=12)
-			sprintf(text,"%02d:%02d:%02d PM",hour(t)-12,minute(t),second(t));
-		else
-			sprintf(text,"%02d:%02d:%02d AM",hour(t),minute(t),second(t));
+		int h = hour(t);
+		if(h > 12) {
+			h = h - 12;
+		} else if ( h == 0 ) {
+			h = 12;
+		}
+		sprintf(text, "%02d:%02d:%02d %s", h, minute(t), second(t), (hour(t)>=12)?"PM":"AM");
 	}
 	Font.DrawText(text);
 }
@@ -572,7 +575,7 @@ void RA_TouchLCD::DrawSetupDateTime(int x, int y, byte value, FontClass Font)
 void RA_TouchLCD::DrawRelayStatus(int x, int y, boolean status)
 {
 	int color;
-	if (status) color=RELAYGREEN; else color=COLOR_RED; 
+	if (status) color=RELAYGREEN; else color=COLOR_RED;
 	for (int c=0;c<=6;c++) DrawLine(alphaBlend(color,(10-c)*10),x+c+4,y,x+c+4,y+17);
 	for (int c=4;c<=10;c++) DrawLine(alphaBlend(color,c*10),x+c+14,y,x+c+14,y+17);
 	Clear(alphaBlend(color,40),x+11,y,x+17,y+17);
@@ -582,14 +585,14 @@ void RA_TouchLCD::DrawRelayStatus(int x, int y, boolean status)
 	for (int c=0;c<=3;c++) DrawLine(alphaBlend(COLOR_SILVER,80-(c*10)),x+c,y,x+c,y+17);
 	for (int c=0;c<=3;c++) DrawLine(alphaBlend(COLOR_SILVER,(c*10)+50),x+25+c,y,x+25+c,y+17);
 //	Clear(color,x+10,y,x+15,y+17);
-	
+
 }
 
 char* RA_TouchLCD::ConvertDigitsNumber(int number)
 {
 	char text[9];
 	char temp[3];
-	
+
 	strcpy(text,"");
 	if (number<10) strcat(text,"0");
 	itoa(number,temp,10);
