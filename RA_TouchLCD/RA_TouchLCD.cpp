@@ -356,7 +356,7 @@ void RA_TouchLCD::DrawRoundRect(int color, int x1, int y1, int x2, int y2, int r
 
 }
 
-void RA_TouchLCD::DrawBMP(int ix, int iy, const prog_uchar *iPtr)
+void RA_TouchLCD::DrawBMP(int ix, int iy, const unsigned char *iPtr)
 {
 	byte i,j;
 	int w = pgm_read_byte_near(iPtr++)+1;
@@ -371,11 +371,13 @@ void RA_TouchLCD::DrawBMP(int ix, int iy, const prog_uchar *iPtr)
 //		if ((i=pgm_read_byte_near(iPtr++))==0) i=255;
 //		if ((j=pgm_read_byte_near(iPtr++))==0) j=255;
 //		RA_TFT::SendData(i,j);
-		RA_TFT::SendData(pgm_read_byte_near(iPtr++),pgm_read_byte_near(iPtr++));
+		i=pgm_read_byte_near(iPtr++);
+		j=pgm_read_byte_near(iPtr++);
+		RA_TFT::SendData(i,j);
 	}
 }
 
-void RA_TouchLCD::DrawBMP(int ix, int iy, const prog_uchar *iPtr, byte overridecolor_msb, byte overridecolor_lsb)
+void RA_TouchLCD::DrawBMP(int ix, int iy, const unsigned char *iPtr, byte overridecolor_msb, byte overridecolor_lsb)
 {
 	// This is to workaround avrdude bug that doesn't allow us to write chunk blocks of 0xff into memory.
 	// So, we change override color to white.

@@ -18,7 +18,7 @@ void DisplayMenuEntry(char *text);
 void ProcessButtonPress();
 // Nested Menu Functions
 #ifdef CUSTOM_MENU
-void InitMenu(int ptr, byte qty);
+void InitMenu(int ptr, byte index);
 void ProcessButtonPressCustom();
 #else
 void InitMenus();

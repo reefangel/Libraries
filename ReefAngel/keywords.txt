@@ -52,6 +52,7 @@ AddHumidityExpansion	KEYWORD2
 AddPARExpansion	KEYWORD2
 AddStandardMenu	KEYWORD2
 AddWifi	KEYWORD2
+AddCloudWifi	KEYWORD2
 AddRANet	KEYWORD2
 AddSPILCD	KEYWORD2
 StandardLights	KEYWORD2
@@ -75,7 +76,13 @@ ActinicLights	KEYWORD2
 MoonLights	KEYWORD2
 MHLights	KEYWORD2
 StandardHeater	KEYWORD2
+StandardHeater1	KEYWORD2
+StandardHeater2	KEYWORD2
+StandardHeater3	KEYWORD2
 StandardFan	KEYWORD2
+StandardFan1	KEYWORD2
+StandardFan2	KEYWORD2
+StandardFan3	KEYWORD2
 StandardATO	KEYWORD2
 WaterLevelATO	KEYWORD2
 SingleATO	KEYWORD2
@@ -98,12 +105,14 @@ DisplayVersion	KEYWORD2
 ClearScreen	KEYWORD2
 MoonlightPWM	KEYWORD2
 Portal	KEYWORD2
+CloudPortal	KEYWORD2
 FeedingModeStart	KEYWORD2
 WaterChangeModeStart	KEYWORD2
 ATOClear	KEYWORD2
 OverheatClear	KEYWORD2
 InitMenu	KEYWORD2
 ShowInterface	KEYWORD2
+ShowTouchInterface	KEYWORD2
 CO2Control	KEYWORD2
 PHControl	KEYWORD2
 LightsOn	KEYWORD2
@@ -141,6 +150,22 @@ DrawCircleOutletBoxHorizontal	KEYWORD2
 DrawSingleMonitor	KEYWORD2
 DrawSingleMonitorAlarm	KEYWORD2
 
+#Font
+SetColor	KEYWORD2
+SetPosition	KEYWORD2
+SetFont	KEYWORD2
+CharWidth	KEYWORD2
+TextWidth	KEYWORD2
+TextWidthP	KEYWORD2
+DrawChar	KEYWORD2
+DrawTextP	KEYWORD2
+DrawCenterText	KEYWORD2
+DrawCenterTextP	KEYWORD2
+DrawCenterNumber	KEYWORD2
+GetX	KEYWORD2
+GetY	KEYWORD2
+DrawPixel	KEYWORD2
+
 #PWM
 
 SetActinic	KEYWORD2
@@ -175,8 +200,8 @@ ExpansionWrite	KEYWORD2
 GetChannelValue	KEYWORD2
 GetActinicValue	KEYWORD2
 GetDaylightValue	KEYWORD2
-GetActinicValue2	KEYWORD2
-GetDaylightValue2	KEYWORD2
+GetActinic2Value	KEYWORD2
+GetDaylight2Value	KEYWORD2
 Channel0PWMSlope	KEYWORD2
 Channel1PWMSlope	KEYWORD2
 Channel2PWMSlope	KEYWORD2
@@ -540,6 +565,7 @@ write_dword	KEYWORD2
 
 ReefAngel	KEYWORD1
 LCD	LITERAL1
+TouchLCD	LITERAL1
 PWM	LITERAL1
 VariableControl	LITERAL1
 Relay	LITERAL1
@@ -737,6 +763,8 @@ Sync	LITERAL2
 AntiSync	LITERAL2
 DaylightChannel	LITERAL2
 ActinicChannel	LITERAL2
+Daylight2Channel	LITERAL2
+Actinic2Channel	LITERAL2
 FeedingSpeed	LITERAL2
 WaterChangeSpeed	LITERAL2
 

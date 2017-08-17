@@ -49,5 +49,5 @@ if (InternalMemory.IMCheck_read()!=0xCF06A31E)
 
 #ifdef MAIN_2014
     MenuItem_2014=PARAMS_2014;
-    InitCustomLabels();
+//    InitCustomLabels();
 #endif // MAIN_2014

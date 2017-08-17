@@ -12,15 +12,15 @@ SIGNAL(PCINT0_vect)
 #endif // RANET
 
 // Menu Headings
-const prog_char Menu_0_label[] PROGMEM = "Main:";
+const char Menu_0_label[] PROGMEM = "Main:";
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
-const prog_char Menu_1_label[] PROGMEM = "Setup:";
+const char Menu_1_label[] PROGMEM = "Setup:";
 #ifndef RemoveAllLights
-const prog_char Menu_2_label[] PROGMEM = "Lights:";
+const char Menu_2_label[] PROGMEM = "Lights:";
 #endif  // RemoveAllLights
-const prog_char Menu_3_label[] PROGMEM = "Temp:";
+const char Menu_3_label[] PROGMEM = "Temp:";
 #if defined SetupExtras || defined ATOSetup
-const prog_char Menu_4_label[] PROGMEM = "Timeouts:";
+const char Menu_4_label[] PROGMEM = "Timeouts:";
 #endif  // defined SetupExtras || defined ATOSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
 PROGMEM const char * const menulabel_items[] = {
@@ -38,9 +38,9 @@ PROGMEM const char * const menulabel_items[] = {
 };
 
 // Return menu entries
-const prog_char Return_0_label[] PROGMEM = "<- Prev Menu";
-const prog_char Return_1_label[] PROGMEM = "Exit";
-//const prog_char Return_2_label[] PROGMEM = "Press to exit...";
+const char Return_0_label[] PROGMEM = "<- Prev Menu";
+const char Return_1_label[] PROGMEM = "Exit";
+//const char Return_2_label[] PROGMEM = "Press to exit...";
 PROGMEM const char * const return_items[] = { Return_0_label, Return_1_label/*, Return_2_label*/ };
 
 // NOTE for nested menus
@@ -96,33 +96,33 @@ enum CustomMenuItem {
 #ifdef SIMPLE_MENU
 // This is the simplified menu
 // Main Menu
-const prog_char mainmenu_0_label[] PROGMEM = "Feeding";
-const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
-const prog_char mainmenu_2_label[] PROGMEM = "ATO Clear";
-const prog_char mainmenu_3_label[] PROGMEM = "Overheat Clear";
+const char mainmenu_0_label[] PROGMEM = "Feeding";
+const char mainmenu_1_label[] PROGMEM = "Water Change";
+const char mainmenu_2_label[] PROGMEM = "ATO Clear";
+const char mainmenu_3_label[] PROGMEM = "Overheat Clear";
 #ifdef LEAKDETECTOREXPANSION
-const prog_char mainmenu_11_label[] PROGMEM = "Leak Clear";
+const char mainmenu_11_label[] PROGMEM = "Leak Clear";
 #endif  // LEAKDETECTOREXPANSION
-const prog_char mainmenu_4_label[] PROGMEM = "PH Calibration";
+const char mainmenu_4_label[] PROGMEM = "PH Calibration";
 #ifdef SALINITYEXPANSION
-const prog_char mainmenu_5_label[] PROGMEM = "Sal Calibration";
+const char mainmenu_5_label[] PROGMEM = "Sal Calibration";
 #endif  // SALINITYEXPANSION
 #ifdef ORPEXPANSION
-const prog_char mainmenu_6_label[] PROGMEM = "ORP Calibration";
+const char mainmenu_6_label[] PROGMEM = "ORP Calibration";
 #endif  // ORPEXPANSION
 #ifdef PHEXPANSION
-const prog_char mainmenu_7_label[] PROGMEM = "PH Exp Calibration";
+const char mainmenu_7_label[] PROGMEM = "PH Exp Calibration";
 #endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-const prog_char mainmenu_8_label[] PROGMEM = "Water Calibration";
+const char mainmenu_8_label[] PROGMEM = "Water Calibration";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
-const prog_char mainmenu_9_label[] PROGMEM = "Date / Time";
+const char mainmenu_9_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 #ifdef VersionMenu
-const prog_char mainmenu_10_label[] PROGMEM = "Version";
+const char mainmenu_10_label[] PROGMEM = "Version";
 #endif  // VersionMenu
-PROGMEM const char * const mainmenu_items[] = {
+static PROGMEM const char * const mainmenu_items[] = {
 		mainmenu_0_label,
 		mainmenu_1_label,
 		mainmenu_2_label,
@@ -183,23 +183,23 @@ enum MainMenuItem {
 // This is the standard menu
 
 // Main Menu
-const prog_char mainmenu_0_label[] PROGMEM = "Feeding";
-const prog_char mainmenu_1_label[] PROGMEM = "Water Change";
+const char mainmenu_0_label[] PROGMEM = "Feeding";
+const char mainmenu_1_label[] PROGMEM = "Water Change";
 #ifndef RemoveAllLights
-const prog_char mainmenu_2_label[] PROGMEM = "Lights ->";
+const char mainmenu_2_label[] PROGMEM = "Lights ->";
 #endif  // RemoveAllLights
-const prog_char mainmenu_3_label[] PROGMEM = "Temps ->";
+const char mainmenu_3_label[] PROGMEM = "Temps ->";
 #if defined SetupExtras || defined ATOSetup
-const prog_char mainmenu_4_label[] PROGMEM = "Timeouts ->";
+const char mainmenu_4_label[] PROGMEM = "Timeouts ->";
 #endif  // if defined SetupExtras || defined ATOSetup
-const prog_char mainmenu_5_label[] PROGMEM = "Setup ->";
+const char mainmenu_5_label[] PROGMEM = "Setup ->";
 #ifdef LEAKDETECTOREXPANSION
-const prog_char mainmenu_7_label[] PROGMEM = "Leak Clear";
+const char mainmenu_7_label[] PROGMEM = "Leak Clear";
 #endif  // LEAKDETECTOREXPANSION
 #ifdef VersionMenu
-const prog_char mainmenu_6_label[] PROGMEM = "Version";
+const char mainmenu_6_label[] PROGMEM = "Version";
 #endif  // VersionMenu
-PROGMEM const char * const mainmenu_items[] = {
+static PROGMEM const char * const mainmenu_items[] = {
 		mainmenu_0_label,
 		mainmenu_1_label,
 #ifndef RemoveAllLights
@@ -239,29 +239,29 @@ enum MainMenuItem {
 
 // Setup MenuWavemakerSetup
 #ifdef WavemakerSetup
-const prog_char setupmenu_0_label[] PROGMEM = "Wavemaker";
+const char setupmenu_0_label[] PROGMEM = "Wavemaker";
 #endif  // WavemakerSetup
 #ifdef DosingPumpSetup
-const prog_char setupmenu_1_label[] PROGMEM = "Single Dose";
+const char setupmenu_1_label[] PROGMEM = "Single Dose";
 #endif  // DosingPumpSetup
 #ifdef DosingPumpIntervalSetup
-const prog_char setupmenu_2_label[] PROGMEM = "Multi Dose";
+const char setupmenu_2_label[] PROGMEM = "Multi Dose";
 #endif  // DosingPumpIntervalSetup
-const prog_char setupmenu_3_label[] PROGMEM = "Calibrate pH";
+const char setupmenu_3_label[] PROGMEM = "Calibrate pH";
 #ifdef SALINITYEXPANSION
-const prog_char setupmenu_4_label[] PROGMEM = "Calibrate Sal";
+const char setupmenu_4_label[] PROGMEM = "Calibrate Sal";
 #endif  // SALINITYEXPANSION
 #ifdef ORPEXPANSION
-const prog_char setupmenu_5_label[] PROGMEM = "Calibrate ORP";
+const char setupmenu_5_label[] PROGMEM = "Calibrate ORP";
 #endif  // ORPEXPANSION
 #ifdef PHEXPANSION
-const prog_char setupmenu_6_label[] PROGMEM = "Calibrate PH Exp";
+const char setupmenu_6_label[] PROGMEM = "Calibrate PH Exp";
 #endif  // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
-const prog_char setupmenu_7_label[] PROGMEM = "Calibrate Water";
+const char setupmenu_7_label[] PROGMEM = "Calibrate Water";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
 #ifdef DateTimeSetup
-const prog_char setupmenu_8_label[] PROGMEM = "Date / Time";
+const char setupmenu_8_label[] PROGMEM = "Date / Time";
 #endif  // DateTimeSetup
 PROGMEM const char * const setupmenu_items[] = {
 #ifdef WavemakerSetup
@@ -320,17 +320,17 @@ enum SetupMenuItem {
 
 #ifndef RemoveAllLights
 // Lights Menu
-const prog_char lightsmenu_0_label[] PROGMEM = "Lights On";
-const prog_char lightsmenu_1_label[] PROGMEM = "Lights Off";
+const char lightsmenu_0_label[] PROGMEM = "Lights On";
+const char lightsmenu_1_label[] PROGMEM = "Lights Off";
 #ifdef MetalHalideSetup
-const prog_char lightsmenu_2_label[] PROGMEM = "Metal Halides";
-const prog_char lightsmenu_3_label[] PROGMEM = "MH On Delay";
+const char lightsmenu_2_label[] PROGMEM = "Metal Halides";
+const char lightsmenu_3_label[] PROGMEM = "MH On Delay";
 #endif  // MetalHalideSetup
 #ifdef StandardLightSetup
-const prog_char lightsmenu_4_label[] PROGMEM = "Standard Lights";
+const char lightsmenu_4_label[] PROGMEM = "Standard Lights";
 #endif  // StandardLightSetup
 #ifdef DisplayLEDPWM
-const prog_char lightsmenu_5_label[] PROGMEM = "LED PWM";
+const char lightsmenu_5_label[] PROGMEM = "LED PWM";
 #endif  // DisplayLEDPWM
 PROGMEM const char * const lightsmenu_items[] = {
 		lightsmenu_0_label, lightsmenu_1_label,
@@ -362,12 +362,12 @@ enum LightsMenuItem {
 #endif  // RemoveAllLights
 
 // Temps Menu
-const prog_char tempsmenu_0_label[] PROGMEM = "Heater";
-const prog_char tempsmenu_1_label[] PROGMEM = "Chiller";
+const char tempsmenu_0_label[] PROGMEM = "Heater";
+const char tempsmenu_1_label[] PROGMEM = "Chiller";
 #ifdef OverheatSetup
-const prog_char tempsmenu_2_label[] PROGMEM = "Overheat Set";
+const char tempsmenu_2_label[] PROGMEM = "Overheat Set";
 #endif  // OverheatSetup
-const prog_char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
+const char tempsmenu_3_label[] PROGMEM = "Overheat Clear";
 PROGMEM const char * const tempsmenu_items[] = {
 		tempsmenu_0_label,
 		tempsmenu_1_label,
@@ -387,15 +387,15 @@ enum TempsMenuItem {
 // Timeouts Menu
 #if defined SetupExtras || defined ATOSetup
 #ifdef ATOSetup
-const prog_char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
+const char timeoutsmenu_0_label[] PROGMEM = "ATO Set";
 #ifdef SingleATOSetup
-const prog_char timeoutsmenu_1_label[] PROGMEM = "ATO Interval";
+const char timeoutsmenu_1_label[] PROGMEM = "ATO Interval";
 #endif  // SingleATOSetup
-const prog_char timeoutsmenu_2_label[] PROGMEM = "ATO Clear";
+const char timeoutsmenu_2_label[] PROGMEM = "ATO Clear";
 #endif  // ATOSetup
 #ifdef SetupExtras
-const prog_char timeoutsmenu_3_label[] PROGMEM = "Feeding";
-const prog_char timeoutsmenu_4_label[] PROGMEM = "LCD";
+const char timeoutsmenu_3_label[] PROGMEM = "Feeding";
+const char timeoutsmenu_4_label[] PROGMEM = "LCD";
 #endif  // SetupExtras
 PROGMEM const char * const timeoutsmenu_items[] = {
 #ifdef ATOSetup
@@ -1198,16 +1198,16 @@ enum ScreenItem {
 	STATUS_FLAGS_2014
 };
 
-void ReefAngelClass::InitCustomLabels()
-{
-	for (int a=1;a<=8;a++)
-		CustomLabels[a-1]=String("Port " + String(a));
-#ifdef RelayExp
-	for (int a=1;a<=MAX_RELAY_EXPANSION_MODULES;a++)
-		for (int b=1;b<=8;b++)
-			CustomLabels[(a*8)+b-1]=String("Port "+ String(a) + String(b));
-#endif // RelayExp
-}
+//void ReefAngelClass::InitCustomLabels()
+//{
+//	for (int a=1;a<=8;a++)
+//		CustomLabels[a-1]=String("Port " + String(a));
+//#ifdef RelayExp
+//	for (int a=1;a<=MAX_RELAY_EXPANSION_MODULES;a++)
+//		for (int b=1;b<=8;b++)
+//			CustomLabels[(a*8)+b-1]=String("Port "+ String(a) + String(b));
+//#endif // RelayExp
+//}
 
 void ReefAngelClass::Draw2014Main()
 {
@@ -1272,51 +1272,35 @@ void ReefAngelClass::Draw2014Main()
 			LCD.Clear(PHColor,0,26,43,39);
 			LCD.Clear(COLOR_DIMGREY,45,26,87,39);
 			LCD.Clear(COLOR_DIMGREY,89,26,131,39);
-			LCD.DrawLargeText(COLOR_WHITE,T1TempColor,15,4,"T1");
-			LCD.DrawLargeText(COLOR_WHITE,T2TempColor,58,4,"T2");
-			LCD.DrawLargeText(COLOR_WHITE,T3TempColor,101,4,"T3");
-			LCD.DrawLargeText(COLOR_WHITE,PHColor,15,30,"pH");
+			LCD.DrawLargeTextP(COLOR_WHITE,T1TempColor,15,4,LABEL_TEMP1_SHORT);
+			LCD.DrawLargeTextP(COLOR_WHITE,T2TempColor,58,4,LABEL_TEMP2_SHORT);
+			LCD.DrawLargeTextP(COLOR_WHITE,T3TempColor,101,4,LABEL_TEMP3_SHORT);
+			LCD.DrawLargeTextP(COLOR_WHITE,PHColor,15,30,LABEL_PH);
 			x=1;
 			y=26;
-//#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-//			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+15,y+4,"AP");
-//			CheckOffset(x,y);
-//			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+15,y+4,"DP");
-//			CheckOffset(x,y);
-//#endif // DisplayLEDPWM
-//#ifdef RA_STAR
-//			LCD.Clear(APColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,APColor,x1[x]+12,y+4,"AP2");
-//			CheckOffset(x,y);
-//			LCD.Clear(DPColor,x1[x],y,x2[x],y+13);
-//			LCD.DrawLargeText(COLOR_WHITE,DPColor,x1[x]+12,y+4,"DP2");
-//			CheckOffset(x,y);
-//#endif // RA_STAR
 #if defined SALINITYEXPANSION
 			LCD.Clear(COLOR_DARKSLATEGREY,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,"SAL");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_DARKSLATEGREY,x1[x]+12,y+4,LABEL_SALINITY_SHORT);
 			CheckOffset(x,y);
 #endif // SALINITYEXPANSION
 #if defined ORPEXPANSION
 			LCD.Clear(COLOR_SADDLEBROWN,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_SADDLEBROWN,x1[x]+12,y+4,"ORP");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_SADDLEBROWN,x1[x]+12,y+4,LABEL_ORP);
 			CheckOffset(x,y);
 #endif // ORPEXPANSION
 #if defined PHEXPANSION
 			LCD.Clear(COLOR_DARKGREEN,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKGREEN,x1[x]+12,y+4,"pHE");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_DARKGREEN,x1[x]+12,y+4,LABEL_PHEXP_SHORT);
 			CheckOffset(x,y);
 #endif // PHEXPANSION
 #if defined HUMIDITYEXPANSION
 			LCD.Clear(COLOR_PLUM,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,"HUM");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,LABEL_HUMIDITY_SHORT);
 			CheckOffset(x,y);
 #endif // HUMIDITYEXPANSION
 #if defined PAREXPANSION
 			LCD.Clear(COLOR_DODGERBLUE,x1[x],y,x2[x],y+13);
-			LCD.DrawLargeText(COLOR_WHITE,COLOR_DODGERBLUE,x1[x]+12,y+4,"PAR");
+			LCD.DrawLargeTextP(COLOR_WHITE,COLOR_DODGERBLUE,x1[x]+12,y+4,LABEL_PAR);
 			CheckOffset(x,y);
 #endif // PAREXPANSION
 			break;
@@ -1324,35 +1308,25 @@ void ReefAngelClass::Draw2014Main()
 		case DIMMING_2014:
 			x=5;
 			y=5;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,37,y,"Dimming");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,37,y,DIMMING_LABEL);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Daylight");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_DAYLIGHT);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Actinic");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ACTINIC);
 			y+=20;
-#ifdef RA_STAR
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Daylight 2");
-			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Actinic 2");
-			y+=20;
-#endif // RA_STAR
 			break;
 #endif // DisplayLEDPWM
 		case INPUT_2014:
 			x=25;
 			y=5;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,47,y,"Input");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,47,y,INPUT_LABEL);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"ATO Low");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ATOLOW);
 			y+=20;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"ATO High");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_ATOHIGH);
 			y+=20;
-#ifdef RA_STAR
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Alarm");
-			y+=20;
-#endif // RA_STAR
 #ifdef LEAKDETECTOREXPANSION
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Water Leak");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,ALERT_LEAK_LABEL);
 #endif // LEAKDETECTOREXPANSION
 			break;
 		case RELAY_2014:
@@ -1370,9 +1344,10 @@ void ReefAngelClass::Draw2014Main()
 			y=5;
 			for (int a=0+(MenuItem_2014-RELAY_2014)*8;a<8+(MenuItem_2014-RELAY_2014)*8;a++)
 			{
-				char buf[16];
-				CustomLabels[a].toCharArray(buf,16);
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,buf);
+//				char buf[16];
+//				CustomLabels[a].toCharArray(buf,16);
+//				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,buf);
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,(char * )pgm_read_word(&(LABEL_PORT[a])));
 				LCD.DrawImage(35,12,0,y-2,RELAY_BAR);
 				y+=12;
 			}
@@ -1389,7 +1364,7 @@ void ReefAngelClass::Draw2014Main()
 #endif
 			for (a; a < WATERLEVEL_CHANNELS; a++)
 			{
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"WL Ch");
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_WL_CHANNEL);
 				ConvertNumToString(text, a, 1);
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,52,y,text);
 				y+=19;
@@ -1403,7 +1378,7 @@ void ReefAngelClass::Draw2014Main()
 			y=5;
 			for (int a=0; a<PWM_EXPANSION_CHANNELS; a++)
 			{
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Dimming Ch");
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_PWME_CHANNEL);
 				ConvertNumToString(text, a, 1);
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,92,y,text);
 				y+=17;
@@ -1416,7 +1391,7 @@ void ReefAngelClass::Draw2014Main()
 			y=5;
 			for (int a=0; a<IO_EXPANSION_CHANNELS; a++)
 			{
-				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"I/O Ch");
+				LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_IO_CHANNEL);
 				ConvertNumToString(text, a, 1);
 				LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,80,y,text);
 				y+=17;
@@ -1427,11 +1402,11 @@ void ReefAngelClass::Draw2014Main()
 		case AI_2014:
 			x=5;
 			y=15;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"White");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_AI_WHITE);
 			y+=25;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_AI_BLUE);
 			y+=25;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Royal Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_AI_ROYAL_BLUE);
 			y+=25;
 			break;
 #endif // AI_LED
@@ -1440,17 +1415,17 @@ void ReefAngelClass::Draw2014Main()
 		case RF_RADION_2014:
 			x=5;
 			y=5;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"White");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_WHITE);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Royal Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_ROYAL_BLUE);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Red");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_RED);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Green");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_GREEN);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Blue");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_BLUE);
 			y+=17;
-			LCD.DrawLargeText(COLOR_BLACK,COLOR_WHITE,x,y,"Intensity");
+			LCD.DrawLargeTextP(COLOR_BLACK,COLOR_WHITE,x,y,LABEL_RF_INTENSITY);
 			y+=17;
 			break;
 #endif // RADION_COMM
@@ -1578,26 +1553,6 @@ void ReefAngelClass::Draw2014Main()
 		LCD.DrawCenterSingleMonitor(Params.PH,PHColor,22,42,100,1);
 		x=1;
 		y=42;
-//#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
-//		offset=intlength(PWM.GetActinicValue())+1;
-//		ConvertNumToString(text, PWM.GetActinicValue(), 1);
-//		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//		offset=intlength(PWM.GetDaylightValue())+1;
-//		ConvertNumToString(text, PWM.GetDaylightValue(), 1);
-//		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//#endif // DisplayLEDPWM
-//#ifdef RA_STAR
-//		offset=intlength(PWM.GetActinic2Value())+1;
-//		ConvertNumToString(text, PWM.GetActinic2Value(), 1);
-//		LCD.DrawText(APColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//		offset=intlength(PWM.GetDaylight2Value())+1;
-//		ConvertNumToString(text, PWM.GetDaylight2Value(), 1);
-//		LCD.DrawText(DPColor,DefaultBGColor, x1[x]+19-(offset*2),y,text);
-//		CheckOffset(x,y);
-//#endif // RA_STAR
 #if defined SALINITYEXPANSION
 		LCD.DrawCenterSingleMonitor(Params.Salinity,COLOR_DARKSLATEGREY,x3[x],y,10,1);
 		CheckOffset(x,y);
@@ -1642,27 +1597,6 @@ void ReefAngelClass::Draw2014Main()
 		for(int b=a1; b<100; b++)
 			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
 		y+=20;
-#ifdef RA_STAR
-		byte d2,a2;
-		d2=PWM.GetDaylight2Value();
-		a2=PWM.GetActinic2Value();
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,d2);
-		for(int b=0; b<d2; b++)
-			LCD.DrawImage(1,6,b+5,y+2,BAR_D_LEFT);
-		LCD.DrawImage(2,6,d2+5,y+2,BAR_CENTER);
-		for(int b=d2; b<100; b++)
-			LCD.DrawImage(1,6,b+7,y+2,BAR_D_RIGHT);
-		y+=20;
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,"   ");
-		LCD.DrawText(COLOR_BLACK,DefaultBGColor, 110,y,a2);
-		for(int b=0; b<a2; b++)
-			LCD.DrawImage(1,6,b+5,y+2,BAR_RB_LEFT);
-		LCD.DrawImage(2,6,a2+5,y+2,BAR_CENTER);
-		for(int b=a2; b<100; b++)
-			LCD.DrawImage(1,6,b+7,y+2,BAR_RB_RIGHT);
-		y+=20;
-#endif // RA_STAR
 		break;
 #endif // DisplayLEDPWM
 	case INPUT_2014:
@@ -1672,10 +1606,6 @@ void ReefAngelClass::Draw2014Main()
 		y+=20;
 		LCD.DrawImage(8,8,x,y,HighATO.IsActive()?ATO_GREEN:ATO_RED);
 		y+=20;
-#ifdef RA_STAR
-		LCD.DrawImage(8,8,x,y,AlarmInput.IsActive()?ATO_GREEN:ATO_RED);
-		y+=20;
-#endif // RA_STAR
 #ifdef LEAKDETECTOREXPANSION
 		LCD.DrawImage(8,8,x,y,IsLeakDetected()?ATO_GREEN:ATO_RED);
 #endif // LEAKDETECTOREXPANSION
@@ -2065,7 +1995,7 @@ void ReefAngelClass::DisplayMenu()
 {
 	// redrawmenu should only get set from within this function when we move the joystick or press the button
 	byte qty = menuqtysptr[DisplayedMenu];
-	int ptr = menusptr[DisplayedMenu];
+//	int ptr = menusptr[DisplayedMenu];
 	byte PreviousSelectedMenuItem=SelectedMenuItem;
 	if (redrawmenu) PreviousSelectedMenuItem=0;
 	if ( Joystick.IsUp() )
@@ -2131,21 +2061,21 @@ void ReefAngelClass::DisplayMenu()
 	{
 		bcolor = DefaultBGColor;
 		fcolor = DefaultFGColor;
-		if ( i < qty )
-		{
-			strcpy_P(buffer, (char *)ptr++);
-		}
-		else
-		{
-			// the last item in the list is either Exit or Prev Menu
-			int ptr2 = pgm_read_word(&(return_items[0]));
-			if ( DisplayedMenu == MainMenu )
-			{
-				ptr2 += strlen(Return_0_label) + 1;
-			}
-			strcpy_P(buffer, (char *)ptr2);
-		}
-		ptr += strlen(buffer);
+//		if ( i < qty )
+//		{
+//			strcpy_P(buffer, (char *)ptr++);
+//		}
+//		else
+//		{
+//			// the last item in the list is either Exit or Prev Menu
+//			int ptr2 = pgm_read_word(&(return_items[0]));
+//			if ( DisplayedMenu == MainMenu )
+//			{
+//				ptr2 += strlen(Return_0_label) + 1;
+//			}
+//			strcpy_P(buffer, (char *)ptr2);
+//		}
+//		ptr += strlen(buffer);
 
 		// change the background color on the selected menu entry
 		if ( i == SelectedMenuItem )
@@ -2159,7 +2089,55 @@ void ReefAngelClass::DisplayMenu()
 					(i*MENU_START_ROW)+MENU_HEADING_SIZE-1,
 					MENU_END_COL,
 					(i*MENU_START_ROW)+(MENU_HEADING_SIZE+MENU_ITEM_HEIGHT-1));
-			LCD.DrawText(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, buffer);
+			//LCD.DrawText(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, buffer);
+			if ( i < qty )
+			{
+				//LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )pgm_read_word(&(mainmenu_items[i])));
+
+				switch ( DisplayedMenu )
+				{
+				default:
+				case MainMenu:
+				{
+#ifdef CUSTOM_MENU
+					LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )custom_items[i]);
+#else // CUSTOM_MENU
+					LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )pgm_read_word(&(mainmenu_items[i])));
+#endif // CUSTOM_MENU
+				}
+				break;
+#if !defined SIMPLE_MENU && !defined CUSTOM_MENU
+				case SetupMenu:
+				{
+					LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )pgm_read_word(&(setupmenu_items[i])));
+				}
+				break;
+#ifndef RemoveAllLights
+				case LightsMenu:
+				{
+					LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )pgm_read_word(&(lightsmenu_items[i])));
+				}
+				break;
+#endif  // RemoveAllLights
+				case TempsMenu:
+				{
+					LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )pgm_read_word(&(tempsmenu_items[i])));
+				}
+				break;
+#if defined SetupExtras || defined ATOSetup
+				case TimeoutsMenu:
+				{
+					LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )pgm_read_word(&(timeoutsmenu_items[i])));
+				}
+				break;
+#endif  // if defined SetupExtras || defined ATOSetup
+#endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
+				}  // switch MenuNum				
+			}
+			else
+			{
+				LCD.DrawTextP(fcolor, bcolor, MENU_START_COL, (i*MENU_START_ROW)+MENU_HEADING_SIZE, (char * )pgm_read_word(&(return_items[0])));
+			}
 		}
 	}  // for i
 	// once drawn, no need to redraw yet
@@ -2172,87 +2150,60 @@ void ReefAngelClass::DisplayMenuHeading()
 	if ( ! redrawmenu )
 		return;
 
-	char buffer[10];
-	int ptr = pgm_read_word(&(menulabel_items[0]));
+	// clear the line that has the menu heading on it
+	LCD.Clear(DefaultBGColor, MENU_START_COL, MENU_START_ROW, MAX_X, MAX_Y);
 
 	switch ( DisplayedMenu )
 	{
 	default:
-		//            {
-		//                //strcpy(buffer, "Menu:");
-		//                sprintf(buffer, "Menu (%d):", MenuNum);
-		//            }
-		//            break;
 	case MainMenu:
 	{
-		//                strcpy_P(buffer, (char*)ptr);
+		LCD.DrawTextP(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, Menu_0_label);
 	}
 	break;
 #if !defined SIMPLE_MENU && !defined CUSTOM_MENU
 	case SetupMenu:
 	{
-		ptr += strlen(Menu_0_label) + 1;
-		//                strcpy_P(buffer, (char*)ptr);
+		LCD.DrawTextP(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, Menu_1_label);
 	}
 	break;
 #ifndef RemoveAllLights
 	case LightsMenu:
 	{
-		ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + 2;
-		//                strcpy_P(buffer, (char*)ptr);
+		LCD.DrawTextP(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, Menu_2_label);
 	}
 	break;
 #endif  // RemoveAllLights
 	case TempsMenu:
 	{
-		ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + 2;
-#ifndef RemoveAllLights
-		ptr += strlen(Menu_2_label) + 1;
-#endif  // RemoveAllLights
-		//                strcpy_P(buffer, (char*)ptr);
+		LCD.DrawTextP(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, Menu_3_label);
 	}
 	break;
 #if defined SetupExtras || defined ATOSetup
 	case TimeoutsMenu:
 	{
-		ptr += strlen(Menu_0_label) + strlen(Menu_1_label) + strlen(Menu_3_label) + 3;
-#ifndef RemoveAllLights
-		ptr += strlen(Menu_2_label) + 1;
-#endif  // RemoveAllLights
-		//                strcpy_P(buffer, (char*)ptr);
+		LCD.DrawTextP(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, Menu_4_label);
 	}
 	break;
 #endif  // if defined SetupExtras || defined ATOSetup
 #endif  // !defined SIMPLE_MENU && !defined CUSTOM_MENU
 	}  // switch MenuNum
-	strcpy_P(buffer, (char*)ptr);
-
-	// clear the line that has the menu heading on it
-	LCD.Clear(DefaultBGColor, MENU_START_COL, MENU_START_ROW, MAX_X, MAX_Y);
-	// Display the menu heading
-	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, buffer);
 }
 
 void ReefAngelClass::DisplayMenuEntry(char *text)
 {
 	ClearScreen(DefaultBGColor);
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, text);
-	/*
-    char buffer[18];
-	int ptr = pgm_read_word(&(return_items[0]));
-	ptr += strlen(Return_0_label) + strlen(Return_1_label) + 2;
-	strcpy_P(buffer, (char *)ptr);
-    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, buffer);
-	 */
 	LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*4, "Press to exit...");
 }
 
 #ifdef CUSTOM_MENU
-void ReefAngelClass::InitMenu(int ptr, byte qty)
+void ReefAngelClass::InitMenu(int ptr, byte index)
 {
+	if (index==0) menuqtysptr[MainMenu]=0;
 	// loads all the menus
-	menusptr[MainMenu] = ptr;
-	menuqtysptr[MainMenu] = qty;
+	custom_items[index]=ptr;
+	menuqtysptr[MainMenu]++;
 	// initialize menus
 	PreviousMenu = DEFAULT_MENU;
 	SetDisplayedMenu(DEFAULT_MENU);
@@ -3654,6 +3605,10 @@ void ReefAngelClass::StartSetupCalibrateChoicePHExp()
     setup_input_render=true;
     setup_screen_refresh=true;
     setup_save=false;
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudPHExpBit)==1) { Serial.println(F("CLOUD:PHEC:1")); }
+		CloudCalVal=0;
+#endif
 }
 
 void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
@@ -3677,12 +3632,27 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
     ReefAngel.Network.ReceiveData();
     #endif//wifi||defined ETH_WIZ5100
     ph_read_range[setup_step]=0;
-    for (int a=0;a<5;a++)
-    {
-        ph_read_range[setup_step]+=PH.Read();
-    }
-    ph_read_range[setup_step]/=5;
+	wdt_reset();
+#if defined wifi || defined ETH_WIZ5100
+	ReefAngel.Network.ReceiveData();
+#endif  // wifi
+	if (bitRead(ReefAngel.CEM,CloudPHExpBit)==0)
+	{
+	    for (int a=0;a<5;a++)
+	    {
+	        ph_read_range[setup_step]+=PH.Read();
+	    }
+	    ph_read_range[setup_step]/=5;
+	}
+
+	else
+	{
+#ifdef CLOUD_WIFI
+		ph_read_range[setup_step]=CloudCalVal;
+#endif
+	}
     LCD.DrawCalibrate(ph_read_range[setup_step], MENU_START_COL+65, MENU_START_ROW*6);
+    delay(100);
     if(setup_input_render)
     {
         switch(setup_option)
@@ -3789,6 +3759,9 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
         else
         {
             setup_save=false;
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudPHExpBit)==1) { Serial.println(F("CLOUD:PHEC:0")); }
+#endif
         }
         setup_step+=1;
     }
@@ -3803,6 +3776,10 @@ void ReefAngelClass::DisplaySetupCalibrateChoicePHExp()
         PHExpMax=map(PH_DEFAULT_RANGE[HIGH], ph_target_range[LOW], ph_target_range[HIGH], ph_read_range[LOW], ph_read_range[HIGH]);
         InternalMemory.PHExpMin_write(PHExpMin);
         InternalMemory.PHExpMax_write(PHExpMax);
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudPHExpBit)==1) { Serial.print(F("CLOUD:PHEC:2:")); Serial.println(PHExpMin); }
+		if (bitRead(ReefAngel.CEM,CloudPHExpBit)==1) { Serial.print(F("CLOUD:PHEC:3:")); Serial.println(PHExpMax); }
+#endif
     }
 }
 #endif  // PHEXPANSION
@@ -3816,6 +3793,10 @@ void ReefAngelClass::StartSetupCalibrateSalinity()
     setup_input_select=true;
     setup_input_render=true;
     setup_screen_refresh=true;
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudSalinityBit)==1) { Serial.println(F("CLOUD:SALC:1")); }
+		CloudCalVal=0;
+#endif
 }
 
 void ReefAngelClass::DisplaySetupCalibrateSalinity()
@@ -3826,19 +3807,27 @@ void ReefAngelClass::DisplaySetupCalibrateSalinity()
         LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*5, "35 PPT");
         setup_screen_refresh=!setup_screen_refresh;
     }
-    #if defined WDT||defined WDT_FORCE
-    wdt_reset();
-    #endif//WDT||defined WDT_FORCE
-    #if defined wifi||defined ETH_WIZ5100
-    ReefAngel.Network.ReceiveData();
-    #endif//wifi||defined ETH_WIZ5100
-    salinity_read=0;
-    for(int a=0; a<15; a++)
-    {
-        salinity_read+=Salinity.Read();
-    }
-    salinity_read/=15;
+	wdt_reset();
+#if defined wifi || defined ETH_WIZ5100
+	ReefAngel.Network.ReceiveData();
+#endif  // wifi
+	if (bitRead(ReefAngel.CEM,CloudSalinityBit)==0)
+	{
+	    salinity_read=0;
+	    for(int a=0; a<15; a++)
+	    {
+	        salinity_read+=Salinity.Read();
+	    }
+	    salinity_read/=15;
+	}
+	else
+	{
+#ifdef CLOUD_WIFI
+		salinity_read=CloudCalVal;
+#endif
+	}
     LCD.DrawCalibrate(salinity_read, MENU_START_COL+65, MENU_START_ROW*5);
+    delay(100);
     if(setup_input_render)
     {
         LCD.DrawOK(setup_input_select);
@@ -3857,6 +3846,15 @@ void ReefAngelClass::DisplaySetupCalibrateSalinity()
             InternalMemory.SalMax_write(salinity_read);
             InternalMemory.SalTempComp_write(Params.Temp[TempProbe]);
             SalMax=salinity_read;
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudSalinityBit)==1) { Serial.print(F("CLOUD:SALC:2:")); Serial.println(SalMax); }
+#endif
+        }
+        else
+        {
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudSalinityBit)==1) { Serial.println(F("CLOUD:SALC:0")); }
+#endif
         }
         ClearScreen(DefaultBGColor);
         DisplayedMenu=DEFAULT_MENU;
@@ -3877,6 +3875,10 @@ void ReefAngelClass::SetupCalibrateORP()
 	// draw labels
 	ClearScreen(DefaultBGColor);
 	DisplayedMenu=ORP_CALIBRATE_MENU;
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudORPBit)==1) { Serial.println(F("CLOUD:ORPC:1")); }
+		CloudCalVal=0;
+#endif
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3898,12 +3900,23 @@ void ReefAngelClass::SetupCalibrateORP()
 			ReefAngel.Network.ReceiveData();
 #endif  // wifi
 			iO[b]=0;
-			for (int a=0;a<15;a++)
+			if (bitRead(ReefAngel.CEM,CloudORPBit)==0)
 			{
-				iO[b] += ORP.Read();
+				for (int a=0;a<15;a++)
+				{
+					iO[b] += ORP.Read();
+				}
+				iO[b]/=15;
 			}
-			iO[b]/=15;
+			else
+			{
+#ifdef CLOUD_WIFI
+				iO[b]=CloudCalVal;
+#endif
+			}
+			
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
+			delay(100);
 			if (  bDrawButtons )
 			{
 				if ( bOKSel )
@@ -3931,6 +3944,12 @@ void ReefAngelClass::SetupCalibrateORP()
 				{
 					bSave = true;
 				}
+				else
+				{
+#ifdef CLOUD_WIFI
+					if (bitRead(ReefAngel.CEM,CloudORPBit)==1) { Serial.println(F("CLOUD:ORPC:0")); }
+#endif
+				}
 			}
 		} while ( ! bDone );
 	}
@@ -3945,6 +3964,10 @@ void ReefAngelClass::SetupCalibrateORP()
 		ORPMin = iO[0];
 		InternalMemory.ORPMax_write(iO[1]);
 		ORPMax = iO[1];
+#ifdef CLOUD_WIFI
+		if (bitRead(ReefAngel.CEM,CloudORPBit)==1) { Serial.print(F("CLOUD:ORPC:2:")); Serial.println(ORPMin); }
+		if (bitRead(ReefAngel.CEM,CloudORPBit)==1) { Serial.print(F("CLOUD:ORPC:3:")); Serial.println(ORPMax); }
+#endif
 	}
 }
 #endif  // ORPEXPANSION
@@ -3967,6 +3990,7 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 	unsigned int iO[2] = {0,0};
 	unsigned int iCal[2] = {0,100};
 	byte offset = 65;
+	char buffer[7];
 #if defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
   int wl_channel=1;
 #else
@@ -3976,6 +4000,12 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 	// draw labels
 	ClearScreen(DefaultBGColor);
 	DisplayedMenu=WL_CALIBRATE_MENU;
+#ifdef CLOUD_WIFI
+	sprintf(buffer, "WL%dC:1", wl_channel);
+	if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+	if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+	CloudCalVal=0;
+#endif
 	for (int b=0;b<2;b++)
 	{
 		if (b==1 && !bSave) break;
@@ -3991,19 +4021,36 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*7, "Channel:");
 		do
 		{
-#if defined WDT || defined WDT_FORCE
 			wdt_reset();
-#endif  // defined WDT || defined WDT_FORCE
 #if defined wifi || defined ETH_WIZ5100
 			ReefAngel.Network.ReceiveData();
 #endif  // wifi
 			iO[b]=0;
-			for (int a=0;a<15;a++)
+			if (bitRead(ReefAngel.CEM,CloudWLBit)==0 && wl_channel==0)
 			{
-				iO[b] += WaterLevel.Read(wl_channel);
+				for (int a=0;a<15;a++)
+				{
+					iO[b] += WaterLevel.Read();
+				}
+				iO[b]/=15;
 			}
-			iO[b]/=15;
+			else if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==0 && wl_channel>0)
+			{
+				for (int a=0;a<15;a++)
+				{
+					iO[b] += WaterLevel.Read(wl_channel);
+				}
+				iO[b]/=15;
+			}
+
+			else
+			{
+#ifdef CLOUD_WIFI
+				iO[b]=CloudCalVal;
+#endif
+			}
 			LCD.DrawCalibrate(iO[b], MENU_START_COL + offset, MENU_START_ROW*5);
+			delay(100);
 
 			if (  bRedraw )
 			{
@@ -4047,6 +4094,11 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 			{
 				if (sel == WLCHANNEL)
 				{
+#ifdef CLOUD_WIFI
+					sprintf(buffer, "WL%dC:0", wl_channel);
+					if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+					if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+#endif
 					wl_channel++;
 					if ( wl_channel == WATERLEVEL_CHANNELS )
 					{
@@ -4056,17 +4108,27 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 					{
 						bRedraw = true;
 					}
+#ifdef CLOUD_WIFI
+					sprintf(buffer, "WL%dC:1", wl_channel);
+					if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+					if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+#endif
 				}
 			}
 			if ( Joystick.IsDown() )
 			{
 				if (sel == WLCHANNEL)
 				{
+#ifdef CLOUD_WIFI
+					sprintf(buffer, "WL%dC:0", wl_channel);
+					if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+					if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+#endif
 					wl_channel--;
 #if defined MULTIWATERLEVELEXPANSION && !defined WATERLEVELEXPANSION
-          if ( wl_channel < 1 )
-          {
-            wl_channel = 1;
+					if ( wl_channel < 1 )
+					{
+					wl_channel = 1;
 #else
 					if ( wl_channel < 0 )
 					{
@@ -4077,6 +4139,11 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 					{
 						bRedraw = true;
 					}
+#ifdef CLOUD_WIFI
+					sprintf(buffer, "WL%dC:1", wl_channel);
+					if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+					if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+#endif
 				}
 			}
 
@@ -4116,6 +4183,11 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 				}
 				else if ( sel == CANCEL )
 				{
+#ifdef CLOUD_WIFI
+					sprintf(buffer, "WL%dC:0", wl_channel);
+					if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+					if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+#endif
 					bDone = true;
 				}
 			}
@@ -4127,6 +4199,15 @@ void ReefAngelClass::SetupCalibrateWaterLevel()
 	showmenu = false;
 	if ( bSave )
 	{
+#ifdef CLOUD_WIFI
+		sprintf(buffer, "WL%dC:2:%d", wl_channel,iO[0]);
+		if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+		if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+		delay(100);
+		sprintf(buffer, "WL%dC:3:%d", wl_channel,iO[1]);
+		if (bitRead(ReefAngel.CEM,CloudWLBit)==1 && wl_channel==0) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+		if (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1  && wl_channel>0 && wl_channel<5) { Serial.print(F("CLOUD:")); Serial.println(buffer); }
+#endif
 		// save WaterLevelMin & WaterLevelMax to memory
 		switch ( wl_channel )
 		{

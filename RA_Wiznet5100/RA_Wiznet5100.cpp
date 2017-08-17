@@ -13,31 +13,33 @@
 #include <RA_Wifi.h>
 #include <avr/wdt.h>
 
-byte* ParamArrayByte[NumParamByte] = {&ReefAngel.Relay.RelayDataE[0],&ReefAngel.Relay.RelayMaskOffE[0],&ReefAngel.Relay.RelayMaskOnE[0],&ReefAngel.Relay.RelayDataE[1],&ReefAngel.Relay.RelayMaskOffE[1],&ReefAngel.Relay.RelayMaskOnE[1],&ReefAngel.Relay.RelayDataE[2],&ReefAngel.Relay.RelayMaskOffE[2],&ReefAngel.Relay.RelayMaskOnE[2],&ReefAngel.Relay.RelayDataE[3],&ReefAngel.Relay.RelayMaskOffE[3],&ReefAngel.Relay.RelayMaskOnE[3],&ReefAngel.Relay.RelayDataE[4],&ReefAngel.Relay.RelayMaskOffE[4],&ReefAngel.Relay.RelayMaskOnE[4],&ReefAngel.Relay.RelayDataE[5],&ReefAngel.Relay.RelayMaskOffE[5],&ReefAngel.Relay.RelayMaskOnE[5],&ReefAngel.Relay.RelayDataE[6],&ReefAngel.Relay.RelayMaskOffE[6],&ReefAngel.Relay.RelayMaskOnE[6],&ReefAngel.Relay.RelayDataE[7],&ReefAngel.Relay.RelayMaskOffE[7],&ReefAngel.Relay.RelayMaskOnE[7],&ReefAngel.LowATO.Status,&ReefAngel.HighATO.Status,&ReefAngel.AlarmInput.Status,&ReefAngel.EM,&ReefAngel.EM1,&ReefAngel.REM,&ReefAngel.Board,&ReefAngel.AlertFlags,&ReefAngel.StatusFlags,&ReefAngel.PWM.DaylightPercentage,&ReefAngel.PWM.ActinicPercentage,&ReefAngel.PWM.Daylight2Percentage,&ReefAngel.PWM.Actinic2Percentage,&ReefAngel.PWM.DaylightPWMOverride,&ReefAngel.PWM.ActinicPWMOverride,&ReefAngel.PWM.Daylight2PWMOverride,&ReefAngel.PWM.Actinic2PWMOverride,&ReefAngel.WaterLevel.level[0],&ReefAngel.WaterLevel.level[1],&ReefAngel.WaterLevel.level[2],&ReefAngel.WaterLevel.level[3],&ReefAngel.WaterLevel.level[4],&ReefAngel.Humidity.level,&ReefAngel.DCPump.Mode,&ReefAngel.DCPump.Speed,&ReefAngel.DCPump.Duration,&ReefAngel.DCPump.Threshold,&ReefAngel.PWM.ExpansionPercentage[0],&ReefAngel.PWM.ExpansionPercentage[1],&ReefAngel.PWM.ExpansionPercentage[2],&ReefAngel.PWM.ExpansionPercentage[3],&ReefAngel.PWM.ExpansionPercentage[4],&ReefAngel.PWM.ExpansionPercentage[5],&ReefAngel.PWM.ExpansionChannelOverride[0],&ReefAngel.PWM.ExpansionChannelOverride[1],&ReefAngel.PWM.ExpansionChannelOverride[2],&ReefAngel.PWM.ExpansionChannelOverride[3],&ReefAngel.PWM.ExpansionChannelOverride[4],&ReefAngel.PWM.ExpansionChannelOverride[5],&ReefAngel.AI.AIChannels[0],&ReefAngel.AI.AIChannels[1],&ReefAngel.AI.AIChannels[2],&ReefAngel.RF.Mode,&ReefAngel.RF.Speed,&ReefAngel.RF.Duration,&ReefAngel.RF.RadionChannels[0],&ReefAngel.RF.RadionChannels[1],&ReefAngel.RF.RadionChannels[2],&ReefAngel.RF.RadionChannels[3],&ReefAngel.RF.RadionChannels[4],&ReefAngel.RF.RadionChannels[5],&ReefAngel.RF.RadionChannelsOverride[0],&ReefAngel.RF.RadionChannelsOverride[1],&ReefAngel.RF.RadionChannelsOverride[2],&ReefAngel.RF.RadionChannelsOverride[3],&ReefAngel.RF.RadionChannelsOverride[4],&ReefAngel.RF.RadionChannelsOverride[5],&ReefAngel.IO.IOPorts,&ReefAngel.LeakValue,&ReefAngel.CustomVar[0],&ReefAngel.CustomVar[1],&ReefAngel.CustomVar[2],&ReefAngel.CustomVar[3],&ReefAngel.CustomVar[4],&ReefAngel.CustomVar[5],&ReefAngel.CustomVar[6],&ReefAngel.CustomVar[7]};
-static PROGMEM const char *param_items_byte[] = {JSON_R1, JSON_ROFF1, JSON_RON1, JSON_R2, JSON_ROFF2, JSON_RON2, JSON_R3, JSON_ROFF3, JSON_RON3, JSON_R4, JSON_ROFF4, JSON_RON4, JSON_R5, JSON_ROFF5, JSON_RON5, JSON_R6, JSON_ROFF6, JSON_RON6, JSON_R7, JSON_ROFF7, JSON_RON7, JSON_R8, JSON_ROFF8, JSON_RON8, JSON_ATOLOW, JSON_ATOHIGH, JSON_ALARM, JSON_EM, JSON_EM1, JSON_REM, JSON_BOARDID, JSON_ALERTFLAG, JSON_STATUSFLAG, JSON_PWMD, JSON_PWMA, JSON_PWMD2, JSON_PWMA2, JSON_PWMDO, JSON_PWMAO, JSON_PWMD2O, JSON_PWMA2O, JSON_WL, JSON_WL1, JSON_WL2, JSON_WL3, JSON_WL4, JSON_HUM, JSON_DCM, JSON_DCS, JSON_DCD, JSON_DCT, JSON_PWME0, JSON_PWME1, JSON_PWME2, JSON_PWME3, JSON_PWME4, JSON_PWME5, JSON_PWME0O, JSON_PWME1O, JSON_PWME2O, JSON_PWME3O, JSON_PWME4O, JSON_PWME5O, JSON_AIW, JSON_AIB, JSON_AIRB, JSON_RFM, JSON_RFS, JSON_RFD, JSON_RFW, JSON_RFRB, JSON_RFR, JSON_RFG, JSON_RFB, JSON_RFI, JSON_RFWO, JSON_RFRBO, JSON_RFRO, JSON_RFGO, JSON_RFBO, JSON_RFIO, JSON_IO, JSON_LEAK, JSON_C0, JSON_C1, JSON_C2, JSON_C3, JSON_C4, JSON_C5, JSON_C6, JSON_C7};
-int* ParamArrayInt[NumParamInt] = {&ReefAngel.Params.Temp[T1_PROBE],&ReefAngel.Params.Temp[T2_PROBE],&ReefAngel.Params.Temp[T3_PROBE],&ReefAngel.Params.PH,&ReefAngel.Params.ORP,&ReefAngel.Params.Salinity,&ReefAngel.Params.PHExp,&ReefAngel.PAR.level,&ReefAngel.CustomExpansionValue[0],&ReefAngel.CustomExpansionValue[1],&ReefAngel.CustomExpansionValue[2],&ReefAngel.CustomExpansionValue[3],&ReefAngel.CustomExpansionValue[4],&ReefAngel.CustomExpansionValue[5],&ReefAngel.CustomExpansionValue[6],&ReefAngel.CustomExpansionValue[7]};
-static PROGMEM const char *param_items_int[] = {JSON_T1, JSON_T2, JSON_T3, JSON_PH, JSON_ORP, JSON_SAL, JSON_PHEXP, JSON_PAR, JSON_CEXP0, JSON_CEXP1, JSON_CEXP2, JSON_CEXP3, JSON_CEXP4, JSON_CEXP5, JSON_CEXP6, JSON_CEXP7};
-
 RA_Wiznet5100::RA_Wiznet5100()
 {
 	PortalTimeOut=millis();
+	downloading=false;
 }
 
 void RA_Wiznet5100::Init()
 {
+	NetMac[5] = InternalMemory.read(StarMac);
+	if (NetMac[5]==0xff)
+	{
+		byte tempmac = random(0xff);
+		InternalMemory.write(StarMac,tempmac);
+		NetMac[5] = tempmac;
+	}
 	EthernetDHCP.begin(NetMac, 1); // Start Ethernet with DHCP polling enabled
 	NetServer.begin();
 	FoundIP=false;
-//	RelayConnected=false;
-//	RelayIndex=0;
-//	ConnectionRetry=0;
-//	RelayClient.setTimeout(100);
-	PortalClient.setTimeout(100);
 	PortalConnection=false;
 	PortalWaiting=false;
 	PortalDataReceived=false;
+	FirmwareConnection=false;
+	FirmwareWaiting=false;
 	MQTTReconnectmillis=millis();
 	MQTTSendmillis=millis();
+	downloadsize=0;
+	sd_index=0;
 }
 
 void RA_Wiznet5100::Update()
@@ -46,7 +48,7 @@ void RA_Wiznet5100::Update()
 	EthernetDHCP.poll();
 
 	const byte* ipAddr=EthernetDHCP.ipAddress();
-
+	
 	if (ipAddr[0]!=0)
 	{
 		if (!FoundIP)
@@ -59,97 +61,164 @@ void RA_Wiznet5100::Update()
 
 	    //Portal server
 	    // Read and dump what the server is returning from the Portal GET request.
-		if (PortalClient.available() && PortalConnection)
+		if (PortalClient.available() && (PortalConnection || FirmwareConnection))
 		{
-			Serial.println(F("Receiving Data..."));
+		    boolean newline = false;
+		    String headerline="";
+
+		    PortalTimeOut=millis();
+		    //Serial.println(F("Receiving"));
 			while(PortalClient.available())
 			{
 				wdt_reset();
-				char c = PortalClient.read();
-				Serial.write(c);
+				if (payload_ready)
+				{
+					if (PortalClient.available()>32)
+					{
+						for (int a=0;a<32;a++)
+							sd_buffer[a]=PortalClient.read();
+						firwareFile.write(sd_buffer,32);
+						downloadsize+=32;
+						sd_index++;
+						if (sd_index==32)
+						{
+							sd_index=0;
+							ReefAngel.Timer[PORTAL_TIMER].Start();  // start timer
+							PortalTimeOut=millis();
+							ReefAngel.Font.DrawTextP(38,9,DOWNLOADING);
+							ReefAngel.Font.DrawText((downloadsize*100)/lheader);
+							ReefAngel.Font.DrawText("%");
+						}
+					}
+					else
+					{
+						char c = PortalClient.read();
+						downloadsize++;
+						firwareFile.write(c);
+					}
+				}
+				else
+				{
+					char c = PortalClient.read();
+					downloadsize++;
+					headerline+=c;
+					Serial.write(c);
+					if (c == '\n')
+					{
+						byte sheader = headerline.indexOf("Length");
+						if (sheader==8)
+							lheader=headerline.substring(sheader+8).toInt();
+						headerline="";
+						newline = true;
+						c = PortalClient.read();
+						headerline+=c;
+						Serial.write(c);
+						if (c == '\r' && newline)
+						{
+							c = PortalClient.read();
+							Serial.write(c);
+							if (FirmwareConnection)
+							{
+								payload_ready = true;
+								if (lheader>0) downloading = true;
+							}
+							downloadsize=0;
+						}
+						else
+						{
+							newline = false;
+						}
+					}
+				}
 			}
-			PortalDataReceived=true;
-			Serial.println();
-			Serial.println(F("Portal Received"));
+			//Serial.println(downloadsize);
+			if (PortalConnection) PortalDataReceived=true;
+			//Serial.println(F("Received"));
 		}
 
 		// if the server has disconnected, stop the client
 		if (!PortalClient.connected() && PortalConnection)
 		{
-			Serial.println(F("Portal Disconnected"));
+			Serial.println(F("Disconnected"));
 			PortalConnection=false;
 			PortalClient.stop();
 			if (!PortalDataReceived) Init();
 			PortalDataReceived=false;
+			FirmwareConnection=true;
+			PortalWaiting=false;
+			FirmwareWaiting=false;
+			downloadsize=0;
+			lheader=0;
+		    payload_ready = false;
+			delay(100);
+			FirmwareConnect();
+			//Serial.println(F("Connecting..."));
+		}
+		
+		if (!PortalClient.connected() && FirmwareConnection)
+		{
+			Serial.print(F("Data: "));
+			Serial.println(downloadsize);
+			Serial.print(F("Header: "));
+			Serial.println(lheader);
+			Serial.println(F("Disconnected"));
+			FirmwareConnection=false;
+			PortalWaiting=false;
+			FirmwareWaiting=false;
+			PortalClient.stop();
+		    payload_ready = false;
+			if (firwareFile) firwareFile.close();
+			if (lheader==downloadsize && downloadsize>600)
+			{
+				if (firwareFile) firwareFile.close();
+				Serial.println(F("Updating..."));
+				InternalMemory.write(RemoteFirmware, 0xf0);
+				while(1);
+			}
+			else
+			{
+				if (SD.exists("FIRMWARE.BIN")) SD.remove("FIRMWARE.BIN");
+			}
+			downloadsize=0;
+			lheader=0;
 		}
 
 		// if request timed out, stop the client
-		if (PortalClient.connected() && PortalConnection && millis()-PortalTimeOut>PORTAL_TIMEOUT)
+		if (PortalClient.connected() && (PortalConnection || FirmwareConnection) && millis()-PortalTimeOut>PORTAL_TIMEOUT)
 		{
 			Serial.println(F("Portal Timeout"));
+			Serial.println(downloadsize);
 			PortalConnection=false;
+			FirmwareConnection=false;
 			PortalClient.stop();
 			if (!PortalDataReceived) Init();
 			PortalDataReceived=false;
+			PortalWaiting=false;
+			FirmwareWaiting=false;
+			downloadsize=0;
+			lheader=0;
+		    payload_ready = false;
+			if (firwareFile) firwareFile.close();
+			if (SD.exists("FIRMWARE.BIN")) SD.remove("FIRMWARE.BIN");
 		}
-		
-//		EthernetClient RelayClient = RelayServer.available();
-//		if (RelayClient && RelayClient.connected()) {
-//			RelayClient.find("\r\n\r\n"); // Consume incoming request
-//
-//			RelayClient.print("HTTP/1.1 200 OK\r\n");
-//			RelayClient.print("Connection: close\r\n");
-//			RelayClient.print("Content-Length: 5\r\n");
-//			RelayClient.print("\r\n");
-//			RelayClient.print("Hello");
-//
-//			delay(1); // Give the Web browser time to receive the data
-//			RelayClient.stop();
-//		}
-		
-//		// Relay server
-//		if (!RelayClient.connected()) // Check for relay server closed connection
-//		{
-//			Serial.println("Relay Disconnected");
-//			ConnectionRetry++;
-//			RelayConnected=false;
-//			RelayIndex=0;
-//			RelayClient.stop(); // Make sure we free up the client
-//			if (ConnectionRetry>=RETRY_COUNT) // Connection failed too many times
-//			{
-//				Serial.println("Reinitialzing");
-//				Init();
-//			}
-//			else
-//			{
-//				delay(100);
-//				Serial.println("Relay Connecting...");
-//				RelayClient.noblockconnect(RelayServer, 80);
-//			}
-//		}
-//		else
-//		{
-//			if (!RelayConnected)
-//			{
-//				Serial.print(".");
-//				delay(100);
-//				wdt_reset();
-//				if (RelayClient.checkconnect()==0x17) // Check for connection established
-//				{
-//					Serial.println();
-//					Serial.println("Relay Connected");
-//					ConnectionRetry=0;
-//					RelayConnected=true;
-//					RelayClient.print("POST /");
-//					RelayClient.print(uid);
-//					RelayClient.println(" HTTP/1.1");
-//					RelayClient.println("Upgrade: PTTH/1.0");
-//					RelayClient.println("Connection: Upgrade");
-//					RelayClient.println("Host: try.yaler.net");
-//					RelayClient.println();
-//				}
-//			}
-//		}
+		if (IsPortalConnected() && FirmwareConnection && !FirmwareWaiting) // Check for connection established
+		{
+		    payload_ready = false;
+			lheader=0;
+			FirmwareWaiting=true;
+			firwareFile = SD.open("FIRMWARE.BIN", O_WRITE | O_CREAT | O_TRUNC);  // change file name to write to here
+		    if (!firwareFile) {
+		      Serial.println(F("Could not create file"));
+		    }
+			
+			Serial.println(F("Connected"));
+			PortalClient.print("GET /getcodebin.php?u=");
+			PortalClient.print(CLOUD_USERNAME);
+			PortalClient.println(" HTTP/1.1");
+			PortalClient.println("Host: webwizard.reefangel.com");
+			PortalClient.println("Connection: close");
+			PortalClient.println();
+		}
 	}
 }
 
@@ -167,35 +236,6 @@ void RA_Wiznet5100::ReceiveData()
 			}
 		}
 	}
-	
-//	if (RelayClient.available())
-//	{
-//		wdt_reset();
-////			if (RelayClient.available()>54) // length of the return header of the HTTP upgrade
-////				RelayClient.find("\r\n\r\n"); // Discard header
-////			else
-////				RelayClient.read(); // Most likely HTTP/1.1 204, so we read one byte to cause timeout
-////			RelayClient.find("\r\n\r\n"); // Discard header
-//		Serial.print("Relay Data available: ");
-//		Serial.println(RelayClient.available());
-//		if (RelayClient.available()==17)
-//		{
-//			while(RelayClient.available()) Serial.write(RelayClient.read());
-//			Serial.println("Relay Repost");
-//			RelayClient.print("POST /");
-//			RelayClient.print(uid);
-//			RelayClient.println(" HTTP/1.1");
-//			RelayClient.println("Upgrade: PTTH/1.0");
-//			RelayClient.println("Connection: Upgrade");
-//			RelayClient.println("Host: try.yaler.net");
-//			RelayClient.println();
-//		}
-//		if (RelayClient.available()>0)
-//		{
-//			RelayClient.find("\r\n\r\n"); // Discard header
-//			ProcessRelayEthernet();
-//		}
-//	}
 }
 
 void RA_Wiznet5100::ProcessEthernet()
@@ -232,65 +272,15 @@ void RA_Wiznet5100::ProcessEthernet()
 	m_pushbackindex=0;
 }
 
-//void RA_Wiznet5100::ProcessRelayEthernet()
-//{
-//	bIncomingR=true;
-//	timeoutR=millis();
-//	Serial.println("Incoming...");
-//	while (bIncomingR)
-//	{
-//		if (millis()-timeoutR>100)
-//		{
-//			Serial.println("Timeout");
-//			bIncomingR=false;
-//			RelayIndex=0;
-//			RelayClient.stop();
-//		}
-//		if (RelayClient.available()>0)
-//		{
-//			if (RelayIndex++==5)
-//			{
-//				// Commented to allow for direct access subdomain instead of folder
-////				for (int a=0;a<uid.length();a++)
-////				{
-////					RelayClient.read(); // Consume the unique id
-////				}
-////				if (RelayClient.peek()=='/') RelayClient.read(); // Consume the slash, we already have one
-//			}
-//			char c=RelayClient.read();
-//			Serial.write(c);
-//			PushBuffer(c);
-//			timeoutR=millis();
-//			wdt_reset();
-//			if (reqtype>0 && reqtype<128)
-//			{
-//				bIncomingR=false;
-//				while(RelayClient.available())
-//				{
-//					wdt_reset();
-//					RelayClient.read();
-//				}
-//			}
-//		}
-//	}
-////	Serial1.println();
-////	Serial1.println(reqtype);
-//	wdt_reset();
-//	ProcessHTTP();
-//	Serial.println("Done processing");
-//	RelayIndex=0;
-//	RelayClient.stop();
-//	m_pushbackindex=0;
-//}
-
-//void RA_Wiznet5100::DirectAccess(String uniqueid)
-//{
-//	uid=uniqueid;
-//}
-
 void RA_Wiznet5100::PortalConnect()
 {
 	  PortalClient.noblockconnect(PortalServer, 80);
+	  PortalTimeOut=millis();
+}
+
+void RA_Wiznet5100::FirmwareConnect()
+{
+	  PortalClient.noblockconnect(WebWizardServer, 80);
 	  PortalTimeOut=millis();
 }
 
@@ -306,63 +296,63 @@ boolean RA_Wiznet5100::IsMQTTConnected()
 
 void RA_Wiznet5100::Cloud()
 {
-	if (FoundIP)
+	if (!payload_ready)
 	{
-		char username[16];
-		char password[16];
-		strcpy_P(username, CLOUD_USERNAME); 
-		strcpy_P(password, CLOUD_PASSWORD);
-		MQTTClient.loop();
-		if (millis()-MQTTReconnectmillis>5000)
+		if (FoundIP)
 		{
-			if (!MQTTClient.connected())
+			Portal(CLOUD_USERNAME);
+			MQTTClient.loop();
+			if (millis()-MQTTReconnectmillis>5000)
 			{
-				char sub_buffer[sizeof(username)+6];
-				MQTTReconnectmillis=millis();
-				Serial.println(F("MQTT Connecting..."));
-				wdt_reset();
-				sprintf(sub_buffer, "RA-%s", username);
-				if (MQTTClient.connect(sub_buffer,username,password))
+				if (!MQTTClient.connected())
 				{
-					sprintf(sub_buffer, "%s/in/#", username);
-					Serial.println(F("MQTT succeeded"));
-					MQTTClient.subscribe(sub_buffer);
+					char sub_buffer[sizeof(CLOUD_USERNAME)+6];
+					MQTTReconnectmillis=millis();
+					Serial.println(F("MQTT Connecting..."));
 					wdt_reset();
-				}
-				else
-				{
-					Serial.println(F("MQTT failed"));
-					MQTTClient.disconnect();
+					sprintf(sub_buffer, "RA-%s", CLOUD_USERNAME);
+					if (MQTTClient.connect(sub_buffer,CLOUD_USERNAME,CLOUD_PASSWORD))
+					{
+						sprintf(sub_buffer, "%s/in/#", CLOUD_USERNAME);
+						Serial.println(F("MQTT succeeded"));
+						MQTTClient.subscribe(sub_buffer);
+						wdt_reset();
+					}
+					else
+					{
+						Serial.println(F("MQTT failed"));
+						MQTTClient.disconnect();
+					}
 				}
 			}
+			
+			if (millis()-MQTTSendmillis>1000 && MQTTClient.connected())
+			{
+				MQTTSendmillis=millis();
+				for (byte a=0; a<NumParamByte;a++)
+				{
+					if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
+					{
+						char buffer[15];
+						strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
+						sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
+						CloudPublish(buffer);
+						ReefAngel.OldParamArrayByte[a]=*ReefAngel.ParamArrayByte[a];
+					}
+				}
+				for (byte a=0; a<NumParamInt;a++)
+				{
+					if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
+					{
+						char buffer[15];
+						strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
+						sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
+						CloudPublish(buffer);
+						ReefAngel.OldParamArrayInt[a]=*ReefAngel.ParamArrayInt[a];
+					}
+				}
+			}		
 		}
-		
-		if (millis()-MQTTSendmillis>1000 && MQTTClient.connected())
-		{
-			MQTTSendmillis=millis();
-			for (byte a=0; a<NumParamByte;a++)
-			{
-				if (*ParamArrayByte[a]!=OldParamArrayByte[a])
-				{
-					char buffer[15];
-					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
-					sprintf(buffer, "%s:%d", buffer, *ParamArrayByte[a]);
-					CloudPublish(buffer);
-					OldParamArrayByte[a]=*ParamArrayByte[a];
-				}
-			}
-			for (byte a=0; a<NumParamInt;a++)
-			{
-				if (*ParamArrayInt[a]!=OldParamArrayInt[a])
-				{
-					char buffer[15];
-					strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
-					sprintf(buffer, "%s:%d", buffer, *ParamArrayInt[a]);
-					CloudPublish(buffer);
-					OldParamArrayInt[a]=*ParamArrayInt[a];
-				}
-			}
-		}		
 	}
 }
 
@@ -370,10 +360,8 @@ void RA_Wiznet5100::CloudPublish(char* message)
 {
 	if (MQTTClient.connected())
 	{
-		char username[16];
-		strcpy_P(username, CLOUD_USERNAME); 
-		char pub_buffer[sizeof(username)+5];
-		sprintf(pub_buffer, "%s/out", username);
+		char pub_buffer[sizeof(CLOUD_USERNAME)+5];
+		sprintf(pub_buffer, "%s/out", CLOUD_USERNAME);
 		MQTTClient.publish(pub_buffer,message);
 
 	}

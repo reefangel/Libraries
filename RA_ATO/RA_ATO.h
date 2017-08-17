@@ -93,6 +93,7 @@ public:
 class RA_ATOWLClass : public RA_ATOClass
 {
 public:
+	unsigned long Timer;
 	inline bool IsActive() { return false; }
 };
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION

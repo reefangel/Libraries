@@ -26,7 +26,7 @@
 #include <Arduino.h>
 
 extern "C" {
-   #include <wiring.h>
+   #include <Arduino.h>
    #include <utility/EthernetUtil.h>
 }
 

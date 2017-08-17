@@ -36,6 +36,10 @@ public:
 	 byte AntiSyncOffset;
 	 byte DaylightChannel;
 	 byte ActinicChannel;
+#ifdef RA_STAR
+	 byte Daylight2Channel;
+	 byte Actinic2Channel;
+#endif
 	 byte LowATOChannel;
 	 byte HighATOChannel;
 	 byte FeedingSpeed;

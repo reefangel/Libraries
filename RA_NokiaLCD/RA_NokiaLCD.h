@@ -52,6 +52,7 @@ public:
 	void Clear(byte color, byte x1, byte y1, byte x2, byte y2);
 #if defined FONT_8x8 || defined FONT_8x16 || defined NUMBERS_8x8 || defined NUMBERS_8x16
 	void DrawLargeText(byte fcolor, byte bcolor, byte x, byte y, char* text, byte height = Font8x8);
+	void DrawLargeTextP(byte fcolor, byte bcolor, byte x, byte y, const char* text, byte height = Font8x8);	
 #endif  // FONT_8x8 || FONT_8x16 || NUMBERS_8x8 || NUMBERS_8x16
 #if defined FONT_12x16 || defined NUMBERS_12x16
 	void DrawHugeText(byte fcolor, byte bcolor, byte x, byte y, char* text, byte height = Font12x16);
@@ -63,6 +64,7 @@ public:
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, int text);
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, byte text);
 	void DrawText(byte fcolor, byte bcolor, byte x, byte y, long text);
+	void DrawTextP(byte fcolor, byte bcolor, byte x, byte y, const char *str);
 	void PutPixel(byte color, byte x, byte y);
 	void SetContrast(byte Contrast);
 	void DrawCircleOutline(byte x, byte y, byte radius, byte bordercolor);
@@ -81,7 +83,7 @@ public:
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
 	void DrawGraph(byte x, byte y);
 	void DrawEEPromImage(int swidth, int sheight, byte x, byte y, int I2CAddr, int EEaddr);
-	void DrawImage(int swidth, int sheight, byte x, byte y, const prog_uchar *iPtr);
+	void DrawImage(int swidth, int sheight, byte x, byte y, const unsigned char *iPtr);
 
     // For Setup
     void DrawOption(int Option, byte Selected, byte x, byte y, char *unit, char *subunit, byte maxdigits = 2);

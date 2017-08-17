@@ -75,7 +75,7 @@ int FontClass::TextWidth(char *str)
 	return length;
 }
 
-int FontClass::TextWidthP(const prog_char *str)
+int FontClass::TextWidthP(const char *str)
 {
 	int length=0;
 	char c;
@@ -245,7 +245,7 @@ void FontClass::DrawChar(char c)
 	if(!Transparent) RA_TFT::Clear(BC,x-CS,y,x,y+h);
 }
 
-//void FontClass::DrawText(int iFC, int iBC,int ix, int iy, const prog_char *str)
+//void FontClass::DrawText(int iFC, int iBC,int ix, int iy, const char *str)
 //{
 //	int TempFC,TempBC;
 //	
@@ -261,14 +261,14 @@ void FontClass::DrawChar(char c)
 //	
 //}
 //
-//void FontClass::DrawText(int ix, int iy, const prog_char *str)
+//void FontClass::DrawText(int ix, int iy, const char *str)
 //{
 //	x=ix;
 //	y=iy;
 //	DrawText(str); 
 //}
 //
-//void FontClass::DrawText(const prog_char *str)
+//void FontClass::DrawText(const char *str)
 //{
 //	char c;
 //	while(c = pgm_read_byte(str++))	DrawChar(c);
@@ -386,7 +386,7 @@ void FontClass::DrawText(String str)
 	DrawText(buff);
 }
 
-void FontClass::DrawTextP(int iFC, int iBC,int ix, int iy, const prog_char *str)
+void FontClass::DrawTextP(int iFC, int iBC,int ix, int iy, const char *str)
 {
 	int TempFC,TempBC;
 	
@@ -401,14 +401,14 @@ void FontClass::DrawTextP(int iFC, int iBC,int ix, int iy, const prog_char *str)
 	BC=TempBC;	
 }
 
-void FontClass::DrawTextP(int ix, int iy, const prog_char *str)
+void FontClass::DrawTextP(int ix, int iy, const char *str)
 {
 	x=ix;
 	y=iy;
 	DrawTextP(str); 	
 }
 
-void FontClass::DrawTextP(const prog_char *str)
+void FontClass::DrawTextP(const char *str)
 {
 	char c;
 	while( c = pgm_read_byte(str++))
@@ -429,7 +429,7 @@ void FontClass::DrawCenterText(int ix, int iy, String str)
 	DrawCenterText(ix, iy, buff);
 }
 
-void FontClass::DrawCenterTextP(int ix, int iy, const prog_char *str)
+void FontClass::DrawCenterTextP(int ix, int iy, const char *str)
 {
 	int width=TextWidthP(str);
 	width/=2;

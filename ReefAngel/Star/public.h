@@ -37,7 +37,6 @@ byte orientation;
 bool SDFound;
 time_t newnow;
 int CalVal1, CalVal2;
-int CloudCalVal;
 byte CalStep;
 unsigned long lastRedraw; 
 unsigned long lastDisplayChange; 

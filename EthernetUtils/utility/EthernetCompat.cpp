@@ -28,7 +28,7 @@
 #include <utility/socket.h>
 #include <utility/w5100.h>
 extern "C" {
-   #include <wiring.h>
+	#include <Arduino.h>
 }
 
 #define TXBUF_BASE      0x4000
@@ -138,7 +138,7 @@ void ethernet_compat_read_data(int socket, uint8_t* src, uint8_t* dst, uint16_t 
 #if defined(__SAM3X8E__)
 	W5100.read_data(socket, (uint32_t)src, dst, len);
 #else
-	W5100.read_data(socket, src, dst, len);
+	W5100.read_data(socket, (uint16_t)src, dst, len);
 #endif //defined(__SAM3X8E__)
 }
 

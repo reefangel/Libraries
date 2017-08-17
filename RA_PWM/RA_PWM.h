@@ -31,18 +31,18 @@ public:
 	RA_PWMClass();
 	byte DaylightPWMOverride;
 	byte ActinicPWMOverride;
-#ifdef RA_STAR
 	byte DaylightPercentage;
 	byte ActinicPercentage;
+#ifdef RA_STAR
 	byte Daylight2Percentage;
 	byte Actinic2Percentage;
 	byte Daylight2PWMOverride;
 	byte Actinic2PWMOverride;
 #endif // RA_STAR
-	void inline SetActinicRaw(int value) { ActinicPWMValue = value; };
-	void inline SetDaylightRaw(int value) { DaylightPWMValue = value; };
-	void inline SetActinic(byte value) { ActinicPWMValue = (int)value*40.95; };
-	void inline SetDaylight(byte value) { DaylightPWMValue = (int)value*40.95; };
+	void inline SetActinicRaw(int value) { ActinicPWMValue = value; ActinicPercentage = value/40.95; };
+	void inline SetDaylightRaw(int value) { DaylightPWMValue = value; DaylightPercentage = value/40.95; };
+	void inline SetActinic(byte value) { ActinicPWMValue = (int)value*40.95; ActinicPercentage = value; };
+	void inline SetDaylight(byte value) { DaylightPWMValue = (int)value*40.95; DaylightPercentage = value; };
 	void inline SetActinicOverride(byte value) { if (value>100) value=255; ActinicPWMOverride = value; };
 	void inline SetDaylightOverride(byte value) { if (value>100) value=255; DaylightPWMOverride = value; };
 	byte GetActinicValue();
@@ -131,8 +131,8 @@ public:
     byte ExpansionPercentage[PWM_EXPANSION_CHANNELS];
 	int ExpansionChannel[PWM_EXPANSION_CHANNELS];
 	byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
-	void inline SetChannelRaw(byte Channel, int Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; };
-	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=(int)Value*40.95; };
+	void inline SetChannelRaw(byte Channel, int Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=Value; ExpansionPercentage[Channel]=Value/40.95; };
+	void inline SetChannel(byte Channel, byte Value) { if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannel[Channel]=(int)Value*40.95; ExpansionPercentage[Channel]=Value; };
 	void inline SetChannelOverride(byte Channel, byte Value) { if (Value>100) Value=255; if (Channel<PWM_EXPANSION_CHANNELS) ExpansionChannelOverride[Channel]=Value; };
 	void Expansion(byte cmd, byte data);
 	void Expansion(byte cmd, int data);

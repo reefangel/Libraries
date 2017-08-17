@@ -34,10 +34,10 @@ class FontClass
 		void SetFont(uint8_t *iPtr);
 		byte CharWidth(char c);
 		int TextWidth(char *str);
-		int TextWidthP(const prog_char *str);
-//		void DrawText(const prog_char *str);
-//		void DrawText(int ix, int iy, const prog_char *str);
-//		void DrawText(int iFC, int iBC,int ix, int iy, const prog_char *str);
+		int TextWidthP(const char *str);
+//		void DrawText(const char *str);
+//		void DrawText(int ix, int iy, const char *str);
+//		void DrawText(int iFC, int iBC,int ix, int iy, const char *str);
 		void DrawChar(char c); 
 		void DrawChar(int ix, int iy,char c);
 		void DrawChar(int iFC, int iBC,int ix, int iy,char c);
@@ -50,14 +50,15 @@ class FontClass
 		void DrawText(String str);
 		void DrawText(int ix, int iy, String str);
 		void DrawText(int iFC, int iBC,int ix, int iy, String str);		
-		void DrawTextP(const prog_char *str);
-		void DrawTextP(int ix, int iy, const prog_char *str);
-		void DrawTextP(int iFC, int iBC,int ix, int iy, const prog_char *str);
+		void DrawTextP(const char *str);
+		void DrawTextP(int ix, int iy, const char *str);
+		void DrawTextP(int iFC, int iBC,int ix, int iy, const char *str);
 		void DrawCenterText(int ix, int iy, char *str);
 		void DrawCenterText(int ix, int iy, String str);
-		void DrawCenterTextP(int ix, int iy, const prog_char *str);
+		void DrawCenterTextP(int ix, int iy, const char *str);
 		void DrawCenterNumber(int ix, int iy, long n, byte decimal);
 		int inline GetX() { return x; }
+		int inline GetY() { return y; }
 
 	private:
 		uint8_t *Ptr;
@@ -77,7 +78,7 @@ class FontClass
 #define f8x8_WIDTH 8
 #define f8x8_HEIGHT 8
 
-static uint8_t __attribute__ ((progmem)) f8x8[] = {
+static const uint8_t __attribute__ ((progmem)) f8x8[] = {
     0x01, 0x76, 0x08, 0x08, 0x01, 0x20, 0x7A,
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 
     0x04, 0x02, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 
@@ -113,7 +114,7 @@ static uint8_t __attribute__ ((progmem)) f8x8[] = {
 #define f12x12_WIDTH 12
 #define f12x12_HEIGHT 12
 
-static uint8_t __attribute__ ((progmem)) f12x12[] = {
+static const uint8_t __attribute__ ((progmem)) f12x12[] = {
     0x02, 0xF6, 0x0C, 0x0C, 0x01, 0x20, 0x7A,
     0x01, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x05, 
     0x06, 0x04, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x02, 0x00, 0x00, 0x00, 0x00, 0x06, 
@@ -173,7 +174,7 @@ static uint8_t __attribute__ ((progmem)) f12x12[] = {
 #define ArialBold20_WIDTH 26
 #define ArialBold20_HEIGHT 31
 
-static uint8_t __attribute__ ((progmem)) ArialBold20[] = {
+static const uint8_t __attribute__ ((progmem)) ArialBold20[] = {
     0x0B, 0x92, 0x1A, 0x1F, 0x81, 0x20, 0x7A,
     0x0A, 0x04, 0x09, 0x0F, 0x0E, 0x17, 0x13, 0x04, 0x07, 0x07, 0x0A, 0x0E, 0x04, 0x08, 0x04, 0x07, 
     0x0E, 0x0A, 0x0E, 0x0E, 0x10, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x04, 0x04, 0x0D, 0x0E, 0x0D, 0x0E, 
