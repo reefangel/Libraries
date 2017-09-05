@@ -103,7 +103,7 @@ class RA_ATOALARMClass : public RA_ATOClass
 {
 public:
     byte Status;
-#ifdef ATO_LOW_REVERSE
+#ifdef ATO_ALARM_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return !activestatus; }
 #elif defined(__SAM3X8E__)
@@ -111,7 +111,7 @@ public:
 #else // RA_TOUCHDISPLAY
     inline bool IsActive() { Status=(PINJ & (1<<PJ4)); return (PINJ & (1<<PJ4)); }
 #endif // RA_TOUCHDISPLAY
-#else // ATO_LOW_REVERSE
+#else // ATO_ALARM_REVERSE
 #ifdef RA_TOUCHDISPLAY
     inline bool IsActive() { return activestatus; }
 #elif defined(__SAM3X8E__)
@@ -119,7 +119,7 @@ public:
 #else // RA_TOUCHDISPLAY
     inline bool IsActive() { Status=!(PINJ & (1<<PJ4)); return !(PINJ & (1<<PJ4)); }
 #endif // RA_TOUCHDISPLAY
-#endif // ATO_LOW_REVERSE
+#endif // ATO_ALARM_REVERSE
 };
 #endif // RA_STAR
 
