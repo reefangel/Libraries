@@ -432,6 +432,7 @@ public:
 	void inline UseFlexiblePhCalibration() {};
 	void inline ReverseATOLow() {};
 	void inline ReverseATOHigh() {};
+	void inline ReverseAlarmInput() {};
 	void inline Mini() {}; // deprecated
 	void inline Touch() {};
 	void inline TouchDisplay() {};
