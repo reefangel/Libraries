@@ -138,6 +138,8 @@ WiFiServer server(2000);
 WiFiClient client;
 WiFiClient portalclient;
 WiFiClient mqttclient;
+#elif defined(ESP8266)
+
 #else
 static EthernetServer NetServer(2000);
 static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xE0 };
