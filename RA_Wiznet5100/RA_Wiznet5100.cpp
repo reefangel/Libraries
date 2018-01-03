@@ -144,14 +144,14 @@ void RA_Wiznet5100::Update()
 			PortalClient.stop();
 			if (!PortalDataReceived) Init();
 			PortalDataReceived=false;
-			FirmwareConnection=true;
+//			FirmwareConnection=true;
 			PortalWaiting=false;
 			FirmwareWaiting=false;
 			downloadsize=0;
 			lheader=0;
 		    payload_ready = false;
-			delay(100);
-			FirmwareConnect();
+//			delay(100);
+//			FirmwareConnect();
 			//Serial.println(F("Connecting..."));
 		}
 		
@@ -286,6 +286,7 @@ void RA_Wiznet5100::FirmwareConnect()
 
 boolean RA_Wiznet5100::IsPortalConnected()
 {
+	wdt_reset();
 	return PortalClient.checkconnect()==0x17;
 }
 

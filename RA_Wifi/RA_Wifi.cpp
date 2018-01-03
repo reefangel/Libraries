@@ -1780,12 +1780,12 @@ void RA_Wifi::SendPortal(char *username, char*key)
 {
   ReefAngel.Timer[PORTAL_TIMER].Start();
 #ifdef ETH_WIZ5100
-  Serial.println(F("Portal Call"));
   if (!ReefAngel.Network.FoundIP) return;
   if (!ReefAngel.Network.PortalConnection)
   {
 	  ReefAngel.Network.PortalConnection=true;
 	  PortalWaiting=false;
+	  Serial.println(F("Portal Call"));
 	  ReefAngel.Network.PortalConnect();
 	  //Serial.println(F("Connecting..."));
   }
