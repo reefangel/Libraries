@@ -1607,8 +1607,31 @@ void ReefAngelClass::ShowTouchInterface()
 				TouchLCD.Clear(COLOR_WHITE,0,theight/3,twidth,theight-50);
 				Font.SetColor(COLOR_BLACK, COLOR_WHITE,false);
 				Font.DrawCenterTextP(twidth/2,theight/2,PH_CALI14);
-				InternalMemory.WaterLevelMin_write(CalVal1);
-				InternalMemory.WaterLevelMax_write(CalVal2);
+				if (channel==0)
+				{
+					InternalMemory.WaterLevelMin_write(CalVal1);
+					InternalMemory.WaterLevelMax_write(CalVal2);
+				}
+				else if (channel==1)
+				{
+					InternalMemory.WaterLevel1Min_write(CalVal1);
+					InternalMemory.WaterLevel1Max_write(CalVal2);
+				}
+				else if (channel==2)
+				{
+					InternalMemory.WaterLevel2Min_write(CalVal1);
+					InternalMemory.WaterLevel2Max_write(CalVal2);
+				}
+				else if (channel==3)
+				{
+					InternalMemory.WaterLevel3Min_write(CalVal1);
+					InternalMemory.WaterLevel3Max_write(CalVal2);
+				}
+				else if (channel==4)
+				{
+					InternalMemory.WaterLevel4Min_write(CalVal1);
+					InternalMemory.WaterLevel4Max_write(CalVal2);
+				}
 				CalStep++;
 				if ((bitRead(ReefAngel.CEM,CloudWLBit)==1 && channel==0) || (bitRead(ReefAngel.CEM,CloudMultiWLBit)==1 && channel>0 && channel<5))
 				{
