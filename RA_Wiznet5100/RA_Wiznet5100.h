@@ -53,6 +53,7 @@ public:
 	boolean payload_ready;
 	unsigned long lheader;
 	boolean downloading;
+	boolean goodheader=false;
 
 private:
 	unsigned long MQTTReconnectmillis;
