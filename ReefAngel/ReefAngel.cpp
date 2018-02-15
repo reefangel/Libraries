@@ -769,11 +769,20 @@ void ReefAngelClass::Refresh()
 		LED.Off();
 		bitSet(AlertFlags,BusLockFlag);
 		sbi(PORTH,2); // Turn off exp bus power
+		wdt_reset();
+		delay(500);
+		Wire.end();
+		wdt_reset();
+		delay(500);
+		Wire.begin();
+		cbi(PORTH,2); // Turn on exp bus power
+
 	}
 	else
 	{
 		bitClear(AlertFlags,BusLockFlag);
 		cbi(PORTH,2); // Turn on exp bus power
+		
 	}
 #endif // BUSCHECK
 }
