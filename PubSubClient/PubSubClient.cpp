@@ -6,7 +6,9 @@
 
 #include "PubSubClient.h"
 #include "Arduino.h"
+#ifdef __AVR_ATmega2560__
 #include <avr/wdt.h>
+#endif // __AVR_ATmega2560__
 
 PubSubClient::PubSubClient() {
     this->_state = MQTT_DISCONNECTED;
@@ -177,7 +179,9 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
             lastInActivity = lastOutActivity = millis();
 
             while (!_client->available()) {
+#ifdef __AVR_ATmega2560__
             	wdt_reset();
+#endif // __AVR_ATmega2560__
                 unsigned long t = millis();
                 if (t-lastInActivity >= ((int32_t) MQTT_SOCKET_TIMEOUT*1000UL)) {
                     _state = MQTT_CONNECTION_TIMEOUT;
@@ -211,7 +215,9 @@ boolean PubSubClient::connect(const char *id, const char *user, const char *pass
 boolean PubSubClient::readByte(uint8_t * result) {
    uint32_t previousMillis = millis();
    while(!_client->available()) {
+#ifdef __AVR_ATmega2560__
 	 wdt_reset();
+#endif // __AVR_ATmega2560__
      uint32_t currentMillis = millis();
      if(currentMillis - previousMillis >= ((int32_t) MQTT_SOCKET_TIMEOUT * 1000)){
        return false;
@@ -247,7 +253,9 @@ uint16_t PubSubClient::readPacket(uint8_t* lengthLength) {
         buffer[len++] = digit;
         length += (digit & 127) * multiplier;
         multiplier *= 128;
+#ifdef __AVR_ATmega2560__
         wdt_reset();
+#endif // __AVR_ATmega2560__
     } while ((digit & 128) != 0);
     *lengthLength = len-1;
 
@@ -410,7 +418,9 @@ boolean PubSubClient::publish_P(const char* topic, const uint8_t* payload, unsig
         }
         buffer[pos++] = digit;
         llen++;
+#ifdef __AVR_ATmega2560__
         wdt_reset();
+#endif // __AVR_ATmega2560__
     } while(len>0);
 
     pos = writeString(topic,buffer,pos);
@@ -441,7 +451,9 @@ boolean PubSubClient::write(uint8_t header, uint8_t* buf, uint16_t length) {
         }
         lenBuf[pos++] = digit;
         llen++;
+#ifdef __AVR_ATmega2560__
         wdt_reset();
+#endif // __AVR_ATmega2560__
     } while(len>0);
 
     buf[4-llen] = header;
@@ -455,7 +467,9 @@ boolean PubSubClient::write(uint8_t header, uint8_t* buf, uint16_t length) {
     uint8_t bytesToWrite;
     boolean result = true;
     while((bytesRemaining > 0) && result) {
-    	wdt_reset();
+#ifdef __AVR_ATmega2560__
+        wdt_reset();
+#endif // __AVR_ATmega2560__
         bytesToWrite = (bytesRemaining > MQTT_MAX_TRANSFER_SIZE)?MQTT_MAX_TRANSFER_SIZE:bytesRemaining;
         rc = _client->write(writeBuf,bytesToWrite);
         result = (rc == bytesToWrite);
@@ -531,7 +545,9 @@ uint16_t PubSubClient::writeString(const char* string, uint8_t* buf, uint16_t po
     uint16_t i = 0;
     pos += 2;
     while (*idp) {
-    	wdt_reset();
+#ifdef __AVR_ATmega2560__
+        wdt_reset();
+#endif // __AVR_ATmega2560__
         buf[pos++] = *idp++;
         i++;
     }
