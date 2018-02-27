@@ -10,6 +10,7 @@
 
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
+#define PWM16_EXPANSION_CHANNELS     		16
 #define IO_EXPANSION_CHANNELS     		6
 #define WL_CHANNELS						5
 #define CUSTOM_EXP_MODULES				8
@@ -47,6 +48,7 @@ typedef struct  {
 #define I2CIO_PCF8574       0x27
 #define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
+#define I2CPWM_16CH_PCA9685		0x41
 #define I2CLeak				0X48
 #define I2CMultiWaterLevel	0X49
 #define I2CPAR				0X4a
@@ -103,7 +105,10 @@ static byte RelayMaskOffE[MAX_RELAY_EXPANSION_MODULES];
 static byte RelayFallBackE[MAX_RELAY_EXPANSION_MODULES];
 static byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
 static byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
+static byte Expansion16Channel[PWM_EXPANSION_CHANNELS];
+static byte Expansion16ChannelOverride[PWM_EXPANSION_CHANNELS];
 static byte lastcrc;
+static byte lastcrc16;
 static ParamsStruct Params;
 static ParamsStruct OldParams;
 static unsigned long Paramsmillis=millis();
