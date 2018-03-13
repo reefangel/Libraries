@@ -40,6 +40,7 @@ int CalVal1, CalVal2;
 byte CalStep;
 unsigned long lastRedraw; 
 unsigned long lastDisplayChange; 
+int leakSensitivity;
 
 void ChangeOrientation();
 void SetOrientation(byte o);
@@ -75,6 +76,7 @@ void ShowTouchInterface();
 void ReDrawScreen();
 void ProcessTouch();
 void CheckTouch();
+inline void LeakSensitivity(int value) { leakSensitivity=value; };
 
 void BuzzerOn(byte style=0);
 void BuzzerOff();

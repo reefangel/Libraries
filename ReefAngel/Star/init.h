@@ -38,6 +38,7 @@ delay(10);
 digitalWrite(i2cMuxEnable,HIGH);
 digitalWrite(i2cEnable1,HIGH);
 digitalWrite(i2cEnable2,LOW);
+leakSensitivity=900;
 SPI.begin();
 Serial.println(F("SPI Init"));
 TouchLCD.Init();

@@ -120,6 +120,7 @@ LightsOff	KEYWORD2
 BuzzerOn	KEYWORD2
 BuzzerOff	KEYWORD2
 UseFlexiblePhCalibration	KEYWORD2
+LeakSensitivity	KEYWORD2
 
 #LCD
 
