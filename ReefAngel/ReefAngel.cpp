@@ -2670,6 +2670,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 				else if (strcmp("date", mqtt_sub)==0) mqtt_type=MQTT_DATE;
 				else if (strcmp("v", mqtt_sub)==0) mqtt_type=MQTT_VERSION;
 				else if (strcmp("mr", mqtt_sub)==0) mqtt_type=MQTT_MEM_RAW;
+				else if (strcmp("avs", mqtt_sub)==0) mqtt_type=MQTT_ALEXA;
 			}
 		}
 		else
@@ -2958,6 +2959,18 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			wdt_reset();
 #endif
 				mindex+=8;
+			}
+			break;
+		}
+		case MQTT_ALEXA:
+		{
+//			for (byte a=0; a<NumParamByte;a++)
+//			{
+//				ReefAngel.OldParamArrayByte[a]=ReefAngel.OldParamArrayByte[a]+1;
+//			}
+			for (byte a=0; a<4; a++)
+			{
+				ReefAngel.OldParamArrayInt[a]=ReefAngel.OldParamArrayInt[a]+1;
 			}
 			break;
 		}

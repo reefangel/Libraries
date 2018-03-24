@@ -1298,6 +1298,7 @@ typedef struct Compensation
 #define MQTT_VERSION	26
 #define MQTT_MEM_RAW	27
 #define MQTT_HUM 28
+#define MQTT_ALEXA	29
 
 
 // Cloud Expansion Bits ( CEM )
