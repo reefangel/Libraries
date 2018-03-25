@@ -591,11 +591,17 @@ void ReefAngelClass::Refresh()
 		{
 			RANetCRC+=RANetData[a];
 			RANET_SERIAL.write(RANetData[a]);
+			delay(1);
+//			Serial.print(RANetData[a]);
+//			Serial.print(",");
 //			sprintf(buf,"%02x",RANetData[a]);
 //			RANET_SERIAL.print(buf);
 		}
 		RANET_SERIAL.write(RANetCRC);
 		RANET_SERIAL.println();
+//		Serial.print(RANetCRC);
+//		Serial.println();
+		delay(1);
 //		sprintf(buf,"%02x",RANetCRC);
 //		RANET_SERIAL.println(buf);
 		RANetSeq++;
