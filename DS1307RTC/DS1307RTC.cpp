@@ -21,6 +21,7 @@
   30 Dec 2009 - Initial release
  */
 
+#include <TimeLib.h>
 #include "DS1307RTC.h"
 
 #define DS1307_CTRL_ID 0x68 
