@@ -2978,6 +2978,10 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			{
 				ReefAngel.OldParamArrayInt[a]=ReefAngel.OldParamArrayInt[a]+1;
 			}
+			ReefAngel.OldParamArrayByte[7]=ReefAngel.OldParamArrayByte[7]+1;
+			ReefAngel.OldParamArrayByte[12]=ReefAngel.OldParamArrayByte[12]+1;
+			ReefAngel.OldParamArrayByte[13]=ReefAngel.OldParamArrayByte[13]+1;
+			ReefAngel.OldParamArrayByte[14]=ReefAngel.OldParamArrayByte[14]+1;
 			break;
 		}
 	}
