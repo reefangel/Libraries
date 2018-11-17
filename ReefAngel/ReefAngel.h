@@ -88,6 +88,10 @@
 #include <Evolution/includes.h>
 #endif //  RA_STANDARD
 
+#if defined wifi || defined CLOUD_WIFI || defined ETH_WIZ5100
+#include <RA_Wifi.h>
+#endif // wifi || CLOUD_WIFI || ETH_WIZ5100
+
 class ReefAngelClass
 {
 
