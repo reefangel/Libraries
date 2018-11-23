@@ -67,8 +67,8 @@ void SunLocation::StdLightsOnOff_write()
   int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read());
   int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read());
 
-  int riseTime=NumMins(m_SunriseHour,m_SunriseMin)+MinuteOffset;
-  int setTime=NumMins(m_SunsetHour,m_SunsetMin)-MinuteOffset;
+  int riseTime=NumMins(hour(m_rise+MinuteOffset*60),minute(m_rise+MinuteOffset*60));
+  int setTime=NumMins(hour(m_set-MinuteOffset*60),minute(m_set-MinuteOffset*60));
 
   if (riseTime/60!=onTime/60) InternalMemory.StdLightsOnHour_write(riseTime/60);
   if (riseTime%60!=onTime%60) InternalMemory.StdLightsOnMinute_write(riseTime%60);
