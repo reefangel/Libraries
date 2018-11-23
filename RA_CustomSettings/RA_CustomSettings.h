@@ -19,6 +19,7 @@
 
 #if defined(ARDUINO_ARCH_SAMD) || defined RA_STAR || defined CLOUD_WIFI
 
+#include <Ethernet.h>
 // Portal & Cloud Server
 const IPAddress PortalServer(104,36,18,155); // forum.reefangel.com
 static byte MQTTServer[] = {104,36,18,211}; // cloud.reefangel.com

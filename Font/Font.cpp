@@ -20,7 +20,6 @@
   */
 
 #include "Font.h"
-#include "RA_Wifi.h"
 
 FontClass::FontClass()
 {
