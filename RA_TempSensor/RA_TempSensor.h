@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+typedef unsigned char byte;
  /*
   * Updated by:  Curt Binder
   * Updates Released under Apache License, Version 2.0
@@ -22,7 +22,7 @@
 #ifndef __RA_TEMPSENSOR_H__
 #define __RA_TEMPSENSOR_H__
 
-#include <Globals.h>
+// #include <Globals.h>
 
 class RA_TempSensorClass
 {
@@ -37,10 +37,15 @@ public:
 	byte addrT2[8];
 	byte addrT3[8];
 #ifdef EXTRA_TEMP_PROBES
+	static const int ProbeCount = 6;
 	byte addrT4[8];
 	byte addrT5[8];
 	byte addrT6[8];
-#endif	
+#else
+    static const int ProbeCount = 3;
+#endif
+    byte* addrArray[ProbeCount];
+    void RemapSensors(byte map[ProbeCount]);
 	byte unit;
 };
 

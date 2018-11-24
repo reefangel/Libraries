@@ -34,34 +34,34 @@ void RA_TempSensorClass::Init()
 {
 	byte addr[8];
 	byte count=0;
-	while (ds.search(addr))
-	{
-		count++;
-		if(addr[0]==0x28)
-		{
-			if (count==1) memcpy(addrT1,addr,8);
-			if (count==2) memcpy(addrT2,addr,8);
-			if (count==3) memcpy(addrT3,addr,8);
+    addrArray[0] = addrT1;
+    addrArray[1] = addrT2;
+    addrArray[2] = addrT3;
 #ifdef EXTRA_TEMP_PROBES
-			if (count==4) memcpy(addrT4,addr,8);
-			if (count==5) memcpy(addrT5,addr,8);
-			if (count==6) memcpy(addrT6,addr,8);
-#endif			
-		}
-	}
+    addrArray[3] = addrT4;
+    addrArray[4] = addrT5;
+    addrArray[5] = addrT6;
+#endif    
+	while (ds.search(addr)) {
+        if (addr[0] == 0x28 && count < ProbeCount) {
+            memcpy(addrArray[count], addr, 8);
+        }
+        count++;
+    }
 	ds.reset_search();
 }
-
+void RA_TempSensorClass::RemapSensors(byte map[ProbeCount]) {
+    byte tempArray[ProbeCount][8];
+    for (int i = 0; i < ProbeCount; i++) 
+        memcpy(tempArray[i], addrArray[i], 8);
+    for (int i = 0; i < ProbeCount; i++)
+        memcpy(addrArray[i], tempArray[map[i]], 8);
+}
+    
 void RA_TempSensorClass::RequestConversion()
 {
-	SendRequest(addrT1);
-	SendRequest(addrT2);
-	SendRequest(addrT3);
-#ifdef EXTRA_TEMP_PROBES
-	SendRequest(addrT4);
-	SendRequest(addrT5);
-	SendRequest(addrT6);
-#endif
+    for (int i = 0; i < ProbeCount; i++)
+	    SendRequest(addrArray[i]);
 }
 
 void RA_TempSensorClass::SendRequest(byte addr[8])
