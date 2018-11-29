@@ -99,6 +99,11 @@ int RA_PWMClass::GetDaylightValueRaw()
 		return DaylightPWMValue;
 }
 
+void RA_PWMClass::ActinicPWMSlope()
+{
+	ActinicPWMSlope(InternalMemory.ActinicOffset_read());
+}
+
 void RA_PWMClass::ActinicPWMSlope(int MinuteOffset)
 {
 	ActinicPWMSlope(MinuteOffset, MinuteOffset);	
@@ -106,18 +111,12 @@ void RA_PWMClass::ActinicPWMSlope(int MinuteOffset)
 
 void RA_PWMClass::ActinicPWMSlope(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinicRaw(PWMSlopeHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA_read(),
-			InternalMemory.PWMSlopeEndA_read(),
-			InternalMemory.PWMSlopeDurationA_read(),
-			ActinicPWMValue
-			));
+	SetActinicRaw(Slope(InternalMemory.PWMSlopeStartA_read(),InternalMemory.PWMSlopeEndA_read(),InternalMemory.PWMSlopeDurationA_read(),ActinicPWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::DaylightPWMSlope()
+{
+	DaylightPWMSlope(0);
 }
 
 void RA_PWMClass::DaylightPWMSlope(int MinuteOffset)
@@ -127,37 +126,12 @@ void RA_PWMClass::DaylightPWMSlope(int MinuteOffset)
 
 void RA_PWMClass::DaylightPWMSlope(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylightRaw(PWMSlopeHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
-			));
+	SetDaylightRaw(Slope(InternalMemory.PWMSlopeStartD_read(),InternalMemory.PWMSlopeEndD_read(),InternalMemory.PWMSlopeDurationD_read(),DaylightPWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::ActinicPWMSlope()
+void RA_PWMClass::ActinicPWMParabola()
 {
-	ActinicPWMSlope(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::DaylightPWMSlope()
-{
-	SetDaylightRaw(PWMSlopeHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
-			));
+	ActinicPWMParabola(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::ActinicPWMParabola(int MinuteOffset)
@@ -167,17 +141,12 @@ void RA_PWMClass::ActinicPWMParabola(int MinuteOffset)
 
 void RA_PWMClass::ActinicPWMParabola(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinicRaw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA_read(),
-			InternalMemory.PWMSlopeEndA_read(),
-			ActinicPWMValue
-			));
+	SetActinicRaw(Parabola(InternalMemory.PWMSlopeStartA_read(),InternalMemory.PWMSlopeEndA_read(),ActinicPWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::DaylightPWMParabola()
+{
+	DaylightPWMParabola(0);
 }
 
 void RA_PWMClass::DaylightPWMParabola(int MinuteOffset)
@@ -187,35 +156,12 @@ void RA_PWMClass::DaylightPWMParabola(int MinuteOffset)
 
 void RA_PWMClass::DaylightPWMParabola(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylightRaw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			DaylightPWMValue
-			));
+	SetDaylightRaw(Parabola(InternalMemory.PWMSlopeStartD_read(),InternalMemory.PWMSlopeEndD_read(),DaylightPWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::ActinicPWMParabola()
+void RA_PWMClass::ActinicPWMSmoothRamp()
 {
-	ActinicPWMParabola(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::DaylightPWMParabola()
-{
-	SetDaylightRaw(PWMParabolaHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			DaylightPWMValue
-			));
+	ActinicPWMSmoothRamp(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::ActinicPWMSmoothRamp(int MinuteOffset)
@@ -225,18 +171,12 @@ void RA_PWMClass::ActinicPWMSmoothRamp(int MinuteOffset)
 
 void RA_PWMClass::ActinicPWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinicRaw(PWMSmoothRampHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA_read(),
-			InternalMemory.PWMSlopeEndA_read(),
-			InternalMemory.PWMSlopeDurationA_read(),
-			ActinicPWMValue
-			));
+	SetActinicRaw(SmoothRamp(InternalMemory.PWMSlopeStartA_read(),InternalMemory.PWMSlopeEndA_read(),InternalMemory.PWMSlopeDurationA_read(),ActinicPWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::DaylightPWMSmoothRamp()
+{
+	DaylightPWMSmoothRamp(0);
 }
 
 void RA_PWMClass::DaylightPWMSmoothRamp(int MinuteOffset)
@@ -246,37 +186,12 @@ void RA_PWMClass::DaylightPWMSmoothRamp(int MinuteOffset)
 
 void RA_PWMClass::DaylightPWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylightRaw(PWMSmoothRampHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
-			));
+	SetDaylightRaw(SmoothRamp(InternalMemory.PWMSlopeStartD_read(),InternalMemory.PWMSlopeEndD_read(),InternalMemory.PWMSlopeDurationD_read(),DaylightPWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::ActinicPWMSmoothRamp()
+void RA_PWMClass::ActinicPWMSigmoid()
 {
-	ActinicPWMSmoothRamp(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::DaylightPWMSmoothRamp()
-{
-	SetDaylightRaw(PWMSmoothRampHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			InternalMemory.PWMSlopeDurationD_read(),
-			DaylightPWMValue
-			));
+	ActinicPWMSigmoid(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::ActinicPWMSigmoid(int MinuteOffset)
@@ -286,17 +201,12 @@ void RA_PWMClass::ActinicPWMSigmoid(int MinuteOffset)
 
 void RA_PWMClass::ActinicPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinicRaw(PWMSigmoidHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA_read(),
-			InternalMemory.PWMSlopeEndA_read(),
-			ActinicPWMValue
-			));
+	SetActinicRaw(Sigmoid(InternalMemory.PWMSlopeStartA_read(),InternalMemory.PWMSlopeEndA_read(),ActinicPWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::DaylightPWMSigmoid()
+{
+	DaylightPWMSigmoid(0);
 }
 
 void RA_PWMClass::DaylightPWMSigmoid(int MinuteOffset)
@@ -306,61 +216,12 @@ void RA_PWMClass::DaylightPWMSigmoid(int MinuteOffset)
 
 void RA_PWMClass::DaylightPWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylightRaw(PWMSigmoidHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			DaylightPWMValue
-			));
-}
-
-void RA_PWMClass::ActinicPWMSigmoid()
-{
-	ActinicPWMSigmoid(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::DaylightPWMSigmoid()
-{
-	SetDaylightRaw(PWMSigmoidHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD_read(),
-			InternalMemory.PWMSlopeEndD_read(),
-			DaylightPWMValue
-			));
+	SetDaylightRaw(Sigmoid(InternalMemory.PWMSlopeStartD_read(),InternalMemory.PWMSlopeEndD_read(),DaylightPWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
 void RA_PWMClass::StandardActinic()
 {
-	SetDaylightRaw(PWMParabolaHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			0,
-			InternalMemory.LEDPWMActinic_read(),
-			0
-			));
-}
-
-void RA_PWMClass::StandardDaylight()
-{
-	SetDaylightRaw(PWMParabolaHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			0,
-			InternalMemory.LEDPWMDaylight_read(),
-			0
-			));
+	StandardActinic(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::StandardActinic(int MinuteOffset)
@@ -370,17 +231,12 @@ void RA_PWMClass::StandardActinic(int MinuteOffset)
 
 void RA_PWMClass::StandardActinic(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinicRaw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			0,
-			InternalMemory.LEDPWMActinic_read(),
-			0
-			));
+	SetActinicRaw(Parabola(0,InternalMemory.LEDPWMActinic_read(),0,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::StandardDaylight()
+{
+	StandardDaylight(0);
 }
 
 void RA_PWMClass::StandardDaylight(int MinuteOffset)
@@ -389,17 +245,7 @@ void RA_PWMClass::StandardDaylight(int MinuteOffset)
 
 void RA_PWMClass::StandardDaylight(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylightRaw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			0,
-			InternalMemory.LEDPWMDaylight_read(),
-			0
-			));
+	SetActinicRaw(Parabola(0,InternalMemory.LEDPWMActinic_read(),0,PreMinuteOffset,PostMinuteOffset));
 }
 
 void RA_PWMClass::Override(byte Channel, byte Value)
@@ -473,6 +319,11 @@ int RA_PWMClass::GetDaylight2ValueRaw()
 		return Daylight2PWMValue;
 }
 
+void RA_PWMClass::Actinic2PWMSlope()
+{
+	Actinic2PWMSlope(InternalMemory.ActinicOffset_read());
+}
+
 void RA_PWMClass::Actinic2PWMSlope(int MinuteOffset)
 {
 	Actinic2PWMSlope(MinuteOffset, MinuteOffset);
@@ -480,18 +331,12 @@ void RA_PWMClass::Actinic2PWMSlope(int MinuteOffset)
 
 void RA_PWMClass::Actinic2PWMSlope(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinic2Raw(PWMSlopeHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA2_read(),
-			InternalMemory.PWMSlopeEndA2_read(),
-			InternalMemory.PWMSlopeDurationA2_read(),
-			Actinic2PWMValue
-			));
+	SetActinic2Raw(Slope(InternalMemory.PWMSlopeStartA2_read(),InternalMemory.PWMSlopeEndA2_read(),InternalMemory.PWMSlopeDurationA2_read(),Actinic2PWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::Daylight2PWMSlope()
+{
+	Daylight2PWMSlope(0);
 }
 
 void RA_PWMClass::Daylight2PWMSlope(int MinuteOffset)
@@ -501,37 +346,12 @@ void RA_PWMClass::Daylight2PWMSlope(int MinuteOffset)
 
 void RA_PWMClass::Daylight2PWMSlope(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylight2Raw(PWMSlopeHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
-			));
+	SetDaylight2Raw(Slope(InternalMemory.PWMSlopeStartD2_read(),InternalMemory.PWMSlopeEndD2_read(),InternalMemory.PWMSlopeDurationD2_read(),Daylight2PWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::Actinic2PWMSlope()
+void RA_PWMClass::Actinic2PWMParabola()
 {
-	Actinic2PWMSlope(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::Daylight2PWMSlope()
-{
-	SetDaylight2Raw(PWMSlopeHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
-			));
+	Actinic2PWMParabola(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::Actinic2PWMParabola(int MinuteOffset)
@@ -541,17 +361,12 @@ void RA_PWMClass::Actinic2PWMParabola(int MinuteOffset)
 
 void RA_PWMClass::Actinic2PWMParabola(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinic2Raw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA2_read(),
-			InternalMemory.PWMSlopeEndA2_read(),
-			Actinic2PWMValue
-			));
+	SetActinic2Raw(Parabola(InternalMemory.PWMSlopeStartA2_read(),InternalMemory.PWMSlopeEndA2_read(),Actinic2PWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::Daylight2PWMParabola()
+{
+	Daylight2PWMParabola(0);
 }
 
 void RA_PWMClass::Daylight2PWMParabola(int MinuteOffset)
@@ -561,35 +376,12 @@ void RA_PWMClass::Daylight2PWMParabola(int MinuteOffset)
 
 void RA_PWMClass::Daylight2PWMParabola(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylight2Raw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			Daylight2PWMValue
-			));
+	SetDaylight2Raw(Parabola(InternalMemory.PWMSlopeStartD2_read(),InternalMemory.PWMSlopeEndD2_read(),Daylight2PWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::Actinic2PWMParabola()
+void RA_PWMClass::Actinic2PWMSmoothRamp()
 {
-	Actinic2PWMParabola(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::Daylight2PWMParabola()
-{
-	SetDaylight2Raw(PWMParabolaHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			Daylight2PWMValue
-			));
+	Actinic2PWMSmoothRamp(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::Actinic2PWMSmoothRamp(int MinuteOffset)
@@ -599,18 +391,12 @@ void RA_PWMClass::Actinic2PWMSmoothRamp(int MinuteOffset)
 
 void RA_PWMClass::Actinic2PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinic2Raw(PWMSmoothRampHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA2_read(),
-			InternalMemory.PWMSlopeEndA2_read(),
-			InternalMemory.PWMSlopeDurationA2_read(),
-			Actinic2PWMValue
-			));
+	SetActinic2Raw(SmoothRamp(InternalMemory.PWMSlopeStartA2_read(),InternalMemory.PWMSlopeEndA2_read(),InternalMemory.PWMSlopeDurationA2_read(),Actinic2PWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::Daylight2PWMSmoothRamp()
+{
+	Daylight2PWMSmoothRamp(0);
 }
 
 void RA_PWMClass::Daylight2PWMSmoothRamp(int MinuteOffset)
@@ -620,37 +406,12 @@ void RA_PWMClass::Daylight2PWMSmoothRamp(int MinuteOffset)
 
 void RA_PWMClass::Daylight2PWMSmoothRamp(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylight2Raw(PWMSmoothRampHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
-			));
+	SetDaylight2Raw(SmoothRamp(InternalMemory.PWMSlopeStartD2_read(),InternalMemory.PWMSlopeEndD2_read(),InternalMemory.PWMSlopeDurationD2_read(),DaylightPWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::Actinic2PWMSmoothRamp()
+void RA_PWMClass::Actinic2PWMSigmoid()
 {
-	Actinic2PWMSmoothRamp(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::Daylight2PWMSmoothRamp()
-{
-	SetDaylight2Raw(PWMSmoothRampHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			InternalMemory.PWMSlopeDurationD2_read(),
-			Daylight2PWMValue
-			));
+	Actinic2PWMSigmoid(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::Actinic2PWMSigmoid(int MinuteOffset)
@@ -660,17 +421,12 @@ void RA_PWMClass::Actinic2PWMSigmoid(int MinuteOffset)
 
 void RA_PWMClass::Actinic2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinic2Raw(PWMSigmoidHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartA2_read(),
-			InternalMemory.PWMSlopeEndA2_read(),
-			Actinic2PWMValue
-			));
+    SetActinic2Raw(Sigmoid(InternalMemory.PWMSlopeStartA2_read(),InternalMemory.PWMSlopeEndA2_read(),Actinic2PWMValue,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::Daylight2PWMSigmoid()
+{
+	Daylight2PWMSigmoid(0);
 }
 
 void RA_PWMClass::Daylight2PWMSigmoid(int MinuteOffset)
@@ -680,61 +436,12 @@ void RA_PWMClass::Daylight2PWMSigmoid(int MinuteOffset)
 
 void RA_PWMClass::Daylight2PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylight2Raw(PWMSigmoidHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			Daylight2PWMValue
-			));
-}
-
-void RA_PWMClass::Actinic2PWMSigmoid()
-{
-	Actinic2PWMSigmoid(InternalMemory.ActinicOffset_read());
-}
-
-void RA_PWMClass::Daylight2PWMSigmoid()
-{
-	SetDaylight2Raw(PWMSigmoidHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			InternalMemory.PWMSlopeStartD2_read(),
-			InternalMemory.PWMSlopeEndD2_read(),
-			Daylight2PWMValue
-			));
+	SetDaylight2Raw(Sigmoid(InternalMemory.PWMSlopeStartD2_read(),InternalMemory.PWMSlopeEndD2_read(),Daylight2PWMValue,PreMinuteOffset,PostMinuteOffset));
 }
 
 void RA_PWMClass::StandardActinic2()
 {
-	SetDaylight2Raw(PWMParabolaHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			0,
-			InternalMemory.LEDPWMActinic2_read(),
-			0
-			));
-}
-
-void RA_PWMClass::StandardDaylight2()
-{
-	SetDaylight2Raw(PWMParabolaHighRes(
-			InternalMemory.StdLightsOnHour_read(),
-			InternalMemory.StdLightsOnMinute_read(),
-			InternalMemory.StdLightsOffHour_read(),
-			InternalMemory.StdLightsOffMinute_read(),
-			0,
-			InternalMemory.LEDPWMDaylight2_read(),
-			0
-			));
+	StandardActinic2(InternalMemory.ActinicOffset_read());
 }
 
 void RA_PWMClass::StandardActinic2(int MinuteOffset)
@@ -744,17 +451,12 @@ void RA_PWMClass::StandardActinic2(int MinuteOffset)
 
 void RA_PWMClass::StandardActinic2(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetActinic2Raw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			0,
-			InternalMemory.LEDPWMActinic2_read(),
-			0
-			));
+	SetActinic2Raw(Parabola(0,InternalMemory.LEDPWMActinic2_read(),0,PreMinuteOffset,PostMinuteOffset));
+}
+
+void RA_PWMClass::StandardDaylight2()
+{
+	StandardDaylight2(0);
 }
 
 void RA_PWMClass::StandardDaylight2(int MinuteOffset)
@@ -764,17 +466,7 @@ void RA_PWMClass::StandardDaylight2(int MinuteOffset)
 
 void RA_PWMClass::StandardDaylight2(int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetDaylight2Raw(PWMParabolaHighRes(
-			onTime/60,
-			onTime%60,
-			offTime/60,
-			offTime%60,
-			0,
-			InternalMemory.LEDPWMDaylight2_read(),
-			0
-			));
+	SetDaylightRaw(Parabola(0,InternalMemory.LEDPWMDaylight2_read(),0,PreMinuteOffset,PostMinuteOffset));
 }
 #endif //defined RA_STAR || defined RA_TOUCHDISPLAY || defined(__SAM3X8E__)
 
@@ -964,18 +656,8 @@ void RA_PWMClass::Channel5PWMSlope(int PreMinuteOffset, int PostMinuteOffset)
 
 void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration)
 {
-	SetChannelRaw(Channel,PWMSlopeHighRes(
-		InternalMemory.StdLightsOnHour_read(),
-		InternalMemory.StdLightsOnMinute_read(),
-		InternalMemory.StdLightsOffHour_read(),
-		InternalMemory.StdLightsOffMinute_read(),
-		Start,
-		End, 
-		Duration,  
-		ExpansionChannel[Channel] 
-	));	
+	ChannelPWMSlope(Channel,Start,End,Duration,0);
 }
-
 
 void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, int MinuteOffset)
 {
@@ -984,48 +666,37 @@ void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Durat
 
 void RA_PWMClass::ChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetChannelRaw(Channel,PWMSlopeHighRes(
-		onTime/60,
-		onTime%60,
-		offTime/60,
-		offTime%60,
-		Start,
-		End, 
-		Duration,  
-		ExpansionChannel[Channel] 
-	));	
+  	SetChannelRaw(Channel, Slope(Start,End,ExpansionChannel[Channel],Duration,PreMinuteOffset,PostMinuteOffset));	
 }
 
 void RA_PWMClass::Channel0PWMParabola()
 {
-	ChannelPWMParabola(0,InternalMemory.PWMSlopeStart0_read(),InternalMemory.PWMSlopeEnd0_read());
+	Channel0PWMParabola(0);
 }
 
 void RA_PWMClass::Channel1PWMParabola()
 {
-	ChannelPWMParabola(1,InternalMemory.PWMSlopeStart1_read(),InternalMemory.PWMSlopeEnd1_read());
+	Channel0PWMParabola(0);
 }
 
 void RA_PWMClass::Channel2PWMParabola()
 {
-	ChannelPWMParabola(2,InternalMemory.PWMSlopeStart2_read(),InternalMemory.PWMSlopeEnd2_read());
+	Channel0PWMParabola(0);
 }
 
 void RA_PWMClass::Channel3PWMParabola()
 {
-	ChannelPWMParabola(3,InternalMemory.PWMSlopeStart3_read(),InternalMemory.PWMSlopeEnd3_read());
+	Channel0PWMParabola(0);
 }
 
 void RA_PWMClass::Channel4PWMParabola()
 {
-	ChannelPWMParabola(4,InternalMemory.PWMSlopeStart4_read(),InternalMemory.PWMSlopeEnd4_read());
+	Channel0PWMParabola(0);
 }
 
 void RA_PWMClass::Channel5PWMParabola()
 {
-	ChannelPWMParabola(5,InternalMemory.PWMSlopeStart5_read(),InternalMemory.PWMSlopeEnd5_read());
+	Channel0PWMParabola(0);
 }
 
 void RA_PWMClass::Channel0PWMParabola(int MinuteOffset)
@@ -1090,15 +761,7 @@ void RA_PWMClass::Channel5PWMParabola(int PreMinuteOffset, int PostMinuteOffset)
 
 void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End)
 {
-	SetChannelRaw(Channel,PWMParabolaHighRes(
-		InternalMemory.StdLightsOnHour_read(),
-		InternalMemory.StdLightsOnMinute_read(),
-		InternalMemory.StdLightsOffHour_read(),
-		InternalMemory.StdLightsOffMinute_read(),
-		Start,
-		End, 
-		ExpansionChannel[Channel] 
-	));	
+	ChannelPWMParabola(Channel, Start, End, 0);
 }
 
 void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, int MinuteOffset)
@@ -1108,17 +771,7 @@ void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, int Min
 
 void RA_PWMClass::ChannelPWMParabola(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	SetChannelRaw(Channel,PWMParabolaHighRes(
-		onTime/60,
-		onTime%60,
-		offTime/60,
-		offTime%60,
-		Start,
-		End, 
-		ExpansionChannel[Channel] 
-	));	
+	SetChannelRaw(Channel, Parabola(Start,End,ExpansionChannel[Channel],PreMinuteOffset,PostMinuteOffset));
 }
 
 void RA_PWMClass::Channel0PWMSmoothRamp()
@@ -1233,8 +886,10 @@ void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte 
 
 void RA_PWMClass::ChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;
+	int onTime=NumMins(hour(ScheduleTime(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read(),0)-PreMinuteOffset*60),
+						minute(ScheduleTime(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read(),0)-PreMinuteOffset*60));
+	int offTime=NumMins(hour(ScheduleTime(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read(),0)+PostMinuteOffset*60),
+						minute(ScheduleTime(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read(),0)+PostMinuteOffset*60));
 	SetChannelRaw(Channel,PWMSmoothRampHighRes(
 		onTime/60,
 		onTime%60,
@@ -1339,15 +994,7 @@ void RA_PWMClass::Channel5PWMSigmoid(int PreMinuteOffset, int PostMinuteOffset)
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End)
 {
-	SetChannelRaw(Channel,PWMSigmoidHighRes(
-		InternalMemory.StdLightsOnHour_read(),
-		InternalMemory.StdLightsOnMinute_read(),
-		InternalMemory.StdLightsOffHour_read(),
-		InternalMemory.StdLightsOffMinute_read(),
-		Start,
-		End, 
-		ExpansionChannel[Channel] 
-	));	
+	ChannelPWMSigmoid(Channel,Start,End,0);
 }
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, int MinuteOffset)
@@ -1357,17 +1004,7 @@ void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, int Minu
 
 void RA_PWMClass::ChannelPWMSigmoid(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;
-	SetChannelRaw(Channel,PWMSigmoidHighRes(
-		onTime/60,
-		onTime%60,
-		offTime/60,
-		offTime%60,
-		Start,
-		End, 
-		ExpansionChannel[Channel] 
-	));	
+  	SetChannelRaw(Channel, Sigmoid(Start,End,ExpansionChannel[Channel],PreMinuteOffset,PostMinuteOffset));
 }
 
 #endif  // PWMEXPANSION
@@ -1452,141 +1089,112 @@ int RA_PWMClass::Get16ChannelValueRaw(byte Channel)
 		return SIXTEENChExpansionChannel[Channel];
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration)
+void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration)
 {
-	Set16ChannelRaw(Channel,PWMSlopeHighRes(
-		InternalMemory.StdLightsOnHour_read(),
-		InternalMemory.StdLightsOnMinute_read(),
-		InternalMemory.StdLightsOffHour_read(),
-		InternalMemory.StdLightsOffMinute_read(),
-		Start,
-		End, 
-		Duration,  
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+	SIXTEENChannelPWMSlope(Channel,Start,End,Duration,0);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration, int MinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, int MinuteOffset)
 {
 	SIXTEENChannelPWMSlope(Channel, Start, End, Duration, MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration, int PreMinuteOffset, int PostMinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PreMinuteOffset;
-	Set16ChannelRaw(Channel,PWMSlopeHighRes(
-		onTime/60,
-		onTime%60,
-		offTime/60,
-		offTime%60,
-		Start,
-		End, 
-		Duration,  
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+ 	Set16ChannelRaw(Channel, Slope(Start,End,ExpansionChannel[Channel],Duration,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, int Start, int End)
+void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, byte Start, byte End)
 {
-	Set16ChannelRaw(Channel,PWMParabolaHighRes(
-		InternalMemory.StdLightsOnHour_read(),
-		InternalMemory.StdLightsOnMinute_read(),
-		InternalMemory.StdLightsOffHour_read(),
-		InternalMemory.StdLightsOffMinute_read(),
-		Start,
-		End, 
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+	SIXTEENChannelPWMParabola(Channel,Start,End,0);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, int Start, int End, int MinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, byte Start, byte End, int MinuteOffset)
 {
 	SIXTEENChannelPWMParabola(Channel, Start, End, MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, int Start, int End, int PreMinuteOffset, int PostMinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	Set16ChannelRaw(Channel,PWMParabolaHighRes(
-		onTime/60,
-		onTime%60,
-		offTime/60,
-		offTime%60,
-		Start,
-		End, 
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+	Set16ChannelRaw(Channel, Parabola(Start,End,SIXTEENChExpansionChannel[Channel],PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength)
+void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength)
 {
-	Set16ChannelRaw(Channel,PWMSmoothRampHighRes(
-		InternalMemory.StdLightsOnHour_read(),
-		InternalMemory.StdLightsOnMinute_read(),
-		InternalMemory.StdLightsOffHour_read(),
-		InternalMemory.StdLightsOffMinute_read(),
-		Start,
-		End, 
-		SlopeLength, 
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+	SIXTEENChannelSmoothRamp(Channel,Start,End,SlopeLength,0);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int MinuteOffset)
 {
 	SIXTEENChannelPWMSmoothRamp(Channel, Start, End, SlopeLength, MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	Set16ChannelRaw(Channel,PWMSmoothRampHighRes(
-		onTime/60,
-		onTime%60,
-		offTime/60,
-		offTime%60,
-		Start,
-		End, 
-                SlopeLength,
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+    Set16ChannelRaw(Channel, SmoothRamp(Start,End,ExpansionChannel[Channel],SlopeLength,PreMinuteOffset,PostMinuteOffset));
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End)
+void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, byte Start, byte End)
 {
-	Set16ChannelRaw(Channel,PWMSigmoidHighRes(
-		InternalMemory.StdLightsOnHour_read(),
-		InternalMemory.StdLightsOnMinute_read(),
-		InternalMemory.StdLightsOffHour_read(),
-		InternalMemory.StdLightsOffMinute_read(),
-		Start,
-		End, 
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+	SIXTEENChannelPWMSigmoid(Channel,Start,End,0);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int MinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, byte Start, byte End, int MinuteOffset)
 {
 	SIXTEENChannelPWMSigmoid(Channel, Start, End, MinuteOffset, MinuteOffset);
 }
 
-void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int PreMinuteOffset, int PostMinuteOffset)
+void RA_PWMClass::SIXTEENChannelPWMSigmoid(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset)
 {
-	int onTime=NumMins(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read())-PreMinuteOffset;
-	int offTime=NumMins(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read())+PostMinuteOffset;
-	Set16ChannelRaw(Channel,PWMSigmoidHighRes(
-		onTime/60,
-		onTime%60,
-		offTime/60,
-		offTime%60,
-		Start,
-		End, 
-		SIXTEENChExpansionChannel[Channel] 
-	));	
+    Set16ChannelRaw(Channel, Sigmoid(Start,End,ExpansionChannel[Channel],PreMinuteOffset,PostMinuteOffset));
 }
 
 #endif //SIXTEENCHPWMEXPANSION
 
+
+int RA_PWMClass::Parabola(byte Start, byte End, int PrevValue, int PreMinuteOffset, int PostMinuteOffset) 
+{
+	SetWaveForm(Parabola_Type,Start,End,0,PrevValue,PreMinuteOffset,PostMinuteOffset);
+}
+
+int RA_PWMClass::Slope(byte Start, byte End, byte Duration, int PrevValue, int PreMinuteOffset, int PostMinuteOffset) 
+{
+	SetWaveForm(Slope_Type,Start,End,Duration,PrevValue,PreMinuteOffset,PostMinuteOffset);
+}
+
+int RA_PWMClass::SmoothRamp(byte Start, byte End, byte Duration, int PrevValue, int PreMinuteOffset, int PostMinuteOffset) 
+{
+	SetWaveForm(SmoothRamp_Type,Start,End,Duration,PrevValue,PreMinuteOffset,PostMinuteOffset);
+}
+
+int RA_PWMClass::Sigmoid(byte Start, byte End, int PrevValue, int PreMinuteOffset, int PostMinuteOffset) 
+{
+	SetWaveForm(Sigmoid_Type,Start,End,0,PrevValue,PreMinuteOffset,PostMinuteOffset);
+}
+
+int RA_PWMClass::SetWaveForm(byte type, byte Start, byte End, byte Duration, int PrevValue, int PreMinuteOffset, int PostMinuteOffset)
+{
+	int value;
+	int onTime=NumMins(hour(ScheduleTime(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read(),0)-PreMinuteOffset*60),
+						minute(ScheduleTime(InternalMemory.StdLightsOnHour_read(),InternalMemory.StdLightsOnMinute_read(),0)-PreMinuteOffset*60));
+	int offTime=NumMins(hour(ScheduleTime(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read(),0)+PostMinuteOffset*60),
+						minute(ScheduleTime(InternalMemory.StdLightsOffHour_read(),InternalMemory.StdLightsOffMinute_read(),0)+PostMinuteOffset*60));
+
+	switch (type) 
+	{
+		case Parabola_Type: 
+		 	value=PWMParabolaHighRes(onTime/60,onTime%60,offTime/60,offTime%60,Start,End,PrevValue);
+			break;
+		case Slope_Type:
+		 	value=PWMSlopeHighRes(onTime/60,onTime%60,offTime/60,offTime%60,Start,End,Duration,PrevValue);
+			break;
+		case SmoothRamp_Type:
+		 	value=PWMSmoothRampHighRes(onTime/60,onTime%60,offTime/60,offTime%60,Start,End,Duration,PrevValue);
+			break;
+		case Sigmoid_Type:
+		 	value=PWMSigmoidHighRes(onTime/60,onTime%60,offTime/60,offTime%60,Start,End,PrevValue);
+			break;
+	}
+
+	return value;
+}

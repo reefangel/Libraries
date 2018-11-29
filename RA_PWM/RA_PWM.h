@@ -25,6 +25,11 @@
 #include <Globals.h>
 #include <InternalEEPROM.h>
 
+#define Parabola_Type   0
+#define Slope_Type      1
+#define SmoothRamp_Type 2
+#define Sigmoid_Type    3
+
 class RA_PWMClass
 {
 public:
@@ -33,6 +38,13 @@ public:
 	byte ActinicPWMOverride;
 	byte DaylightPercentage;
 	byte ActinicPercentage;
+
+	int Parabola(byte Start, byte End, int PrevValue, int PreMinuteOffset, int PostMinuteOffset);
+	int Slope(byte Start, byte End, byte Duration, int PrevValue, int PreMinuteOffset, int PostMinuteOffset);
+	int SmoothRamp(byte Start, byte End, byte Duration, int PrevValue, int PreMinuteOffset, int PostMinuteOffset);
+	int Sigmoid(byte Start, byte End, int PrevValue, int PreMinuteOffset, int PostMinuteOffset);
+	int SetWaveForm(byte type, byte Start, byte End, byte Duration, int PrevValue, int PreMinuteOffset, int PostMinuteOffset);
+
 #ifdef RA_STAR
 	byte Daylight2Percentage;
 	byte Actinic2Percentage;
@@ -243,18 +255,18 @@ public:
 	byte Get16ChannelValue(byte Channel);
 	int Get16ChannelValueRaw(byte Channel);
 	byte inline Get16ChannelOverrideValue(byte Channel) { return SIXTEENChExpansionChannelOverride[Channel]; };
-	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration);
-	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration, int MinuteOffset);
-	void SIXTEENChannelPWMSlope(byte Channel, int Start, int End, byte Duration, int PreMinuteOffset, int PostMinuteOffset);
-	void SIXTEENChannelPWMParabola(byte Channel, int Start, int End);	
-	void SIXTEENChannelPWMParabola(byte Channel, int Start, int End, int MinuteOffset);	
-	void SIXTEENChannelPWMParabola(byte Channel, int Start, int End, int PreMinuteOffset, int PostMinuteOffset);	
-	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength);	
-	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int MinuteOffset);	
-	void SIXTEENChannelPWMSmoothRamp(byte Channel, int Start, int End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
-	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End);	
-	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int MinuteOffset);	
-	void SIXTEENChannelPWMSigmoid(byte Channel, int Start, int End, int PreMinuteOffset, int PostMinuteOffset);	
+	void SIXTEENChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration);
+	void SIXTEENChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, int MinuteOffset);
+	void SIXTEENChannelPWMSlope(byte Channel, byte Start, byte End, byte Duration, int PreMinuteOffset, int PostMinuteOffset);
+	void SIXTEENChannelPWMParabola(byte Channel, byte Start, byte End);	
+	void SIXTEENChannelPWMParabola(byte Channel, byte Start, byte End, int MinuteOffset);	
+	void SIXTEENChannelPWMParabola(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset);	
+	void SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength);	
+	void SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int MinuteOffset);	
+	void SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int PreMinuteOffset, int PostMinuteOffset);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, byte Start, byte End);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, byte Start, byte End, int MinuteOffset);	
+	void SIXTEENChannelPWMSigmoid(byte Channel, byte Start, byte End, int PreMinuteOffset, int PostMinuteOffset);	
 	boolean inline SIXTEENChIsPresent() { return SIXTEENChPresent; }
 	boolean SIXTEENChPresent;
 #endif  // SIXTEENCHPWMEXPANSION

@@ -228,6 +228,12 @@ time_t makeTime(tmElements_t &tm){
   seconds+= tm.Second;
   return (time_t)seconds; 
 }
+
+time_t ScheduleTime(uint8_t ScheduleHour, uint8_t ScheduleMinute, uint8_t ScheduleSecond)
+{
+        return previousMidnight(now()) + (ScheduleHour* SECS_PER_HOUR) + (ScheduleMinute* SECS_PER_MIN) + ScheduleSecond;
+}
+
 /*=====================================================*/	
 /* Low level system time functions  */
 

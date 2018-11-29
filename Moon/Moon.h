@@ -30,10 +30,12 @@
 //
 //------------------------------------------------------------
 
+/* Relocated to Time.cpp
 time_t ScheduleTime(uint8_t ScheduleHour, uint8_t ScheduleMinute, uint8_t ScheduleSecond)
 {
         return previousMidnight(now()) + (ScheduleHour* SECS_PER_HOUR) + (ScheduleMinute* SECS_PER_MIN) + ScheduleSecond;
 }
+*/
 
 struct moon_t
 {
