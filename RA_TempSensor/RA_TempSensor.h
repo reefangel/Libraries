@@ -22,7 +22,7 @@ typedef unsigned char byte;
 #ifndef __RA_TEMPSENSOR_H__
 #define __RA_TEMPSENSOR_H__
 
-// #include <Globals.h>
+#include <Globals.h>
 
 class RA_TempSensorClass
 {
