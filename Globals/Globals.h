@@ -364,6 +364,7 @@ static unsigned long RANetlastmillis;
 #ifdef RA_STAR
 #define RANET_SERIAL	Serial2
 #elif defined RA_PLUS
+#include <SoftwareSerial.h>
 static SoftwareSerial RANetSerial(RANetRXPin,RANetTXPin);
 #define RANET_SERIAL	RANetSerial
 #endif // RA_STAR
