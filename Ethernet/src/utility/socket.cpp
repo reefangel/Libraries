@@ -1,6 +1,8 @@
 #include "w5100.h"
 #include "socket.h"
+#ifdef __AVR_ATmega2560__
 #include <avr/wdt.h>
+#endif // __AVR_ATmega2560__
 
 static uint16_t local_port;
 
@@ -138,7 +140,9 @@ uint16_t send(SOCKET s, const uint8_t * buf, uint16_t len)
       break;
     }
     yield();
+#ifdef __AVR_ATmega2560__
     wdt_reset();
+#endif // __AVR_ATmega2560__
   } 
   while (freesize < ret);
 
@@ -150,7 +154,9 @@ uint16_t send(SOCKET s, const uint8_t * buf, uint16_t len)
   /* +2008.01 bj */
   while ( (W5100.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
   {
-	wdt_reset();
+#ifdef __AVR_ATmega2560__
+    wdt_reset();
+#endif // __AVR_ATmega2560__
     /* m2008.01 [bj] : reduce code */
     if ( W5100.readSnSR(s) == SnSR::CLOSED )
     {
@@ -268,7 +274,9 @@ uint16_t sendto(SOCKET s, const uint8_t *buf, uint16_t len, uint8_t *addr, uint1
     /* +2008.01 bj */
     while ( (W5100.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
     {
-      wdt_reset();
+#ifdef __AVR_ATmega2560__
+    wdt_reset();
+#endif // __AVR_ATmega2560__
       if (W5100.readSnIR(s) & SnIR::TIMEOUT)
       {
         /* +2008.01 [bj]: clear interrupt */
@@ -388,7 +396,9 @@ uint16_t igmpsend(SOCKET s, const uint8_t * buf, uint16_t len)
 
   while ( (W5100.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
   {
-	wdt_reset();
+#ifdef __AVR_ATmega2560__
+    wdt_reset();
+#endif // __AVR_ATmega2560__
     if (W5100.readSnIR(s) & SnIR::TIMEOUT)
     {
       /* in case of igmp, if send fails, then socket closed */
@@ -452,7 +462,9 @@ int sendUDP(SOCKET s)
   /* +2008.01 bj */
   while ( (W5100.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
   {
-	wdt_reset();
+#ifdef __AVR_ATmega2560__
+    wdt_reset();
+#endif // __AVR_ATmega2560__
     if (W5100.readSnIR(s) & SnIR::TIMEOUT)
     {
       /* +2008.01 [bj]: clear interrupt */
