@@ -61,7 +61,9 @@ int EthernetClient::connect(IPAddress ip, uint16_t port) {
 
   while (status() != SnSR::ESTABLISHED) {
     delay(1);
+#ifdef __AVR_ATmega2560__
     wdt_reset();
+#endif // __AVR_ATmega2560__
     if (status() == SnSR::CLOSED) {
       _sock = MAX_SOCK_NUM;
       return 0;
@@ -194,7 +196,9 @@ void EthernetClient::stop() {
     if (s == SnSR::CLOSED)
       break; // exit the loop
     delay(1);
+#ifdef __AVR_ATmega2560__
     wdt_reset();
+#endif // __AVR_ATmega2560__
   } while (millis() - start < 1000);
 
   // if it hasn't closed, close it forcefully
