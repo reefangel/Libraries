@@ -14,7 +14,9 @@ public:
   WiFiAlert();
   inline void Send() { Send(AlertMsg); };
   inline void Send(char *message) { Send(message,false); }
+  inline void Send(const __FlashStringHelper* message) { Send((char *)message,false); }
   void Send(char *message, boolean force);
+  inline void Send(const __FlashStringHelper* message, boolean force) { Send ((char *)message,force); };
 
   inline void SetDelay(int delay) { AlertDelay=delay; }
   inline int GetDelay() { return AlertDelay; }
