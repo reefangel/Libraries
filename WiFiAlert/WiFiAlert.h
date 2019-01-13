@@ -16,6 +16,10 @@ public:
   inline void Send(char *message) { Send(message,false); }
   void Send(char *message, boolean force);
 
+  void Send(const __FlashStringHelper* message);
+  void Send(const __FlashStringHelper* message, boolean force);
+  char* getString(const __FlashStringHelper* str);
+
   inline void SetDelay(int delay) { AlertDelay=delay; }
   inline int GetDelay() { return AlertDelay; }
   inline void ResetAlert() { LastAlert=now(); }

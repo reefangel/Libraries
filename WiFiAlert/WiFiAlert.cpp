@@ -20,6 +20,23 @@ boolean WiFiAlert::IsAlert()
   return false;
 }
 
+void WiFiAlert::Send(const __FlashStringHelper* message) 
+{
+	Send(message,false);	
+}
+
+void WiFiAlert::Send(const __FlashStringHelper* message, boolean force) 
+{
+	Send(getString(message),force);
+}
+
+char* WiFiAlert::getString(const __FlashStringHelper* str)
+{
+	char stringBuffer[50];
+	strcpy_P(stringBuffer, (char*)str);
+	return stringBuffer;
+}
+
 void WiFiAlert::Send(char *message, boolean force)
 {
   static boolean connected = false;
@@ -85,3 +102,4 @@ void WiFiAlert::Send(char *message, boolean force)
 }
 
 #endif  // wifi || ETH_WIZ5100
+
