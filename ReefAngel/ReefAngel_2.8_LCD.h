@@ -2417,7 +2417,7 @@ void ReefAngelClass::ReDrawScreen()
 					//Water Level
 					if ((EM&(1<<7))!=0)
 					{
-						for (int a=0;a<5;a++)
+						for (int a=0;a<WATERLEVEL_CHANNELS;a++)
 						{
 							if (x>twidth*18/21)
 							{
