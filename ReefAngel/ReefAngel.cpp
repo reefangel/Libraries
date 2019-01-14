@@ -770,11 +770,36 @@ void ReefAngelClass::Refresh()
 		BusLocked=false;  // Bus is not locked
 	if (BusLocked)
 	{
+		Serial.println("Bus Locked. Trying to clear");
 		LED.On();
 		delay(20);
 		LED.Off();
 		bitSet(AlertFlags,BusLockFlag);
 		sbi(PORTH,2); // Turn off exp bus power
+		for (int a=0;a<6;a++)
+		{
+			delay(500);
+			wdt_reset();
+		}
+		cbi(PORTH,2); // Turn on exp bus power
+
+		int rtn = I2C_ClearBus(); // clear the I2C bus first before calling Wire.begin()
+		  if (rtn != 0) {
+		    Serial.println(F("I2C bus error. Could not clear"));
+		    if (rtn == 1) {
+		      Serial.println(F("SCL clock line held low"));
+		    } else if (rtn == 2) {
+		      Serial.println(F("SCL clock line held low by slave clock stretch"));
+		    } else if (rtn == 3) {
+		      Serial.println(F("SDA data line held low"));
+		    }
+		  } else { // bus clear
+		    // re-enable Wire
+		    // now can start Wire Arduino master
+		    Wire.begin();
+		  }
+		  Serial.println("Bus Cleared :)");
+
 	}
 	else
 	{

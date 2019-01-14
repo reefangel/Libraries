@@ -1639,6 +1639,8 @@ byte StormMode(byte VSpeed, byte VTimer, boolean waveSync);
 
 const char* ip_to_str(const uint8_t* ipAddr);
 
+int I2C_ClearBus();
+
 // for virtual functions
 //extern "C" void __cxa_pure_virtual(void);
 // other fixes
