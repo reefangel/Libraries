@@ -34,7 +34,7 @@ RFClass::RFClass()
 	{
 		RadionChannels[a]=0;
 		RadionChannelsOverride[a]=255;
-	}	
+	}
 }
 
 void RFClass::SendData(byte mode, byte speed, byte duration)
@@ -92,7 +92,7 @@ byte RFClass::GetChannel(byte Channel)
 	if (RadionChannelsOverride[Channel]<=100)
 		return RadionChannelsOverride[Channel];
 	else
-		return RadionChannels[Channel];	
+		return RadionChannels[Channel];
 }
 
 void RFClass::RadionWrite()
@@ -101,7 +101,7 @@ void RFClass::RadionWrite()
 	{
 		lastWrite=millis();
 		for (byte a=0;a<RF_CHANNELS;a++)
-			SendData(Radion, RadionChannels[a]*2, a);
+			SendData(Radion, GetChannel(a)*2, a);
 		SendData(Radion,0,Radion_Ready);
 	}
 }
@@ -283,4 +283,3 @@ void RFClass::ChannelRadionParabola(byte Channel, byte Start, byte End, byte Dur
 		RadionChannels[Channel]
 	));
 }
-
