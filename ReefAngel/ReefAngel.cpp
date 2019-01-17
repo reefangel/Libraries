@@ -282,8 +282,9 @@ void ReefAngelClass::Refresh()
 		DCPump.Duration=InternalMemory.DCPumpDuration_read();
 		DCPump.Threshold=InternalMemory.DCPumpThreshold_read();
 	}
-	byte SyncSpeed;
-	byte AntiSyncSpeed;
+	// Let's initialize the speeds to 0 as a default
+	byte SyncSpeed=0;
+	byte AntiSyncSpeed=0;
 	switch (DCPump.Mode)
 	{
 	case Constant:
@@ -352,10 +353,21 @@ void ReefAngelClass::Refresh()
 		AntiSyncSpeed=StormMode(DCPump.Speed,DCPump.Duration,false);
 		break;
     }
+	case Custom:
+	{
+		SyncSpeed=DCPump.Speed;
+		AntiSyncSpeed=DCPump.Duration;	// Use duration to allow us to set an anti-sync speed for Custom mode
+		break;
+	}
+	default:
+	{
+		// We initialize to speed 0 above as a default
+		break;
+	}
     }
 	if (DisplayedMenu==FEEDING_MODE)
 	{
-		if (DCPump.FeedingSpeed < 100) 
+		if (DCPump.FeedingSpeed < 100)
 		{
 			SyncSpeed=DCPump.FeedingSpeed;
 			AntiSyncSpeed=DCPump.FeedingSpeed;
@@ -363,7 +375,7 @@ void ReefAngelClass::Refresh()
 	}
 	if (DisplayedMenu==WATERCHANGE_MODE)
 	{
-		if (DCPump.WaterChangeSpeed < 100) 
+		if (DCPump.WaterChangeSpeed < 100)
 		{
 			SyncSpeed=DCPump.WaterChangeSpeed;
 			AntiSyncSpeed=DCPump.WaterChangeSpeed;
@@ -562,7 +574,7 @@ void ReefAngelClass::Refresh()
 			int newdata=PWM.GetChannelValueRaw(a/2);
 			RANetData[18+a]=newdata&0xff;	// LSB
 			RANetData[18+a+1]=newdata>>8;	// MSB
-			
+
 #endif
 #else
 			RANetData[18+a]=0;
@@ -628,7 +640,7 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 	Params.Temp[T6_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT6);
 	RefreshScreen();
-#endif // EXTRA_TEMP_PROBES	
+#endif // EXTRA_TEMP_PROBES
 #else  // DirectTempSensor
 	int x=0;
 	int y=0;
@@ -676,7 +688,7 @@ void ReefAngelClass::Refresh()
 		y = x - Params.Temp[T6_PROBE];
 		if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T6_PROBE] == 0 || ~x) Params.Temp[T6_PROBE] = x;
 	}
-#endif // EXTRA_TEMP_PROBES	
+#endif // EXTRA_TEMP_PROBES
 #endif  // DirectTempSensor
 	Params.PH=0;
 	for (int a=0;a<20;a++)
@@ -942,7 +954,7 @@ void ReefAngelClass::ApplySalinityCompensation()
 }
 #endif  // SALINITYEXPANSION
 
-#ifdef BUSCHECK 
+#ifdef BUSCHECK
 boolean ReefAngelClass::isBusLock()
 {
 	return bitRead(AlertFlags, BusLockFlag);
@@ -1952,7 +1964,7 @@ void ReefAngelClass::CloudPortal()
 			if (*ReefAngel.ParamArrayByte[a]!=ReefAngel.OldParamArrayByte[a])
 			{
 				char buffer[15];
-				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a]))); 
+				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_byte[a])));
 				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayByte[a]);
 				Serial.print(F("CLOUD:"));
 				Serial.println(buffer);
@@ -1966,7 +1978,7 @@ void ReefAngelClass::CloudPortal()
 			if (*ReefAngel.ParamArrayInt[a]!=ReefAngel.OldParamArrayInt[a])
 			{
 				char buffer[15];
-				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a]))); 
+				strcpy_P(buffer, (char*)pgm_read_word(&(param_items_int[a])));
 				sprintf(buffer, "%s:%d", buffer, *ReefAngel.ParamArrayInt[a]);
 				Serial.print(F("CLOUD:"));
 				Serial.println(buffer);
@@ -2552,7 +2564,7 @@ void receiveEventMaster(int howMany)
 #endif // I2CMASTER
 
 #ifdef DCPUMPCONTROL
-void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed) 
+void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 {
 		// Apply the Threshold
 		SyncSpeed=PumpThreshold(SyncSpeed,DCPump.Threshold);
@@ -2574,13 +2586,13 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
             PWM.SetDaylight(AntiSyncSpeed);
 #endif // __SAM3X8E__
 
-        if (DCPump.ActinicChannel==Sync) 
+        if (DCPump.ActinicChannel==Sync)
 #if defined(__SAM3X8E__)
             VariableControl.SetActinic(SyncSpeed);
 #else // __SAM3X8E__
             PWM.SetActinic(SyncSpeed);
 #endif // __SAM3X8E__
-		else if (DCPump.ActinicChannel==AntiSync) 
+		else if (DCPump.ActinicChannel==AntiSync)
 #if defined(__SAM3X8E__)
             VariableControl.SetActinic(AntiSyncSpeed);
 #else // __SAM3X8E__
@@ -2609,7 +2621,7 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
             analogWrite(highATOPin, 2.55*AntiSyncSpeed);
 
 #ifdef PWMEXPANSION
-        for (int a=0; a<PWM_EXPANSION_CHANNELS;a++) 
+        for (int a=0; a<PWM_EXPANSION_CHANNELS;a++)
 		{
             if (DCPump.ExpansionChannel[a]==Sync) {
 #if defined(__SAM3X8E__)
@@ -2628,7 +2640,7 @@ void ReefAngelClass::SetDCPumpChannels(byte SyncSpeed, byte AntiSyncSpeed)
 #endif // PWMEXPANSION
 
 #ifdef SIXTEENCHPWMEXPANSION
-        for (int a=0; a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++) 
+        for (int a=0; a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
 		{
             if (DCPump.SIXTEENChExpansionChannel[a]==Sync) {
 #if defined(__SAM3X8E__)
@@ -2657,7 +2669,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 	long mqtt_val1=0;
 	byte mqtt_type=MQTT_NONE;
 	boolean foundchannel=false;
-	
+
 	for (int a=0;a<length;a++)
 	{
 #ifdef RA_STAR
@@ -2851,7 +2863,7 @@ void MQTTSubCallback(char* topic, byte* payload, unsigned int length) {
 			break;
 		}
 #endif // IOEXPANSION
-#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION 
+#if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		case MQTT_WL:
 		{
 			if (mqtt_val < 5) ReefAngel.WaterLevel.level[mqtt_val]=mqtt_val1;
@@ -3076,7 +3088,7 @@ void ReefAngelClass::CheckOverride(int option)
 				ReefAngel.Relay.RelayMaskOnE[i] &= ~ReefAngel.OverridePortsE[i];
 				ReefAngel.Relay.RelayMaskOffE[i] |= ReefAngel.OverridePortsE[i];
 		}
-#endif  // RelayExp  
+#endif  // RelayExp
 #endif  // OVERRIDE_PORTS
 	ReefAngel.Relay.Write();
 	// Force update of the Portal after relay change
@@ -3088,7 +3100,7 @@ void ReefAngelClass::DimmingOverride(int weboption, int weboption2 )
 	// weboption2 is channel
 	// weboption is override value
 	// if channel is from an expansion module that is not enabled, the command will be accepted, but it will do nothing.
-#ifdef DisplayLEDPWM					
+#ifdef DisplayLEDPWM
 #if defined(__SAM3X8E__)
 	if (weboption2==0) ReefAngel.VariableControl.SetDaylightOverride(weboption);
 	else if (weboption2==1) ReefAngel.VariableControl.SetActinicOverride(weboption);
