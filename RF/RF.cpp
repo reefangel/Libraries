@@ -106,6 +106,16 @@ void RFClass::RadionWrite()
 	}
 }
 
+void RFClass::RadionSlope()
+{
+	ChannelWhiteSlope();
+	ChannelRoyalBlueSlope();
+	ChannelRedSlope();
+	ChannelGreenSlope();
+	ChannelBlueSlope();
+	ChannelIntensitySlope();
+}
+
 void RFClass::ChannelWhiteSlope()
 {
 	ChannelRadionSlope(Radion_White,InternalMemory.RadionSlopeStartW_read(),InternalMemory.RadionSlopeEndW_read(),InternalMemory.RadionSlopeDurationW_read());
@@ -134,6 +144,16 @@ void RFClass::ChannelBlueSlope()
 void RFClass::ChannelIntensitySlope()
 {
 	ChannelRadionSlope(Radion_Intensity,InternalMemory.RadionSlopeStartI_read(),InternalMemory.RadionSlopeEndI_read(),InternalMemory.RadionSlopeDurationI_read());
+}
+
+void RFClass::RadionSlope(byte MinuteOffset)
+{
+	ChannelWhiteSlope(MinuteOffset);
+	ChannelRoyalBlueSlope(MinuteOffset);
+	ChannelRedSlope(MinuteOffset);
+	ChannelGreenSlope(MinuteOffset);
+	ChannelBlueSlope(MinuteOffset);
+	ChannelIntensitySlope(MinuteOffset);
 }
 
 void RFClass::ChannelWhiteSlope(byte MinuteOffset)
@@ -196,6 +216,16 @@ void RFClass::ChannelRadionSlope(byte Channel, byte Start, byte End, byte Durati
 	));
 }
 
+void RFClass::RadionParabola()
+{
+	ChannelWhiteParabola();
+	ChannelRoyalBlueParabola();
+	ChannelRedParabola();
+	ChannelGreenParabola();
+	ChannelBlueParabola();
+	ChannelIntensityParabola();
+}
+
 void RFClass::ChannelWhiteParabola()
 {
 	ChannelRadionParabola(Radion_White,InternalMemory.RadionSlopeStartW_read(),InternalMemory.RadionSlopeEndW_read(),InternalMemory.RadionSlopeDurationW_read());
@@ -224,6 +254,16 @@ void RFClass::ChannelBlueParabola()
 void RFClass::ChannelIntensityParabola()
 {
 	ChannelRadionParabola(Radion_Intensity,InternalMemory.RadionSlopeStartI_read(),InternalMemory.RadionSlopeEndI_read(),InternalMemory.RadionSlopeDurationI_read());
+}
+
+void RFClass::RadionParabola(byte MinuteOffset)
+{
+	ChannelWhiteParabola(MinuteOffset);
+	ChannelRoyalBlueParabola(MinuteOffset);
+	ChannelRedParabola(MinuteOffset);
+	ChannelGreenParabola(MinuteOffset);
+	ChannelBlueParabola(MinuteOffset);
+	ChannelIntensityParabola(MinuteOffset);
 }
 
 void RFClass::ChannelWhiteParabola(byte MinuteOffset)
