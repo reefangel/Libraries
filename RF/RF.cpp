@@ -28,12 +28,12 @@ RFClass::RFClass()
 	UseMemory=true;
 	VortechEnable=true;
 	lastcrc=-1;
-    FeedingSpeed=255;
-    WaterChangeSpeed=255;
+    FeedingSpeed=UCHAR_MAX;
+    WaterChangeSpeed=UCHAR_MAX;
 	for ( byte a = 0; a < RF_CHANNELS; a++ )
 	{
 		RadionChannels[a]=0;
-		RadionChannelsOverride[a]=255;
+		RadionChannelsOverride[a]=UCHAR_MAX;
 	}
 }
 
