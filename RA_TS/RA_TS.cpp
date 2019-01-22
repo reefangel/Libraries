@@ -31,6 +31,8 @@ void RA_TS::Init()
 	orientation=1;
 	CalibrationNeeded=false;
 #ifdef TOUCHCAP
+	digitalWrite(i2cEnable1,LOW);
+	digitalWrite(i2cEnable2,HIGH);
 	if ((readRegister8(FT6206_REG_VENDID) != 17) || (readRegister8(FT6206_REG_CHIPID) != 6))
 	{
 		Serial.println(F("Unknown Touch controller"));
@@ -41,6 +43,8 @@ void RA_TS::Init()
 		writeRegister8(FT6206_REG_THRESHOLD, FT6206_CUSTOM_THRESHOLD);
 		writeRegister8(FT6206_REG_G_MODE, FT6206_INT_POLLING);
 	}
+	digitalWrite(i2cEnable1,HIGH);
+	digitalWrite(i2cEnable2,LOW);
 #else // TOUCHCAP
 	ApplyCalibration();
 #endif // TOUCHCAP
