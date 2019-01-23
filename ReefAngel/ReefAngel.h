@@ -412,7 +412,7 @@ public:
 	unsigned long lastmasterupdate;
 #endif // I2CMASTER
 
-	void inline Use2014Screen() {};
+	// Call these methods to explictly add expansion features
 	void inline AddSalinityExpansion() {};
 	void inline AddORPExpansion() {};
 	void inline AddPHExpansion() {};
@@ -420,13 +420,18 @@ public:
 	void inline AddMultiChannelWaterLevelExpansion() {};
 	void inline AddHumidityExpansion() {};
 	void inline AddPARExpansion() {};
+	void inline AddRFExpansion() {};
+	void inline Add16ChPWM() {};
+	void inline AddIOExpansion() {};
+	void inline AddLeakDetectorExpansion() {};
+	void inline AddPWMExpansion() {};
+
+	void inline Use2014Screen() {};
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
 	void inline AddCloudWifi() {};
 	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
-	void inline AddRFExpansion() {};
-	void inline Add16ChPWM() {};
 	void inline AddCustomColors() {};
 	void inline AddBusCheck() {};
 	void inline AddPortOverrides() {};
