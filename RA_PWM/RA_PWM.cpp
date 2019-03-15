@@ -1121,7 +1121,7 @@ void RA_PWMClass::SIXTEENChannelPWMParabola(byte Channel, byte Start, byte End, 
 
 void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength)
 {
-	SIXTEENChannelSmoothRamp(Channel,Start,End,SlopeLength,0);
+	SIXTEENChannelPWMSmoothRamp(Channel,Start,End,SlopeLength,0);
 }
 
 void RA_PWMClass::SIXTEENChannelPWMSmoothRamp(byte Channel, byte Start, byte End, byte SlopeLength, int MinuteOffset)
