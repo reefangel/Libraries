@@ -2511,7 +2511,7 @@ void ReefAngelClass::ReDrawScreen()
 					{
 						if (CustomExpansionValue[a]!=CustomExpansionLastValue[a])
 						{
-							LargeFont.DrawCenterNumber(x,j,CustomExpansionValue[a],InternalMemory.read(Mem_B_CustomExpansion1Decimal+a));
+							LargeFont.DrawCenterNumber(x,j,CustomExpansionValue[a],0);
 							CustomExpansionLastValue[a]=CustomExpansionValue[a];
 						}
 						x+=twidth*5/16;
@@ -2526,7 +2526,7 @@ void ReefAngelClass::ReDrawScreen()
 					{
 						if (CustomExpansionValue[a]!=CustomExpansionLastValue[a])
 						{
-							LargeFont.DrawCenterNumber(x,j,CustomExpansionValue[a],InternalMemory.read(Mem_B_CustomExpansion1Decimal+a));
+							LargeFont.DrawCenterNumber(x,j,CustomExpansionValue[a],0);
 							CustomExpansionLastValue[a]=CustomExpansionValue[a];
 						}
 						x+=twidth*5/21;
