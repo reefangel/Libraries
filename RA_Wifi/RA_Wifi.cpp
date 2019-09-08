@@ -23,7 +23,6 @@
 
 #if defined wifi || defined ETH_WIZ5100
 #include "RA_Wifi.h"
-#include <DS1307RTC.h>
 #include <ReefAngel.h>
 
 RA_Wifi::RA_Wifi()

@@ -23,6 +23,7 @@
 #define __RA_WIFI_H__
 
 #include <Globals.h>
+#include <DS1307RTC.h>
 
 #if defined wifi || defined ETH_WIZ5100
 #include <avr/pgmspace.h>
