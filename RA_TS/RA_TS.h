@@ -95,8 +95,10 @@ class RA_TS
 		byte orientation;
 		boolean touchinsideenabled;
 #ifdef TOUCHCAP
-		  uint8_t touches;
-		  uint16_t touchX[2], touchY[2], touchID[2];
+		uint8_t touches;
+		uint16_t touchX[2], touchY[2], touchID[2];
+		unsigned long last_touch;
+		boolean first_touch;
 #endif // TOUCHCAP	
 };
 #endif // __RA_TS_H__

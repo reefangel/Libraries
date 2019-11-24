@@ -33,6 +33,8 @@ void RA_TS::Init()
 #ifdef TOUCHCAP
 	digitalWrite(i2cEnable1,LOW);
 	digitalWrite(i2cEnable2,HIGH);
+	last_touch=millis();
+	first_touch=true;
 	if ((readRegister8(FT6206_REG_VENDID) != 17) || (readRegister8(FT6206_REG_CHIPID) != 6))
 	{
 		Serial.println(F("Unknown Touch controller"));
@@ -95,6 +97,19 @@ void RA_TS::SaveCalibration()
 boolean RA_TS::GetTouch()
 {
 #ifdef TOUCHCAP
+	if (first_touch)
+	{
+		first_touch=false;
+		last_touch=millis();
+		// Serial.println("Touch");
+	}
+	if ((millis()-last_touch)>5000)
+	{
+		// Serial.println("Reset Touch");
+		digitalWrite(i2cEnable1,HIGH);
+		digitalWrite(i2cEnable2,LOW);
+		return false;
+	}
 	digitalWrite(i2cEnable1,LOW);
 	digitalWrite(i2cEnable2,HIGH);
 	X = Y = 0;
@@ -298,9 +313,14 @@ boolean RA_TS::IsTouched()
 	boolean t=!digitalRead(TPINTPin);
 #endif // defined RA_TOUCH || defined RA_TOUCHDISPLAY	
 	if (t) 
+	{
 		t=GetTouch();
+	}
 	else
+	{
 		X = Y = 0;
+		first_touch=true;
+	}
 	return t;
 }
 
