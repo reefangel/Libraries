@@ -108,13 +108,21 @@ boolean RA_TS::GetTouch()
 		// Serial.println("Reset Touch");
 		digitalWrite(i2cEnable1,HIGH);
 		digitalWrite(i2cEnable2,LOW);
+		// Serial.println("I2C Enabled");
 		return false;
 	}
 	digitalWrite(i2cEnable1,LOW);
 	digitalWrite(i2cEnable2,HIGH);
+	// Serial.println("I2C Disabled");
 	X = Y = 0;
 	uint8_t n = readRegister8(FT6206_REG_NUMTOUCHES);
-	if ((n == 0) || (n > 2)) return false;
+	if ((n == 0) || (n > 2))
+	{
+		digitalWrite(i2cEnable1,HIGH);
+		digitalWrite(i2cEnable2,LOW);
+		// Serial.println("I2C Enabled");
+		return false;
+	}
 	
 	uint8_t i2cdat[16];
 	enableI2CChannel1();
@@ -130,6 +138,7 @@ boolean RA_TS::GetTouch()
 	touches = i2cdat[0x02];
 	digitalWrite(i2cEnable1,HIGH);
 	digitalWrite(i2cEnable2,LOW);
+	// Serial.println("I2C Enabled");
 	
 	if ((touches == 0) || (touches > 2))
 	{
