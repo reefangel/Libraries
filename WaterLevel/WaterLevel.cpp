@@ -27,6 +27,7 @@
 
 WaterLevelClass::WaterLevelClass()
 {
+	wl_gain=3;
 	for (int a=0;a<WATERLEVEL_CHANNELS;a++)
 		level[a]=0;
 }
@@ -51,7 +52,7 @@ int WaterLevelClass::Read(byte channel)
 	Wire.beginTransmission(I2CMultiWaterLevel);
 	Wire.write(1); // Config Pointer
 	byte addr=(0xb+channel)<<4; // Select which channel to read
-	addr+=0x03; // Programmable Gain
+	addr+=wl_gain; // Programmable Gain
 	Wire.write(addr);
 	Wire.write(0x83);
 	Wire.endTransmission();

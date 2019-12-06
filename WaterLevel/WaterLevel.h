@@ -30,6 +30,7 @@ public:
 	WaterLevelClass();
 	byte LastLevel[WATERLEVEL_CHANNELS];
 	byte level[WATERLEVEL_CHANNELS];
+	byte wl_gain;
 	int Read();
 	int Read(byte channel);
 	void Convert();
@@ -37,6 +38,7 @@ public:
 	inline byte GetLevel() { return level[0]; } ;
 	inline byte GetLevel(byte channel) { if (channel>=WATERLEVEL_CHANNELS) return 0; else return level[channel]; } ;
 	inline byte SetLevel(byte channel, int value) { if (channel<=WATERLEVEL_CHANNELS) level[channel]=value; } ;
+	inline void SetGain(byte gain) { wl_gain=gain; };
 private:
 };
 
