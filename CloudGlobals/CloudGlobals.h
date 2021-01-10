@@ -45,6 +45,7 @@ typedef struct  {
   int CalHigh;
 } CustomCalStruct;
 
+#define I2CRF				0X10
 #define I2CIO_PCF8574       0x27
 #define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
@@ -107,6 +108,9 @@ static byte ExpansionChannel[PWM_EXPANSION_CHANNELS];
 static byte ExpansionChannelOverride[PWM_EXPANSION_CHANNELS];
 static int Expansion16Channel[PWM16_EXPANSION_CHANNELS];
 static byte Expansion16ChannelOverride[PWM16_EXPANSION_CHANNELS];
+static byte RFMode;
+static byte RFSpeed;
+static byte RFDuration;
 static byte lastcrc;
 static int lastcrc16;
 static ParamsStruct Params;
